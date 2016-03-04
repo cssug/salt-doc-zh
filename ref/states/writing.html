@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>State Modules</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="State System Reference" href="index.html">
+        <link rel="next" title="Events &amp; Reactor" href="../../topics/event/index.html">
+        <link rel="prev" title="SLS Template Variable Reference" href="vars.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="vars.html" title="SLS Template Variable Reference">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../../topics/event/index.html" title="Events &amp; Reactor">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="state-modules">
+<span id="id1"></span><h1>State Modules<a class="headerlink" href="#state-modules" title="永久链接至标题">¶</a></h1>
+<p>State Modules are the components that map to actual enforcement and management
+of Salt states.</p>
+<div class="section" id="states-are-easy-to-write">
+<span id="writing-state-modules"></span><h2>States are Easy to Write!<a class="headerlink" href="#states-are-easy-to-write" title="永久链接至标题">¶</a></h2>
+<p>State Modules should be easy to write and straightforward. The information
+passed to the SLS data structures will map directly to the states modules.</p>
+<p>Mapping the information from the SLS data is simple, this example should
+illustrate:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/salt/master</span><span class="p p-Indicator">:</span> <span class="c1"># maps to &quot;name&quot;</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span> <span class="c1"># maps to &lt;filename&gt;.&lt;function&gt; - e.g. &quot;managed&quot; in https://github.com/saltstack/salt/tree/develop/salt/states/file.py</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span> <span class="c1"># one of many options passed to the manage function</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">644</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://salt/master</span>
+</pre></div>
+</div>
+<p>Therefore this SLS data can be directly linked to a module, function, and
+arguments passed to that function.</p>
+<p>This does issue the burden, that function names, state names and function
+arguments should be very human readable inside state modules, since they
+directly define the user interface.</p>
+<div class="admonition-keyword-arguments admonition">
+<p class="first admonition-title">Keyword Arguments</p>
+<p class="last">Salt passes a number of keyword arguments to states when rendering them,
+including the environment, a unique identifier for the state, and more.
+Additionally, keep in mind that the requisites for a state are part of the
+keyword arguments. Therefore, if you need to iterate through the keyword
+arguments in a state, these must be considered and handled appropriately.
+One such example is in the <a class="reference internal" href="all/salt.states.pkgrepo.html#salt.states.pkgrepo.managed" title="salt.states.pkgrepo.managed"><code class="xref py py-mod docutils literal"><span class="pre">pkgrepo.managed</span></code></a> state, which needs to be able to handle
+arbitrary keyword arguments and pass them to module execution functions.
+An example of how these keyword arguments can be handled can be found
+<a class="reference external" href="https://github.com/saltstack/salt/blob/v0.16.2/salt/states/pkgrepo.py#L163-183">here</a>.</p>
+</div>
+</div>
+<div class="section" id="using-custom-state-modules">
+<h2>Using Custom State Modules<a class="headerlink" href="#using-custom-state-modules" title="永久链接至标题">¶</a></h2>
+<p>Place your custom state modules inside a <code class="docutils literal"><span class="pre">_states</span></code> directory within the
+<a class="reference internal" href="../configuration/master.html#std:conf_master-file_roots"><code class="xref std std-conf_master docutils literal"><span class="pre">file_roots</span></code></a> specified by the master config file. These custom
+state modules can then be distributed in a number of ways. Custom state modules
+are distributed when <a class="reference internal" href="../modules/all/salt.modules.state.html#salt.modules.state.highstate" title="salt.modules.state.highstate"><code class="xref py py-mod docutils literal"><span class="pre">state.highstate</span></code></a> is
+run, or by executing the <a class="reference internal" href="../modules/all/salt.modules.saltutil.html#salt.modules.saltutil.sync_states" title="salt.modules.saltutil.sync_states"><code class="xref py py-mod docutils literal"><span class="pre">saltutil.sync_states</span></code></a> or <a class="reference internal" href="../modules/all/salt.modules.saltutil.html#salt.modules.saltutil.sync_all" title="salt.modules.saltutil.sync_all"><code class="xref py py-mod docutils literal"><span class="pre">saltutil.sync_all</span></code></a> functions.</p>
+<p>Any custom states which have been synced to a minion, that are named the
+same as one of Salt's default set of states, will take the place of the default
+state with the same name. Note that a state's default name is its filename
+(i.e. <code class="docutils literal"><span class="pre">foo.py</span></code> becomes state <code class="docutils literal"><span class="pre">foo</span></code>), but that its name can be overridden
+by using a <a class="reference internal" href="../modules/index.html#virtual-modules"><span>__virtual__ function</span></a>.</p>
+</div>
+<div class="section" id="cross-calling-execution-modules-from-states">
+<h2>Cross Calling Execution Modules from States<a class="headerlink" href="#cross-calling-execution-modules-from-states" title="永久链接至标题">¶</a></h2>
+<p>As with Execution Modules, State Modules can also make use of the <code class="docutils literal"><span class="pre">__salt__</span></code>
+and <code class="docutils literal"><span class="pre">__grains__</span></code> data. See <a class="reference internal" href="../modules/index.html#cross-calling-execution-modules"><span>cross calling execution modules</span></a>.</p>
+<p>It is important to note that the real work of state management should not be
+done in the state module unless it is needed. A good example is the pkg state
+module. This module does not do any package management work, it just calls the
+pkg execution module. This makes the pkg state module completely generic, which
+is why there is only one pkg state module and many backend pkg execution
+modules.</p>
+<p>On the other hand some modules will require that the logic be placed in the
+state module, a good example of this is the file module. But in the vast
+majority of cases this is not the best approach, and writing specific
+execution modules to do the backend work will be the optimal solution.</p>
+</div>
+<div class="section" id="cross-calling-state-modules">
+<span id="id2"></span><h2>Cross Calling State Modules<a class="headerlink" href="#cross-calling-state-modules" title="永久链接至标题">¶</a></h2>
+<p>All of the Salt state modules are available to each other and state modules can call
+functions available in other state modules.</p>
+<p>The variable <code class="docutils literal"><span class="pre">__states__</span></code> is packed into the modules after they are loaded into
+the Salt minion.</p>
+<p>The <code class="docutils literal"><span class="pre">__states__</span></code> variable is a <a class="reference external" href="http://docs.python.org/2/library/stdtypes.html#typesmapping" title="(在 Python v2.7)"><span class="xref std std-ref">Python dictionary</span></a>
+containing all of the state modules. Dictionary keys are strings representing the
+names of the modules and the values are the functions themselves.</p>
+<p>Salt state modules can be cross-called by accessing the value in the <code class="docutils literal"><span class="pre">__states__</span></code> dict:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ret</span> <span class="o">=</span> <span class="n">__states__</span><span class="p">[</span><span class="s1">&#39;file.managed&#39;</span><span class="p">](</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;/tmp/myfile&#39;</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="s1">&#39;salt://myfile&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This code will call the <cite>managed</cite> function in the <a class="reference internal" href="all/salt.states.file.html#module-salt.states.file" title="salt.states.file"><code class="xref py py-mod docutils literal"><span class="pre">file</span></code></a> state module and pass the arguments <code class="docutils literal"><span class="pre">name</span></code> and <code class="docutils literal"><span class="pre">source</span></code>
+to it.</p>
+</div>
+<div class="section" id="return-data">
+<h2>Return Data<a class="headerlink" href="#return-data" title="永久链接至标题">¶</a></h2>
+<p>A State Module must return a dict containing the following keys/values:</p>
+<ul>
+<li><p class="first"><strong>name:</strong> The same value passed to the state as &quot;name&quot;.</p>
+</li>
+<li><p class="first"><strong>changes:</strong> A dict describing the changes made. Each thing changed should
+be a key, with its value being another dict with keys called &quot;old&quot; and &quot;new&quot;
+containing the old/new values. For example, the pkg state's <strong>changes</strong> dict
+has one key for each package changed, with the &quot;old&quot; and &quot;new&quot; keys in its
+sub-dict containing the old and new versions of the package.</p>
+</li>
+<li><p class="first"><strong>result:</strong> A tristate value.  <code class="docutils literal"><span class="pre">True</span></code> if the action was successful,
+<code class="docutils literal"><span class="pre">False</span></code> if it was not, or <code class="docutils literal"><span class="pre">None</span></code> if the state was run in test mode,
+<code class="docutils literal"><span class="pre">test=True</span></code>, and changes would have been made if the state was not run in
+test mode.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="48%" />
+<col width="26%" />
+<col width="26%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">&nbsp;</th>
+<th class="head">live mode</th>
+<th class="head">test mode</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>no changes</td>
+<td><code class="docutils literal"><span class="pre">True</span></code></td>
+<td><code class="docutils literal"><span class="pre">True</span></code></td>
+</tr>
+<tr class="row-odd"><td>successful changes</td>
+<td><code class="docutils literal"><span class="pre">True</span></code></td>
+<td><code class="docutils literal"><span class="pre">None</span></code></td>
+</tr>
+<tr class="row-even"><td>failed changes</td>
+<td><code class="docutils literal"><span class="pre">False</span></code></td>
+<td><code class="docutils literal"><span class="pre">None</span></code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Test mode does not predict if the changes will be successful or not.</p>
+</div>
+</li>
+<li><p class="first"><strong>comment:</strong> A string containing a summary of the result.</p>
+</li>
+</ul>
+<p>The return data can also, include the <strong>pchanges</strong> key, this statnds for
+<cite>predictive changes</cite>. The <strong>pchanges</strong> key informs the State system what
+changes are predicted to occur.</p>
+</div>
+<div class="section" id="test-state">
+<h2>Test State<a class="headerlink" href="#test-state" title="永久链接至标题">¶</a></h2>
+<p>All states should check for and support <code class="docutils literal"><span class="pre">test</span></code> being passed in the options.
+This will return data about what changes would occur if the state were actually
+run. An example of such a check could look like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Return comment of changes if test.</span>
+<span class="k">if</span> <span class="n">__opts__</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">]:</span>
+    <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;State Foo will execute with param {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ret</span>
+</pre></div>
+</div>
+<p>Make sure to test and return before performing any real actions on the minion.</p>
+</div>
+<div class="section" id="watcher-function">
+<h2>Watcher Function<a class="headerlink" href="#watcher-function" title="永久链接至标题">¶</a></h2>
+<p>If the state being written should support the watch requisite then a watcher
+function needs to be declared. The watcher function is called whenever the
+watch requisite is invoked and should be generic to the behavior of the state
+itself.</p>
+<p>The watcher function should accept all of the options that the normal state
+functions accept (as they will be passed into the watcher function).</p>
+<p>A watcher function typically is used to execute state specific reactive
+behavior, for instance, the watcher for the service module restarts the
+named service and makes it useful for the watcher to make the service
+react to changes in the environment.</p>
+<p>The watcher function also needs to return the same data that a normal state
+function returns.</p>
+</div>
+<div class="section" id="mod-init-interface">
+<h2>Mod_init Interface<a class="headerlink" href="#mod-init-interface" title="永久链接至标题">¶</a></h2>
+<p>Some states need to execute something only once to ensure that an environment
+has been set up, or certain conditions global to the state behavior can be
+predefined. This is the realm of the mod_init interface.</p>
+<p>A state module can have a function called <strong>mod_init</strong> which executes when the
+first state of this type is called. This interface was created primarily to
+improve the pkg state. When packages are installed the package metadata needs
+to be refreshed, but refreshing the package metadata every time a package is
+installed is wasteful. The mod_init function for the pkg state sets a flag down
+so that the first, and only the first, package installation attempt will refresh
+the package database (the package database can of course be manually called to
+refresh via the <code class="docutils literal"><span class="pre">refresh</span></code> option in the pkg state).</p>
+<p>The mod_init function must accept the <strong>Low State Data</strong> for the given
+executing state as an argument. The low state data is a dict and can be seen by
+executing the state.show_lowstate function. Then the mod_init function must
+return a bool. If the return value is True, then the mod_init function will not
+be executed again, meaning that the needed behavior has been set up. Otherwise,
+if the mod_init function returns False, then the function will be called the
+next time.</p>
+<p>A good example of the mod_init function is found in the pkg state module:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">mod_init</span><span class="p">(</span><span class="n">low</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Refresh the package database here so that it only needs to happen once</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">low</span><span class="p">[</span><span class="s1">&#39;fun&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;installed&#39;</span> <span class="ow">or</span> <span class="n">low</span><span class="p">[</span><span class="s1">&#39;fun&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;latest&#39;</span><span class="p">:</span>
+        <span class="n">rtag</span> <span class="o">=</span> <span class="n">__gen_rtag</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">rtag</span><span class="p">):</span>
+            <span class="nb">open</span><span class="p">(</span><span class="n">rtag</span><span class="p">,</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+</pre></div>
+</div>
+<p>The mod_init function in the pkg state accepts the low state data as <code class="docutils literal"><span class="pre">low</span></code>
+and then checks to see if the function being called is going to install
+packages, if the function is not going to install packages then there is no
+need to refresh the package database. Therefore if the package database is
+prepared to refresh, then return True and the mod_init will not be called
+the next time a pkg state is evaluated, otherwise return False and the mod_init
+will be called next time a pkg state is evaluated.</p>
+</div>
+<div class="section" id="log-output">
+<h2>Log Output<a class="headerlink" href="#log-output" title="永久链接至标题">¶</a></h2>
+<p>You can call the logger from custom modules to write messages to the minion
+logs. The following code snippet demonstrates writing log messages:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Here is Some Information&#39;</span><span class="p">)</span>
+<span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;You Should Not Do That&#39;</span><span class="p">)</span>
+<span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;It Is Busted&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="full-state-module-example">
+<h2>Full State Module Example<a class="headerlink" href="#full-state-module-example" title="永久链接至标题">¶</a></h2>
+<p>The following is a simplistic example of a full state module and function.
+Remember to call out to execution modules to perform all the real work. The
+state module should only perform &quot;before&quot; and &quot;after&quot; checks.</p>
+<ol class="arabic">
+<li><p class="first">Make a custom state module by putting the code into a file at the following
+path: <strong>/srv/salt/_states/my_custom_state.py</strong>.</p>
+</li>
+<li><p class="first">Distribute the custom state module to the minions:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> saltutil.sync_states
+</pre></div>
+</div>
+</li>
+<li><p class="first">Write a new state to use the custom state by making a new state file, for
+instance <strong>/srv/salt/my_custom_state.sls</strong>.</p>
+</li>
+<li><p class="first">Add the following SLS configuration to the file created in Step 3:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">human_friendly_state_id</span><span class="p p-Indicator">:</span>        <span class="c1"># An arbitrary state ID declaration.</span>
+  <span class="l l-Scalar l-Scalar-Plain">my_custom_state</span><span class="p p-Indicator">:</span>              <span class="c1"># The custom state module name.</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">enforce_custom_thing</span>      <span class="c1"># The function in the custom state module.</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">a_value</span>             <span class="c1"># Maps to the ``name`` parameter in the custom function.</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">foo</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Foo</span>                  <span class="c1"># Specify the required ``foo`` parameter.</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bar</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>                <span class="c1"># Override the default value for the ``bar`` parameter.</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<div class="section" id="example-state-module">
+<h3>Example state module<a class="headerlink" href="#example-state-module" title="永久链接至标题">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">salt.exceptions</span>
+
+<span class="k">def</span> <span class="nf">enforce_custom_thing</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">foo</span><span class="p">,</span> <span class="n">bar</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Enforce the state of a custom thing</span>
+
+<span class="sd">    This state module does a custom thing. It calls out to the execution module</span>
+<span class="sd">    ``my_custom_module`` in order to check the current system and perform any</span>
+<span class="sd">    needed changes.</span>
+
+<span class="sd">    name</span>
+<span class="sd">        The thing to do something to</span>
+<span class="sd">    foo</span>
+<span class="sd">        A required argument</span>
+<span class="sd">    bar : True</span>
+<span class="sd">        An argument with a default value</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+        <span class="s1">&#39;changes&#39;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+        <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pchanges&#39;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="p">}</span>
+
+    <span class="c1"># Start with basic error-checking. Do all the passed parameters make sense</span>
+    <span class="c1"># and agree with each-other?</span>
+    <span class="k">if</span> <span class="n">bar</span> <span class="o">==</span> <span class="bp">True</span> <span class="ow">and</span> <span class="n">foo</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;Foo&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">salt</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">SaltInvocationError</span><span class="p">(</span>
+            <span class="s1">&#39;Argument &quot;foo&quot; cannot start with &quot;Foo&quot; if argument &quot;bar&quot; is True.&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Check the current state of the system. Does anything need to change?</span>
+    <span class="n">current_state</span> <span class="o">=</span> <span class="n">__salt__</span><span class="p">[</span><span class="s1">&#39;my_custom_module.current_state&#39;</span><span class="p">](</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">current_state</span> <span class="o">==</span> <span class="n">foo</span><span class="p">:</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;System already in the correct state&#39;</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="c1"># The state of the system does need to be changed. Check if we&#39;re running</span>
+    <span class="c1"># in ``test=true`` mode.</span>
+    <span class="k">if</span> <span class="n">__opts__</span><span class="p">[</span><span class="s1">&#39;test&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;The state of &quot;{0}&quot; will be changed.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;pchanges&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;old&#39;</span><span class="p">:</span> <span class="n">current_state</span><span class="p">,</span>
+            <span class="s1">&#39;new&#39;</span><span class="p">:</span> <span class="s1">&#39;Description, diff, whatever of the new state&#39;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Return ``None`` when running with ``test=true``.</span>
+        <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="c1"># Finally, make the actual change and return the result.</span>
+    <span class="n">new_state</span> <span class="o">=</span> <span class="n">__salt__</span><span class="p">[</span><span class="s1">&#39;my_custom_module.change_state&#39;</span><span class="p">](</span><span class="n">name</span><span class="p">,</span> <span class="n">foo</span><span class="p">)</span>
+
+    <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;The state of &quot;{0}&quot; was changed!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;changes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;old&#39;</span><span class="p">:</span> <span class="n">current_state</span><span class="p">,</span>
+        <span class="s1">&#39;new&#39;</span><span class="p">:</span> <span class="n">new_state</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">return</span> <span class="n">ret</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="vars.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="SLS Template Variable Reference" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../../topics/event/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Events &amp; Reactor" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../topics/states/index.html">Configuration Management</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/starting_states.html">我们如何使用Salt States？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt1.html">States教程，第1部分 - 基础用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt2.html">States tutorial, part 2 - More Complex States, Requisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt3.html">States tutorial, part 3 - Templating, Includes, Extends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt4.html">States tutorial, part 4</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">State System Reference</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aggregate.html">Mod Aggregate State Runtime Modifications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="altering_states.html">Altering States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="backup_mode.html">File State Backups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compiler_ordering.html">Understanding State Compiler Ordering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extend.html">Extending External SLS Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="failhard.html">Failhard Global Option</a></li>
+<li class="toctree-l3"><a class="reference internal" href="global_state_arguments.html">Global State Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html">Highstate data structure definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="include.html">Include and Exclude</a></li>
+<li class="toctree-l3"><a class="reference internal" href="layers.html">State System Layers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="master_side.html">The Orchestrate Runner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ordering.html">Ordering States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="providers.html">State Providers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="requisites.html">Requisites and Other Global State Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="startup.html">Startup States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html">State Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="top.html">顶级配置文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vars.html">SLS Template Variable Reference</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">State Modules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#states-are-easy-to-write">States are Easy to Write!</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#using-custom-state-modules">Using Custom State Modules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cross-calling-execution-modules-from-states">Cross Calling Execution Modules from States</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cross-calling-state-modules">Cross Calling State Modules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#return-data">Return Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#test-state">Test State</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#watcher-function">Watcher Function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mod-init-interface">Mod_init Interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#log-output">Log Output</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#full-state-module-example">Full State Module Example</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#example-state-module">Example state module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#state-management">State Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#understanding-the-salt-state-system-components">理解Salt状态系统组件</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Getting Started with VEXXHOST</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt云端" href="index.html">
+        <link rel="next" title="Getting Started With Virtualbox" href="virtualbox.html">
+        <link rel="prev" title="Getting Started With SoftLayer" href="softlayer.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="softlayer.html" title="Getting Started With SoftLayer">上一页</a>
+            
+        </li>
+        <li>
+            <a href="virtualbox.html" title="Getting Started With Virtualbox">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="getting-started-with-vexxhost">
+<h1>Getting Started with VEXXHOST<a class="headerlink" href="#getting-started-with-vexxhost" title="永久链接至标题">¶</a></h1>
+<p><a class="reference external" href="http://vexxhost.com">VEXXHOST</a> is a cloud computing host which provides
+<a class="reference external" href="http://vexxhost.com/cloud-computing">Canadian cloud computing</a> services
+which are based in Monteral and use the libcloud OpenStack driver.  VEXXHOST
+currently runs the Havana release of OpenStack.  When provisioning new
+instances, they automatically get a public IP and private IP address.
+Therefore, you do not need to assign a floating IP to access your instance
+after it's booted.</p>
+<div class="section" id="cloud-provider-configuration">
+<h2>Cloud Provider Configuration<a class="headerlink" href="#cloud-provider-configuration" title="永久链接至标题">¶</a></h2>
+<p>To use the <cite>openstack</cite> driver for the VEXXHOST public cloud, you will need to
+set up the cloud provider configuration file as in the example below:</p>
+<p><code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/vexxhost.conf</span></code>:
+In order to use the VEXXHOST public cloud, you will need to setup a cloud
+provider configuration file as in the example below which uses the OpenStack
+driver.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-vexxhost-config</span><span class="p p-Indicator">:</span>
+  <span class="c1"># Set the location of the salt-master</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">saltmaster.example.com</span>
+
+  <span class="c1"># Configure VEXXHOST using the OpenStack plugin</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">identity_url</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">http://auth.api.thenebulacloud.com:5000/v2.0/tokens</span>
+  <span class="l l-Scalar l-Scalar-Plain">compute_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">nova</span>
+
+  <span class="c1"># Set the compute region:</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">compute_region</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">na-yul-nhs1</span>
+
+  <span class="c1"># Configure VEXXHOST authentication credentials</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">your-tenant-id</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">your-api-key</span>
+  <span class="l l-Scalar l-Scalar-Plain">tenant</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">your-tenant-name</span>
+
+  <span class="c1"># keys to allow connection to the instance launched</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_key_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">yourkey</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_key_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/path/to/key/yourkey.priv</span>
+
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<div class="versionchanged">
+<p><span class="versionmodified">在 2015.8.0 版更改.</span></p>
+</div>
+<p class="last">The <code class="docutils literal"><span class="pre">provider</span></code> parameter in cloud provider definitions was renamed to <code class="docutils literal"><span class="pre">driver</span></code>. This
+change was made to avoid confusion with the <code class="docutils literal"><span class="pre">provider</span></code> parameter that is used in cloud profile
+definitions. Cloud provider definitions now use <code class="docutils literal"><span class="pre">driver</span></code> to refer to the Salt cloud module that
+provides the underlying functionality to connect to a cloud host, while cloud profiles continue
+to use <code class="docutils literal"><span class="pre">provider</span></code> to refer to provider configurations that you define.</p>
+</div>
+</div>
+<div class="section" id="authentication">
+<h2>Authentication<a class="headerlink" href="#authentication" title="永久链接至标题">¶</a></h2>
+<p>All of the authentication fields that you need can be found by logging into
+your VEXXHOST customer center.  Once you've logged in, you will need to click
+on &quot;CloudConsole&quot; and then click on &quot;API Credentials&quot;.</p>
+</div>
+<div class="section" id="cloud-profile-configuration">
+<h2>Cloud Profile Configuration<a class="headerlink" href="#cloud-profile-configuration" title="永久链接至标题">¶</a></h2>
+<p>In order to get the correct image UUID and the instance type to use in the
+cloud profile, you can run the following command respectively:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-cloud --list-images=vexxhost-config</span>
+<span class="c1"># salt-cloud --list-sizes=vexxhost-config</span>
+</pre></div>
+</div>
+<p>Once you have that, you can go ahead and create a new cloud profile.  This
+profile will build an Ubuntu 12.04 LTS <cite>nb.2G</cite> instance.</p>
+<p><code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles.d/vh_ubuntu1204_2G.conf</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">vh_ubuntu1204_2G</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-vexxhost-config</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">4051139f-750d-4d72-8ef0-074f2ccc7e5a</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">nb.2G</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="provision-an-instance">
+<h2>Provision an instance<a class="headerlink" href="#provision-an-instance" title="永久链接至标题">¶</a></h2>
+<p>To create an instance based on the sample profile that we created above, you
+can run the following <cite>salt-cloud</cite> command.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-cloud -p vh_ubuntu1204_2G vh_instance1</span>
+</pre></div>
+</div>
+<p>Typically, instances are provisioned in under 30 seconds on the VEXXHOST public
+cloud.  After the instance provisions, it will be set up a minion and then
+return all the instance information once it's complete.</p>
+<p>Once the instance has been setup, you can test connectivity to it by running
+the following command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt vh_instance1 test.ping</span>
+</pre></div>
+</div>
+<p>You can now continue to provision new instances and they will all automatically
+be set up as minions of the master you've defined in the configuration file.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="softlayer.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started With SoftLayer" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="virtualbox.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started With Virtualbox" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt云端</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">入门指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud">Using Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#core-configuration">Cloud核心配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#windows-configuration">Windows Configuration</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#cloud-provider-specifics">Cloud Provider Specifics</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aliyun.html">    Getting Started With Aliyun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html">    Getting Started With Azure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="digitalocean.html">    Getting Started With DigitalOcean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html">    Getting Started With EC2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gogrid.html">    Getting Started With GoGrid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html">    Getting Started With Google Compute Engine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hpcloud.html">    Getting Started With HP Cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="joyent.html">    Getting Started With Joyent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lxc.html">    Getting Started With LXC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linode.html">    Getting Started With Linode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="opennebula.html">    Getting Started With OpenNebula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="openstack.html">    Getting Started With OpenStack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parallels.html">    Getting Started With Parallels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="profitbricks.html">    Getting Started With Profitbricks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="proxmox.html">    Getting Started With Proxmox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rackspace.html">    Getting Started With Rackspace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="saltify.html">    Getting Started With Saltify</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scaleway.html">    Getting Started With Scaleway</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html">    Getting Started With SoftLayer</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">    Getting Started With Vexxhost</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cloud-provider-configuration">Cloud Provider Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#authentication">Authentication</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cloud-profile-configuration">Cloud Profile Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#provision-an-instance">Provision an instance</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="virtualbox.html">    Getting Started With Virtualbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vmware.html">    Getting Started With VMware</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vsphere.html">    Getting Started With vSphere</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#miscellaneous-options">Miscellaneous Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#troubleshooting-steps">Troubleshooting Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#extending-salt-cloud">Extending Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud-from-salt">Using Salt Cloud from Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#feature-comparison">Feature Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorials">Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

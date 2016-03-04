@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>顶级配置文件</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="State System Reference" href="index.html">
+        <link rel="next" title="SLS Template Variable Reference" href="vars.html">
+        <link rel="prev" title="State Testing" href="testing.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="testing.html" title="State Testing">上一页</a>
+            
+        </li>
+        <li>
+            <a href="vars.html" title="SLS Template Variable Reference">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="the-top-file">
+<span id="states-top"></span><h1>顶级配置文件<a class="headerlink" href="#the-top-file" title="永久链接至标题">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="永久链接至标题">¶</a></h2>
+<p>Most infrastructures are made up of groups of machines, each machine in the
+group performing a role similar to others. Those groups of machines work
+in concert with each other to create an application stack.</p>
+<p>To effectively manage those groups of machines, an administrator needs to
+be able to create roles for those groups. For example, a group of machines
+that serve front-end web traffic might have roles which indicate that
+those machines should all have the Apache webserver package installed and
+that the Apache service should always be running.</p>
+<p>In Salt, the file which contains a mapping between groups of machines on a
+network and the configuration roles that should be applied to them is
+called a <code class="docutils literal"><span class="pre">top</span> <span class="pre">file</span></code>.</p>
+<p>Top files are named <code class="docutils literal"><span class="pre">top.sls</span></code> by default and they are so-named because they
+always exist in the &quot;top&quot; of a directory hierarchy that contains state files.
+That directory hierarchy is called a <code class="docutils literal"><span class="pre">state</span> <span class="pre">tree</span></code>.</p>
+</div>
+<div class="section" id="a-basic-example">
+<h2>A Basic Example<a class="headerlink" href="#a-basic-example" title="永久链接至标题">¶</a></h2>
+<p>Top files have three components:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Environment: A state tree directory containing a set of state files to
+configure systems.</li>
+<li>Target: A grouping of machines which will have a set of states applied
+to them.</li>
+<li>State files: A list of state files to apply to a target. Each state
+file describes one or more states to be configured and enforced
+on the targeted machines.</li>
+</ul>
+</div></blockquote>
+<p>The relationship between these three components is nested as follows:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Environments contain targets</li>
+<li>Targets contain states</li>
+</ul>
+</div></blockquote>
+<p>Putting these concepts together, we can describe a scenario in which all
+minions with an ID that begins with <code class="docutils literal"><span class="pre">web</span></code> have an <code class="docutils literal"><span class="pre">apache</span></code> state applied
+to them:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>          <span class="c1"># Apply SLS files from the directory root for the &#39;base&#39; environment</span>
+  <span class="s">&#39;web*&#39;</span><span class="p p-Indicator">:</span>      <span class="c1"># All minions with a minion_id that begins with &#39;web&#39;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">apache</span>   <span class="c1"># Apply the state file named &#39;apache.sls&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="environments">
+<span id="states-top-environments"></span><h2>环境变量<a class="headerlink" href="#environments" title="永久链接至标题">¶</a></h2>
+<p>Environments are directory hierarchies which contain a top files and a set
+of state files.</p>
+<p>Environments can be used in many ways, however there is no requirement that
+they be used at all. In fact, the most common way to deploy Salt is with
+a single environment, called <code class="docutils literal"><span class="pre">base</span></code>. It is recommended that users only
+create multiple environments if they have a use case which specifically
+calls for multiple versions of state trees.</p>
+</div>
+<div class="section" id="getting-started-with-top-files">
+<h2>Getting Started with Top Files<a class="headerlink" href="#getting-started-with-top-files" title="永久链接至标题">¶</a></h2>
+<p>Each environment is defined inside a salt master configuration variable
+called, <a class="reference internal" href="../configuration/master.html#std:conf_master-file_roots"><code class="xref std std-conf_master docutils literal"><span class="pre">file_roots</span></code></a> .</p>
+<p>In the most common single-environment setup, only the <code class="docutils literal"><span class="pre">base</span></code> environment is
+defined in <a class="reference internal" href="../configuration/master.html#std:conf_master-file_roots"><code class="xref std std-conf_master docutils literal"><span class="pre">file_roots</span></code></a> along with only one directory path for
+the state tree.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">file_roots</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt</span>
+</pre></div>
+</div>
+<p>In the above example, the top file will only have a single environment to pull
+from.</p>
+<p>Next is a simple single-environment top file placed in <code class="docutils literal"><span class="pre">/srv/salt/top.sls</span></code>,
+illustrating that for the environment called <code class="docutils literal"><span class="pre">base</span></code>, all minions will have the
+state files named <code class="docutils literal"><span class="pre">core.sls</span></code> and <code class="docutils literal"><span class="pre">edit.sls</span></code> applied to them.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">core</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">edit</span>
+</pre></div>
+</div>
+<p>Assuming the <code class="docutils literal"><span class="pre">file_roots</span></code> configuration from above, Salt will look in the
+<code class="docutils literal"><span class="pre">/srv/salt</span></code> directory for <code class="docutils literal"><span class="pre">core.sls</span></code> and <code class="docutils literal"><span class="pre">edit.sls</span></code>.</p>
+</div>
+<div class="section" id="multiple-environments">
+<h2>Multiple Environments<a class="headerlink" href="#multiple-environments" title="永久链接至标题">¶</a></h2>
+<p>In some cases, teams may wish to create versioned state trees which can be
+used to test Salt configurations in isolated sets of systems such as a staging
+environment before deploying states into production.</p>
+<p>For this case, multiple environments can be used to accomplish this task.</p>
+<p>To create multiple environments, the <a class="reference internal" href="../configuration/master.html#std:conf_master-file_roots"><code class="xref std std-conf_master docutils literal"><span class="pre">file_roots</span></code></a> option can be
+expanded:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">file_roots</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">dev</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt/dev</span>
+  <span class="l l-Scalar l-Scalar-Plain">qa</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt/qa</span>
+  <span class="l l-Scalar l-Scalar-Plain">prod</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt/prod</span>
+</pre></div>
+</div>
+<p>In the above, we declare three environments: <code class="docutils literal"><span class="pre">dev</span></code>, <code class="docutils literal"><span class="pre">qa</span></code> and <code class="docutils literal"><span class="pre">prod</span></code>.
+Each environment has a single directory assigned to it.</p>
+<p>Our top file references the environments:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">dev</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;webserver*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">webserver</span>
+  <span class="s">&#39;db*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">db</span>
+<span class="l l-Scalar l-Scalar-Plain">qa</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;webserver*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">webserver</span>
+  <span class="s">&#39;db*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">db</span>
+<span class="l l-Scalar l-Scalar-Plain">prod</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;webserver*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">webserver</span>
+  <span class="s">&#39;db*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">db</span>
+</pre></div>
+</div>
+<p>As seen above, the top file now declares the three environments and for each,
+targets are defined to map globs of minion IDs to state files. For example,
+all minions which have an ID beginning with the string <code class="docutils literal"><span class="pre">webserver</span></code> will have the
+webserver state from the requested environment assigned to it.</p>
+<p>In this manner, a proposed change to a state could first be made in a state
+file in <code class="docutils literal"><span class="pre">/srv/salt/dev</span></code> and then be applied to development webservers before
+moving the state into QA by copying the state file into <code class="docutils literal"><span class="pre">/srv/salt/qa</span></code>.</p>
+</div>
+<div class="section" id="choosing-an-environment-to-target">
+<h2>Choosing an Environment to Target<a class="headerlink" href="#choosing-an-environment-to-target" title="永久链接至标题">¶</a></h2>
+<p>The top file is used to assign a minion to an environment unless overridden
+using the methods described below. The environment in the top file must match
+an environment in <a class="reference internal" href="../configuration/master.html#std:conf_master-file_roots"><code class="xref std std-conf_master docutils literal"><span class="pre">file_roots</span></code></a> in order for any states to be
+applied to that minion. The states that will be applied to a minion in a given
+environment can be viewed using the <a class="reference internal" href="../modules/all/salt.modules.state.html#salt.modules.state.show_top" title="salt.modules.state.show_top"><code class="xref py py-func docutils literal"><span class="pre">state.show_top</span></code></a> execution function.</p>
+<p>Minions may be pinned to a particular environment by setting the <code class="docutils literal"><span class="pre">environment</span></code>
+value in the minion configuration file. In doing so, a minion will only
+request files from the environment to which it is assigned.</p>
+<p>The environment to use may also be dynamically selected at the time that
+a <code class="docutils literal"><span class="pre">salt</span></code>, <code class="docutils literal"><span class="pre">salt-call</span></code> or <code class="docutils literal"><span class="pre">salt-ssh</span></code> by passing passing a flag to the
+execution module being called. This is most commonly done with
+functions in the <code class="docutils literal"><span class="pre">state</span></code> module by using the <code class="docutils literal"><span class="pre">saltenv=</span></code> argument. For
+example, to run a <code class="docutils literal"><span class="pre">highstate</span></code> on all minions, using the state files in
+the <code class="docutils literal"><span class="pre">prod</span></code> state tree, run: <code class="docutils literal"><span class="pre">salt</span> <span class="pre">'*'</span> <span class="pre">state.highstate</span> <span class="pre">saltenv=prod</span></code>.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Not all functions accept <code class="docutils literal"><span class="pre">saltenv</span></code> as an argument See individual
+function documentation to verify.</p>
+</div>
+</div>
+<div class="section" id="shorthand">
+<h2>Shorthand<a class="headerlink" href="#shorthand" title="永久链接至标题">¶</a></h2>
+<p>If you assign only one SLS to a system, as in this example, a shorthand is
+also available:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">global</span>
+<span class="l l-Scalar l-Scalar-Plain">dev</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;webserver*&#39;</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">webserver</span>
+  <span class="s">&#39;db*&#39;</span><span class="p p-Indicator">:</span>        <span class="l l-Scalar l-Scalar-Plain">db</span>
+<span class="l l-Scalar l-Scalar-Plain">qa</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;webserver*&#39;</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">webserver</span>
+  <span class="s">&#39;db*&#39;</span><span class="p p-Indicator">:</span>        <span class="l l-Scalar l-Scalar-Plain">db</span>
+<span class="l l-Scalar l-Scalar-Plain">prod</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;webserver*&#39;</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">webserver</span>
+  <span class="s">&#39;db*&#39;</span><span class="p p-Indicator">:</span>        <span class="l l-Scalar l-Scalar-Plain">db</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="advanced-minion-targeting">
+<h2>Advanced Minion Targeting<a class="headerlink" href="#advanced-minion-targeting" title="永久链接至标题">¶</a></h2>
+<p>In addition to globs, minions can be specified in top files a few other
+ways. Some common ones are <a class="reference internal" href="../../topics/targeting/compound.html"><em>compound matches</em></a>
+and <a class="reference internal" href="../../topics/targeting/nodegroups.html"><em>node groups</em></a>.</p>
+<p>Below is a slightly more complex top file example, showing the different types
+of matches you can perform:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># All files will be taken from the file path specified in the base</span>
+<span class="c1"># environment in the ``file_roots`` configuration value.</span>
+
+<span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+    <span class="c1"># All minions get the following three state files applied</span>
+
+    <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ldap-client</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">networking</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt.minion</span>
+
+    <span class="c1"># All minions which have an ID that begins with the phrase</span>
+    <span class="c1"># &#39;salt-master&#39; will have an SLS file applied that is named</span>
+    <span class="c1"># &#39;master.sls&#39; and is in the &#39;salt&#39; directory, underneath</span>
+    <span class="c1"># the root specified in the ``base`` environment in the</span>
+    <span class="c1"># configuration value for ``file_roots``.</span>
+
+    <span class="s">&#39;salt-master*&#39;</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt.master</span>
+
+    <span class="c1"># Minions that have an ID matching the following regular</span>
+    <span class="c1"># expression will have the state file called &#39;web.sls&#39; in the</span>
+    <span class="c1"># nagios/mon directory applied. Additionally, minions matching</span>
+    <span class="c1"># the regular expression will also have the &#39;server.sls&#39; file</span>
+    <span class="c1"># in the apache/ directory applied.</span>
+
+    <span class="c1"># NOTE!</span>
+    <span class="c1">#</span>
+    <span class="c1"># Take note of the &#39;match&#39; directive here, which tells Salt</span>
+    <span class="c1"># to treat the target string as a regex to be matched!</span>
+
+    <span class="s">&#39;^(memcache|web).(qa|prod).loc$&#39;</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">pcre</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">nagios.mon.web</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">apache.server</span>
+
+    <span class="c1"># Minions that have a grain set indicating that they are running</span>
+    <span class="c1"># the Ubuntu operating system will have the state file called</span>
+    <span class="c1"># &#39;ubuntu.sls&#39; in the &#39;repos&#39; directory applied.</span>
+    <span class="c1">#</span>
+    <span class="c1"># Again take note of the &#39;match&#39; directive here which tells</span>
+    <span class="c1"># Salt to match against a grain instead of a minion ID.</span>
+
+    <span class="s">&#39;os:Ubuntu&#39;</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">grain</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">repos.ubuntu</span>
+
+    <span class="c1"># Minions that are either RedHat or CentOS should have the &#39;epel.sls&#39;</span>
+    <span class="c1"># state applied, from the &#39;repos/&#39; directory.</span>
+
+    <span class="s">&#39;os:(RedHat|CentOS)&#39;</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">grain_pcre</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">repos.epel</span>
+
+    <span class="c1"># The three minions with the IDs of &#39;foo&#39;, &#39;bar&#39; and &#39;baz&#39; should</span>
+    <span class="c1"># have &#39;database.sls&#39; applied.</span>
+
+    <span class="s">&#39;foo,bar,baz&#39;</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">list</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">database</span>
+
+    <span class="c1"># Any minion for which the pillar key &#39;somekey&#39; is set and has a value</span>
+    <span class="c1"># of that key matching &#39;abc&#39; will have the &#39;xyz.sls&#39; state applied.</span>
+
+    <span class="s">&#39;somekey:abc&#39;</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">pillar</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">xyz</span>
+
+    <span class="c1"># All minions which begin with the strings &#39;nag1&#39; or any minion with</span>
+    <span class="c1"># a grain set called &#39;role&#39; with the value of &#39;monitoring&#39; will have</span>
+    <span class="c1"># the &#39;server.sls&#39; state file applied from the &#39;nagios/&#39; directory.</span>
+
+    <span class="s">&#39;nag1*</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">G@role:monitoring&#39;</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">compound</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">nagios.server</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="how-top-files-are-compiled">
+<h2>How Top Files Are Compiled<a class="headerlink" href="#how-top-files-are-compiled" title="永久链接至标题">¶</a></h2>
+<p>When using multiple environments, it is not necessary to create a top file for
+each environment. The most common approach, and the easiest to maintain, is
+to use a single top file placed in only one environment.</p>
+<p>However, some workflows do call for multiple top files. In this case, top
+files may be merged together to create <code class="docutils literal"><span class="pre">high</span> <span class="pre">data</span></code> for the state compiler
+to use as a source to compile states on a minion.</p>
+<p>For the following discussion of top file compilation, assume the following
+configuration:</p>
+<p><code class="docutils literal"><span class="pre">/etc/salt/master</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">&lt;snip&gt;</span>
+<span class="l l-Scalar l-Scalar-Plain">file_roots</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">first_env</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt/first</span>
+  <span class="l l-Scalar l-Scalar-Plain">second_env</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt/second</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/salt/first/top.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">first_env</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">first</span>
+<span class="l l-Scalar l-Scalar-Plain">second_env</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">second</span>
+</pre></div>
+</div>
+<p>The astute reader will ask how the state compiler resolves which should be
+an obvious conflict if a minion is not pinned to a particular environment
+and if no environment argument is passed into a state function.</p>
+<p>Given the above, it is initially unclear whether <code class="docutils literal"><span class="pre">first.sls</span></code> will be applied
+or whether <code class="docutils literal"><span class="pre">second.sls</span></code> will be applied in a <code class="docutils literal"><span class="pre">salt</span> <span class="pre">'*'</span> <span class="pre">state.highstate</span></code> command.</p>
+<p>When conflicting keys arise, there are several configuration options which
+control the behaviour of salt:</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt><code class="docutils literal"><span class="pre">env_order</span></code></dt>
+<dd><p class="first last">Setting <code class="docutils literal"><span class="pre">env_order</span></code> will set the order in which environments are processed
+by the state compiler.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><code class="docutils literal"><span class="pre">top_file_merging_strategy</span></code></dt>
+<dd><p class="first">Can be set to <code class="docutils literal"><span class="pre">same</span></code>, which will process only the top file from the environment
+that the minion belongs to via the <code class="docutils literal"><span class="pre">environment</span></code> configuration setting or
+the environment that is requested via the <code class="docutils literal"><span class="pre">saltenv</span></code> argument supported
+by some functions in the <code class="docutils literal"><span class="pre">state</span></code> module.</p>
+<p class="last">Can also be set to <code class="docutils literal"><span class="pre">merge</span></code>. This is the default. When set to <code class="docutils literal"><span class="pre">merge</span></code>,
+top files will be merged together. The order in which top files are
+merged together can be controlled with <code class="docutils literal"><span class="pre">env_order</span></code>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><code class="docutils literal"><span class="pre">default_top</span></code></dt>
+<dd><p class="first last">If <code class="docutils literal"><span class="pre">top_file_merging_strategy</span></code> is set to <code class="docutils literal"><span class="pre">same</span></code> and an environment does
+not contain a top file, the top file in the environment specified by
+<code class="docutils literal"><span class="pre">default_top</span></code> will be used instead.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="testing.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="State Testing" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="vars.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="SLS Template Variable Reference" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../topics/states/index.html">Configuration Management</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/starting_states.html">我们如何使用Salt States？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt1.html">States教程，第1部分 - 基础用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt2.html">States tutorial, part 2 - More Complex States, Requisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt3.html">States tutorial, part 3 - Templating, Includes, Extends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt4.html">States tutorial, part 4</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">State System Reference</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aggregate.html">Mod Aggregate State Runtime Modifications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="altering_states.html">Altering States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="backup_mode.html">File State Backups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compiler_ordering.html">Understanding State Compiler Ordering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extend.html">Extending External SLS Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="failhard.html">Failhard Global Option</a></li>
+<li class="toctree-l3"><a class="reference internal" href="global_state_arguments.html">Global State Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html">Highstate data structure definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="include.html">Include and Exclude</a></li>
+<li class="toctree-l3"><a class="reference internal" href="layers.html">State System Layers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="master_side.html">The Orchestrate Runner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ordering.html">Ordering States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="providers.html">State Providers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="requisites.html">Requisites and Other Global State Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="startup.html">Startup States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html">State Testing</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">顶级配置文件</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#a-basic-example">A Basic Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#environments">环境变量</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getting-started-with-top-files">Getting Started with Top Files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#multiple-environments">Multiple Environments</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#choosing-an-environment-to-target">Choosing an Environment to Target</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#shorthand">Shorthand</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#advanced-minion-targeting">Advanced Minion Targeting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-top-files-are-compiled">How Top Files Are Compiled</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="vars.html">SLS Template Variable Reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="writing.html">State Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#state-management">State Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#understanding-the-salt-state-system-components">理解Salt状态系统组件</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

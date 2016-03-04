@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Getting Started With vSphere</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt云端" href="index.html">
+        <link rel="next" title="Miscellaneous Salt Cloud Options" href="misc.html">
+        <link rel="prev" title="Getting Started With VMware" href="vmware.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="vmware.html" title="Getting Started With VMware">上一页</a>
+            
+        </li>
+        <li>
+            <a href="misc.html" title="Miscellaneous Salt Cloud Options">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="getting-started-with-vsphere">
+<h1>Getting Started With vSphere<a class="headerlink" href="#getting-started-with-vsphere" title="永久链接至标题">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<div class="last deprecated">
+<p><span class="versionmodified">Carbon 版后已移除: </span>The <a class="reference internal" href="../../ref/clouds/all/salt.cloud.clouds.vsphere.html#module-salt.cloud.clouds.vsphere" title="salt.cloud.clouds.vsphere"><code class="xref py py-func docutils literal"><span class="pre">vsphere</span></code></a> cloud driver has been
+deprecated in favor of the <a class="reference internal" href="../../ref/clouds/all/salt.cloud.clouds.vmware.html#module-salt.cloud.clouds.vmware" title="salt.cloud.clouds.vmware"><code class="xref py py-func docutils literal"><span class="pre">vmware</span></code></a>
+cloud driver and will be removed in Salt Carbon. Please refer to
+<a class="reference internal" href="vmware.html"><em>Getting started with VMware</em></a> instead to get
+started with the configuration.</p>
+</div>
+</div>
+<p>VMware vSphere is a management platform for virtual infrastructure and cloud
+computing.</p>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="永久链接至标题">¶</a></h2>
+<p>The vSphere module for Salt Cloud requires the PySphere package, which is
+available at PyPI:</p>
+<p><a class="reference external" href="https://pypi.python.org/pypi/pysphere">https://pypi.python.org/pypi/pysphere</a></p>
+<p>This package can be installed using <cite>pip</cite> or <cite>easy_install</cite>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># pip install pysphere</span>
+<span class="c1"># easy_install pysphere</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="永久链接至标题">¶</a></h2>
+<p>Set up the cloud config at <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers</span></code> or in the
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/</span></code> directory:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-vsphere-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">vsphere</span>
+  <span class="c1"># Set the vSphere access credentials</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">marco</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">polo</span>
+  <span class="c1"># Set the URL of your vSphere server</span>
+  <span class="l l-Scalar l-Scalar-Plain">url</span><span class="p p-Indicator">:</span> <span class="s">&#39;vsphere.example.com&#39;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<div class="versionchanged">
+<p><span class="versionmodified">在 2015.8.0 版更改.</span></p>
+</div>
+<p class="last">The <code class="docutils literal"><span class="pre">provider</span></code> parameter in cloud provider definitions was renamed to <code class="docutils literal"><span class="pre">driver</span></code>. This
+change was made to avoid confusion with the <code class="docutils literal"><span class="pre">provider</span></code> parameter that is used in cloud profile
+definitions. Cloud provider definitions now use <code class="docutils literal"><span class="pre">driver</span></code> to refer to the Salt cloud module that
+provides the underlying functionality to connect to a cloud host, while cloud profiles continue
+to use <code class="docutils literal"><span class="pre">provider</span></code> to refer to provider configurations that you define.</p>
+</div>
+</div>
+<div class="section" id="profiles">
+<h2>Profiles<a class="headerlink" href="#profiles" title="永久链接至标题">¶</a></h2>
+<div class="section" id="cloud-profiles">
+<h3>Cloud Profiles<a class="headerlink" href="#cloud-profiles" title="永久链接至标题">¶</a></h3>
+<p>vSphere uses a Managed Object Reference to identify objects located in vCenter.
+The MOR ID's are used when configuring a vSphere cloud profile. Use the
+following reference when locating the MOR's for the cloud profile.</p>
+<p><a class="reference external" href="http://kb.vmware.com/selfservice/microsites/search.do?cmd=displayKC&amp;docType=kc&amp;externalId=1017126&amp;sliceId=1&amp;docTypeID=DT_KB_1_1&amp;dialogID=520386078&amp;stateId=1%200%20520388386">http://kb.vmware.com/selfservice/microsites/search.do?cmd=displayKC&amp;docType=kc&amp;externalId=1017126&amp;sliceId=1&amp;docTypeID=DT_KB_1_1&amp;dialogID=520386078&amp;stateId=1%200%20520388386</a></p>
+<p>Set up an initial profile at <code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles</span></code> or in the
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles.d</span></code> directory:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">vsphere-centos</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-vsphere-config</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">centos</span>
+  <span class="c1"># Optional</span>
+  <span class="l l-Scalar l-Scalar-Plain">datastore</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">datastore-15</span>
+  <span class="l l-Scalar l-Scalar-Plain">resourcepool</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">resgroup-8</span>
+  <span class="l l-Scalar l-Scalar-Plain">folder</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt-cloud</span>
+  <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">host-9</span>
+  <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+</pre></div>
+</div>
+<div class="section" id="provider">
+<h4>provider<a class="headerlink" href="#provider" title="永久链接至标题">¶</a></h4>
+<p>Enter the name that was specified when the cloud provider profile was created.</p>
+</div>
+<div class="section" id="image">
+<h4>image<a class="headerlink" href="#image" title="永久链接至标题">¶</a></h4>
+<p>Images available to build an instance can be found using the <cite>--list-images</cite>
+option:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-cloud --list-images my-vsphere-config</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="datastore">
+<h4>datastore<a class="headerlink" href="#datastore" title="永久链接至标题">¶</a></h4>
+<p>The MOR of the datastore where the virtual machine should be located. If not
+specified, the current datastore is used.</p>
+</div>
+<div class="section" id="resourcepool">
+<h4>resourcepool<a class="headerlink" href="#resourcepool" title="永久链接至标题">¶</a></h4>
+<p>The MOR of the resourcepool to be used for the new vm. If not set, it will use
+the same resourcepool as the original vm.</p>
+</div>
+<div class="section" id="folder">
+<h4>folder<a class="headerlink" href="#folder" title="永久链接至标题">¶</a></h4>
+<p>Name of the folder that will contain the new VM. If not set, the VM will be
+added to the folder the original VM belongs to.</p>
+</div>
+<div class="section" id="host">
+<h4>host<a class="headerlink" href="#host" title="永久链接至标题">¶</a></h4>
+<p>The MOR of the host where the vm should be registered.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>If not specified:</dt>
+<dd><ul class="first last simple">
+<li>if resourcepool is not specified, the current host is used.</li>
+<li>if resourcepool is specified, and the target pool represents a
+stand-alone host, the host is used.</li>
+<li>if resourcepool is specified, and the target pool represents a
+DRS-enabled cluster, a host selected by DRS is used.</li>
+<li>if resourcepool is specified, and the target pool represents a
+cluster without DRS enabled, an InvalidArgument exception will be thrown.</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+<div class="section" id="template">
+<h4>template<a class="headerlink" href="#template" title="永久链接至标题">¶</a></h4>
+<p>Specifies whether or not the new virtual machine should be marked as a
+template. Default is False.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="vmware.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started With VMware" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="misc.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Miscellaneous Salt Cloud Options" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt云端</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">入门指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud">Using Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#core-configuration">Cloud核心配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#windows-configuration">Windows Configuration</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#cloud-provider-specifics">Cloud Provider Specifics</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aliyun.html">    Getting Started With Aliyun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html">    Getting Started With Azure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="digitalocean.html">    Getting Started With DigitalOcean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html">    Getting Started With EC2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gogrid.html">    Getting Started With GoGrid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html">    Getting Started With Google Compute Engine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hpcloud.html">    Getting Started With HP Cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="joyent.html">    Getting Started With Joyent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lxc.html">    Getting Started With LXC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linode.html">    Getting Started With Linode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="opennebula.html">    Getting Started With OpenNebula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="openstack.html">    Getting Started With OpenStack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parallels.html">    Getting Started With Parallels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="profitbricks.html">    Getting Started With Profitbricks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="proxmox.html">    Getting Started With Proxmox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rackspace.html">    Getting Started With Rackspace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="saltify.html">    Getting Started With Saltify</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scaleway.html">    Getting Started With Scaleway</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html">    Getting Started With SoftLayer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vexxhost.html">    Getting Started With Vexxhost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="virtualbox.html">    Getting Started With Virtualbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vmware.html">    Getting Started With VMware</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">    Getting Started With vSphere</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#profiles">Profiles</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#cloud-profiles">Cloud Profiles</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#provider">provider</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#image">image</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#datastore">datastore</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#resourcepool">resourcepool</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#folder">folder</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#host">host</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#template">template</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#miscellaneous-options">Miscellaneous Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#troubleshooting-steps">Troubleshooting Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#extending-salt-cloud">Extending Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud-from-salt">Using Salt Cloud from Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#feature-comparison">Feature Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorials">Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

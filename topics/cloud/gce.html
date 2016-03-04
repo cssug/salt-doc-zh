@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Getting Started With Google Compute Engine</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt云端" href="index.html">
+        <link rel="next" title="Getting Started With HP Cloud" href="hpcloud.html">
+        <link rel="prev" title="Getting Started With GoGrid" href="gogrid.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="gogrid.html" title="Getting Started With GoGrid">上一页</a>
+            
+        </li>
+        <li>
+            <a href="hpcloud.html" title="Getting Started With HP Cloud">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="getting-started-with-google-compute-engine">
+<h1>Getting Started With Google Compute Engine<a class="headerlink" href="#getting-started-with-google-compute-engine" title="永久链接至标题">¶</a></h1>
+<p>Google Compute Engine (GCE) is Google-infrastructure as a service that lets you
+run your large-scale computing workloads on virtual machines.  This document
+covers how to use Salt Cloud to provision and manage your virtual machines
+hosted within Google's infrastructure.</p>
+<p>You can find out more about GCE and other Google Cloud Platform services
+at <a class="reference external" href="https://cloud.google.com">https://cloud.google.com</a>.</p>
+<div class="section" id="dependencies">
+<h2>依赖<a class="headerlink" href="#dependencies" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>LibCloud &gt;= 0.14.1</li>
+<li>A Google Cloud Platform account with Compute Engine enabled</li>
+<li>A registered Service Account for authorization</li>
+<li>Oh, and obviously you'll need <a class="reference external" href="https://github.com/saltstack/salt">salt</a></li>
+</ul>
+</div>
+<div class="section" id="google-compute-engine-setup">
+<span id="gce-setup"></span><h2>Google Compute Engine Setup<a class="headerlink" href="#google-compute-engine-setup" title="永久链接至标题">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Sign up for Google Cloud Platform</p>
+<p>Go to <a class="reference external" href="https://cloud.google.com">https://cloud.google.com</a> and use your Google account to sign up for
+Google Cloud Platform and complete the guided instructions.</p>
+</li>
+<li><p class="first">Create a Project</p>
+<p>Next, go to the console at <a class="reference external" href="https://cloud.google.com/console">https://cloud.google.com/console</a> and create a
+new Project.  Make sure to select your new Project if you are not
+automatically directed to the Project.</p>
+<p>Projects are a way of grouping together related users, services, and
+billing.  You may opt to create multiple Projects and the remaining
+instructions will need to be completed for each Project if you wish to
+use GCE and Salt Cloud to manage your virtual machines.</p>
+</li>
+<li><p class="first">Enable the Google Compute Engine service</p>
+<p>In your Project, either just click <em>Compute Engine</em> to the left, or go to
+the <em>APIs &amp; auth</em> section and <em>APIs</em> link and enable the Google Compute
+Engine service.</p>
+</li>
+<li><p class="first">Create a Service Account</p>
+<p>To set up authorization, navigate to <em>APIs &amp; auth</em> section and then the
+<em>Credentials</em> link and click the <em>CREATE NEW CLIENT ID</em> button. Select
+<em>Service Account</em> and click the <em>Create Client ID</em> button. This will
+automatically download a <code class="docutils literal"><span class="pre">.json</span></code> file, which may or may not be used
+in later steps, depending on your version of <code class="docutils literal"><span class="pre">libcloud</span></code>.</p>
+<p>Look for a new <em>Service Account</em> section in the page and record the generated
+email address for the matching key/fingerprint. The email address will be used
+in the <code class="docutils literal"><span class="pre">service_account_email_address</span></code> of the <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers</span></code>
+or the <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/*.conf</span></code> file.</p>
+</li>
+<li><p class="first">Key Format</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>If you are using <code class="docutils literal"><span class="pre">libcloud</span> <span class="pre">&gt;=</span> <span class="pre">0.17.0</span></code> it is recommended that you use the <code class="docutils literal"><span class="pre">JSON</span>
+<span class="pre">format</span></code> file you downloaded above and skip to the <a class="reference internal" href="#provider-configuration">Provider Configuration</a> section
+below, using the JSON file <strong>in place of 'NEW.pem'</strong> in the documentation.</p>
+<p class="last">If you are using an older version of libcloud or are unsure of the version you
+have, please follow the instructions below to generate and format a new P12 key.</p>
+</div>
+<p>In the new <em>Service Account</em> section, click <em>Generate new P12 key</em>, which
+will automatically download a <code class="docutils literal"><span class="pre">.p12</span></code> private key file. The <code class="docutils literal"><span class="pre">.p12</span></code>
+private key needs to be converted to a format compatible with libcloud.
+This new Google-generated private key was encrypted using <em>notasecret</em> as
+a passphrase. Use the following command and record the location of the
+converted private key and record the location for use in the
+<code class="docutils literal"><span class="pre">service_account_private_key</span></code> of the <code class="docutils literal"><span class="pre">/etc/salt/cloud</span></code> file:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>openssl pkcs12 -in ORIG.p12 -passin pass:notasecret <span class="se">\</span>
+-nodes -nocerts <span class="p">|</span> openssl rsa -out NEW.pem
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="provider-configuration">
+<h2>Provider Configuration<a class="headerlink" href="#provider-configuration" title="永久链接至标题">¶</a></h2>
+<p>Set up the provider cloud config at <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers</span></code> or
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/*.conf</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">gce-config</span><span class="p p-Indicator">:</span>
+  <span class="c1"># Set up the Project name and Service Account authorization</span>
+  <span class="l l-Scalar l-Scalar-Plain">project</span><span class="p p-Indicator">:</span> <span class="s">&quot;your-project-id&quot;</span>
+  <span class="l l-Scalar l-Scalar-Plain">service_account_email_address</span><span class="p p-Indicator">:</span> <span class="s">&quot;123-a5gt@developer.gserviceaccount.com&quot;</span>
+  <span class="l l-Scalar l-Scalar-Plain">service_account_private_key</span><span class="p p-Indicator">:</span> <span class="s">&quot;/path/to/your/NEW.pem&quot;</span>
+
+  <span class="c1"># Set up the location of the salt master</span>
+  <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">saltmaster.example.com</span>
+
+  <span class="c1"># Set up grains information, which will be common for all nodes</span>
+  <span class="c1"># using this provider</span>
+  <span class="l l-Scalar l-Scalar-Plain">grains</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">node_type</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">broker</span>
+    <span class="l l-Scalar l-Scalar-Plain">release</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1.0.1</span>
+
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">gce</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The value provided for <code class="docutils literal"><span class="pre">project</span></code> must not contain underscores or spaces and
+is labeled as &quot;Project ID&quot; on the Google Developers Console.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<div class="versionchanged">
+<p><span class="versionmodified">在 2015.8.0 版更改.</span></p>
+</div>
+<p class="last">The <code class="docutils literal"><span class="pre">provider</span></code> parameter in cloud provider definitions was renamed to <code class="docutils literal"><span class="pre">driver</span></code>. This
+change was made to avoid confusion with the <code class="docutils literal"><span class="pre">provider</span></code> parameter that is used in cloud profile
+definitions. Cloud provider definitions now use <code class="docutils literal"><span class="pre">driver</span></code> to refer to the Salt cloud module that
+provides the underlying functionality to connect to a cloud host, while cloud profiles continue
+to use <code class="docutils literal"><span class="pre">provider</span></code> to refer to provider configurations that you define.</p>
+</div>
+</div>
+<div class="section" id="profile-configuration">
+<h2>Profile Configuration<a class="headerlink" href="#profile-configuration" title="永久链接至标题">¶</a></h2>
+<p>Set up an initial profile at <code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles</span></code> or
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles.d/*.conf</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-gce-profile</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">centos-6</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">n1-standard-1</span>
+  <span class="l l-Scalar l-Scalar-Plain">location</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">europe-west1-b</span>
+  <span class="l l-Scalar l-Scalar-Plain">network</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+  <span class="l l-Scalar l-Scalar-Plain">tags</span><span class="p p-Indicator">:</span> <span class="s">&#39;[&quot;one&quot;,</span><span class="nv"> </span><span class="s">&quot;two&quot;,</span><span class="nv"> </span><span class="s">&quot;three&quot;]&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">metadata</span><span class="p p-Indicator">:</span> <span class="s">&#39;{&quot;one&quot;:</span><span class="nv"> </span><span class="s">&quot;1&quot;,</span><span class="nv"> </span><span class="s">&quot;2&quot;:</span><span class="nv"> </span><span class="s">&quot;two&quot;}&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">use_persistent_disk</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+  <span class="l l-Scalar l-Scalar-Plain">delete_boot_pd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+  <span class="l l-Scalar l-Scalar-Plain">deploy</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+  <span class="l l-Scalar l-Scalar-Plain">make_master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">gce-config</span>
+</pre></div>
+</div>
+<p>The profile can be realized now with a salt command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -p my-gce-profile gce-instance
+</pre></div>
+</div>
+<p>This will create an salt minion instance named <code class="docutils literal"><span class="pre">gce-instance</span></code> in GCE.  If
+the command was executed on the salt-master, its Salt key will automatically
+be signed on the master.</p>
+<p>Once the instance has been created with a salt-minion installed, connectivity to
+it can be verified with Salt:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt gce-instance test.ping
+</pre></div>
+</div>
+</div>
+<div class="section" id="gce-specific-settings">
+<h2>GCE Specific Settings<a class="headerlink" href="#gce-specific-settings" title="永久链接至标题">¶</a></h2>
+<p>Consult the sample profile below for more information about GCE specific
+settings. Some of them are mandatory and are properly labeled below but
+typically also include a hard-coded default.</p>
+<div class="section" id="initial-profile">
+<h3>Initial Profile<a class="headerlink" href="#initial-profile" title="永久链接至标题">¶</a></h3>
+<p>Set up an initial profile at <code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles</span></code> or
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles.d/gce.conf</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-gce-profile</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">centos-6</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">n1-standard-1</span>
+  <span class="l l-Scalar l-Scalar-Plain">location</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">europe-west1-b</span>
+  <span class="l l-Scalar l-Scalar-Plain">network</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+  <span class="l l-Scalar l-Scalar-Plain">tags</span><span class="p p-Indicator">:</span> <span class="s">&#39;[&quot;one&quot;,</span><span class="nv"> </span><span class="s">&quot;two&quot;,</span><span class="nv"> </span><span class="s">&quot;three&quot;]&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">metadata</span><span class="p p-Indicator">:</span> <span class="s">&#39;{&quot;one&quot;:</span><span class="nv"> </span><span class="s">&quot;1&quot;,</span><span class="nv"> </span><span class="s">&quot;2&quot;:</span><span class="nv"> </span><span class="s">&quot;two&quot;}&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">use_persistent_disk</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+  <span class="l l-Scalar l-Scalar-Plain">delete_boot_pd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_interface</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">public_ips</span>
+  <span class="l l-Scalar l-Scalar-Plain">external_ip</span><span class="p p-Indicator">:</span> <span class="s">&quot;ephemeral&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="image">
+<h3>image<a class="headerlink" href="#image" title="永久链接至标题">¶</a></h3>
+<p>Image is used to define what Operating System image should be used
+to for the instance. Examples are Debian 7 (wheezy) and CentOS 6. Required.</p>
+</div>
+<div class="section" id="size">
+<h3>size<a class="headerlink" href="#size" title="永久链接至标题">¶</a></h3>
+<p>A 'size', in GCE terms, refers to the instance's 'machine type'. See
+the on-line documentation for a complete list of GCE machine types. Required.</p>
+</div>
+<div class="section" id="location">
+<h3>location<a class="headerlink" href="#location" title="永久链接至标题">¶</a></h3>
+<p>A 'location', in GCE terms, refers to the instance's 'zone'. GCE
+has the notion of both Regions (e.g. us-central1, europe-west1, etc)
+and Zones (e.g. us-central1-a, us-central1-b, etc). Required.</p>
+</div>
+<div class="section" id="network">
+<h3>network<a class="headerlink" href="#network" title="永久链接至标题">¶</a></h3>
+<p>Use this setting to define the network resource for the instance.
+All GCE projects contain a network named 'default' but it's possible
+to use this setting to create instances belonging to a different
+network resource.</p>
+</div>
+<div class="section" id="tags">
+<h3>tags<a class="headerlink" href="#tags" title="永久链接至标题">¶</a></h3>
+<p>GCE supports instance/network tags and this setting allows you to
+set custom tags. It should be a list of strings and must be
+parse-able by the python ast.literal_eval() function to convert it
+to a python list.</p>
+</div>
+<div class="section" id="metadata">
+<h3>metadata<a class="headerlink" href="#metadata" title="永久链接至标题">¶</a></h3>
+<p>GCE supports instance metadata and this setting allows you to
+set custom metadata. It should be a hash of key/value strings and
+parse-able by the python ast.literal_eval() function to convert it
+to a python dictionary.</p>
+</div>
+<div class="section" id="use-persistent-disk">
+<h3>use_persistent_disk<a class="headerlink" href="#use-persistent-disk" title="永久链接至标题">¶</a></h3>
+<p>Use this setting to ensure that when new instances are created,
+they will use a persistent disk to preserve data between instance
+terminations and re-creations.</p>
+</div>
+<div class="section" id="delete-boot-pd">
+<h3>delete_boot_pd<a class="headerlink" href="#delete-boot-pd" title="永久链接至标题">¶</a></h3>
+<p>In the event that you wish the boot persistent disk to be permanently
+deleted when you destroy an instance, set delete_boot_pd to True.</p>
+</div>
+<div class="section" id="ssh-interface">
+<h3>ssh_interface<a class="headerlink" href="#ssh-interface" title="永久链接至标题">¶</a></h3>
+<div class="versionadded">
+<p><span class="versionmodified">2015.5.0 新版功能.</span></p>
+</div>
+<p>Specify whether to use public or private IP for deploy script.</p>
+<p>Valid options are:</p>
+<ul class="simple">
+<li>private_ips: The salt-master is also hosted with GCE</li>
+<li>public_ips: The salt-master is hosted outside of GCE</li>
+</ul>
+</div>
+<div class="section" id="external-ip">
+<h3>external_ip<a class="headerlink" href="#external-ip" title="永久链接至标题">¶</a></h3>
+<p>Per instance setting: Used a named fixed IP address to this host.</p>
+<p>Valid options are:</p>
+<ul class="simple">
+<li>ephemeral: The host will use a GCE ephemeral IP</li>
+<li>None: No external IP will be configured on this host.</li>
+</ul>
+<p>Optionally, pass the name of a GCE address to use a fixed IP address.
+If the address does not already exist, it will be created.</p>
+</div>
+<div class="section" id="ex-disk-type">
+<h3>ex_disk_type<a class="headerlink" href="#ex-disk-type" title="永久链接至标题">¶</a></h3>
+<p>GCE supports two different disk types, <code class="docutils literal"><span class="pre">pd-standard</span></code> and <code class="docutils literal"><span class="pre">pd-ssd</span></code>.
+The default disk type setting is <code class="docutils literal"><span class="pre">pd-standard</span></code>. To specify using an SSD
+disk, set <code class="docutils literal"><span class="pre">pd-ssd</span></code> as the value.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+</div>
+<div class="section" id="ip-forwarding">
+<h3>ip_forwarding<a class="headerlink" href="#ip-forwarding" title="永久链接至标题">¶</a></h3>
+<p>GCE instances can be enabled to use IP Forwarding. When set to <code class="docutils literal"><span class="pre">True</span></code>,
+this options allows the instance to send/receive non-matching src/dst
+packets. Default is <code class="docutils literal"><span class="pre">False</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.1 新版功能.</span></p>
+</div>
+</div>
+<div class="section" id="profile-with-scopes">
+<h3>Profile with scopes<a class="headerlink" href="#profile-with-scopes" title="永久链接至标题">¶</a></h3>
+<p>Scopes can be specified by setting the optional <code class="docutils literal"><span class="pre">ex_service_accounts</span></code>
+key in your cloud profile. The following example enables the bigquery scope.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-gce-profile</span><span class="p p-Indicator">:</span>
+ <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">centos-6</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_username</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">f1-micro</span>
+  <span class="l l-Scalar l-Scalar-Plain">location</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">us-central1-a</span>
+  <span class="l l-Scalar l-Scalar-Plain">network</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+  <span class="l l-Scalar l-Scalar-Plain">tags</span><span class="p p-Indicator">:</span> <span class="s">&#39;[&quot;one&quot;,</span><span class="nv"> </span><span class="s">&quot;two&quot;,</span><span class="nv"> </span><span class="s">&quot;three&quot;]&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">metadata</span><span class="p p-Indicator">:</span> <span class="s">&#39;{&quot;one&quot;:</span><span class="nv"> </span><span class="s">&quot;1&quot;,</span><span class="nv"> </span><span class="s">&quot;2&quot;:</span><span class="nv"> </span><span class="s">&quot;two&quot;,</span>
+              <span class="s">&quot;sshKeys&quot;:</span><span class="nv"> </span><span class="s">&quot;&quot;}&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">use_persistent_disk</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+  <span class="l l-Scalar l-Scalar-Plain">delete_boot_pd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+  <span class="l l-Scalar l-Scalar-Plain">deploy</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+  <span class="l l-Scalar l-Scalar-Plain">make_master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">gce-config</span>
+  <span class="l l-Scalar l-Scalar-Plain">ex_service_accounts</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">scopes</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bigquery</span>
+</pre></div>
+</div>
+<p>Email can also be specified as an (optional) parameter.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-gce-profile</span><span class="p p-Indicator">:</span>
+<span class="l l-Scalar l-Scalar-Plain">...snip</span>
+  <span class="l l-Scalar l-Scalar-Plain">ex_service_accounts</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">scopes</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bigquery</span>
+      <span class="l l-Scalar l-Scalar-Plain">email</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+</pre></div>
+</div>
+<p>There can be multiple entries for scopes since <code class="docutils literal"><span class="pre">ex-service_accounts</span></code> accepts
+a list of dictionaries. For more information refer to the libcloud documentation
+on <a class="reference external" href="http://libcloud.readthedocs.org/en/latest/compute/drivers/gce.html#specifying-service-account-scopes">specifying service account scopes</a>.</p>
+</div>
+</div>
+<div class="section" id="ssh-remote-access">
+<h2>SSH Remote Access<a class="headerlink" href="#ssh-remote-access" title="永久链接至标题">¶</a></h2>
+<p>GCE instances do not allow remote access to the root user by default.
+Instead, another user must be used to run the deploy script using sudo.
+Append something like this to <code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles</span></code> or
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles.d/*.conf</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-gce-profile</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+    <span class="l l-Scalar l-Scalar-Plain"># SSH to GCE instances as gceuser</span>
+    <span class="l l-Scalar l-Scalar-Plain">ssh_username</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">gceuser</span>
+
+    <span class="c1"># Use the local private SSH key file located here</span>
+    <span class="l l-Scalar l-Scalar-Plain">ssh_keyfile</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/cloud/google_compute_engine</span>
+</pre></div>
+</div>
+<p>If you have not already used this SSH key to login to instances in this
+GCE project you will also need to add the public key to your projects
+metadata at <a class="reference external" href="https://cloud.google.com/console">https://cloud.google.com/console</a>. You could also add it via
+the metadata setting too:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-gce-profile</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+    <span class="l l-Scalar l-Scalar-Plain">metadata</span><span class="p p-Indicator">:</span> <span class="s">&#39;{&quot;one&quot;:</span><span class="nv"> </span><span class="s">&quot;1&quot;,</span><span class="nv"> </span><span class="s">&quot;2&quot;:</span><span class="nv"> </span><span class="s">&quot;two&quot;,</span>
+                <span class="s">&quot;sshKeys&quot;:</span><span class="nv"> </span><span class="s">&quot;gceuser:ssh-rsa</span><span class="nv"> </span><span class="s">&lt;Your</span><span class="nv"> </span><span class="s">SSH</span><span class="nv"> </span><span class="s">Public</span><span class="nv"> </span><span class="s">Key&gt;</span><span class="nv"> </span><span class="s">gceuser@host&quot;}&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="single-instance-details">
+<h2>Single instance details<a class="headerlink" href="#single-instance-details" title="永久链接至标题">¶</a></h2>
+<p>This action is a thin wrapper around <code class="docutils literal"><span class="pre">--full-query</span></code>, which displays details on a
+single instance only. In an environment with several machines, this will save a
+user from having to sort through all instance data, just to examine a single
+instance.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a show_instance myinstance
+</pre></div>
+</div>
+</div>
+<div class="section" id="destroy-persistent-disks-and-metadata">
+<h2>Destroy, persistent disks, and metadata<a class="headerlink" href="#destroy-persistent-disks-and-metadata" title="永久链接至标题">¶</a></h2>
+<p>As noted in the provider configuration, it's possible to force the boot
+persistent disk to be deleted when you destroy the instance.  The way that
+this has been implemented is to use the instance metadata to record the
+cloud profile used when creating the instance.  When <code class="docutils literal"><span class="pre">destroy</span></code> is called,
+if the instance contains a <code class="docutils literal"><span class="pre">salt-cloud-profile</span></code> key, it's value is used
+to reference the matching profile to determine if <code class="docutils literal"><span class="pre">delete_boot_pd</span></code> is
+set to <code class="docutils literal"><span class="pre">True</span></code>.</p>
+<p>Be aware that any GCE instances created with salt cloud will contain this
+custom <code class="docutils literal"><span class="pre">salt-cloud-profile</span></code> metadata entry.</p>
+</div>
+<div class="section" id="list-various-resources">
+<h2>List various resources<a class="headerlink" href="#list-various-resources" title="永久链接至标题">¶</a></h2>
+<p>It's also possible to list several GCE resources similar to what can be done
+with other providers.  The following commands can be used to list GCE zones
+(locations), machine types (sizes), and images.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud --list-locations gce
+salt-cloud --list-sizes gce
+salt-cloud --list-images gce
+</pre></div>
+</div>
+</div>
+<div class="section" id="persistent-disk">
+<h2>Persistent Disk<a class="headerlink" href="#persistent-disk" title="永久链接至标题">¶</a></h2>
+<p>The Compute Engine provider provides functions via salt-cloud to manage your
+Persistent Disks. You can create and destroy disks as well as attach and
+detach them from running instances.</p>
+<div class="section" id="create">
+<h3>Create<a class="headerlink" href="#create" title="永久链接至标题">¶</a></h3>
+<p>When creating a disk, you can create an empty disk and specify its size (in
+GB), or specify either an 'image' or 'snapshot'.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_disk gce <span class="nv">disk_name</span><span class="o">=</span>pd <span class="nv">location</span><span class="o">=</span>us-central1-b <span class="nv">size</span><span class="o">=</span>200
+</pre></div>
+</div>
+</div>
+<div class="section" id="delete">
+<h3>Delete<a class="headerlink" href="#delete" title="永久链接至标题">¶</a></h3>
+<p>Deleting a disk only requires the name of the disk to delete</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_disk gce <span class="nv">disk_name</span><span class="o">=</span>old-backup
+</pre></div>
+</div>
+</div>
+<div class="section" id="attach">
+<h3>Attach<a class="headerlink" href="#attach" title="永久链接至标题">¶</a></h3>
+<p>Attaching a disk to an existing instance is really an 'action' and requires
+both an instance name and disk name. It's possible to use this ation to
+create bootable persistent disks if necessary. Compute Engine also supports
+attaching a persistent disk in READ_ONLY mode to multiple instances at the
+same time (but then cannot be attached in READ_WRITE to any instance).</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a attach_disk myinstance <span class="nv">disk_name</span><span class="o">=</span>pd <span class="nv">mode</span><span class="o">=</span>READ_WRITE <span class="nv">boot</span><span class="o">=</span>yes
+</pre></div>
+</div>
+</div>
+<div class="section" id="detach">
+<h3>Detach<a class="headerlink" href="#detach" title="永久链接至标题">¶</a></h3>
+<p>Detaching a disk is also an action against an instance and only requires
+the name of the disk. Note that this does <em>not</em> safely sync and umount the
+disk from the instance. To ensure no data loss, you must first make sure the
+disk is unmounted from the instance.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a detach_disk myinstance <span class="nv">disk_name</span><span class="o">=</span>pd
+</pre></div>
+</div>
+</div>
+<div class="section" id="show-disk">
+<h3>Show disk<a class="headerlink" href="#show-disk" title="永久链接至标题">¶</a></h3>
+<p>It's also possible to look up the details for an existing disk with either
+a function or an action.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a show_disk myinstance <span class="nv">disk_name</span><span class="o">=</span>pd
+salt-cloud -f show_disk gce <span class="nv">disk_name</span><span class="o">=</span>pd
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-snapshot">
+<h3>Create snapshot<a class="headerlink" href="#create-snapshot" title="永久链接至标题">¶</a></h3>
+<p>You can take a snapshot of an existing disk's content. The snapshot can then
+in turn be used to create other persistent disks. Note that to prevent data
+corruption, it is strongly suggested that you unmount the disk prior to
+taking a snapshot. You must name the snapshot and provide the name of the
+disk.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_snapshot gce <span class="nv">name</span><span class="o">=</span>backup-20140226 <span class="nv">disk_name</span><span class="o">=</span>pd
+</pre></div>
+</div>
+</div>
+<div class="section" id="delete-snapshot">
+<h3>Delete snapshot<a class="headerlink" href="#delete-snapshot" title="永久链接至标题">¶</a></h3>
+<p>You can delete a snapshot when it's no longer needed by specifying the name
+of the snapshot.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_snapshot gce <span class="nv">name</span><span class="o">=</span>backup-20140226
+</pre></div>
+</div>
+</div>
+<div class="section" id="show-snapshot">
+<h3>Show snapshot<a class="headerlink" href="#show-snapshot" title="永久链接至标题">¶</a></h3>
+<p>Use this function to look up information about the snapshot.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_snapshot gce <span class="nv">name</span><span class="o">=</span>backup-20140226
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="networking">
+<h2>Networking<a class="headerlink" href="#networking" title="永久链接至标题">¶</a></h2>
+<p>Compute Engine supports multiple private networks per project. Instances
+within a private network can easily communicate with each other by an
+internal DNS service that resolves instance names. Instances within a private
+network can also communicate with either directly without needing special
+routing or firewall rules even if they span different regions/zones.</p>
+<p>Networks also support custom firewall rules. By default, traffic between
+instances on the same private network is open to all ports and protocols.
+Inbound SSH traffic (port 22) is also allowed but all other inbound traffic
+is blocked.</p>
+<div class="section" id="create-network">
+<h3>Create network<a class="headerlink" href="#create-network" title="永久链接至标题">¶</a></h3>
+<p>New networks require a name and CIDR range. New instances can be created
+and added to this network by setting the network name during create. It is
+not possible to add/remove existing instances to a network.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_network gce <span class="nv">name</span><span class="o">=</span>mynet <span class="nv">cidr</span><span class="o">=</span>10.10.10.0/24
+</pre></div>
+</div>
+</div>
+<div class="section" id="destroy-network">
+<h3>Destroy network<a class="headerlink" href="#destroy-network" title="永久链接至标题">¶</a></h3>
+<p>Destroy a network by specifying the name. Make sure that there are no
+instances associated with the network prior to deleting it or you'll have
+a bad day.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_network gce <span class="nv">name</span><span class="o">=</span>mynet
+</pre></div>
+</div>
+</div>
+<div class="section" id="show-network">
+<h3>Show network<a class="headerlink" href="#show-network" title="永久链接至标题">¶</a></h3>
+<p>Specify the network name to view information about the network.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_network gce <span class="nv">name</span><span class="o">=</span>mynet
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-address">
+<h3>Create address<a class="headerlink" href="#create-address" title="永久链接至标题">¶</a></h3>
+<p>Create a new named static IP address in a region.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_address gce <span class="nv">name</span><span class="o">=</span>my-fixed-ip <span class="nv">region</span><span class="o">=</span>us-central1
+</pre></div>
+</div>
+</div>
+<div class="section" id="delete-address">
+<h3>Delete address<a class="headerlink" href="#delete-address" title="永久链接至标题">¶</a></h3>
+<p>Delete an existing named fixed IP address.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_address gce <span class="nv">name</span><span class="o">=</span>my-fixed-ip <span class="nv">region</span><span class="o">=</span>us-central1
+</pre></div>
+</div>
+</div>
+<div class="section" id="show-address">
+<h3>Show address<a class="headerlink" href="#show-address" title="永久链接至标题">¶</a></h3>
+<p>View details on a named address.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_address gce <span class="nv">name</span><span class="o">=</span>my-fixed-ip <span class="nv">region</span><span class="o">=</span>us-central1
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-firewall">
+<h3>Create firewall<a class="headerlink" href="#create-firewall" title="永久链接至标题">¶</a></h3>
+<p>You'll need to create custom firewall rules if you want to allow other traffic
+than what is described above. For instance, if you run a web service on
+your instances, you'll need to explicitly allow HTTP and/or SSL traffic.
+The firewall rule must have a name and it will use the 'default' network
+unless otherwise specified with a 'network' attribute. Firewalls also support
+instance tags for source/destination</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_fwrule gce <span class="nv">name</span><span class="o">=</span>web <span class="nv">allow</span><span class="o">=</span>tcp:80,tcp:443,icmp
+</pre></div>
+</div>
+</div>
+<div class="section" id="delete-firewall">
+<h3>Delete firewall<a class="headerlink" href="#delete-firewall" title="永久链接至标题">¶</a></h3>
+<p>Deleting a firewall rule will prevent any previously allowed traffic for the
+named firewall rule.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_fwrule gce <span class="nv">name</span><span class="o">=</span>web
+</pre></div>
+</div>
+</div>
+<div class="section" id="show-firewall">
+<h3>Show firewall<a class="headerlink" href="#show-firewall" title="永久链接至标题">¶</a></h3>
+<p>Use this function to review an existing firewall rule's information.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_fwrule gce <span class="nv">name</span><span class="o">=</span>web
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="load-balancer">
+<h2>Load Balancer<a class="headerlink" href="#load-balancer" title="永久链接至标题">¶</a></h2>
+<p>Compute Engine possess a load-balancer feature for splitting traffic across
+multiple instances. Please reference the
+<a class="reference external" href="https://developers.google.com/compute/docs/load-balancing/">documentation</a>
+for a more complete discription.</p>
+<p>The load-balancer functionality is slightly different than that described
+in Google's documentation.  The concept of <em>TargetPool</em> and <em>ForwardingRule</em>
+are consolidated in salt-cloud/libcloud.  HTTP Health Checks are optional.</p>
+<div class="section" id="http-health-check">
+<h3>HTTP Health Check<a class="headerlink" href="#http-health-check" title="永久链接至标题">¶</a></h3>
+<p>HTTP Health Checks can be used as a means to toggle load-balancing across
+instance members, or to detect if an HTTP site is functioning.  A common
+use-case is to set up a health check URL and if you want to toggle traffic
+on/off to an instance, you can temporarily have it return a non-200 response.
+A non-200 response to the load-balancer's health check will keep the LB from
+sending any new traffic to the &quot;down&quot; instance.  Once the instance's
+health check URL beings returning 200-responses, the LB will again start to
+send traffic to it. Review Compute Engine's documentation for allowable
+parameters.  You can use the following salt-cloud functions to manage your
+HTTP health checks.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_hc gce <span class="nv">name</span><span class="o">=</span>myhc <span class="nv">path</span><span class="o">=</span>/ <span class="nv">port</span><span class="o">=</span>80
+salt-cloud -f delete_hc gce <span class="nv">name</span><span class="o">=</span>myhc
+salt-cloud -f show_hc gce <span class="nv">name</span><span class="o">=</span>myhc
+</pre></div>
+</div>
+</div>
+<div class="section" id="id1">
+<h3>Load-balancer<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h3>
+<p>When creating a new load-balancer, it requires a name, region, port range,
+and list of members. There are other optional parameters for protocol,
+and list of health checks. Deleting or showing details about the LB only
+requires the name.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_lb gce <span class="nv">name</span><span class="o">=</span>lb <span class="nv">region</span><span class="o">=</span>... <span class="nv">ports</span><span class="o">=</span><span class="m">80</span> <span class="nv">members</span><span class="o">=</span>w1,w2,w3
+salt-cloud -f delete_lb gce <span class="nv">name</span><span class="o">=</span>lb
+salt-cloud -f show_lb gce <span class="nv">name</span><span class="o">=</span>lb
+</pre></div>
+</div>
+<p>You can also create a load balancer using a named fixed IP addressby specifying the name of the address.
+If the address does not exist yet it will be created.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_lb gce <span class="nv">name</span><span class="o">=</span>my-lb <span class="nv">region</span><span class="o">=</span>us-central1 <span class="nv">ports</span><span class="o">=</span><span class="m">234</span> <span class="nv">members</span><span class="o">=</span>s1,s2,s3 <span class="nv">address</span><span class="o">=</span>my-lb-ip
+</pre></div>
+</div>
+</div>
+<div class="section" id="attach-and-detach-lb">
+<h3>Attach and Detach LB<a class="headerlink" href="#attach-and-detach-lb" title="永久链接至标题">¶</a></h3>
+<p>It is possible to attach or detach an instance from an existing load-balancer.
+Both the instance and load-balancer must exist before using these functions.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f attach_lb gce <span class="nv">name</span><span class="o">=</span>lb <span class="nv">member</span><span class="o">=</span>w4
+salt-cloud -f detach_lb gce <span class="nv">name</span><span class="o">=</span>lb <span class="nv">member</span><span class="o">=</span>oops
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="gogrid.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started With GoGrid" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="hpcloud.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started With HP Cloud" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt云端</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">入门指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud">Using Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#core-configuration">Cloud核心配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#windows-configuration">Windows Configuration</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#cloud-provider-specifics">Cloud Provider Specifics</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aliyun.html">    Getting Started With Aliyun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html">    Getting Started With Azure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="digitalocean.html">    Getting Started With DigitalOcean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html">    Getting Started With EC2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gogrid.html">    Getting Started With GoGrid</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">    Getting Started With Google Compute Engine</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dependencies">依赖</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#google-compute-engine-setup">Google Compute Engine Setup</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#provider-configuration">Provider Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#profile-configuration">Profile Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#gce-specific-settings">GCE Specific Settings</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#initial-profile">Initial Profile</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#image">image</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#size">size</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#location">location</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#network">network</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#tags">tags</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#metadata">metadata</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#use-persistent-disk">use_persistent_disk</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#delete-boot-pd">delete_boot_pd</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#ssh-interface">ssh_interface</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#external-ip">external_ip</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#ex-disk-type">ex_disk_type</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#ip-forwarding">ip_forwarding</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#profile-with-scopes">Profile with scopes</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#ssh-remote-access">SSH Remote Access</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#single-instance-details">Single instance details</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#destroy-persistent-disks-and-metadata">Destroy, persistent disks, and metadata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#list-various-resources">List various resources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#persistent-disk">Persistent Disk</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#create">Create</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#delete">Delete</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#attach">Attach</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#detach">Detach</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#show-disk">Show disk</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#create-snapshot">Create snapshot</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#delete-snapshot">Delete snapshot</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#show-snapshot">Show snapshot</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#networking">Networking</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#create-network">Create network</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#destroy-network">Destroy network</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#show-network">Show network</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#create-address">Create address</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#delete-address">Delete address</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#show-address">Show address</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#create-firewall">Create firewall</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#delete-firewall">Delete firewall</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#show-firewall">Show firewall</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#load-balancer">Load Balancer</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#http-health-check">HTTP Health Check</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id1">Load-balancer</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#attach-and-detach-lb">Attach and Detach LB</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hpcloud.html">    Getting Started With HP Cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="joyent.html">    Getting Started With Joyent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lxc.html">    Getting Started With LXC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linode.html">    Getting Started With Linode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="opennebula.html">    Getting Started With OpenNebula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="openstack.html">    Getting Started With OpenStack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parallels.html">    Getting Started With Parallels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="profitbricks.html">    Getting Started With Profitbricks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="proxmox.html">    Getting Started With Proxmox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rackspace.html">    Getting Started With Rackspace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="saltify.html">    Getting Started With Saltify</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scaleway.html">    Getting Started With Scaleway</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html">    Getting Started With SoftLayer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vexxhost.html">    Getting Started With Vexxhost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="virtualbox.html">    Getting Started With Virtualbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vmware.html">    Getting Started With VMware</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vsphere.html">    Getting Started With vSphere</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#miscellaneous-options">Miscellaneous Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#troubleshooting-steps">Troubleshooting Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#extending-salt-cloud">Extending Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud-from-salt">Using Salt Cloud from Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#feature-comparison">Feature Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorials">Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

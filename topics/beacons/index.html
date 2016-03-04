@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Beacons</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Events &amp; Reactor" href="../event/index.html">
+        <link rel="next" title="Reactor系统" href="../reactor/index.html">
+        <link rel="prev" title="Salt Master Events" href="../event/master_events.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../event/master_events.html" title="Salt Master Events">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../reactor/index.html" title="Reactor系统">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="beacons">
+<span id="id1"></span><h1>Beacons<a class="headerlink" href="#beacons" title="永久链接至标题">¶</a></h1>
+<p>Beacons let you use the Salt event system to monitor non-Salt processes. The
+beacon system allows the minion to hook into a variety of system processes and
+continually monitor these processes. When monitored activity occurs in a system
+process, an event is sent on the Salt event bus that can be used to trigger
+a <a class="reference internal" href="../reactor/index.html#reactor"><span>reactor</span></a>.</p>
+<p>Salt beacons can currently monitor and send Salt events for many system
+activities, including:</p>
+<ul class="simple">
+<li>file system changes</li>
+<li>system load</li>
+<li>service status</li>
+<li>shell activity, such as user login</li>
+<li>network and disk usage</li>
+</ul>
+<p>See <a class="reference internal" href="../../ref/beacons/all/index.html#all-salt-beacons"><span>beacon modules</span></a> for a current list.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Salt beacons are an event generation mechanism. Beacons leverage the Salt
+<a class="reference internal" href="../reactor/index.html#reactor"><span>reactor</span></a> system to make changes when beacon events occur.</p>
+</div>
+<div class="section" id="configuring-beacons">
+<h2>Configuring Beacons<a class="headerlink" href="#configuring-beacons" title="永久链接至标题">¶</a></h2>
+<p>Salt beacons do not require any changes to the system process that
+is being monitored, everything is configured using Salt.</p>
+<p>Beacons are typically enabled by placing a <code class="docutils literal"><span class="pre">beacons:</span></code> top level block in the
+minion configuration file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">beacons</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">inotify</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">/etc/httpd/conf.d</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{}</span>
+    <span class="l l-Scalar l-Scalar-Plain">/opt</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{}</span>
+</pre></div>
+</div>
+<p>The beacon system, like many others in Salt, can also be configured via the
+minion pillar, grains, or local config file.</p>
+<div class="section" id="beacon-monitoring-interval">
+<h3>Beacon Monitoring Interval<a class="headerlink" href="#beacon-monitoring-interval" title="永久链接至标题">¶</a></h3>
+<p>Beacons monitor on a 1-second interval by default. To set a different interval,
+provide an <code class="docutils literal"><span class="pre">interval</span></code> argument to a beacon. The following beacons run on
+5- and 10-second intervals:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">beacons</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">inotify</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">/etc/httpd/conf.d</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{}</span>
+    <span class="l l-Scalar l-Scalar-Plain">/opt</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{}</span>
+    <span class="l l-Scalar l-Scalar-Plain">interval</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">5</span>
+  <span class="l l-Scalar l-Scalar-Plain">load</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">1m</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">0.0</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">2.0</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">5m</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">0.0</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">1.5</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">15m</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">0.1</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">1.0</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">interval</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="avoiding-event-loops">
+<h3>Avoiding Event Loops<a class="headerlink" href="#avoiding-event-loops" title="永久链接至标题">¶</a></h3>
+<p>It is important to carefully consider the possibility of creating a loop
+between a reactor and a beacon. For example, one might set up a beacon
+which monitors whether a file is read which in turn fires a reactor to
+run a state which in turn reads the file and re-fires the beacon.</p>
+<p>To avoid these types of scenarios, the <code class="docutils literal"><span class="pre">disable_during_state_run</span></code>
+argument may be set. If a state run is in progress, the beacon will
+not be run on its regular interval until the minion detects that the
+state run has completed, at which point the normal beacon interval
+will resume.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">beacons</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">inotify</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">/etc/passwd</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{}</span>
+    <span class="l l-Scalar l-Scalar-Plain">disable_during_state_run</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="beacon-example">
+<h2>Beacon Example<a class="headerlink" href="#beacon-example" title="永久链接至标题">¶</a></h2>
+<p>This example demonstrates configuring the <a class="reference internal" href="../../ref/beacons/all/salt.beacons.inotify.html#module-salt.beacons.inotify" title="salt.beacons.inotify"><code class="xref py py-mod docutils literal"><span class="pre">inotify</span></code></a>
+beacon to monitor a file for changes, and then create a backup each time
+a change is detected.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The inotify beacon requires Pyinotify on the minion, install it using
+<code class="docutils literal"><span class="pre">salt</span> <span class="pre">myminion</span> <span class="pre">pkg.install</span> <span class="pre">python-inotify</span></code>.</p>
+</div>
+<p>First, on the Salt minion, add the following beacon configuration to
+<code class="docutils literal"><span class="pre">/ect/salt/minion</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">beacons</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">inotify</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">home/user/importantfile</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">mask</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">modify</span>
+</pre></div>
+</div>
+<p>Replace <code class="docutils literal"><span class="pre">user</span></code> in the previous example with the name of your user account,
+and then save the configuration file and restart the minion service.</p>
+<p>Next, create a file in your home directory named <code class="docutils literal"><span class="pre">importantfile</span></code> and add some
+simple content. The beacon is now set up to monitor this file for
+modifications.</p>
+<div class="section" id="view-events-on-the-master">
+<h3>View Events on the Master<a class="headerlink" href="#view-events-on-the-master" title="永久链接至标题">¶</a></h3>
+<p>On your Salt master, start the event runner using the following command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run state.event <span class="nv">pretty</span><span class="o">=</span><span class="nb">true</span>
+</pre></div>
+</div>
+<p>This runner displays events as they are received on the Salt event bus. To test
+the beacon you set up in the previous section, make and save
+a modification to the <code class="docutils literal"><span class="pre">importantfile</span></code> you created. You'll see an event
+similar to the following on the event bus:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span>salt/beacon/minion1/inotify/home/user/importantfile  {
+ &quot;_stamp&quot;: &quot;2015-09-09T15:59:37.972753&quot;,
+ &quot;data&quot;: {
+     &quot;change&quot;: &quot;IN_IGNORED&quot;,
+     &quot;id&quot;: &quot;minion1&quot;,
+     &quot;path&quot;: &quot;/home/user/importantfile&quot;
+ },
+ &quot;tag&quot;: &quot;salt/beacon/minion1/inotify/home/user/importantfile&quot;
+}
+</pre></div>
+</div>
+<p>This indicates that the event is being captured and sent correctly. Now you can
+create a reactor to take action when this event occurs.</p>
+</div>
+<div class="section" id="create-a-reactor">
+<h3>Create a Reactor<a class="headerlink" href="#create-a-reactor" title="永久链接至标题">¶</a></h3>
+<p>On your Salt master, create a file named <code class="docutils literal"><span class="pre">srv/reactor/backup.sls</span></code>. If the
+<code class="docutils literal"><span class="pre">reactor</span></code> directory doesn't exist, create it. Add the following to <code class="docutils literal"><span class="pre">backup.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">backup file</span><span class="p p-Indicator">:</span>
+ <span class="l l-Scalar l-Scalar-Plain">cmd.file.copy</span><span class="p p-Indicator">:</span>
+   <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">tgt</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{{</span> <span class="nv">data</span><span class="p p-Indicator">[</span><span class="s">&#39;data&#39;</span><span class="p p-Indicator">][</span><span class="s">&#39;id&#39;</span><span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+   <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">arg</span><span class="p p-Indicator">:</span>
+     <span class="p p-Indicator">-</span> <span class="p p-Indicator">{{</span> <span class="nv">data</span><span class="p p-Indicator">[</span><span class="s">&#39;data&#39;</span><span class="p p-Indicator">][</span><span class="s">&#39;path&#39;</span><span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+     <span class="p p-Indicator">-</span> <span class="p p-Indicator">{{</span> <span class="nv">data</span><span class="p p-Indicator">[</span><span class="s">&#39;data&#39;</span><span class="p p-Indicator">][</span><span class="s">&#39;path&#39;</span><span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span><span class="l l-Scalar l-Scalar-Plain">.bak</span>
+</pre></div>
+</div>
+<p>Next, add the code to trigger the reactor to <code class="docutils literal"><span class="pre">ect/salt/master</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">reactor</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt/beacon/*/inotify/*/importantfile</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/reactor/backup.sls</span>
+</pre></div>
+</div>
+<p>This reactor creates a backup each time a file named <code class="docutils literal"><span class="pre">importantfile</span></code> is
+modified on a minion that has the <a class="reference internal" href="../../ref/beacons/all/salt.beacons.inotify.html#module-salt.beacons.inotify" title="salt.beacons.inotify"><code class="xref py py-mod docutils literal"><span class="pre">inotify</span></code></a> beacon
+configured as previously shown.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">You can have only one top level <code class="docutils literal"><span class="pre">reactor</span></code> section, so if one already
+exists, add this code to the existing section. See <a class="reference internal" href="../reactor/index.html#reactor-structure"><span>Understanding
+the Structure of Reactor Formulas</span></a> to learn more about
+reactor SLS syntax.</p>
+</div>
+</div>
+<div class="section" id="start-the-salt-master-in-debug-mode">
+<h3>Start the Salt Master in Debug Mode<a class="headerlink" href="#start-the-salt-master-in-debug-mode" title="永久链接至标题">¶</a></h3>
+<p>To help with troubleshooting, start the Salt master in debug mode:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">service salt-master stop</span>
+<span class="l l-Scalar l-Scalar-Plain">salt-master -l debug</span>
+</pre></div>
+</div>
+<p>When debug logging is enabled, event and reactor data are displayed so you can
+discover syntax and other issues.</p>
+</div>
+<div class="section" id="trigger-the-reactor">
+<h3>Trigger the Reactor<a class="headerlink" href="#trigger-the-reactor" title="永久链接至标题">¶</a></h3>
+<p>On your minion, make and save another change to <code class="docutils literal"><span class="pre">importantfile</span></code>. On the Salt
+master, you'll see debug messages that indicate the event was received and the
+<code class="docutils literal"><span class="pre">file.copy</span></code> job was sent. When you list the directory on the minion, you'll now
+see <code class="docutils literal"><span class="pre">importantfile.bak</span></code>.</p>
+<p>All beacons are configured using a similar process of enabling the beacon,
+writing a reactor SLS, and mapping a beacon event to the reactor SLS.</p>
+</div>
+</div>
+<div class="section" id="writing-beacon-plugins">
+<h2>Writing Beacon Plugins<a class="headerlink" href="#writing-beacon-plugins" title="永久链接至标题">¶</a></h2>
+<p>Beacon plugins use the standard Salt loader system, meaning that many of the
+constructs from other plugin systems holds true, such as the <code class="docutils literal"><span class="pre">__virtual__</span></code>
+function.</p>
+<p>The important function in the Beacon Plugin is the <code class="docutils literal"><span class="pre">beacon</span></code> function. When
+the beacon is configured to run, this function will be executed repeatedly
+by the minion. The <code class="docutils literal"><span class="pre">beacon</span></code> function therefore cannot block and should be
+as lightweight as possible. The <code class="docutils literal"><span class="pre">beacon</span></code> also must return a list of dicts,
+each dict in the list will be translated into an event on the master.</p>
+<p>Please see the <a class="reference internal" href="../../ref/beacons/all/salt.beacons.inotify.html#module-salt.beacons.inotify" title="salt.beacons.inotify"><code class="xref py py-mod docutils literal"><span class="pre">inotify</span></code></a> beacon as an example.</p>
+<div class="section" id="the-beacon-function">
+<h3>The <cite>beacon</cite> Function<a class="headerlink" href="#the-beacon-function" title="永久链接至标题">¶</a></h3>
+<p>The beacons system will look for a function named <cite>beacon</cite> in the module. If
+this function is not present then the beacon will not be fired. This function is
+called on a regular basis and defaults to being called on every iteration of the
+minion, which can be tens to hundreds of times a second. This means that the
+<cite>beacon</cite> function cannot block and should not be CPU or IO intensive.</p>
+<p>The beacon function will be passed in the configuration for the executed
+beacon. This makes it easy to establish a flexible configuration for each
+called beacon. This is also the preferred way to ingest the beacon's
+configuration as it allows for the configuration to be dynamically updated
+while the minion is running by configuring the beacon in the minion's pillar.</p>
+</div>
+<div class="section" id="the-beacon-return">
+<h3>The Beacon Return<a class="headerlink" href="#the-beacon-return" title="永久链接至标题">¶</a></h3>
+<p>The information returned from the beacon is expected to follow a predefined
+structure. The returned value needs to be a list of dictionaries (standard
+python dictionaries are preferred, no ordered dicts are needed).</p>
+<p>The dictionaries represent individual events to be fired on the minion and
+master event buses. Each dict is a single event. The dict can contain any
+arbitrary keys but the 'tag' key will be extracted and added to the tag of
+the fired event.</p>
+<p>The return data structure would look something like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">[{</span><span class="s1">&#39;changes&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;/foo/bar&#39;</span><span class="p">],</span> <span class="s1">&#39;tag&#39;</span><span class="p">:</span> <span class="s1">&#39;foo&#39;</span><span class="p">},</span>
+ <span class="p">{</span><span class="s1">&#39;changes&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;/foo/baz&#39;</span><span class="p">],</span> <span class="s1">&#39;tag&#39;</span><span class="p">:</span> <span class="s1">&#39;bar&#39;</span><span class="p">}]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="calling-execution-modules">
+<h3>Calling Execution Modules<a class="headerlink" href="#calling-execution-modules" title="永久链接至标题">¶</a></h3>
+<p>Execution modules are still the preferred location for all work and system
+interaction to happen in Salt. For this reason the <cite>__salt__</cite> variable is
+available inside the beacon.</p>
+<p>Please be careful when calling functions in <cite>__salt__</cite>, while this is the
+preferred means of executing complicated routines in Salt not all of the
+execution modules have been written with beacons in mind. Watch out for
+execution modules that may be CPU intense or IO bound. Please feel free to
+add new execution modules and functions to back specific beacons.</p>
+</div>
+<div class="section" id="distributing-custom-beacons">
+<h3>Distributing Custom Beacons<a class="headerlink" href="#distributing-custom-beacons" title="永久链接至标题">¶</a></h3>
+<p>Custom beacons can be distributed to minions using <code class="docutils literal"><span class="pre">saltutil</span></code>, see
+<a class="reference internal" href="../../ref/file_server/dynamic-modules.html#dynamic-module-distribution"><span>Dynamic Module Distribution</span></a>.</p>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../event/master_events.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt Master Events" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../reactor/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Reactor系统" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../event/events.html">Event System</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Beacons</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configuring-beacons">Configuring Beacons</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#beacon-monitoring-interval">Beacon Monitoring Interval</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#avoiding-event-loops">Avoiding Event Loops</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#beacon-example">Beacon Example</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#view-events-on-the-master">View Events on the Master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-a-reactor">Create a Reactor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#start-the-salt-master-in-debug-mode">Start the Salt Master in Debug Mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#trigger-the-reactor">Trigger the Reactor</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#writing-beacon-plugins">Writing Beacon Plugins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#the-beacon-function">The <cite>beacon</cite> Function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#the-beacon-return">The Beacon Return</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#calling-execution-modules">Calling Execution Modules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#distributing-custom-beacons">Distributing Custom Beacons</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../reactor/index.html">Reactor系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

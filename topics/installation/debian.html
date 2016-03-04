@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Debian GNU/Linux / Raspbian</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="安装教程" href="index.html">
+        <link rel="next" title="Fedora" href="fedora.html">
+        <link rel="prev" title="Arch Linux" href="arch.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="arch.html" title="Arch Linux">上一页</a>
+            
+        </li>
+        <li>
+            <a href="fedora.html" title="Fedora">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="debian-gnu-linux-raspbian">
+<span id="installation-debian"></span><h1>Debian GNU/Linux / Raspbian<a class="headerlink" href="#debian-gnu-linux-raspbian" title="永久链接至标题">¶</a></h1>
+<p>Debian GNU/Linux distribution and some devariatives such as Raspbian already
+have included Salt packages to their repositories. However, current stable
+release codenamed &quot;Jessie&quot; contains old outdated Salt release. It is
+recommended to use SaltStack repository for Debian as described
+<a class="reference internal" href="#installation-debian-repo"><span>below</span></a>.</p>
+<p>Installation from official Debian and Raspbian repositories is described
+<a class="reference internal" href="#installation-debian-raspbian"><span>here</span></a>.</p>
+<div class="section" id="installation-from-the-saltstack-repository">
+<span id="installation-debian-repo"></span><h2>Installation from the SaltStack Repository<a class="headerlink" href="#installation-from-the-saltstack-repository" title="永久链接至标题">¶</a></h2>
+<p>2015.5 and later packages for Debian 8 (&quot;Jessie&quot;) are available in the
+SaltStack repository.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">SaltStack repository contains only packages suitable for <code class="docutils literal"><span class="pre">i386</span></code> (32-bit
+Intel-compatible CPUs) and <code class="docutils literal"><span class="pre">amd64</span></code> (64-bit) architectures. While Salt
+packages are built for all Debian ports (have <code class="docutils literal"><span class="pre">all</span></code> suffix in package
+names), some of the dependencies are avaivable only for <code class="docutils literal"><span class="pre">amd64</span></code> systems.</p>
+</div>
+<div class="admonition important">
+<p class="first admonition-title">重要</p>
+<p class="last">The repository folder structure changed in the 2015.8.3 release, though the
+previous repository structure that was documented in 2015.8.1 can continue to
+be used.</p>
+</div>
+<p>To install using the SaltStack repository:</p>
+<ol class="arabic">
+<li><p class="first">Run the following command to import the SaltStack repository key:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>wget -O - https://repo.saltstack.com/apt/debian/8/amd64/latest/SALTSTACK-GPG-KEY.pub <span class="p">|</span> sudo apt-key add -
+</pre></div>
+</div>
+</li>
+<li><p class="first">Add the following line to <code class="docutils literal"><span class="pre">/etc/apt/sources.list</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>deb http://repo.saltstack.com/apt/debian/8/amd64/latest jessie main
+</pre></div>
+</div>
+</li>
+<li><p class="first">Run <code class="docutils literal"><span class="pre">sudo</span> <span class="pre">apt-get</span> <span class="pre">update</span></code>.</p>
+</li>
+<li><p class="first">Now go to the <a class="reference internal" href="#debian-install-pkgs"><span>packages installation</span></a> section.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="installation-from-the-community-repository">
+<h2>Installation from the Community Repository<a class="headerlink" href="#installation-from-the-community-repository" title="永久链接至标题">¶</a></h2>
+<p>The SaltStack community maintains a Debian repository at debian.saltstack.com.
+Packages for Debian Old Stable, Stable, and Unstable (Wheezy, Jessie, and Sid)
+for Salt 0.16 and later are published in this repository.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Packages in this repository are community built, and it can
+take a little while until the latest SaltStack release is available
+in this repository.</p>
+</div>
+<div class="section" id="jessie-stable">
+<h3>Jessie (Stable)<a class="headerlink" href="#jessie-stable" title="永久链接至标题">¶</a></h3>
+<p>For Jessie, the following line is needed in either
+<code class="docutils literal"><span class="pre">/etc/apt/sources.list</span></code> or a file in <code class="docutils literal"><span class="pre">/etc/apt/sources.list.d</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>deb http://debian.saltstack.com/debian jessie-saltstack main
+</pre></div>
+</div>
+</div>
+<div class="section" id="wheezy-old-stable">
+<h3>Wheezy (Old Stable)<a class="headerlink" href="#wheezy-old-stable" title="永久链接至标题">¶</a></h3>
+<p>For Wheezy, the following line is needed in either
+<code class="docutils literal"><span class="pre">/etc/apt/sources.list</span></code> or a file in <code class="docutils literal"><span class="pre">/etc/apt/sources.list.d</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>deb http://debian.saltstack.com/debian wheezy-saltstack main
+</pre></div>
+</div>
+</div>
+<div class="section" id="squeeze-old-old-stable">
+<h3>Squeeze (Old Old Stable)<a class="headerlink" href="#squeeze-old-old-stable" title="永久链接至标题">¶</a></h3>
+<p>For Squeeze, you will need to enable the Debian backports repository
+as well as the debian.saltstack.com repository. To do so, add the
+following to <code class="docutils literal"><span class="pre">/etc/apt/sources.list</span></code> or a file in
+<code class="docutils literal"><span class="pre">/etc/apt/sources.list.d</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>deb http://debian.saltstack.com/debian squeeze-saltstack main
+deb http://backports.debian.org/debian-backports squeeze-backports main
+</pre></div>
+</div>
+</div>
+<div class="section" id="stretch-testing">
+<h3>Stretch (Testing)<a class="headerlink" href="#stretch-testing" title="永久链接至标题">¶</a></h3>
+<p>For Stretch, the following line is needed in either
+<code class="docutils literal"><span class="pre">/etc/apt/sources.list</span></code> or a file in <code class="docutils literal"><span class="pre">/etc/apt/sources.list.d</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>deb http://debian.saltstack.com/debian stretch-saltstack main
+</pre></div>
+</div>
+</div>
+<div class="section" id="sid-unstable">
+<h3>Sid (不稳定版)<a class="headerlink" href="#sid-unstable" title="永久链接至标题">¶</a></h3>
+<p>For Sid, the following line is needed in either
+<code class="docutils literal"><span class="pre">/etc/apt/sources.list</span></code> or a file in <code class="docutils literal"><span class="pre">/etc/apt/sources.list.d</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>deb http://debian.saltstack.com/debian unstable main
+</pre></div>
+</div>
+</div>
+<div class="section" id="import-the-repository-key">
+<h3>Import the repository key<a class="headerlink" href="#import-the-repository-key" title="永久链接至标题">¶</a></h3>
+<p>你需要导入密钥用于签名。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>wget -q -O- <span class="s2">&quot;http://debian.saltstack.com/debian-salt-team-joehealy.gpg.key&quot;</span> <span class="p">|</span> apt-key add -
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>你也可以通过对比这里显示的公钥签名、使用命令“sha512sum”来验证密钥完整性，例如：</p>
+<div class="last highlight-bash"><div class="highlight"><pre><span></span><span class="nb">echo</span> <span class="s2">&quot;b702969447140d5553e31e9701be13ca11cc0a7ed5fe2b30acb8491567560ee62f834772b5095d735dfcecb2384a5c1a20045f52861c417f50b68dd5ff4660e6  debian-salt-team-joehealy.gpg.key&quot;</span> <span class="p">|</span> sha512sum -c
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="update-the-package-database">
+<h3>更新包数据库<a class="headerlink" href="#update-the-package-database" title="永久链接至标题">¶</a></h3>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>apt-get update
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="installation-from-the-debian-raspbian-official-repository">
+<span id="installation-debian-raspbian"></span><h2>Installation from the Debian / Raspbian Official Repository<a class="headerlink" href="#installation-from-the-debian-raspbian-official-repository" title="永久链接至标题">¶</a></h2>
+<p>Stretch (Testing) and Sid (Unstable) distributions are already contain mostly
+up-to-date Salt packages built by Debian Salt Team. You can install Salt
+components directly from Debian.</p>
+<p>On Jessie (Stable) there is an option to install Salt minion from Stretch with
+<cite>python-tornado</cite> dependency from <cite>jessie-backports</cite> repositories.</p>
+<p>To install fresh release of Salt minion on Jessie:</p>
+<ol class="arabic">
+<li><p class="first">Add <cite>jessie-backports</cite> and <cite>stretch</cite> repositories:</p>
+<p><strong>Debian</strong>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nb">echo</span> <span class="s1">&#39;deb http://httpredir.debian.org/debian jessie-backports main&#39;</span> &gt;&gt; /etc/apt/sources.list
+<span class="nb">echo</span> <span class="s1">&#39;deb http://httpredir.debian.org/debian stretch main&#39;</span> &gt;&gt; /etc/apt/sources.list
+</pre></div>
+</div>
+<p><strong>Raspbian</strong>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nb">echo</span> <span class="s1">&#39;deb http://archive.raspbian.org/raspbian/ stretch main&#39;</span> &gt;&gt; /etc/apt/sources.list
+</pre></div>
+</div>
+</li>
+<li><p class="first">Make Jessie a default release:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nb">echo</span> <span class="s1">&#39;APT::Default-Release &quot;jessie&quot;;&#39;</span> &gt; /etc/apt/apt.conf.d/10apt
+</pre></div>
+</div>
+</li>
+<li><p class="first">Install Salt dependencies:</p>
+<p><strong>Debian</strong>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>apt-get update
+apt-get install python-zmq python-tornado/jessie-backports salt-common/stretch
+</pre></div>
+</div>
+<p><strong>Raspbian</strong>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>apt-get update
+apt-get install python-zmq python-tornado/stretch salt-common/stretch
+</pre></div>
+</div>
+</li>
+<li><p class="first">Install Salt minion package from Stretch:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>apt-get install salt-minion/stretch
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="install-packages">
+<span id="debian-install-pkgs"></span><h2>Install Packages<a class="headerlink" href="#install-packages" title="永久链接至标题">¶</a></h2>
+<p>Install the Salt master, minion or other packages from the repository with
+the <cite>apt-get</cite> command. These examples each install one of Salt components, but
+more than one package name may be given at a time:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">salt-api</span></code></li>
+<li><code class="docutils literal"><span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">salt-cloud</span></code></li>
+<li><code class="docutils literal"><span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">salt-master</span></code></li>
+<li><code class="docutils literal"><span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">salt-minion</span></code></li>
+<li><code class="docutils literal"><span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">salt-ssh</span></code></li>
+<li><code class="docutils literal"><span class="pre">apt-get</span> <span class="pre">install</span> <span class="pre">salt-syndic</span></code></li>
+</ul>
+</div>
+<div class="section" id="post-installation-tasks">
+<span id="debian-config"></span><h2>安装后的工作<a class="headerlink" href="#post-installation-tasks" title="永久链接至标题">¶</a></h2>
+<p>现在, 让我们跳转到 <a class="reference internal" href="../../ref/configuration/index.html"><em>配置Salt</em></a> 页面.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="arch.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Arch Linux" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="fedora.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Fedora" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">安装教程</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#quick-install">快速安装</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#platform-specific-installation-instructions">对应平台的安装教程</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="arch.html">Arch Linux</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Debian GNU/Linux / Raspbian</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#installation-from-the-saltstack-repository">Installation from the SaltStack Repository</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#installation-from-the-community-repository">Installation from the Community Repository</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#jessie-stable">Jessie (Stable)</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#wheezy-old-stable">Wheezy (Old Stable)</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#squeeze-old-old-stable">Squeeze (Old Old Stable)</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#stretch-testing">Stretch (Testing)</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#sid-unstable">Sid (不稳定版)</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#import-the-repository-key">Import the repository key</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#update-the-package-database">更新包数据库</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#installation-from-the-debian-raspbian-official-repository">Installation from the Debian / Raspbian Official Repository</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#install-packages">Install Packages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#post-installation-tasks">安装后的工作</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="fedora.html">Fedora</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freebsd.html">FreeBSD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gentoo.html">Gentoo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="openbsd.html">OpenBSD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="osx.html">OS X</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rhel.html">RHEL / CentOS / Scientific Linux / Amazon Linux / Oracle Linux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solaris.html">Solaris</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ubuntu.html">Ubuntu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="windows.html">Windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="suse.html">SUSE</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#initial-configuration">Initial Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#additional-installation-guides">Additional Installation Guides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#dependencies">依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#optional-dependencies">可选依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#upgrading-salt">升级Salt</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

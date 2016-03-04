@@ -1,0 +1,1796 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Configuration file examples</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Configuring Salt" href="../../topics/configuration/index.html">
+        <link rel="next" title="Minion Blackout Configuration" href="../../topics/blackout/index.html">
+        <link rel="prev" title="配置Salt Minion" href="minion.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="minion.html" title="配置Salt Minion">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../../topics/blackout/index.html" title="Minion Blackout Configuration">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="configuration-file-examples">
+<h1>Configuration file examples<a class="headerlink" href="#configuration-file-examples" title="永久链接至标题">¶</a></h1>
+<div class="contents local topic" id="contents">
+<span id="configuration-examples-master"></span><ul class="simple">
+<li><a class="reference internal" href="#example-master-configuration-file" id="id1">Example master configuration file</a></li>
+<li><a class="reference internal" href="#example-minion-configuration-file" id="id2">Example minion configuration file</a></li>
+</ul>
+</div>
+<div class="section" id="example-master-configuration-file">
+<h2><a class="toc-backref" href="#id1">Example master configuration file</a><a class="headerlink" href="#example-master-configuration-file" title="永久链接至标题">¶</a></h2>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1">##### Primary configuration settings #####</span>
+<span class="c1">##########################################</span>
+<span class="c1"># This configuration file is used to manage the behavior of the Salt Master.</span>
+<span class="c1"># Values that are commented out but have an empty line after the comment are</span>
+<span class="c1"># defaults that do not need to be set in the config. If there is no blank line</span>
+<span class="c1"># after the comment then the value is presented as an example and is not the</span>
+<span class="c1"># default.</span>
+
+<span class="c1"># Per default, the master will automatically include all config files</span>
+<span class="c1"># from master.d/*.conf (master.d is a directory in the same directory</span>
+<span class="c1"># as the main master config file).</span>
+<span class="c1">#default_include: master.d/*.conf</span>
+
+<span class="c1"># The address of the interface to bind to:</span>
+<span class="c1">#interface: 0.0.0.0</span>
+
+<span class="c1"># Whether the master should listen for IPv6 connections. If this is set to True,</span>
+<span class="c1"># the interface option must be adjusted, too. (For example: &quot;interface: &#39;::&#39;&quot;)</span>
+<span class="c1">#ipv6: False</span>
+
+<span class="c1"># The tcp port used by the publisher:</span>
+<span class="c1">#publish_port: 4505</span>
+
+<span class="c1"># The user under which the salt master will run. Salt will update all</span>
+<span class="c1"># permissions to allow the specified user to run the master. The exception is</span>
+<span class="c1"># the job cache, which must be deleted if this user is changed. If the</span>
+<span class="c1"># modified files cause conflicts, set verify_env to False.</span>
+<span class="c1">#user: root</span>
+
+<span class="c1"># The port used by the communication interface. The ret (return) port is the</span>
+<span class="c1"># interface used for the file server, authentication, job returns, etc.</span>
+<span class="c1">#ret_port: 4506</span>
+
+<span class="c1"># Specify the location of the daemon process ID file:</span>
+<span class="c1">#pidfile: /var/run/salt-master.pid</span>
+
+<span class="c1"># The root directory prepended to these options: pki_dir, cachedir,</span>
+<span class="c1"># sock_dir, log_file, autosign_file, autoreject_file, extension_modules,</span>
+<span class="c1"># key_logfile, pidfile:</span>
+<span class="c1">#root_dir: /</span>
+
+<span class="c1"># Directory used to store public key data:</span>
+<span class="c1">#pki_dir: /etc/salt/pki/master</span>
+
+<span class="c1"># Directory to store job and cache data:</span>
+<span class="c1"># This directory may contain sensitive data and should be protected accordingly.</span>
+<span class="c1">#</span>
+<span class="c1">#cachedir: /var/cache/salt/master</span>
+
+<span class="c1"># Directory for custom modules. This directory can contain subdirectories for</span>
+<span class="c1"># each of Salt&#39;s module types such as &quot;runners&quot;, &quot;output&quot;, &quot;wheel&quot;, &quot;modules&quot;,</span>
+<span class="c1"># &quot;states&quot;, &quot;returners&quot;, etc.</span>
+<span class="c1">#extension_modules: &lt;no default&gt;</span>
+
+<span class="c1"># Directory for custom modules. This directory can contain subdirectories for</span>
+<span class="c1"># each of Salt&#39;s module types such as &quot;runners&quot;, &quot;output&quot;, &quot;wheel&quot;, &quot;modules&quot;,</span>
+<span class="c1"># &quot;states&quot;, &quot;returners&quot;, etc.</span>
+<span class="c1"># Like &#39;extension_modules&#39; but can take an array of paths</span>
+<span class="c1">#module_dirs: &lt;no default&gt;</span>
+<span class="c1">#   - /var/cache/salt/minion/extmods</span>
+
+<span class="c1"># Verify and set permissions on configuration directories at startup:</span>
+<span class="c1">#verify_env: True</span>
+
+<span class="c1"># Set the number of hours to keep old job information in the job cache:</span>
+<span class="c1">#keep_jobs: 24</span>
+
+<span class="c1"># Set the default timeout for the salt command and api. The default is 5</span>
+<span class="c1"># seconds.</span>
+<span class="c1">#timeout: 5</span>
+
+<span class="c1"># The loop_interval option controls the seconds for the master&#39;s maintenance</span>
+<span class="c1"># process check cycle. This process updates file server backends, cleans the</span>
+<span class="c1"># job cache and executes the scheduler.</span>
+<span class="c1">#loop_interval: 60</span>
+
+<span class="c1"># Set the default outputter used by the salt command. The default is &quot;nested&quot;.</span>
+<span class="c1">#output: nested</span>
+
+<span class="c1"># Return minions that timeout when running commands like test.ping</span>
+<span class="c1">#show_timeout: True</span>
+
+<span class="c1"># By default, output is colored. To disable colored output, set the color value</span>
+<span class="c1"># to False.</span>
+<span class="c1">#color: True</span>
+
+<span class="c1"># Do not strip off the colored output from nested results and state outputs</span>
+<span class="c1"># (true by default).</span>
+<span class="c1"># strip_colors: False</span>
+
+<span class="c1"># Set the directory used to hold unix sockets:</span>
+<span class="c1">#sock_dir: /var/run/salt/master</span>
+
+<span class="c1"># The master can take a while to start up when lspci and/or dmidecode is used</span>
+<span class="c1"># to populate the grains for the master. Enable if you want to see GPU hardware</span>
+<span class="c1"># data for your master.</span>
+<span class="c1"># enable_gpu_grains: False</span>
+
+<span class="c1"># The master maintains a job cache. While this is a great addition, it can be</span>
+<span class="c1"># a burden on the master for larger deployments (over 5000 minions).</span>
+<span class="c1"># Disabling the job cache will make previously executed jobs unavailable to</span>
+<span class="c1"># the jobs system and is not generally recommended.</span>
+<span class="c1">#job_cache: True</span>
+
+<span class="c1"># Cache minion grains and pillar data in the cachedir.</span>
+<span class="c1">#minion_data_cache: True</span>
+
+<span class="c1"># Store all returns in the given returner.</span>
+<span class="c1"># Setting this option requires that any returner-specific configuration also</span>
+<span class="c1"># be set. See various returners in salt/returners for details on required</span>
+<span class="c1"># configuration values. (See also, event_return_queue below.)</span>
+<span class="c1">#</span>
+<span class="c1">#event_return: mysql</span>
+
+<span class="c1"># On busy systems, enabling event_returns can cause a considerable load on</span>
+<span class="c1"># the storage system for returners. Events can be queued on the master and</span>
+<span class="c1"># stored in a batched fashion using a single transaction for multiple events.</span>
+<span class="c1"># By default, events are not queued.</span>
+<span class="c1">#event_return_queue: 0</span>
+
+<span class="c1"># Only events returns matching tags in a whitelist</span>
+<span class="c1"># event_return_whitelist:</span>
+<span class="c1">#   - salt/master/a_tag</span>
+<span class="c1">#   - salt/master/another_tag</span>
+
+<span class="c1"># Store all event returns _except_ the tags in a blacklist</span>
+<span class="c1"># event_return_blacklist:</span>
+<span class="c1">#   - salt/master/not_this_tag</span>
+<span class="c1">#   - salt/master/or_this_one</span>
+
+<span class="c1"># Passing very large events can cause the minion to consume large amounts of</span>
+<span class="c1"># memory. This value tunes the maximum size of a message allowed onto the</span>
+<span class="c1"># master event bus. The value is expressed in bytes.</span>
+<span class="c1">#max_event_size: 1048576</span>
+
+<span class="c1"># By default, the master AES key rotates every 24 hours. The next command</span>
+<span class="c1"># following a key rotation will trigger a key refresh from the minion which may</span>
+<span class="c1"># result in minions which do not respond to the first command after a key refresh.</span>
+<span class="c1">#</span>
+<span class="c1"># To tell the master to ping all minions immediately after an AES key refresh, set</span>
+<span class="c1"># ping_on_rotate to True. This should mitigate the issue where a minion does not</span>
+<span class="c1"># appear to initially respond after a key is rotated.</span>
+<span class="c1">#</span>
+<span class="c1"># Note that ping_on_rotate may cause high load on the master immediately after</span>
+<span class="c1"># the key rotation event as minions reconnect. Consider this carefully if this</span>
+<span class="c1"># salt master is managing a large number of minions.</span>
+<span class="c1">#</span>
+<span class="c1"># If disabled, it is recommended to handle this event by listening for the</span>
+<span class="c1"># &#39;aes_key_rotate&#39; event with the &#39;key&#39; tag and acting appropriately.</span>
+<span class="c1"># ping_on_rotate: False</span>
+
+<span class="c1"># By default, the master deletes its cache of minion data when the key for that</span>
+<span class="c1"># minion is removed. To preserve the cache after key deletion, set</span>
+<span class="c1"># &#39;preserve_minion_cache&#39; to True.</span>
+<span class="c1">#</span>
+<span class="c1"># WARNING: This may have security implications if compromised minions auth with</span>
+<span class="c1"># a previous deleted minion ID.</span>
+<span class="c1">#preserve_minion_cache: False</span>
+
+<span class="c1"># If max_minions is used in large installations, the master might experience</span>
+<span class="c1"># high-load situations because of having to check the number of connected</span>
+<span class="c1"># minions for every authentication. This cache provides the minion-ids of</span>
+<span class="c1"># all connected minions to all MWorker-processes and greatly improves the</span>
+<span class="c1"># performance of max_minions.</span>
+<span class="c1"># con_cache: False</span>
+
+<span class="c1"># The master can include configuration from other files. To enable this,</span>
+<span class="c1"># pass a list of paths to this option. The paths can be either relative or</span>
+<span class="c1"># absolute; if relative, they are considered to be relative to the directory</span>
+<span class="c1"># the main master configuration file lives in (this file). Paths can make use</span>
+<span class="c1"># of shell-style globbing. If no files are matched by a path passed to this</span>
+<span class="c1"># option, then the master will log a warning message.</span>
+<span class="c1">#</span>
+<span class="c1"># Include a config file from some other path:</span>
+<span class="c1"># include: /etc/salt/extra_config</span>
+<span class="c1">#</span>
+<span class="c1"># Include config from several files and directories:</span>
+<span class="c1"># include:</span>
+<span class="c1">#   - /etc/salt/extra_config</span>
+
+
+<span class="c1">#####  Large-scale tuning settings   #####</span>
+<span class="c1">##########################################</span>
+<span class="c1"># Max open files</span>
+<span class="c1">#</span>
+<span class="c1"># Each minion connecting to the master uses AT LEAST one file descriptor, the</span>
+<span class="c1"># master subscription connection. If enough minions connect you might start</span>
+<span class="c1"># seeing on the console (and then salt-master crashes):</span>
+<span class="c1">#   Too many open files (tcp_listener.cpp:335)</span>
+<span class="c1">#   Aborted (core dumped)</span>
+<span class="c1">#</span>
+<span class="c1"># By default this value will be the one of `ulimit -Hn`, ie, the hard limit for</span>
+<span class="c1"># max open files.</span>
+<span class="c1">#</span>
+<span class="c1"># If you wish to set a different value than the default one, uncomment and</span>
+<span class="c1"># configure this setting. Remember that this value CANNOT be higher than the</span>
+<span class="c1"># hard limit. Raising the hard limit depends on your OS and/or distribution,</span>
+<span class="c1"># a good way to find the limit is to search the internet. For example:</span>
+<span class="c1">#   raise max open files hard limit debian</span>
+<span class="c1">#</span>
+<span class="c1">#max_open_files: 100000</span>
+
+<span class="c1"># The number of worker threads to start. These threads are used to manage</span>
+<span class="c1"># return calls made from minions to the master. If the master seems to be</span>
+<span class="c1"># running slowly, increase the number of threads. This setting can not be</span>
+<span class="c1"># set lower than 3.</span>
+<span class="c1">#worker_threads: 5</span>
+
+<span class="c1"># Set the ZeroMQ high water marks</span>
+<span class="c1"># http://api.zeromq.org/3-2:zmq-setsockopt</span>
+
+<span class="c1"># The publisher interface ZeroMQPubServerChannel</span>
+<span class="c1">#pub_hwm: 1000</span>
+
+<span class="c1"># These two ZMQ HWM settings, salt_event_pub_hwm and event_publisher_pub_hwm</span>
+<span class="c1"># are significant for masters with thousands of minions.  When these are</span>
+<span class="c1"># insufficiently high it will manifest in random responses missing in the CLI</span>
+<span class="c1"># and even missing from the job cache.  Masters that have fast CPUs and many</span>
+<span class="c1"># cores with appropriate worker_threads will not need these set as high.</span>
+
+<span class="c1"># On deployment with 8,000 minions, 2.4GHz CPUs, 24 cores, 32GiB memory has</span>
+<span class="c1"># these settings:</span>
+<span class="c1">#</span>
+<span class="c1">#   salt_event_pub_hwm: 128000</span>
+<span class="c1">#   event_publisher_pub_hwm: 64000</span>
+
+<span class="c1"># ZMQ high-water-mark for SaltEvent pub socket</span>
+<span class="c1">#salt_event_pub_hwm: 20000</span>
+
+<span class="c1"># ZMQ high-water-mark for EventPublisher pub socket</span>
+<span class="c1">#event_publisher_pub_hwm: 10000</span>
+
+
+
+<span class="c1">#####        Security settings       #####</span>
+<span class="c1">##########################################</span>
+<span class="c1"># Enable &quot;open mode&quot;, this mode still maintains encryption, but turns off</span>
+<span class="c1"># authentication, this is only intended for highly secure environments or for</span>
+<span class="c1"># the situation where your keys end up in a bad state. If you run in open mode</span>
+<span class="c1"># you do so at your own risk!</span>
+<span class="c1">#open_mode: False</span>
+
+<span class="c1"># Enable auto_accept, this setting will automatically accept all incoming</span>
+<span class="c1"># public keys from the minions. Note that this is insecure.</span>
+<span class="c1">#auto_accept: False</span>
+
+<span class="c1"># Time in minutes that a incoming public key with a matching name found in</span>
+<span class="c1"># pki_dir/minion_autosign/keyid is automatically accepted. Expired autosign keys</span>
+<span class="c1"># are removed when the master checks the minion_autosign directory.</span>
+<span class="c1"># 0 equals no timeout</span>
+<span class="c1"># autosign_timeout: 120</span>
+
+<span class="c1"># If the autosign_file is specified, incoming keys specified in the</span>
+<span class="c1"># autosign_file will be automatically accepted. This is insecure.  Regular</span>
+<span class="c1"># expressions as well as globing lines are supported.</span>
+<span class="c1">#autosign_file: /etc/salt/autosign.conf</span>
+
+<span class="c1"># Works like autosign_file, but instead allows you to specify minion IDs for</span>
+<span class="c1"># which keys will automatically be rejected. Will override both membership in</span>
+<span class="c1"># the autosign_file and the auto_accept setting.</span>
+<span class="c1">#autoreject_file: /etc/salt/autoreject.conf</span>
+
+<span class="c1"># Enable permissive access to the salt keys. This allows you to run the</span>
+<span class="c1"># master or minion as root, but have a non-root group be given access to</span>
+<span class="c1"># your pki_dir. To make the access explicit, root must belong to the group</span>
+<span class="c1"># you&#39;ve given access to. This is potentially quite insecure. If an autosign_file</span>
+<span class="c1"># is specified, enabling permissive_pki_access will allow group access to that</span>
+<span class="c1"># specific file.</span>
+<span class="c1">#permissive_pki_access: False</span>
+
+<span class="c1"># Allow users on the master access to execute specific commands on minions.</span>
+<span class="c1"># This setting should be treated with care since it opens up execution</span>
+<span class="c1"># capabilities to non root users. By default this capability is completely</span>
+<span class="c1"># disabled.</span>
+<span class="c1">#pulisher_acl:</span>
+<span class="c1">#  larry:</span>
+<span class="c1">#    - test.ping</span>
+<span class="c1">#    - network.*</span>
+<span class="c1">#</span>
+<span class="c1"># Blacklist any of the following users or modules</span>
+<span class="c1">#</span>
+<span class="c1"># This example would blacklist all non sudo users, including root from</span>
+<span class="c1"># running any commands. It would also blacklist any use of the &quot;cmd&quot;</span>
+<span class="c1"># module. This is completely disabled by default.</span>
+<span class="c1">#</span>
+<span class="c1">#publisher_acl_blacklist:</span>
+<span class="c1">#  users:</span>
+<span class="c1">#    - root</span>
+<span class="c1">#    - &#39;^(?!sudo_).*$&#39;   #  all non sudo users</span>
+<span class="c1">#  modules:</span>
+<span class="c1">#    - cmd</span>
+<span class="c1">#</span>
+<span class="c1"># WARNING: client_acl and client_acl_blacklist options are deprecated and will</span>
+<span class="c1"># be removed in the future releases. Use publisher_acl and</span>
+<span class="c1"># publisher_acl_blacklist instead.</span>
+
+<span class="c1"># Enforce publisher_acl &amp; publisher_acl_blacklist when users have sudo</span>
+<span class="c1"># access to the salt command. </span>
+<span class="c1">#</span>
+<span class="c1">#sudo_acl: False</span>
+
+<span class="c1"># The external auth system uses the Salt auth modules to authenticate and</span>
+<span class="c1"># validate users to access areas of the Salt system.</span>
+<span class="c1">#external_auth:</span>
+<span class="c1">#  pam:</span>
+<span class="c1">#    fred:</span>
+<span class="c1">#      - test.*</span>
+<span class="c1">#</span>
+<span class="c1"># Time (in seconds) for a newly generated token to live. Default: 12 hours</span>
+<span class="c1">#token_expire: 43200</span>
+
+<span class="c1"># Allow minions to push files to the master. This is disabled by default, for</span>
+<span class="c1"># security purposes.</span>
+<span class="c1">#file_recv: False</span>
+
+<span class="c1"># Set a hard-limit on the size of the files that can be pushed to the master.</span>
+<span class="c1"># It will be interpreted as megabytes. Default: 100</span>
+<span class="c1">#file_recv_max_size: 100</span>
+
+<span class="c1"># Signature verification on messages published from the master.</span>
+<span class="c1"># This causes the master to cryptographically sign all messages published to its event</span>
+<span class="c1"># bus, and minions then verify that signature before acting on the message.</span>
+<span class="c1">#</span>
+<span class="c1"># This is False by default.</span>
+<span class="c1">#</span>
+<span class="c1"># Note that to facilitate interoperability with masters and minions that are different</span>
+<span class="c1"># versions, if sign_pub_messages is True but a message is received by a minion with</span>
+<span class="c1"># no signature, it will still be accepted, and a warning message will be logged.</span>
+<span class="c1"># Conversely, if sign_pub_messages is False, but a minion receives a signed</span>
+<span class="c1"># message it will be accepted, the signature will not be checked, and a warning message</span>
+<span class="c1"># will be logged. This behavior went away in Salt 2014.1.0 and these two situations</span>
+<span class="c1"># will cause minion to throw an exception and drop the message.</span>
+<span class="c1"># sign_pub_messages: False</span>
+
+<span class="c1">#####     Salt-SSH Configuration     #####</span>
+<span class="c1">##########################################</span>
+
+<span class="c1"># Pass in an alternative location for the salt-ssh roster file</span>
+<span class="c1">#roster_file: /etc/salt/roster</span>
+
+<span class="c1"># Pass in minion option overrides that will be inserted into the SHIM for</span>
+<span class="c1"># salt-ssh calls. The local minion config is not used for salt-ssh. Can be</span>
+<span class="c1"># overridden on a per-minion basis in the roster (`minion_opts`)</span>
+<span class="c1">#ssh_minion_opts:</span>
+<span class="c1">#  gpg_keydir: /root/gpg</span>
+
+<span class="c1">#####    Master Module Management    #####</span>
+<span class="c1">##########################################</span>
+<span class="c1"># Manage how master side modules are loaded.</span>
+
+<span class="c1"># Add any additional locations to look for master runners:</span>
+<span class="c1">#runner_dirs: []</span>
+
+<span class="c1"># Enable Cython for master side modules:</span>
+<span class="c1">#cython_enable: False</span>
+
+
+<span class="c1">#####      State System settings     #####</span>
+<span class="c1">##########################################</span>
+<span class="c1"># The state system uses a &quot;top&quot; file to tell the minions what environment to</span>
+<span class="c1"># use and what modules to use. The state_top file is defined relative to the</span>
+<span class="c1"># root of the base environment as defined in &quot;File Server settings&quot; below.</span>
+<span class="c1">#state_top: top.sls</span>
+
+<span class="c1"># The master_tops option replaces the external_nodes option by creating</span>
+<span class="c1"># a plugable system for the generation of external top data. The external_nodes</span>
+<span class="c1"># option is deprecated by the master_tops option.</span>
+<span class="c1">#</span>
+<span class="c1"># To gain the capabilities of the classic external_nodes system, use the</span>
+<span class="c1"># following configuration:</span>
+<span class="c1"># master_tops:</span>
+<span class="c1">#   ext_nodes: &lt;Shell command which returns yaml&gt;</span>
+<span class="c1">#</span>
+<span class="c1">#master_tops: {}</span>
+
+<span class="c1"># The external_nodes option allows Salt to gather data that would normally be</span>
+<span class="c1"># placed in a top file. The external_nodes option is the executable that will</span>
+<span class="c1"># return the ENC data. Remember that Salt will look for external nodes AND top</span>
+<span class="c1"># files and combine the results if both are enabled!</span>
+<span class="c1">#external_nodes: None</span>
+
+<span class="c1"># The renderer to use on the minions to render the state data</span>
+<span class="c1">#renderer: yaml_jinja</span>
+
+<span class="c1"># The Jinja renderer can strip extra carriage returns and whitespace</span>
+<span class="c1"># See http://jinja.pocoo.org/docs/api/#high-level-api</span>
+<span class="c1">#</span>
+<span class="c1"># If this is set to True the first newline after a Jinja block is removed</span>
+<span class="c1"># (block, not variable tag!). Defaults to False, corresponds to the Jinja</span>
+<span class="c1"># environment init variable &quot;trim_blocks&quot;.</span>
+<span class="c1">#jinja_trim_blocks: False</span>
+<span class="c1">#</span>
+<span class="c1"># If this is set to True leading spaces and tabs are stripped from the start</span>
+<span class="c1"># of a line to a block. Defaults to False, corresponds to the Jinja</span>
+<span class="c1"># environment init variable &quot;lstrip_blocks&quot;.</span>
+<span class="c1">#jinja_lstrip_blocks: False</span>
+
+<span class="c1"># The failhard option tells the minions to stop immediately after the first</span>
+<span class="c1"># failure detected in the state execution, defaults to False</span>
+<span class="c1">#failhard: False</span>
+
+<span class="c1"># The state_verbose and state_output settings can be used to change the way</span>
+<span class="c1"># state system data is printed to the display. By default all data is printed.</span>
+<span class="c1"># The state_verbose setting can be set to True or False, when set to False</span>
+<span class="c1"># all data that has a result of True and no changes will be suppressed.</span>
+<span class="c1">#state_verbose: True</span>
+
+<span class="c1"># The state_output setting changes if the output is the full multi line</span>
+<span class="c1"># output for each changed state if set to &#39;full&#39;, but if set to &#39;terse&#39;</span>
+<span class="c1"># the output will be shortened to a single line.  If set to &#39;mixed&#39;, the output</span>
+<span class="c1"># will be terse unless a state failed, in which case that output will be full.</span>
+<span class="c1"># If set to &#39;changes&#39;, the output will be full unless the state didn&#39;t change.</span>
+<span class="c1">#state_output: full</span>
+
+<span class="c1"># Automatically aggregate all states that have support for mod_aggregate by</span>
+<span class="c1"># setting to &#39;True&#39;. Or pass a list of state module names to automatically</span>
+<span class="c1"># aggregate just those types.</span>
+<span class="c1">#</span>
+<span class="c1"># state_aggregate:</span>
+<span class="c1">#   - pkg</span>
+<span class="c1">#</span>
+<span class="c1">#state_aggregate: False</span>
+
+<span class="c1"># Send progress events as each function in a state run completes execution</span>
+<span class="c1"># by setting to &#39;True&#39;. Progress events are in the format</span>
+<span class="c1"># &#39;salt/job/&lt;JID&gt;/prog/&lt;MID&gt;/&lt;RUN NUM&gt;&#39;.</span>
+<span class="c1">#state_events: False</span>
+
+<span class="c1">#####      File Server settings      #####</span>
+<span class="c1">##########################################</span>
+<span class="c1"># Salt runs a lightweight file server written in zeromq to deliver files to</span>
+<span class="c1"># minions. This file server is built into the master daemon and does not</span>
+<span class="c1"># require a dedicated port.</span>
+
+<span class="c1"># The file server works on environments passed to the master, each environment</span>
+<span class="c1"># can have multiple root directories, the subdirectories in the multiple file</span>
+<span class="c1"># roots cannot match, otherwise the downloaded files will not be able to be</span>
+<span class="c1"># reliably ensured. A base environment is required to house the top file.</span>
+<span class="c1"># Example:</span>
+<span class="c1"># file_roots:</span>
+<span class="c1">#   base:</span>
+<span class="c1">#     - /srv/salt/</span>
+<span class="c1">#   dev:</span>
+<span class="c1">#     - /srv/salt/dev/services</span>
+<span class="c1">#     - /srv/salt/dev/states</span>
+<span class="c1">#   prod:</span>
+<span class="c1">#     - /srv/salt/prod/services</span>
+<span class="c1">#     - /srv/salt/prod/states</span>
+<span class="c1">#</span>
+<span class="c1">#file_roots:</span>
+<span class="c1">#  base:</span>
+<span class="c1">#    - /srv/salt</span>
+<span class="c1">#</span>
+
+<span class="c1"># When using multiple environments, each with their own top file, the</span>
+<span class="c1"># default behaviour is an unordered merge. To prevent top files from</span>
+<span class="c1"># being merged together and instead to only use the top file from the</span>
+<span class="c1"># requested environment, set this value to &#39;same&#39;.</span>
+<span class="c1">#top_file_merging_strategy: merge</span>
+
+<span class="c1"># To specify the order in which environments are merged, set the ordering</span>
+<span class="c1"># in the env_order option. Given a conflict, the last matching value will</span>
+<span class="c1"># win.</span>
+<span class="c1">#env_order: [&#39;base&#39;, &#39;dev&#39;, &#39;prod&#39;]</span>
+
+<span class="c1"># If top_file_merging_strategy is set to &#39;same&#39; and an environment does not</span>
+<span class="c1"># contain a top file, the top file in the environment specified by default_top</span>
+<span class="c1"># will be used instead.</span>
+<span class="c1">#default_top: base</span>
+
+<span class="c1"># The hash_type is the hash to use when discovering the hash of a file on</span>
+<span class="c1"># the master server. The default is md5, but sha1, sha224, sha256, sha384</span>
+<span class="c1"># and sha512 are also supported.</span>
+<span class="c1">#</span>
+<span class="c1"># Prior to changing this value, the master should be stopped and all Salt</span>
+<span class="c1"># caches should be cleared.</span>
+<span class="c1">#hash_type: md5</span>
+
+<span class="c1"># The buffer size in the file server can be adjusted here:</span>
+<span class="c1">#file_buffer_size: 1048576</span>
+
+<span class="c1"># A regular expression (or a list of expressions) that will be matched</span>
+<span class="c1"># against the file path before syncing the modules and states to the minions.</span>
+<span class="c1"># This includes files affected by the file.recurse state.</span>
+<span class="c1"># For example, if you manage your custom modules and states in subversion</span>
+<span class="c1"># and don&#39;t want all the &#39;.svn&#39; folders and content synced to your minions,</span>
+<span class="c1"># you could set this to &#39;/\.svn($|/)&#39;. By default nothing is ignored.</span>
+<span class="c1">#file_ignore_regex:</span>
+<span class="c1">#  - &#39;/\.svn($|/)&#39;</span>
+<span class="c1">#  - &#39;/\.git($|/)&#39;</span>
+
+<span class="c1"># A file glob (or list of file globs) that will be matched against the file</span>
+<span class="c1"># path before syncing the modules and states to the minions. This is similar</span>
+<span class="c1"># to file_ignore_regex above, but works on globs instead of regex. By default</span>
+<span class="c1"># nothing is ignored.</span>
+<span class="c1"># file_ignore_glob:</span>
+<span class="c1">#  - &#39;*.pyc&#39;</span>
+<span class="c1">#  - &#39;*/somefolder/*.bak&#39;</span>
+<span class="c1">#  - &#39;*.swp&#39;</span>
+
+<span class="c1"># File Server Backend</span>
+<span class="c1">#</span>
+<span class="c1"># Salt supports a modular fileserver backend system, this system allows</span>
+<span class="c1"># the salt master to link directly to third party systems to gather and</span>
+<span class="c1"># manage the files available to minions. Multiple backends can be</span>
+<span class="c1"># configured and will be searched for the requested file in the order in which</span>
+<span class="c1"># they are defined here. The default setting only enables the standard backend</span>
+<span class="c1"># &quot;roots&quot; which uses the &quot;file_roots&quot; option.</span>
+<span class="c1">#fileserver_backend:</span>
+<span class="c1">#  - roots</span>
+<span class="c1">#</span>
+<span class="c1"># To use multiple backends list them in the order they are searched:</span>
+<span class="c1">#fileserver_backend:</span>
+<span class="c1">#  - git</span>
+<span class="c1">#  - roots</span>
+<span class="c1">#</span>
+<span class="c1"># Uncomment the line below if you do not want the file_server to follow</span>
+<span class="c1"># symlinks when walking the filesystem tree. This is set to True</span>
+<span class="c1"># by default. Currently this only applies to the default roots</span>
+<span class="c1"># fileserver_backend.</span>
+<span class="c1">#fileserver_followsymlinks: False</span>
+<span class="c1">#</span>
+<span class="c1"># Uncomment the line below if you do not want symlinks to be</span>
+<span class="c1"># treated as the files they are pointing to. By default this is set to</span>
+<span class="c1"># False. By uncommenting the line below, any detected symlink while listing</span>
+<span class="c1"># files on the Master will not be returned to the Minion.</span>
+<span class="c1">#fileserver_ignoresymlinks: True</span>
+<span class="c1">#</span>
+<span class="c1"># By default, the Salt fileserver recurses fully into all defined environments</span>
+<span class="c1"># to attempt to find files. To limit this behavior so that the fileserver only</span>
+<span class="c1"># traverses directories with SLS files and special Salt directories like _modules,</span>
+<span class="c1"># enable the option below. This might be useful for installations where a file root</span>
+<span class="c1"># has a very large number of files and performance is impacted. Default is False.</span>
+<span class="c1"># fileserver_limit_traversal: False</span>
+<span class="c1">#</span>
+<span class="c1"># The fileserver can fire events off every time the fileserver is updated,</span>
+<span class="c1"># these are disabled by default, but can be easily turned on by setting this</span>
+<span class="c1"># flag to True</span>
+<span class="c1">#fileserver_events: False</span>
+
+<span class="c1"># Git File Server Backend Configuration</span>
+<span class="c1">#</span>
+<span class="c1"># Gitfs can be provided by one of two python modules: GitPython or pygit2. If</span>
+<span class="c1"># using pygit2, both libgit2 and git must also be installed.</span>
+<span class="c1">#gitfs_provider: gitpython</span>
+<span class="c1">#</span>
+<span class="c1"># When using the git fileserver backend at least one git remote needs to be</span>
+<span class="c1"># defined. The user running the salt master will need read access to the repo.</span>
+<span class="c1">#</span>
+<span class="c1"># The repos will be searched in order to find the file requested by a client</span>
+<span class="c1"># and the first repo to have the file will return it.</span>
+<span class="c1"># When using the git backend branches and tags are translated into salt</span>
+<span class="c1"># environments.</span>
+<span class="c1"># Note:  file:// repos will be treated as a remote, so refs you want used must</span>
+<span class="c1"># exist in that repo as *local* refs.</span>
+<span class="c1">#gitfs_remotes:</span>
+<span class="c1">#  - git://github.com/saltstack/salt-states.git</span>
+<span class="c1">#  - file:///var/git/saltmaster</span>
+<span class="c1">#</span>
+<span class="c1"># The gitfs_ssl_verify option specifies whether to ignore ssl certificate</span>
+<span class="c1"># errors when contacting the gitfs backend. You might want to set this to</span>
+<span class="c1"># false if you&#39;re using a git backend that uses a self-signed certificate but</span>
+<span class="c1"># keep in mind that setting this flag to anything other than the default of True</span>
+<span class="c1"># is a security concern, you may want to try using the ssh transport.</span>
+<span class="c1">#gitfs_ssl_verify: True</span>
+<span class="c1">#</span>
+<span class="c1"># The gitfs_root option gives the ability to serve files from a subdirectory</span>
+<span class="c1"># within the repository. The path is defined relative to the root of the</span>
+<span class="c1"># repository and defaults to the repository root.</span>
+<span class="c1">#gitfs_root: somefolder/otherfolder</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#####         Pillar settings        #####</span>
+<span class="c1">##########################################</span>
+<span class="c1"># Salt Pillars allow for the building of global data that can be made selectively</span>
+<span class="c1"># available to different minions based on minion grain filtering. The Salt</span>
+<span class="c1"># Pillar is laid out in the same fashion as the file server, with environments,</span>
+<span class="c1"># a top file and sls files. However, pillar data does not need to be in the</span>
+<span class="c1"># highstate format, and is generally just key/value pairs.</span>
+<span class="c1">#pillar_roots:</span>
+<span class="c1">#  base:</span>
+<span class="c1">#    - /srv/pillar</span>
+<span class="c1">#</span>
+<span class="c1">#ext_pillar:</span>
+<span class="c1">#  - hiera: /etc/hiera.yaml</span>
+<span class="c1">#  - cmd_yaml: cat /etc/salt/yaml</span>
+
+<span class="c1"># The ext_pillar_first option allows for external pillar sources to populate</span>
+<span class="c1"># before file system pillar. This allows for targeting file system pillar from</span>
+<span class="c1"># ext_pillar.</span>
+<span class="c1">#ext_pillar_first: False</span>
+
+<span class="c1"># The pillar_gitfs_ssl_verify option specifies whether to ignore ssl certificate</span>
+<span class="c1"># errors when contacting the pillar gitfs backend. You might want to set this to</span>
+<span class="c1"># false if you&#39;re using a git backend that uses a self-signed certificate but</span>
+<span class="c1"># keep in mind that setting this flag to anything other than the default of True</span>
+<span class="c1"># is a security concern, you may want to try using the ssh transport.</span>
+<span class="c1">#pillar_gitfs_ssl_verify: True</span>
+
+<span class="c1"># The pillar_opts option adds the master configuration file data to a dict in</span>
+<span class="c1"># the pillar called &quot;master&quot;. This is used to set simple configurations in the</span>
+<span class="c1"># master config file that can then be used on minions.</span>
+<span class="c1">#pillar_opts: False</span>
+
+<span class="c1"># The pillar_safe_render_error option prevents the master from passing pillar</span>
+<span class="c1"># render errors to the minion. This is set on by default because the error could</span>
+<span class="c1"># contain templating data which would give that minion information it shouldn&#39;t</span>
+<span class="c1"># have, like a password! When set true the error message will only show:</span>
+<span class="c1">#   Rendering SLS &#39;my.sls&#39; failed. Please see master log for details.</span>
+<span class="c1">#pillar_safe_render_error: True</span>
+
+<span class="c1"># The pillar_source_merging_strategy option allows you to configure merging strategy</span>
+<span class="c1"># between different sources. It accepts four values: recurse, aggregate, overwrite,</span>
+<span class="c1"># or smart. Recurse will merge recursively mapping of data. Aggregate instructs</span>
+<span class="c1"># aggregation of elements between sources that use the #!yamlex renderer. Overwrite</span>
+<span class="c1"># will verwrite elements according the order in which they are processed. This is</span>
+<span class="c1"># behavior of the 2014.1 branch and earlier. Smart guesses the best strategy based</span>
+<span class="c1"># on the &quot;renderer&quot; setting and is the default value.</span>
+<span class="c1">#pillar_source_merging_strategy: smart</span>
+
+<span class="c1"># Recursively merge lists by aggregating them instead of replacing them.</span>
+<span class="c1">#pillar_merge_lists: False</span>
+
+<span class="c1"># A master can cache pillars locally to bypass the expense of having to render them</span>
+<span class="c1"># for each minion on every request. This feature should only be enabled in cases</span>
+<span class="c1"># where pillar rendering time is known to be unsatisfactory and any attendent security</span>
+<span class="c1"># concerns about storing pillars in a master cache have been addressed.</span>
+<span class="c1">#</span>
+<span class="c1"># When enabling this feature, be certain to read through the additional pillar_cache_*</span>
+<span class="c1"># configuration options to fully understand the tuneable parameters and their implications.</span>
+<span class="c1">#</span>
+<span class="c1">#pillar_cache: False</span>
+
+<span class="c1"># If and only if a master has set `pillar_cache: True`, the cache TTL controls the amount</span>
+<span class="c1"># of time, in seconds, before the cache is considered invalid by a master and a fresh</span>
+<span class="c1"># pillar is recompiled and stored.</span>
+<span class="c1">#</span>
+<span class="c1"># pillar_cache_ttl: 3600</span>
+
+<span class="c1"># If an only if a master has set `pillar_cache: True`, one of several storage providers</span>
+<span class="c1"># can be utililzed.</span>
+<span class="c1">#</span>
+<span class="c1"># `disk`: The default storage backend. This caches rendered pillars to the master cache.</span>
+<span class="c1">#         Rendered pillars are serialized and deserialized as msgpack structures for speed.</span>
+<span class="c1">#         Note that pillars are stored UNENCRYPTED. Ensure that the master cache</span>
+<span class="c1">#         has permissions set appropriately. (Sane defaults are provided.)</span>
+<span class="c1">#</span>
+<span class="c1">#`memory`: [EXPERIMENTAL] An optional backend for pillar caches which uses a pure-Python</span>
+<span class="c1">#          in-memory data structure for maximal performance. There are several cavaets,</span>
+<span class="c1">#          however. First, because each master worker contains its own in-memory cache,</span>
+<span class="c1">#          there is no guarantee of cache consistency between minion requests. This</span>
+<span class="c1">#          works best in situations where the pillar rarely if ever changes. Secondly,</span>
+<span class="c1">#          and perhaps more importantly, this means that unencrypted pillars will</span>
+<span class="c1">#          be accessible to any process which can examine the memory of the salt-master!</span>
+<span class="c1">#          This may represent a substantial security risk.</span>
+<span class="c1">#</span>
+<span class="c1">#pillar_cache_backend: disk</span>
+
+
+
+
+<span class="c1">#####          Syndic settings       #####</span>
+<span class="c1">##########################################</span>
+<span class="c1"># The Salt syndic is used to pass commands through a master from a higher</span>
+<span class="c1"># master. Using the syndic is simple. If this is a master that will have</span>
+<span class="c1"># syndic servers(s) below it, then set the &quot;order_masters&quot; setting to True.</span>
+<span class="c1">#</span>
+<span class="c1"># If this is a master that will be running a syndic daemon for passthrough, then</span>
+<span class="c1"># the &quot;syndic_master&quot; setting needs to be set to the location of the master server</span>
+<span class="c1"># to receive commands from.</span>
+
+<span class="c1"># Set the order_masters setting to True if this master will command lower</span>
+<span class="c1"># masters&#39; syndic interfaces.</span>
+<span class="c1">#order_masters: False</span>
+
+<span class="c1"># If this master will be running a salt syndic daemon, syndic_master tells</span>
+<span class="c1"># this master where to receive commands from.</span>
+<span class="c1">#syndic_master: masterofmaster</span>
+
+<span class="c1"># This is the &#39;ret_port&#39; of the MasterOfMaster:</span>
+<span class="c1">#syndic_master_port: 4506</span>
+
+<span class="c1"># PID file of the syndic daemon:</span>
+<span class="c1">#syndic_pidfile: /var/run/salt-syndic.pid</span>
+
+<span class="c1"># LOG file of the syndic daemon:</span>
+<span class="c1">#syndic_log_file: syndic.log</span>
+
+
+<span class="c1">#####      Peer Publish settings     #####</span>
+<span class="c1">##########################################</span>
+<span class="c1"># Salt minions can send commands to other minions, but only if the minion is</span>
+<span class="c1"># allowed to. By default &quot;Peer Publication&quot; is disabled, and when enabled it</span>
+<span class="c1"># is enabled for specific minions and specific commands. This allows secure</span>
+<span class="c1"># compartmentalization of commands based on individual minions.</span>
+
+<span class="c1"># The configuration uses regular expressions to match minions and then a list</span>
+<span class="c1"># of regular expressions to match functions. The following will allow the</span>
+<span class="c1"># minion authenticated as foo.example.com to execute functions from the test</span>
+<span class="c1"># and pkg modules.</span>
+<span class="c1">#peer:</span>
+<span class="c1">#  foo.example.com:</span>
+<span class="c1">#    - test.*</span>
+<span class="c1">#    - pkg.*</span>
+<span class="c1">#</span>
+<span class="c1"># This will allow all minions to execute all commands:</span>
+<span class="c1">#peer:</span>
+<span class="c1">#  .*:</span>
+<span class="c1">#    - .*</span>
+<span class="c1">#</span>
+<span class="c1"># This is not recommended, since it would allow anyone who gets root on any</span>
+<span class="c1"># single minion to instantly have root on all of the minions!</span>
+
+<span class="c1"># Minions can also be allowed to execute runners from the salt master.</span>
+<span class="c1"># Since executing a runner from the minion could be considered a security risk,</span>
+<span class="c1"># it needs to be enabled. This setting functions just like the peer setting</span>
+<span class="c1"># except that it opens up runners instead of module functions.</span>
+<span class="c1">#</span>
+<span class="c1"># All peer runner support is turned off by default and must be enabled before</span>
+<span class="c1"># using. This will enable all peer runners for all minions:</span>
+<span class="c1">#peer_run:</span>
+<span class="c1">#  .*:</span>
+<span class="c1">#    - .*</span>
+<span class="c1">#</span>
+<span class="c1"># To enable just the manage.up runner for the minion foo.example.com:</span>
+<span class="c1">#peer_run:</span>
+<span class="c1">#  foo.example.com:</span>
+<span class="c1">#    - manage.up</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#####         Mine settings     #####</span>
+<span class="c1">#####################################</span>
+<span class="c1"># Restrict mine.get access from minions. By default any minion has a full access</span>
+<span class="c1"># to get all mine data from master cache. In acl definion below, only pcre matches</span>
+<span class="c1"># are allowed.</span>
+<span class="c1"># mine_get:</span>
+<span class="c1">#   .*:</span>
+<span class="c1">#     - .*</span>
+<span class="c1">#</span>
+<span class="c1"># The example below enables minion foo.example.com to get &#39;network.interfaces&#39; mine</span>
+<span class="c1"># data only, minions web* to get all network.* and disk.* mine data and all other</span>
+<span class="c1"># minions won&#39;t get any mine data.</span>
+<span class="c1"># mine_get:</span>
+<span class="c1">#   foo.example.com:</span>
+<span class="c1">#     - network.interfaces</span>
+<span class="c1">#   web.*:</span>
+<span class="c1">#     - network.*</span>
+<span class="c1">#     - disk.*</span>
+
+
+<span class="c1">#####         Logging settings       #####</span>
+<span class="c1">##########################################</span>
+<span class="c1"># The location of the master log file</span>
+<span class="c1"># The master log can be sent to a regular file, local path name, or network</span>
+<span class="c1"># location. Remote logging works best when configured to use rsyslogd(8) (e.g.:</span>
+<span class="c1"># ``file:///dev/log``), with rsyslogd(8) configured for network logging. The URI</span>
+<span class="c1"># format is: &lt;file|udp|tcp&gt;://&lt;host|socketpath&gt;:&lt;port-if-required&gt;/&lt;log-facility&gt;</span>
+<span class="c1">#log_file: /var/log/salt/master</span>
+<span class="c1">#log_file: file:///dev/log</span>
+<span class="c1">#log_file: udp://loghost:10514</span>
+
+<span class="c1">#log_file: /var/log/salt/master</span>
+<span class="c1">#key_logfile: /var/log/salt/key</span>
+
+<span class="c1"># The level of messages to send to the console.</span>
+<span class="c1"># One of &#39;garbage&#39;, &#39;trace&#39;, &#39;debug&#39;, info&#39;, &#39;warning&#39;, &#39;error&#39;, &#39;critical&#39;.</span>
+<span class="c1">#</span>
+<span class="c1"># The following log levels are considered INSECURE and may log sensitive data:</span>
+<span class="c1"># [&#39;garbage&#39;, &#39;trace&#39;, &#39;debug&#39;]</span>
+<span class="c1">#</span>
+<span class="c1">#log_level: warning</span>
+
+<span class="c1"># The level of messages to send to the log file.</span>
+<span class="c1"># One of &#39;garbage&#39;, &#39;trace&#39;, &#39;debug&#39;, info&#39;, &#39;warning&#39;, &#39;error&#39;, &#39;critical&#39;.</span>
+<span class="c1"># If using &#39;log_granular_levels&#39; this must be set to the highest desired level.</span>
+<span class="c1">#log_level_logfile: warning</span>
+
+<span class="c1"># The date and time format used in log messages. Allowed date/time formatting</span>
+<span class="c1"># can be seen here: http://docs.python.org/library/time.html#time.strftime</span>
+<span class="c1">#log_datefmt: &#39;%H:%M:%S&#39;</span>
+<span class="c1">#log_datefmt_logfile: &#39;%Y-%m-%d %H:%M:%S&#39;</span>
+
+<span class="c1"># The format of the console logging messages. Allowed formatting options can</span>
+<span class="c1"># be seen here: http://docs.python.org/library/logging.html#logrecord-attributes</span>
+<span class="c1">#</span>
+<span class="c1"># Console log colors are specified by these additional formatters:</span>
+<span class="c1">#</span>
+<span class="c1"># %(colorlevel)s</span>
+<span class="c1"># %(colorname)s</span>
+<span class="c1"># %(colorprocess)s</span>
+<span class="c1"># %(colormsg)s</span>
+<span class="c1">#</span>
+<span class="c1"># Since it is desirable to include the surrounding brackets, &#39;[&#39; and &#39;]&#39;, in</span>
+<span class="c1"># the coloring of the messages, these color formatters also include padding as</span>
+<span class="c1"># well.  Color LogRecord attributes are only available for console logging.</span>
+<span class="c1">#</span>
+<span class="c1">#log_fmt_console: &#39;%(colorlevel)s %(colormsg)s&#39;</span>
+<span class="c1">#log_fmt_console: &#39;[%(levelname)-8s] %(message)s&#39;</span>
+<span class="c1">#</span>
+<span class="c1">#log_fmt_logfile: &#39;%(asctime)s,%(msecs)03.0f [%(name)-17s][%(levelname)-8s] %(message)s&#39;</span>
+
+<span class="c1"># This can be used to control logging levels more specificically.  This</span>
+<span class="c1"># example sets the main salt library at the &#39;warning&#39; level, but sets</span>
+<span class="c1"># &#39;salt.modules&#39; to log at the &#39;debug&#39; level:</span>
+<span class="c1">#   log_granular_levels:</span>
+<span class="c1">#     &#39;salt&#39;: &#39;warning&#39;</span>
+<span class="c1">#     &#39;salt.modules&#39;: &#39;debug&#39;</span>
+<span class="c1">#</span>
+<span class="c1">#log_granular_levels: {}</span>
+
+
+<span class="c1">#####         Node Groups           ######</span>
+<span class="c1">##########################################</span>
+<span class="c1"># Node groups allow for logical groupings of minion nodes. A group consists of</span>
+<span class="c1"># a group name and a compound target. Nodgroups can reference other nodegroups</span>
+<span class="c1"># with &#39;N@&#39; classifier. Ensure that you do not have circular references.</span>
+<span class="c1">#</span>
+<span class="c1">#nodegroups:</span>
+<span class="c1">#  group1: &#39;L@foo.domain.com,bar.domain.com,baz.domain.com or bl*.domain.com&#39;</span>
+<span class="c1">#  group2: &#39;G@os:Debian and foo.domain.com&#39;</span>
+<span class="c1">#  group3: &#39;G@os:Debian and N@group1&#39;</span>
+<span class="c1">#  group4:</span>
+<span class="c1">#    - &#39;G@foo:bar&#39;</span>
+<span class="c1">#    - &#39;or&#39;</span>
+<span class="c1">#    - &#39;G@foo:baz&#39;</span>
+
+
+<span class="c1">#####     Range Cluster settings     #####</span>
+<span class="c1">##########################################</span>
+<span class="c1"># The range server (and optional port) that serves your cluster information</span>
+<span class="c1"># https://github.com/ytoolshed/range/wiki/%22yamlfile%22-module-file-spec</span>
+<span class="c1">#</span>
+<span class="c1">#range_server: range:80</span>
+
+
+<span class="c1">#####  Windows Software Repo settings #####</span>
+<span class="c1">###########################################</span>
+<span class="c1"># Location of the repo on the master:</span>
+<span class="c1">#winrepo_dir_ng: &#39;/srv/salt/win/repo-ng&#39;</span>
+<span class="c1">#</span>
+<span class="c1"># List of git repositories to include with the local repo:</span>
+<span class="c1">#winrepo_remotes_ng:</span>
+<span class="c1">#  - &#39;https://github.com/saltstack/salt-winrepo-ng.git&#39;</span>
+
+
+<span class="c1">#####  Windows Software Repo settings - Pre 2015.8 #####</span>
+<span class="c1">########################################################</span>
+<span class="c1"># Legacy repo settings for pre-2015.8 Windows minions.</span>
+<span class="c1">#</span>
+<span class="c1"># Location of the repo on the master:</span>
+<span class="c1">#winrepo_dir: &#39;/srv/salt/win/repo&#39;</span>
+<span class="c1">#</span>
+<span class="c1"># Location of the master&#39;s repo cache file:</span>
+<span class="c1">#winrepo_mastercachefile: &#39;/srv/salt/win/repo/winrepo.p&#39;</span>
+<span class="c1">#</span>
+<span class="c1"># List of git repositories to include with the local repo:</span>
+<span class="c1">#winrepo_remotes:</span>
+<span class="c1">#  - &#39;https://github.com/saltstack/salt-winrepo.git&#39;</span>
+
+
+<span class="c1">#####      Returner settings          ######</span>
+<span class="c1">############################################</span>
+<span class="c1"># Which returner(s) will be used for minion&#39;s result:</span>
+<span class="c1">#return: mysql</span>
+
+
+<span class="c1">######    Miscellaneous  settings     ######</span>
+<span class="c1">############################################</span>
+<span class="c1"># Default match type for filtering events tags: startswith, endswith, find, regex, fnmatch</span>
+<span class="c1">#event_match_type: startswith</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="example-minion-configuration-file">
+<span id="configuration-examples-minion"></span><h2><a class="toc-backref" href="#id2">Example minion configuration file</a><a class="headerlink" href="#example-minion-configuration-file" title="永久链接至标题">¶</a></h2>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1">##### Primary configuration settings #####</span>
+<span class="c1">##########################################</span>
+<span class="c1"># This configuration file is used to manage the behavior of the Salt Minion.</span>
+<span class="c1"># With the exception of the location of the Salt Master Server, values that are</span>
+<span class="c1"># commented out but have an empty line after the comment are defaults that need</span>
+<span class="c1"># not be set in the config. If there is no blank line after the comment, the</span>
+<span class="c1"># value is presented as an example and is not the default.</span>
+
+<span class="c1"># Per default the minion will automatically include all config files</span>
+<span class="c1"># from minion.d/*.conf (minion.d is a directory in the same directory</span>
+<span class="c1"># as the main minion config file).</span>
+<span class="c1">#default_include: minion.d/*.conf</span>
+
+<span class="c1"># Set the location of the salt master server. If the master server cannot be</span>
+<span class="c1"># resolved, then the minion will fail to start.</span>
+<span class="c1">#master: salt</span>
+
+<span class="c1"># Set http proxy information for the minion when doing requests</span>
+<span class="c1">#proxy_host:</span>
+<span class="c1">#proxy_port:</span>
+<span class="c1">#proxy_username:</span>
+<span class="c1">#proxy_password:</span>
+
+<span class="c1"># If multiple masters are specified in the &#39;master&#39; setting, the default behavior</span>
+<span class="c1"># is to always try to connect to them in the order they are listed. If random_master is</span>
+<span class="c1"># set to True, the order will be randomized instead. This can be helpful in distributing</span>
+<span class="c1"># the load of many minions executing salt-call requests, for example, from a cron job.</span>
+<span class="c1"># If only one master is listed, this setting is ignored and a warning will be logged.</span>
+<span class="c1"># NOTE: If master_type is set to failover, use master_shuffle instead.</span>
+<span class="c1">#random_master: False</span>
+
+<span class="c1"># Use if master_type is set to failover.</span>
+<span class="c1">#master_shuffle: False</span>
+
+<span class="c1"># Minions can connect to multiple masters simultaneously (all masters</span>
+<span class="c1"># are &quot;hot&quot;), or can be configured to failover if a master becomes</span>
+<span class="c1"># unavailable.  Multiple hot masters are configured by setting this</span>
+<span class="c1"># value to &quot;str&quot;.  Failover masters can be requested by setting</span>
+<span class="c1"># to &quot;failover&quot;.  MAKE SURE TO SET master_alive_interval if you are</span>
+<span class="c1"># using failover.</span>
+<span class="c1"># master_type: str</span>
+
+<span class="c1"># Poll interval in seconds for checking if the master is still there.  Only</span>
+<span class="c1"># respected if master_type above is &quot;failover&quot;. To disable the interval entirely,</span>
+<span class="c1"># set the value to -1. (This may be necessary on machines which have high numbers</span>
+<span class="c1"># of TCP connections, such as load balancers.)</span>
+<span class="c1"># master_alive_interval: 30</span>
+
+<span class="c1"># Set whether the minion should connect to the master via IPv6:</span>
+<span class="c1">#ipv6: False</span>
+
+<span class="c1"># Set the number of seconds to wait before attempting to resolve</span>
+<span class="c1"># the master hostname if name resolution fails. Defaults to 30 seconds.</span>
+<span class="c1"># Set to zero if the minion should shutdown and not retry.</span>
+<span class="c1"># retry_dns: 30</span>
+
+<span class="c1"># Set the port used by the master reply and authentication server.</span>
+<span class="c1">#master_port: 4506</span>
+
+<span class="c1"># The user to run salt.</span>
+<span class="c1">#user: root</span>
+
+<span class="c1"># Setting sudo_user will cause salt to run all execution modules under an sudo</span>
+<span class="c1"># to the user given in sudo_user.  The user under which the salt minion process</span>
+<span class="c1"># itself runs will still be that provided in the user config above, but all</span>
+<span class="c1"># execution modules run by the minion will be rerouted through sudo.</span>
+<span class="c1">#sudo_user: saltdev</span>
+
+<span class="c1"># Specify the location of the daemon process ID file.</span>
+<span class="c1">#pidfile: /var/run/salt-minion.pid</span>
+
+<span class="c1"># The root directory prepended to these options: pki_dir, cachedir, log_file,</span>
+<span class="c1"># sock_dir, pidfile.</span>
+<span class="c1">#root_dir: /</span>
+
+<span class="c1"># The directory to store the pki information in</span>
+<span class="c1">#pki_dir: /etc/salt/pki/minion</span>
+
+<span class="c1"># Explicitly declare the id for this minion to use, if left commented the id</span>
+<span class="c1"># will be the hostname as returned by the python call: socket.getfqdn()</span>
+<span class="c1"># Since salt uses detached ids it is possible to run multiple minions on the</span>
+<span class="c1"># same machine but with different ids, this can be useful for salt compute</span>
+<span class="c1"># clusters.</span>
+<span class="c1">#id:</span>
+
+<span class="c1"># Append a domain to a hostname in the event that it does not exist.  This is</span>
+<span class="c1"># useful for systems where socket.getfqdn() does not actually result in a</span>
+<span class="c1"># FQDN (for instance, Solaris).</span>
+<span class="c1">#append_domain:</span>
+
+<span class="c1"># Custom static grains for this minion can be specified here and used in SLS</span>
+<span class="c1"># files just like all other grains. This example sets 4 custom grains, with</span>
+<span class="c1"># the &#39;roles&#39; grain having two values that can be matched against.</span>
+<span class="c1">#grains:</span>
+<span class="c1">#  roles:</span>
+<span class="c1">#    - webserver</span>
+<span class="c1">#    - memcache</span>
+<span class="c1">#  deployment: datacenter4</span>
+<span class="c1">#  cabinet: 13</span>
+<span class="c1">#  cab_u: 14-15</span>
+<span class="c1">#</span>
+<span class="c1"># Where cache data goes.</span>
+<span class="c1"># This data may contain sensitive data and should be protected accordingly.</span>
+<span class="c1">#cachedir: /var/cache/salt/minion</span>
+
+<span class="c1"># Verify and set permissions on configuration directories at startup.</span>
+<span class="c1">#verify_env: True</span>
+
+<span class="c1"># The minion can locally cache the return data from jobs sent to it, this</span>
+<span class="c1"># can be a good way to keep track of jobs the minion has executed</span>
+<span class="c1"># (on the minion side). By default this feature is disabled, to enable, set</span>
+<span class="c1"># cache_jobs to True.</span>
+<span class="c1">#cache_jobs: False</span>
+
+<span class="c1"># Set the directory used to hold unix sockets.</span>
+<span class="c1">#sock_dir: /var/run/salt/minion</span>
+
+<span class="c1"># Set the default outputter used by the salt-call command. The default is</span>
+<span class="c1"># &quot;nested&quot;.</span>
+<span class="c1">#output: nested</span>
+<span class="c1">#</span>
+<span class="c1"># By default output is colored. To disable colored output, set the color value</span>
+<span class="c1"># to False.</span>
+<span class="c1">#color: True</span>
+
+<span class="c1"># Do not strip off the colored output from nested results and state outputs</span>
+<span class="c1"># (true by default).</span>
+<span class="c1"># strip_colors: False</span>
+
+<span class="c1"># Backup files that are replaced by file.managed and file.recurse under</span>
+<span class="c1"># &#39;cachedir&#39;/file_backups relative to their original location and appended</span>
+<span class="c1"># with a timestamp. The only valid setting is &quot;minion&quot;. Disabled by default.</span>
+<span class="c1">#</span>
+<span class="c1"># Alternatively this can be specified for each file in state files:</span>
+<span class="c1"># /etc/ssh/sshd_config:</span>
+<span class="c1">#   file.managed:</span>
+<span class="c1">#     - source: salt://ssh/sshd_config</span>
+<span class="c1">#     - backup: minion</span>
+<span class="c1">#</span>
+<span class="c1">#backup_mode: minion</span>
+
+<span class="c1"># When waiting for a master to accept the minion&#39;s public key, salt will</span>
+<span class="c1"># continuously attempt to reconnect until successful. This is the time, in</span>
+<span class="c1"># seconds, between those reconnection attempts.</span>
+<span class="c1">#acceptance_wait_time: 10</span>
+
+<span class="c1"># If this is nonzero, the time between reconnection attempts will increase by</span>
+<span class="c1"># acceptance_wait_time seconds per iteration, up to this maximum. If this is</span>
+<span class="c1"># set to zero, the time between reconnection attempts will stay constant.</span>
+<span class="c1">#acceptance_wait_time_max: 0</span>
+
+<span class="c1"># If the master rejects the minion&#39;s public key, retry instead of exiting.</span>
+<span class="c1"># Rejected keys will be handled the same as waiting on acceptance.</span>
+<span class="c1">#rejected_retry: False</span>
+
+<span class="c1"># When the master key changes, the minion will try to re-auth itself to receive</span>
+<span class="c1"># the new master key. In larger environments this can cause a SYN flood on the</span>
+<span class="c1"># master because all minions try to re-auth immediately. To prevent this and</span>
+<span class="c1"># have a minion wait for a random amount of time, use this optional parameter.</span>
+<span class="c1"># The wait-time will be a random number of seconds between 0 and the defined value.</span>
+<span class="c1">#random_reauth_delay: 60</span>
+
+<span class="c1"># When waiting for a master to accept the minion&#39;s public key, salt will</span>
+<span class="c1"># continuously attempt to reconnect until successful. This is the timeout value,</span>
+<span class="c1"># in seconds, for each individual attempt. After this timeout expires, the minion</span>
+<span class="c1"># will wait for acceptance_wait_time seconds before trying again. Unless your master</span>
+<span class="c1"># is under unusually heavy load, this should be left at the default.</span>
+<span class="c1">#auth_timeout: 60</span>
+
+<span class="c1"># Number of consecutive SaltReqTimeoutError that are acceptable when trying to</span>
+<span class="c1"># authenticate.</span>
+<span class="c1">#auth_tries: 7</span>
+
+<span class="c1"># If authentication fails due to SaltReqTimeoutError during a ping_interval,</span>
+<span class="c1"># cause sub minion process to restart.</span>
+<span class="c1">#auth_safemode: False</span>
+
+<span class="c1"># Ping Master to ensure connection is alive (minutes).</span>
+<span class="c1">#ping_interval: 0</span>
+
+<span class="c1"># To auto recover minions if master changes IP address (DDNS)</span>
+<span class="c1">#    auth_tries: 10</span>
+<span class="c1">#    auth_safemode: False</span>
+<span class="c1">#    ping_interval: 90</span>
+<span class="c1">#</span>
+<span class="c1"># Minions won&#39;t know master is missing until a ping fails. After the ping fail,</span>
+<span class="c1"># the minion will attempt authentication and likely fails out and cause a restart.</span>
+<span class="c1"># When the minion restarts it will resolve the masters IP and attempt to reconnect.</span>
+
+<span class="c1"># If you don&#39;t have any problems with syn-floods, don&#39;t bother with the</span>
+<span class="c1"># three recon_* settings described below, just leave the defaults!</span>
+<span class="c1">#</span>
+<span class="c1"># The ZeroMQ pull-socket that binds to the masters publishing interface tries</span>
+<span class="c1"># to reconnect immediately, if the socket is disconnected (for example if</span>
+<span class="c1"># the master processes are restarted). In large setups this will have all</span>
+<span class="c1"># minions reconnect immediately which might flood the master (the ZeroMQ-default</span>
+<span class="c1"># is usually a 100ms delay). To prevent this, these three recon_* settings</span>
+<span class="c1"># can be used.</span>
+<span class="c1"># recon_default: the interval in milliseconds that the socket should wait before</span>
+<span class="c1">#                trying to reconnect to the master (1000ms = 1 second)</span>
+<span class="c1">#</span>
+<span class="c1"># recon_max: the maximum time a socket should wait. each interval the time to wait</span>
+<span class="c1">#            is calculated by doubling the previous time. if recon_max is reached,</span>
+<span class="c1">#            it starts again at recon_default. Short example:</span>
+<span class="c1">#</span>
+<span class="c1">#            reconnect 1: the socket will wait &#39;recon_default&#39; milliseconds</span>
+<span class="c1">#            reconnect 2: &#39;recon_default&#39; * 2</span>
+<span class="c1">#            reconnect 3: (&#39;recon_default&#39; * 2) * 2</span>
+<span class="c1">#            reconnect 4: value from previous interval * 2</span>
+<span class="c1">#            reconnect 5: value from previous interval * 2</span>
+<span class="c1">#            reconnect x: if value &gt;= recon_max, it starts again with recon_default</span>
+<span class="c1">#</span>
+<span class="c1"># recon_randomize: generate a random wait time on minion start. The wait time will</span>
+<span class="c1">#                  be a random value between recon_default and recon_default +</span>
+<span class="c1">#                  recon_max. Having all minions reconnect with the same recon_default</span>
+<span class="c1">#                  and recon_max value kind of defeats the purpose of being able to</span>
+<span class="c1">#                  change these settings. If all minions have the same values and your</span>
+<span class="c1">#                  setup is quite large (several thousand minions), they will still</span>
+<span class="c1">#                  flood the master. The desired behavior is to have timeframe within</span>
+<span class="c1">#                  all minions try to reconnect.</span>
+<span class="c1">#</span>
+<span class="c1"># Example on how to use these settings. The goal: have all minions reconnect within a</span>
+<span class="c1"># 60 second timeframe on a disconnect.</span>
+<span class="c1"># recon_default: 1000</span>
+<span class="c1"># recon_max: 59000</span>
+<span class="c1"># recon_randomize: True</span>
+<span class="c1">#</span>
+<span class="c1"># Each minion will have a randomized reconnect value between &#39;recon_default&#39;</span>
+<span class="c1"># and &#39;recon_default + recon_max&#39;, which in this example means between 1000ms</span>
+<span class="c1"># 60000ms (or between 1 and 60 seconds). The generated random-value will be</span>
+<span class="c1"># doubled after each attempt to reconnect. Lets say the generated random</span>
+<span class="c1"># value is 11 seconds (or 11000ms).</span>
+<span class="c1"># reconnect 1: wait 11 seconds</span>
+<span class="c1"># reconnect 2: wait 22 seconds</span>
+<span class="c1"># reconnect 3: wait 33 seconds</span>
+<span class="c1"># reconnect 4: wait 44 seconds</span>
+<span class="c1"># reconnect 5: wait 55 seconds</span>
+<span class="c1"># reconnect 6: wait time is bigger than 60 seconds (recon_default + recon_max)</span>
+<span class="c1"># reconnect 7: wait 11 seconds</span>
+<span class="c1"># reconnect 8: wait 22 seconds</span>
+<span class="c1"># reconnect 9: wait 33 seconds</span>
+<span class="c1"># reconnect x: etc.</span>
+<span class="c1">#</span>
+<span class="c1"># In a setup with ~6000 thousand hosts these settings would average the reconnects</span>
+<span class="c1"># to about 100 per second and all hosts would be reconnected within 60 seconds.</span>
+<span class="c1"># recon_default: 100</span>
+<span class="c1"># recon_max: 5000</span>
+<span class="c1"># recon_randomize: False</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># The loop_interval sets how long in seconds the minion will wait between</span>
+<span class="c1"># evaluating the scheduler and running cleanup tasks. This defaults to a</span>
+<span class="c1"># sane 60 seconds, but if the minion scheduler needs to be evaluated more</span>
+<span class="c1"># often lower this value</span>
+<span class="c1">#loop_interval: 60</span>
+
+<span class="c1"># The grains can be merged, instead of overridden, using this option.</span>
+<span class="c1"># This allows custom grains to defined different subvalues of a dictionary</span>
+<span class="c1"># grain. By default this feature is disabled, to enable set grains_deep_merge</span>
+<span class="c1"># to ``True``.</span>
+<span class="c1">#grains_deep_merge: False</span>
+
+<span class="c1"># The grains_refresh_every setting allows for a minion to periodically check</span>
+<span class="c1"># its grains to see if they have changed and, if so, to inform the master</span>
+<span class="c1"># of the new grains. This operation is moderately expensive, therefore</span>
+<span class="c1"># care should be taken not to set this value too low.</span>
+<span class="c1">#</span>
+<span class="c1"># Note: This value is expressed in __minutes__!</span>
+<span class="c1">#</span>
+<span class="c1"># A value of 10 minutes is a reasonable default.</span>
+<span class="c1">#</span>
+<span class="c1"># If the value is set to zero, this check is disabled.</span>
+<span class="c1">#grains_refresh_every: 1</span>
+
+<span class="c1"># Cache grains on the minion. Default is False.</span>
+<span class="c1">#grains_cache: False</span>
+
+<span class="c1"># Cache rendered pillar data on the minion. Default is False.</span>
+<span class="c1"># This may cause &#39;cachedir&#39;/pillar to contain sensitive data that should be</span>
+<span class="c1"># protected accordingly.</span>
+<span class="c1">#minion_pillar_cache: False</span>
+
+<span class="c1"># Grains cache expiration, in seconds. If the cache file is older than this</span>
+<span class="c1"># number of seconds then the grains cache will be dumped and fully re-populated</span>
+<span class="c1"># with fresh data. Defaults to 5 minutes. Will have no effect if &#39;grains_cache&#39;</span>
+<span class="c1"># is not enabled.</span>
+<span class="c1"># grains_cache_expiration: 300</span>
+
+<span class="c1"># Windows platforms lack posix IPC and must rely on slower TCP based inter-</span>
+<span class="c1"># process communications. Set ipc_mode to &#39;tcp&#39; on such systems</span>
+<span class="c1">#ipc_mode: ipc</span>
+
+<span class="c1"># Overwrite the default tcp ports used by the minion when in tcp mode</span>
+<span class="c1">#tcp_pub_port: 4510</span>
+<span class="c1">#tcp_pull_port: 4511</span>
+
+<span class="c1"># Passing very large events can cause the minion to consume large amounts of</span>
+<span class="c1"># memory. This value tunes the maximum size of a message allowed onto the</span>
+<span class="c1"># minion event bus. The value is expressed in bytes.</span>
+<span class="c1">#max_event_size: 1048576</span>
+
+<span class="c1"># To detect failed master(s) and fire events on connect/disconnect, set</span>
+<span class="c1"># master_alive_interval to the number of seconds to poll the masters for</span>
+<span class="c1"># connection events.</span>
+<span class="c1">#</span>
+<span class="c1">#master_alive_interval: 30</span>
+
+<span class="c1"># The minion can include configuration from other files. To enable this,</span>
+<span class="c1"># pass a list of paths to this option. The paths can be either relative or</span>
+<span class="c1"># absolute; if relative, they are considered to be relative to the directory</span>
+<span class="c1"># the main minion configuration file lives in (this file). Paths can make use</span>
+<span class="c1"># of shell-style globbing. If no files are matched by a path passed to this</span>
+<span class="c1"># option then the minion will log a warning message.</span>
+<span class="c1">#</span>
+<span class="c1"># Include a config file from some other path:</span>
+<span class="c1"># include: /etc/salt/extra_config</span>
+<span class="c1">#</span>
+<span class="c1"># Include config from several files and directories:</span>
+<span class="c1">#include:</span>
+<span class="c1">#  - /etc/salt/extra_config</span>
+<span class="c1">#  - /etc/roles/webserver</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#####   Minion module management     #####</span>
+<span class="c1">##########################################</span>
+<span class="c1"># Disable specific modules. This allows the admin to limit the level of</span>
+<span class="c1"># access the master has to the minion.</span>
+<span class="c1">#disable_modules: [cmdmod,test]</span>
+<span class="c1">#disable_returners: []</span>
+<span class="c1">#</span>
+<span class="c1"># Modules can be loaded from arbitrary paths. This enables the easy deployment</span>
+<span class="c1"># of third party modules. Modules for returners and minions can be loaded.</span>
+<span class="c1"># Specify a list of extra directories to search for minion modules and</span>
+<span class="c1"># returners. These paths must be fully qualified!</span>
+<span class="c1">#module_dirs: []</span>
+<span class="c1">#returner_dirs: []</span>
+<span class="c1">#states_dirs: []</span>
+<span class="c1">#render_dirs: []</span>
+<span class="c1">#utils_dirs: []</span>
+<span class="c1">#</span>
+<span class="c1"># A module provider can be statically overwritten or extended for the minion</span>
+<span class="c1"># via the providers option, in this case the default module will be</span>
+<span class="c1"># overwritten by the specified module. In this example the pkg module will</span>
+<span class="c1"># be provided by the yumpkg5 module instead of the system default.</span>
+<span class="c1">#providers:</span>
+<span class="c1">#  pkg: yumpkg5</span>
+<span class="c1">#</span>
+<span class="c1"># Enable Cython modules searching and loading. (Default: False)</span>
+<span class="c1">#cython_enable: False</span>
+<span class="c1">#</span>
+<span class="c1"># Specify a max size (in bytes) for modules on import. This feature is currently</span>
+<span class="c1"># only supported on *nix operating systems and requires psutil.</span>
+<span class="c1"># modules_max_memory: -1</span>
+
+
+<span class="c1">#####    State Management Settings    #####</span>
+<span class="c1">###########################################</span>
+<span class="c1"># The state management system executes all of the state templates on the minion</span>
+<span class="c1"># to enable more granular control of system state management. The type of</span>
+<span class="c1"># template and serialization used for state management needs to be configured</span>
+<span class="c1"># on the minion, the default renderer is yaml_jinja. This is a yaml file</span>
+<span class="c1"># rendered from a jinja template, the available options are:</span>
+<span class="c1"># yaml_jinja</span>
+<span class="c1"># yaml_mako</span>
+<span class="c1"># yaml_wempy</span>
+<span class="c1"># json_jinja</span>
+<span class="c1"># json_mako</span>
+<span class="c1"># json_wempy</span>
+<span class="c1">#</span>
+<span class="c1">#renderer: yaml_jinja</span>
+<span class="c1">#</span>
+<span class="c1"># The failhard option tells the minions to stop immediately after the first</span>
+<span class="c1"># failure detected in the state execution. Defaults to False.</span>
+<span class="c1">#failhard: False</span>
+<span class="c1">#</span>
+<span class="c1"># Reload the modules prior to a highstate run.</span>
+<span class="c1">#autoload_dynamic_modules: True</span>
+<span class="c1">#</span>
+<span class="c1"># clean_dynamic_modules keeps the dynamic modules on the minion in sync with</span>
+<span class="c1"># the dynamic modules on the master, this means that if a dynamic module is</span>
+<span class="c1"># not on the master it will be deleted from the minion. By default, this is</span>
+<span class="c1"># enabled and can be disabled by changing this value to False.</span>
+<span class="c1">#clean_dynamic_modules: True</span>
+<span class="c1">#</span>
+<span class="c1"># Normally, the minion is not isolated to any single environment on the master</span>
+<span class="c1"># when running states, but the environment can be isolated on the minion side</span>
+<span class="c1"># by statically setting it. Remember that the recommended way to manage</span>
+<span class="c1"># environments is to isolate via the top file.</span>
+<span class="c1">#environment: None</span>
+<span class="c1">#</span>
+<span class="c1"># Isolates the pillar environment on the minion side. This functions the same</span>
+<span class="c1"># as the environment setting, but for pillar instead of states.</span>
+<span class="c1">#pillarenv: None</span>
+<span class="c1">#</span>
+<span class="c1"># If using the local file directory, then the state top file name needs to be</span>
+<span class="c1"># defined, by default this is top.sls.</span>
+<span class="c1">#state_top: top.sls</span>
+<span class="c1">#</span>
+<span class="c1"># Run states when the minion daemon starts. To enable, set startup_states to:</span>
+<span class="c1"># &#39;highstate&#39; -- Execute state.highstate</span>
+<span class="c1"># &#39;sls&#39; -- Read in the sls_list option and execute the named sls files</span>
+<span class="c1"># &#39;top&#39; -- Read top_file option and execute based on that file on the Master</span>
+<span class="c1">#startup_states: &#39;&#39;</span>
+<span class="c1">#</span>
+<span class="c1"># List of states to run when the minion starts up if startup_states is &#39;sls&#39;:</span>
+<span class="c1">#sls_list:</span>
+<span class="c1">#  - edit.vim</span>
+<span class="c1">#  - hyper</span>
+<span class="c1">#</span>
+<span class="c1"># Top file to execute if startup_states is &#39;top&#39;:</span>
+<span class="c1">#top_file: &#39;&#39;</span>
+
+<span class="c1"># Automatically aggregate all states that have support for mod_aggregate by</span>
+<span class="c1"># setting to True. Or pass a list of state module names to automatically</span>
+<span class="c1"># aggregate just those types.</span>
+<span class="c1">#</span>
+<span class="c1"># state_aggregate:</span>
+<span class="c1">#   - pkg</span>
+<span class="c1">#</span>
+<span class="c1">#state_aggregate: False</span>
+
+<span class="c1">#####     File Directory Settings    #####</span>
+<span class="c1">##########################################</span>
+<span class="c1"># The Salt Minion can redirect all file server operations to a local directory,</span>
+<span class="c1"># this allows for the same state tree that is on the master to be used if</span>
+<span class="c1"># copied completely onto the minion. This is a literal copy of the settings on</span>
+<span class="c1"># the master but used to reference a local directory on the minion.</span>
+
+<span class="c1"># Set the file client. The client defaults to looking on the master server for</span>
+<span class="c1"># files, but can be directed to look at the local file directory setting</span>
+<span class="c1"># defined below by setting it to &quot;local&quot;. Setting a local file_client runs the</span>
+<span class="c1"># minion in masterless mode.</span>
+<span class="c1">#file_client: remote</span>
+
+<span class="c1"># The file directory works on environments passed to the minion, each environment</span>
+<span class="c1"># can have multiple root directories, the subdirectories in the multiple file</span>
+<span class="c1"># roots cannot match, otherwise the downloaded files will not be able to be</span>
+<span class="c1"># reliably ensured. A base environment is required to house the top file.</span>
+<span class="c1"># Example:</span>
+<span class="c1"># file_roots:</span>
+<span class="c1">#   base:</span>
+<span class="c1">#     - /srv/salt/</span>
+<span class="c1">#   dev:</span>
+<span class="c1">#     - /srv/salt/dev/services</span>
+<span class="c1">#     - /srv/salt/dev/states</span>
+<span class="c1">#   prod:</span>
+<span class="c1">#     - /srv/salt/prod/services</span>
+<span class="c1">#     - /srv/salt/prod/states</span>
+<span class="c1">#</span>
+<span class="c1">#file_roots:</span>
+<span class="c1">#  base:</span>
+<span class="c1">#    - /srv/salt</span>
+
+<span class="c1"># By default, the Salt fileserver recurses fully into all defined environments</span>
+<span class="c1"># to attempt to find files. To limit this behavior so that the fileserver only</span>
+<span class="c1"># traverses directories with SLS files and special Salt directories like _modules,</span>
+<span class="c1"># enable the option below. This might be useful for installations where a file root</span>
+<span class="c1"># has a very large number of files and performance is negatively impacted. Default</span>
+<span class="c1"># is False.</span>
+<span class="c1">#fileserver_limit_traversal: False</span>
+
+<span class="c1"># The hash_type is the hash to use when discovering the hash of a file in</span>
+<span class="c1"># the local fileserver. The default is md5, but sha1, sha224, sha256, sha384</span>
+<span class="c1"># and sha512 are also supported.</span>
+<span class="c1">#</span>
+<span class="c1"># Warning: Prior to changing this value, the minion should be stopped and all</span>
+<span class="c1"># Salt caches should be cleared.</span>
+<span class="c1">#hash_type: md5</span>
+
+<span class="c1"># The Salt pillar is searched for locally if file_client is set to local. If</span>
+<span class="c1"># this is the case, and pillar data is defined, then the pillar_roots need to</span>
+<span class="c1"># also be configured on the minion:</span>
+<span class="c1">#pillar_roots:</span>
+<span class="c1">#  base:</span>
+<span class="c1">#    - /srv/pillar</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">######        Security settings       #####</span>
+<span class="c1">###########################################</span>
+<span class="c1"># Enable &quot;open mode&quot;, this mode still maintains encryption, but turns off</span>
+<span class="c1"># authentication, this is only intended for highly secure environments or for</span>
+<span class="c1"># the situation where your keys end up in a bad state. If you run in open mode</span>
+<span class="c1"># you do so at your own risk!</span>
+<span class="c1">#open_mode: False</span>
+
+<span class="c1"># Enable permissive access to the salt keys.  This allows you to run the</span>
+<span class="c1"># master or minion as root, but have a non-root group be given access to</span>
+<span class="c1"># your pki_dir.  To make the access explicit, root must belong to the group</span>
+<span class="c1"># you&#39;ve given access to. This is potentially quite insecure.</span>
+<span class="c1">#permissive_pki_access: False</span>
+
+<span class="c1"># The state_verbose and state_output settings can be used to change the way</span>
+<span class="c1"># state system data is printed to the display. By default all data is printed.</span>
+<span class="c1"># The state_verbose setting can be set to True or False, when set to False</span>
+<span class="c1"># all data that has a result of True and no changes will be suppressed.</span>
+<span class="c1">#state_verbose: True</span>
+
+<span class="c1"># The state_output setting changes if the output is the full multi line</span>
+<span class="c1"># output for each changed state if set to &#39;full&#39;, but if set to &#39;terse&#39;</span>
+<span class="c1"># the output will be shortened to a single line.</span>
+<span class="c1">#state_output: full</span>
+
+<span class="c1"># The state_output_diff setting changes whether or not the output from</span>
+<span class="c1"># successful states is returned. Useful when even the terse output of these</span>
+<span class="c1"># states is cluttering the logs. Set it to True to ignore them.</span>
+<span class="c1">#state_output_diff: False</span>
+
+<span class="c1"># The state_output_profile setting changes whether profile information</span>
+<span class="c1"># will be shown for each state run.</span>
+<span class="c1">#state_output_profile: True</span>
+
+<span class="c1"># Fingerprint of the master public key to validate the identity of your Salt master</span>
+<span class="c1"># before the initial key exchange. The master fingerprint can be found by running</span>
+<span class="c1"># &quot;salt-key -F master&quot; on the Salt master.</span>
+<span class="c1">#master_finger: &#39;&#39;</span>
+
+
+<span class="c1">######         Thread settings        #####</span>
+<span class="c1">###########################################</span>
+<span class="c1"># Disable multiprocessing support, by default when a minion receives a</span>
+<span class="c1"># publication a new process is spawned and the command is executed therein.</span>
+<span class="c1">#multiprocessing: True</span>
+
+
+<span class="c1">#####         Logging settings       #####</span>
+<span class="c1">##########################################</span>
+<span class="c1"># The location of the minion log file</span>
+<span class="c1"># The minion log can be sent to a regular file, local path name, or network</span>
+<span class="c1"># location. Remote logging works best when configured to use rsyslogd(8) (e.g.:</span>
+<span class="c1"># ``file:///dev/log``), with rsyslogd(8) configured for network logging. The URI</span>
+<span class="c1"># format is: &lt;file|udp|tcp&gt;://&lt;host|socketpath&gt;:&lt;port-if-required&gt;/&lt;log-facility&gt;</span>
+<span class="c1">#log_file: /var/log/salt/minion</span>
+<span class="c1">#log_file: file:///dev/log</span>
+<span class="c1">#log_file: udp://loghost:10514</span>
+<span class="c1">#</span>
+<span class="c1">#log_file: /var/log/salt/minion</span>
+<span class="c1">#key_logfile: /var/log/salt/key</span>
+
+<span class="c1"># The level of messages to send to the console.</span>
+<span class="c1"># One of &#39;garbage&#39;, &#39;trace&#39;, &#39;debug&#39;, info&#39;, &#39;warning&#39;, &#39;error&#39;, &#39;critical&#39;.</span>
+<span class="c1">#</span>
+<span class="c1"># The following log levels are considered INSECURE and may log sensitive data:</span>
+<span class="c1"># [&#39;garbage&#39;, &#39;trace&#39;, &#39;debug&#39;]</span>
+<span class="c1">#</span>
+<span class="c1"># Default: &#39;warning&#39;</span>
+<span class="c1">#log_level: warning</span>
+
+<span class="c1"># The level of messages to send to the log file.</span>
+<span class="c1"># One of &#39;garbage&#39;, &#39;trace&#39;, &#39;debug&#39;, info&#39;, &#39;warning&#39;, &#39;error&#39;, &#39;critical&#39;.</span>
+<span class="c1"># If using &#39;log_granular_levels&#39; this must be set to the highest desired level.</span>
+<span class="c1"># Default: &#39;warning&#39;</span>
+<span class="c1">#log_level_logfile:</span>
+
+<span class="c1"># The date and time format used in log messages. Allowed date/time formatting</span>
+<span class="c1"># can be seen here: http://docs.python.org/library/time.html#time.strftime</span>
+<span class="c1">#log_datefmt: &#39;%H:%M:%S&#39;</span>
+<span class="c1">#log_datefmt_logfile: &#39;%Y-%m-%d %H:%M:%S&#39;</span>
+
+<span class="c1"># The format of the console logging messages. Allowed formatting options can</span>
+<span class="c1"># be seen here: http://docs.python.org/library/logging.html#logrecord-attributes</span>
+<span class="c1">#</span>
+<span class="c1"># Console log colors are specified by these additional formatters:</span>
+<span class="c1">#</span>
+<span class="c1"># %(colorlevel)s</span>
+<span class="c1"># %(colorname)s</span>
+<span class="c1"># %(colorprocess)s</span>
+<span class="c1"># %(colormsg)s</span>
+<span class="c1">#</span>
+<span class="c1"># Since it is desirable to include the surrounding brackets, &#39;[&#39; and &#39;]&#39;, in</span>
+<span class="c1"># the coloring of the messages, these color formatters also include padding as</span>
+<span class="c1"># well.  Color LogRecord attributes are only available for console logging.</span>
+<span class="c1">#</span>
+<span class="c1">#log_fmt_console: &#39;%(colorlevel)s %(colormsg)s&#39;</span>
+<span class="c1">#log_fmt_console: &#39;[%(levelname)-8s] %(message)s&#39;</span>
+<span class="c1">#</span>
+<span class="c1">#log_fmt_logfile: &#39;%(asctime)s,%(msecs)03.0f [%(name)-17s][%(levelname)-8s] %(message)s&#39;</span>
+
+<span class="c1"># This can be used to control logging levels more specificically.  This</span>
+<span class="c1"># example sets the main salt library at the &#39;warning&#39; level, but sets</span>
+<span class="c1"># &#39;salt.modules&#39; to log at the &#39;debug&#39; level:</span>
+<span class="c1">#   log_granular_levels:</span>
+<span class="c1">#     &#39;salt&#39;: &#39;warning&#39;</span>
+<span class="c1">#     &#39;salt.modules&#39;: &#39;debug&#39;</span>
+<span class="c1">#</span>
+<span class="c1">#log_granular_levels: {}</span>
+
+<span class="c1"># To diagnose issues with minions disconnecting or missing returns, ZeroMQ</span>
+<span class="c1"># supports the use of monitor sockets to log connection events. This</span>
+<span class="c1"># feature requires ZeroMQ 4.0 or higher.</span>
+<span class="c1">#</span>
+<span class="c1"># To enable ZeroMQ monitor sockets, set &#39;zmq_monitor&#39; to &#39;True&#39; and log at a</span>
+<span class="c1"># debug level or higher.</span>
+<span class="c1">#</span>
+<span class="c1"># A sample log event is as follows:</span>
+<span class="c1">#</span>
+<span class="c1"># [DEBUG   ] ZeroMQ event: {&#39;endpoint&#39;: &#39;tcp://127.0.0.1:4505&#39;, &#39;event&#39;: 512,</span>
+<span class="c1"># &#39;value&#39;: 27, &#39;description&#39;: &#39;EVENT_DISCONNECTED&#39;}</span>
+<span class="c1">#</span>
+<span class="c1"># All events logged will include the string &#39;ZeroMQ event&#39;. A connection event</span>
+<span class="c1"># should be logged as the minion starts up and initially connects to the</span>
+<span class="c1"># master. If not, check for debug log level and that the necessary version of</span>
+<span class="c1"># ZeroMQ is installed.</span>
+<span class="c1">#</span>
+<span class="c1">#zmq_monitor: False</span>
+
+<span class="c1">######      Module configuration      #####</span>
+<span class="c1">###########################################</span>
+<span class="c1"># Salt allows for modules to be passed arbitrary configuration data, any data</span>
+<span class="c1"># passed here in valid yaml format will be passed on to the salt minion modules</span>
+<span class="c1"># for use. It is STRONGLY recommended that a naming convention be used in which</span>
+<span class="c1"># the module name is followed by a . and then the value. Also, all top level</span>
+<span class="c1"># data must be applied via the yaml dict construct, some examples:</span>
+<span class="c1">#</span>
+<span class="c1"># You can specify that all modules should run in test mode:</span>
+<span class="c1">#test: True</span>
+<span class="c1">#</span>
+<span class="c1"># A simple value for the test module:</span>
+<span class="c1">#test.foo: foo</span>
+<span class="c1">#</span>
+<span class="c1"># A list for the test module:</span>
+<span class="c1">#test.bar: [baz,quo]</span>
+<span class="c1">#</span>
+<span class="c1"># A dict for the test module:</span>
+<span class="c1">#test.baz: {spam: sausage, cheese: bread}</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">######      Update settings          ######</span>
+<span class="c1">###########################################</span>
+<span class="c1"># Using the features in Esky, a salt minion can both run as a frozen app and</span>
+<span class="c1"># be updated on the fly. These options control how the update process</span>
+<span class="c1"># (saltutil.update()) behaves.</span>
+<span class="c1">#</span>
+<span class="c1"># The url for finding and downloading updates. Disabled by default.</span>
+<span class="c1">#update_url: False</span>
+<span class="c1">#</span>
+<span class="c1"># The list of services to restart after a successful update. Empty by default.</span>
+<span class="c1">#update_restart_services: []</span>
+
+
+<span class="c1">######      Keepalive settings        ######</span>
+<span class="c1">############################################</span>
+<span class="c1"># ZeroMQ now includes support for configuring SO_KEEPALIVE if supported by</span>
+<span class="c1"># the OS. If connections between the minion and the master pass through</span>
+<span class="c1"># a state tracking device such as a firewall or VPN gateway, there is</span>
+<span class="c1"># the risk that it could tear down the connection the master and minion</span>
+<span class="c1"># without informing either party that their connection has been taken away.</span>
+<span class="c1"># Enabling TCP Keepalives prevents this from happening.</span>
+
+<span class="c1"># Overall state of TCP Keepalives, enable (1 or True), disable (0 or False)</span>
+<span class="c1"># or leave to the OS defaults (-1), on Linux, typically disabled. Default True, enabled.</span>
+<span class="c1">#tcp_keepalive: True</span>
+
+<span class="c1"># How long before the first keepalive should be sent in seconds. Default 300</span>
+<span class="c1"># to send the first keepalive after 5 minutes, OS default (-1) is typically 7200 seconds</span>
+<span class="c1"># on Linux see /proc/sys/net/ipv4/tcp_keepalive_time.</span>
+<span class="c1">#tcp_keepalive_idle: 300</span>
+
+<span class="c1"># How many lost probes are needed to consider the connection lost. Default -1</span>
+<span class="c1"># to use OS defaults, typically 9 on Linux, see /proc/sys/net/ipv4/tcp_keepalive_probes.</span>
+<span class="c1">#tcp_keepalive_cnt: -1</span>
+
+<span class="c1"># How often, in seconds, to send keepalives after the first one. Default -1 to</span>
+<span class="c1"># use OS defaults, typically 75 seconds on Linux, see</span>
+<span class="c1"># /proc/sys/net/ipv4/tcp_keepalive_intvl.</span>
+<span class="c1">#tcp_keepalive_intvl: -1</span>
+
+
+<span class="c1">######   Windows Software settings    ######</span>
+<span class="c1">############################################</span>
+<span class="c1"># Location of the repository cache file on the master:</span>
+<span class="c1">#win_repo_cachefile: &#39;salt://win/repo/winrepo.p&#39;</span>
+
+
+<span class="c1">######      Returner  settings        ######</span>
+<span class="c1">############################################</span>
+<span class="c1"># Which returner(s) will be used for minion&#39;s result:</span>
+<span class="c1">#return: mysql</span>
+
+
+<span class="c1">######    Miscellaneous  settings     ######</span>
+<span class="c1">############################################</span>
+<span class="c1"># Default match type for filtering events tags: startswith, endswith, find, regex, fnmatch</span>
+<span class="c1">#event_match_type: startswith</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="minion.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="配置Salt Minion" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../../topics/blackout/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Minion Blackout Configuration" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../topics/configuration/index.html">Configuring Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="master.html">配置Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="minion.html">配置Salt Minion</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Configuration file examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#example-master-configuration-file">Example master configuration file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example-minion-configuration-file">Example minion configuration file</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/blackout/index.html">Minion Blackout Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/eauth/access_control.html">Access Control System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/jobs/index.html">Job Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/jobs/job_cache.html">Managing the Job Cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/jobs/external_cache.html">Storing Job Results in an External System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logging/index.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../file_server/index.html">Salt文件服务器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/gitfs.html">Git Fileserver Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/minionfs.html">MinionFS Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/spm/index.html">Salt Package Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/sdb/index.html">Storing Data in Other Databases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nonroot.html">以非特权用户身份运行Salt Master/Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/cron.html">使用cron运行Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/hardening.html">Hardening Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../security/index.html">Security disclosure policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/transports/index.html">Salt Transport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/master_tops/index.html">Master Tops系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../returners/index.html">返回器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../renderers/index.html">Renderers渲染器</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

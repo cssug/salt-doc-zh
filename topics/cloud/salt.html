@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Using the Salt Modules for Cloud</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt云端" href="index.html">
+        <link rel="next" title="Feature Matrix" href="features.html">
+        <link rel="prev" title="OS Support for Cloud VMs" href="deploy.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="deploy.html" title="OS Support for Cloud VMs">上一页</a>
+            
+        </li>
+        <li>
+            <a href="features.html" title="Feature Matrix">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="using-the-salt-modules-for-cloud">
+<h1>Using the Salt Modules for Cloud<a class="headerlink" href="#using-the-salt-modules-for-cloud" title="永久链接至标题">¶</a></h1>
+<p>In addition to the <code class="docutils literal"><span class="pre">salt-cloud</span></code> command, Salt Cloud can be called from Salt,
+in a variety of different ways. Most users will be interested in either the
+execution module or the state module, but it is also possible to call Salt Cloud
+as a runner.</p>
+<p>Because the actual work will be performed on a remote minion, the normal Salt
+Cloud configuration must exist on any target minion that needs to execute a Salt
+Cloud command.  Because Salt Cloud now supports breaking out configuration into
+individual files, the configuration is easily managed using Salt's own
+<code class="docutils literal"><span class="pre">file.managed</span></code> state function. For example, the following directories allow
+this configuration to be managed easily:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/salt/cloud.providers.d/</span>
+<span class="l l-Scalar l-Scalar-Plain">/etc/salt/cloud.profiles.d/</span>
+</pre></div>
+</div>
+<div class="section" id="minion-keys">
+<h2>Minion Keys<a class="headerlink" href="#minion-keys" title="永久链接至标题">¶</a></h2>
+<p>Keep in mind that when creating minions, Salt Cloud will create public and
+private minion keys, upload them to the minion, and place the public key on the
+machine that created the minion. It will <em>not</em> attempt to place any public
+minion keys on the master, unless the minion which was used to create the
+instance is also the Salt Master. This is because granting arbitrary minions
+access to modify keys on the master is a serious security risk, and must be
+avoided.</p>
+</div>
+<div class="section" id="execution-module">
+<h2>Execution Module<a class="headerlink" href="#execution-module" title="永久链接至标题">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">cloud</span></code> module is available to use from the command line. At the moment,
+almost every standard Salt Cloud feature is available to use. The following
+commands are available:</p>
+<div class="section" id="list-images">
+<h3>list_images<a class="headerlink" href="#list-images" title="永久链接至标题">¶</a></h3>
+<p>This command is designed to show images that are available to be used to create
+an instance using Salt Cloud. In general they are used in the creation of
+profiles, but may also be used to create an instance directly (see below).
+Listing images requires a provider to be configured, and specified:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion cloud.list_images my-cloud-provider
+</pre></div>
+</div>
+</div>
+<div class="section" id="list-sizes">
+<h3>list_sizes<a class="headerlink" href="#list-sizes" title="永久链接至标题">¶</a></h3>
+<p>This command is designed to show sizes that are available to be used to create
+an instance using Salt Cloud. In general they are used in the creation of
+profiles, but may also be used to create an instance directly (see below). This
+command is not available for all cloud providers; see the provider-specific
+documentation for details. Listing sizes requires a provider to be configured,
+and specified:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion cloud.list_sizes my-cloud-provider
+</pre></div>
+</div>
+</div>
+<div class="section" id="list-locations">
+<h3>list_locations<a class="headerlink" href="#list-locations" title="永久链接至标题">¶</a></h3>
+<p>This command is designed to show locations that are available to be used to
+create an instance using Salt Cloud. In general they are used in the creation of
+profiles, but may also be used to create an instance directly (see below). This
+command is not available for all cloud providers; see the provider-specific
+documentation for details. Listing locations requires a provider to be
+configured, and specified:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion cloud.list_locations my-cloud-provider
+</pre></div>
+</div>
+</div>
+<div class="section" id="query">
+<h3>query<a class="headerlink" href="#query" title="永久链接至标题">¶</a></h3>
+<p>This command is used to query all configured cloud providers, and display all
+instances associated with those accounts. By default, it will run a standard
+query, returning the following fields:</p>
+<dl class="docutils">
+<dt>“id”</dt>
+<dd>The name or ID of the instance, as used by the cloud provider.</dd>
+<dt><code class="docutils literal"><span class="pre">image</span></code></dt>
+<dd>The disk image that was used to create this instance.</dd>
+<dt><code class="docutils literal"><span class="pre">private_ips</span></code></dt>
+<dd>Any public IP addresses currently assigned to this instance.</dd>
+<dt><code class="docutils literal"><span class="pre">public_ips</span></code></dt>
+<dd>Any private IP addresses currently assigned to this instance.</dd>
+<dt><code class="docutils literal"><span class="pre">size</span></code></dt>
+<dd>The size of the instance; can refer to RAM, CPU(s), disk space, etc.,
+depending on the cloud provider.</dd>
+<dt><code class="docutils literal"><span class="pre">state</span></code></dt>
+<dd>The running state of the instance; for example, <code class="docutils literal"><span class="pre">running</span></code>, <code class="docutils literal"><span class="pre">stopped</span></code>,
+<code class="docutils literal"><span class="pre">pending</span></code>, etc. This state is dependent upon the provider.</dd>
+</dl>
+<p>This command may also be used to perform a full query or a select query, as
+described below. The following usages are available:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion cloud.query
+salt myminion cloud.query list_nodes
+salt myminion cloud.query list_nodes_full
+</pre></div>
+</div>
+</div>
+<div class="section" id="full-query">
+<h3>full_query<a class="headerlink" href="#full-query" title="永久链接至标题">¶</a></h3>
+<p>This command behaves like the <code class="docutils literal"><span class="pre">query</span></code> command, but lists all information
+concerning each instance as provided by the cloud provider, in addition to the
+fields returned by the <code class="docutils literal"><span class="pre">query</span></code> command.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion cloud.full_query
+</pre></div>
+</div>
+</div>
+<div class="section" id="select-query">
+<h3>select_query<a class="headerlink" href="#select-query" title="永久链接至标题">¶</a></h3>
+<p>This command behaves like the <code class="docutils literal"><span class="pre">query</span></code> command, but only returned select
+fields as defined in the <code class="docutils literal"><span class="pre">/etc/salt/cloud</span></code> configuration file. A sample
+configuration for this section of the file might look like:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">query.selection</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">id</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">key_name</span>
+</pre></div>
+</div>
+<p>This configuration would only return the <code class="docutils literal"><span class="pre">id</span></code> and <code class="docutils literal"><span class="pre">key_name</span></code> fields, for
+those cloud providers that support those two fields. This would be called using
+the following command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion cloud.select_query
+</pre></div>
+</div>
+</div>
+<div class="section" id="profile">
+<h3>profile<a class="headerlink" href="#profile" title="永久链接至标题">¶</a></h3>
+<p>This command is used to create an instance using a profile that is configured
+on the target minion. Please note that the profile must be configured before
+this command can be used with it.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion cloud.profile ec2-centos64-x64 my-new-instance
+</pre></div>
+</div>
+<p>Please note that the execution module does <em>not</em> run in parallel mode. Using
+multiple minions to create instances can effectively perform parallel instance
+creation.</p>
+</div>
+<div class="section" id="create">
+<h3>create<a class="headerlink" href="#create" title="永久链接至标题">¶</a></h3>
+<p>This command is similar to the <code class="docutils literal"><span class="pre">profile</span></code> command, in that it is used to create
+a new instance. However, it does not require a profile to be pre-configured.
+Instead, all of the options that are normally configured in a profile are passed
+directly to Salt Cloud to create the instance:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion cloud.create my-ec2-config my-new-instance <span class="se">\</span>
+    <span class="nv">image</span><span class="o">=</span>ami-1624987f <span class="nv">size</span><span class="o">=</span><span class="s1">&#39;t1.micro&#39;</span> <span class="nv">ssh_username</span><span class="o">=</span>ec2-user <span class="se">\</span>
+    <span class="nv">securitygroup</span><span class="o">=</span>default <span class="nv">delvol_on_destroy</span><span class="o">=</span>True
+</pre></div>
+</div>
+<p>Please note that the execution module does <em>not</em> run in parallel mode. Using
+multiple minions to create instances can effectively perform parallel instance
+creation.</p>
+</div>
+<div class="section" id="destroy">
+<h3>destroy<a class="headerlink" href="#destroy" title="永久链接至标题">¶</a></h3>
+<p>This command is used to destroy an instance or instances. This command will
+search all configured providers and remove any instance(s) which matches the
+name(s) passed in here. The results of this command are <em>non-reversable</em> and
+should be used with caution.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion cloud.destroy myinstance
+salt myminion cloud.destroy myinstance1,myinstance2
+</pre></div>
+</div>
+</div>
+<div class="section" id="action">
+<h3>action<a class="headerlink" href="#action" title="永久链接至标题">¶</a></h3>
+<p>This command implements both the <code class="docutils literal"><span class="pre">action</span></code> and the <code class="docutils literal"><span class="pre">function</span></code> commands
+used in the standard <code class="docutils literal"><span class="pre">salt-cloud</span></code> command. If one of the standard <code class="docutils literal"><span class="pre">action</span></code>
+commands is used, an instance name must be provided. If one of the standard
+<code class="docutils literal"><span class="pre">function</span></code> commands is used, a provider configuration must be named.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion cloud.action start <span class="nv">instance</span><span class="o">=</span>myinstance
+salt myminion cloud.action show_image <span class="nv">provider</span><span class="o">=</span>my-ec2-config <span class="se">\</span>
+    <span class="nv">image</span><span class="o">=</span>ami-1624987f
+</pre></div>
+</div>
+<p>The actions available are largely dependent upon the module for the specific
+cloud provider. The following actions are available for all cloud providers:</p>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">list_nodes</span></code></dt>
+<dd>This is a direct call to the <code class="docutils literal"><span class="pre">query</span></code> function as described above, but is
+only performed against a single cloud provider. A provider configuration
+must be included.</dd>
+<dt><code class="docutils literal"><span class="pre">list_nodes_select</span></code></dt>
+<dd>This is a direct call to the <code class="docutils literal"><span class="pre">full_query</span></code> function as described above, but
+is only performed against a single cloud provider. A provider configuration
+must be included.</dd>
+<dt><code class="docutils literal"><span class="pre">list_nodes_select</span></code></dt>
+<dd>This is a direct call to the <code class="docutils literal"><span class="pre">select_query</span></code> function as described above,
+but is only performed against a single cloud provider.  A provider
+configuration must be included.</dd>
+<dt><code class="docutils literal"><span class="pre">show_instance</span></code></dt>
+<dd>This is a thin wrapper around <code class="docutils literal"><span class="pre">list_nodes</span></code>, which returns the full
+information about a single instance. An instance name must be provided.</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="state-module">
+<h2>State Module<a class="headerlink" href="#state-module" title="永久链接至标题">¶</a></h2>
+<p>A subset of the execution module is available through the <code class="docutils literal"><span class="pre">cloud</span></code> state
+module. Not all functions are currently included, because there is currently
+insufficient code for them to perform statefully. For example, a command to
+create an instance may be issued with a series of options, but those options
+cannot currently be statefully managed. Additional states to manage these
+options will be released at a later time.</p>
+<div class="section" id="cloud-present">
+<h3>cloud.present<a class="headerlink" href="#cloud-present" title="永久链接至标题">¶</a></h3>
+<p>This state will ensure that an instance is present inside a particular cloud
+provider. Any option that is normally specified in the <code class="docutils literal"><span class="pre">cloud.create</span></code>
+execution module and function may be declared here, but only the actual
+presence of the instance will be managed statefully.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-instance-name</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cloud.present</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-ec2-config</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ami-1624987f</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="s">&#39;t1.micro&#39;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ssh_username</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ec2-user</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">securitygroup</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">delvol_on_destroy</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cloud-profile">
+<h3>cloud.profile<a class="headerlink" href="#cloud-profile" title="永久链接至标题">¶</a></h3>
+<p>This state will ensure that an instance is present inside a particular cloud
+provider. This function calls the <code class="docutils literal"><span class="pre">cloud.profile</span></code> execution module and
+function, but as with <code class="docutils literal"><span class="pre">cloud.present</span></code>, only the actual presence of the
+instance will be managed statefully.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-instance-name</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cloud.profile</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">profile</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ec2-centos64-x64</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cloud-absent">
+<h3>cloud.absent<a class="headerlink" href="#cloud-absent" title="永久链接至标题">¶</a></h3>
+<p>This state will ensure that an instance (identified by name) does not exist in
+any of the cloud providers configured on the target minion. Please note that
+this state is <em>non-reversable</em> and may be considered especially destructive when
+issued as a cloud state.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-instance-name</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cloud.absent</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="runner-module">
+<h2>Runner Module<a class="headerlink" href="#runner-module" title="永久链接至标题">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">cloud</span></code> runner module is executed on the master, and performs actions
+using the configuration and Salt modules on the master itself. This means that
+any public minion keys will also be properly accepted by the master.</p>
+<p>Using the functions in the runner module is no different than using those in
+the execution module, outside of the behavior described in the above paragraph.
+The following functions are available inside the runner:</p>
+<ul class="simple">
+<li>list_images</li>
+<li>list_sizes</li>
+<li>list_locations</li>
+<li>query</li>
+<li>full_query</li>
+<li>select_query</li>
+<li>profile</li>
+<li>destroy</li>
+<li>action</li>
+</ul>
+<p>Outside of the standard usage of <code class="docutils literal"><span class="pre">salt-run</span></code> itself, commands are executed as
+usual:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run cloud.profile ec2-centos64-x86_64 my-instance-name
+</pre></div>
+</div>
+</div>
+<div class="section" id="cloudclient">
+<h2>CloudClient<a class="headerlink" href="#cloudclient" title="永久链接至标题">¶</a></h2>
+<p>The execution, state, and runner modules ultimately all use the CloudClient
+library that ships with Salt. To use the CloudClient library locally (either on
+the master or a minion), create a client object and issue a command against it:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">salt.cloud</span>
+<span class="kn">import</span> <span class="nn">pprint</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">cloud</span><span class="o">.</span><span class="n">CloudClient</span><span class="p">(</span><span class="s1">&#39;/etc/salt/cloud&#39;</span><span class="p">)</span>
+<span class="n">nodes</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">query</span><span class="p">()</span>
+<span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reactor">
+<h2>Reactor<a class="headerlink" href="#reactor" title="永久链接至标题">¶</a></h2>
+<p>Examples of using the reactor with Salt Cloud are available in the
+<a class="reference external" href="https://github.com/saltstack-formulas/ec2-autoscale-reactor">ec2-autoscale-reactor</a> and
+<a class="reference external" href="https://github.com/saltstack-formulas/salt-cloud-reactor">salt-cloud-reactor</a> formulas.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="deploy.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="OS Support for Cloud VMs" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="features.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Feature Matrix" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt云端</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">入门指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud">Using Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#core-configuration">Cloud核心配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#windows-configuration">Windows Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#cloud-provider-specifics">Cloud Provider Specifics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#miscellaneous-options">Miscellaneous Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#troubleshooting-steps">Troubleshooting Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#extending-salt-cloud">Extending Salt Cloud</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#using-salt-cloud-from-salt">Using Salt Cloud from Salt</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="">Using Salt Cloud from Salt</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#minion-keys">Minion Keys</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#execution-module">Execution Module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#list-images">list_images</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#list-sizes">list_sizes</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#list-locations">list_locations</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#query">query</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#full-query">full_query</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#select-query">select_query</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#profile">profile</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#create">create</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#destroy">destroy</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#action">action</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#state-module">State Module</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#cloud-present">cloud.present</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#cloud-profile">cloud.profile</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#cloud-absent">cloud.absent</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#runner-module">Runner Module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cloudclient">CloudClient</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reactor">Reactor</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#feature-comparison">Feature Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorials">Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>netapi modules</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="APIs" href="../api.html">
+        <link rel="next" title="HTTP Modules" href="../tutorials/http.html">
+        <link rel="prev" title="Python client API" href="../../ref/clients/index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../ref/clients/index.html" title="Python client API">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../tutorials/http.html" title="HTTP Modules">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="netapi-modules">
+<span id="netapi-introduction"></span><h1><code class="docutils literal"><span class="pre">netapi</span></code> modules<a class="headerlink" href="#netapi-modules" title="永久链接至标题">¶</a></h1>
+<div class="section" id="introduction-to-netapi-modules">
+<h2>Introduction to netapi modules<a class="headerlink" href="#introduction-to-netapi-modules" title="永久链接至标题">¶</a></h2>
+<p>netapi modules provide API-centric access to Salt. Usually externally-facing
+services such as REST or WebSockets, XMPP, XMLRPC, etc.</p>
+<p>In general netapi modules bind to a port and start a service. They are
+purposefully open-ended. A single module can be configured to run as well as
+multiple modules simultaneously.</p>
+<p>netapi modules are enabled by adding configuration to your Salt Master config
+file and then starting the <strong class="command">salt-api</strong> daemon. Check the docs for each
+module to see external requirements and configuration settings.</p>
+<p>Communication with Salt and Salt satellite projects is done using Salt's own
+<a class="reference internal" href="../../ref/clients/index.html#python-api"><span>Python API</span></a>. A list of available client interfaces is below.</p>
+<div class="admonition-salt-api admonition">
+<p class="first admonition-title">salt-api</p>
+<p class="last">Prior to Salt's 2014.7.0 release, netapi modules lived in the separate sister
+projected <code class="docutils literal"><span class="pre">salt-api</span></code>. That project has been merged into the main Salt
+project.</p>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">参见</p>
+<p class="last"><a class="reference internal" href="../../ref/netapi/all/index.html#all-netapi-modules"><span>The full list of netapi modules</span></a></p>
+</div>
+</div>
+<div class="section" id="client-interfaces">
+<h2>Client interfaces<a class="headerlink" href="#client-interfaces" title="永久链接至标题">¶</a></h2>
+<p>Salt's client interfaces expose executing functions by crafting a dictionary of
+values that are mapped to function arguments. This allows calling functions
+simply by creating a data structure. (And this is exactly how much of Salt's
+own internals work!)</p>
+<dl class="class">
+<dt id="salt.netapi.NetapiClient">
+<em class="property">class </em><code class="descclassname">salt.netapi.</code><code class="descname">NetapiClient</code><span class="sig-paren">(</span><em>opts</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.netapi.NetapiClient" title="永久链接至目标">¶</a></dt>
+<dd><p>Provide a uniform method of accessing the various client interfaces in Salt
+in the form of low-data data structures. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">NetapiClient</span><span class="p">(</span><span class="n">__opts__</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lowstate</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;client&#39;</span><span class="p">:</span> <span class="s1">&#39;local&#39;</span><span class="p">,</span> <span class="s1">&#39;tgt&#39;</span><span class="p">:</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;fun&#39;</span><span class="p">:</span> <span class="s1">&#39;test.ping&#39;</span><span class="p">,</span> <span class="s1">&#39;arg&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">lowstate</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="salt.netapi.NetapiClient.local">
+<code class="descname">local</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.netapi.NetapiClient.local" title="永久链接至目标">¶</a></dt>
+<dd><p>Run <span class="xref std std-ref">execution modules</span> synchronously</p>
+<p>See <a class="reference internal" href="../../ref/clients/index.html#salt.client.LocalClient.cmd" title="salt.client.LocalClient.cmd"><code class="xref py py-meth docutils literal"><span class="pre">salt.client.LocalClient.cmd()</span></code></a> for all available
+parameters.</p>
+<p>Sends a command from the master to the targeted minions. This is the
+same interface that Salt's own CLI uses. Note the <code class="docutils literal"><span class="pre">arg</span></code> and <code class="docutils literal"><span class="pre">kwarg</span></code>
+parameters are sent down to the minion(s) and the given function,
+<code class="docutils literal"><span class="pre">fun</span></code>, is called with those parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">返回:</th><td class="field-body">Returns the result from the execution module</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.netapi.NetapiClient.local_async">
+<code class="descname">local_async</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.netapi.NetapiClient.local_async" title="永久链接至目标">¶</a></dt>
+<dd><p>Run <span class="xref std std-ref">execution modules</span> asynchronously</p>
+<p>Wraps <a class="reference internal" href="../../ref/clients/index.html#salt.client.LocalClient.run_job" title="salt.client.LocalClient.run_job"><code class="xref py py-meth docutils literal"><span class="pre">salt.client.LocalClient.run_job()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">返回:</th><td class="field-body">job ID</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.netapi.NetapiClient.local_batch">
+<code class="descname">local_batch</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.netapi.NetapiClient.local_batch" title="永久链接至目标">¶</a></dt>
+<dd><p>Run <span class="xref std std-ref">execution modules</span> against batches of minions</p>
+<p>Wraps <a class="reference internal" href="../../ref/clients/index.html#salt.client.LocalClient.cmd_batch" title="salt.client.LocalClient.cmd_batch"><code class="xref py py-meth docutils literal"><span class="pre">salt.client.LocalClient.cmd_batch()</span></code></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">返回:</th><td class="field-body">Returns the result from the exeuction module for each batch of
+returns</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.netapi.NetapiClient.local_subset">
+<code class="descname">local_subset</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.netapi.NetapiClient.local_subset" title="永久链接至目标">¶</a></dt>
+<dd><p>Run <span class="xref std std-ref">execution modules</span> against subsets of minions</p>
+<div class="versionadded">
+<p><span class="versionmodified">2016.3.0 新版功能.</span></p>
+</div>
+<p>Wraps <a class="reference internal" href="../../ref/clients/index.html#salt.client.LocalClient.cmd_subset" title="salt.client.LocalClient.cmd_subset"><code class="xref py py-meth docutils literal"><span class="pre">salt.client.LocalClient.cmd_subset()</span></code></a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.netapi.NetapiClient.runner">
+<code class="descname">runner</code><span class="sig-paren">(</span><em>fun</em>, <em>timeout=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.netapi.NetapiClient.runner" title="永久链接至目标">¶</a></dt>
+<dd><p>Run <cite>runner modules &lt;all-salt.runners&gt;</cite> synchronously</p>
+<p>Wraps <a class="reference internal" href="../../ref/clients/index.html#salt.runner.RunnerClient.cmd_sync" title="salt.runner.RunnerClient.cmd_sync"><code class="xref py py-meth docutils literal"><span class="pre">salt.runner.RunnerClient.cmd_sync()</span></code></a>.</p>
+<p>Note that runner functions must be called using keyword arguments.
+Positional arguments are not supported.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">返回:</th><td class="field-body">Returns the result from the runner module</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.netapi.NetapiClient.runner_async">
+<code class="descname">runner_async</code><span class="sig-paren">(</span><em>fun</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.netapi.NetapiClient.runner_async" title="永久链接至目标">¶</a></dt>
+<dd><p>Run <cite>runner modules &lt;all-salt.runners&gt;</cite> asynchronously</p>
+<p>Wraps <a class="reference internal" href="../../ref/clients/index.html#salt.runner.RunnerClient.cmd_async" title="salt.runner.RunnerClient.cmd_async"><code class="xref py py-meth docutils literal"><span class="pre">salt.runner.RunnerClient.cmd_async()</span></code></a>.</p>
+<p>Note that runner functions must be called using keyword arguments.
+Positional arguments are not supported.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">返回:</th><td class="field-body">event data and a job ID for the executed function.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.netapi.NetapiClient.ssh">
+<code class="descname">ssh</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.netapi.NetapiClient.ssh" title="永久链接至目标">¶</a></dt>
+<dd><p>Run salt-ssh commands synchronously</p>
+<p>Wraps <code class="xref py py-meth docutils literal"><span class="pre">salt.client.ssh.client.SSHClient.cmd_sync()</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">返回:</th><td class="field-body">Returns the result from the salt-ssh command</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.netapi.NetapiClient.ssh_async">
+<code class="descname">ssh_async</code><span class="sig-paren">(</span><em>fun</em>, <em>timeout=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.netapi.NetapiClient.ssh_async" title="永久链接至目标">¶</a></dt>
+<dd><p>Run salt-ssh commands asynchronously</p>
+<p>Wraps <code class="xref py py-meth docutils literal"><span class="pre">salt.client.ssh.client.SSHClient.cmd_async()</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">返回:</th><td class="field-body">Returns the JID to check for results on</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.netapi.NetapiClient.wheel">
+<code class="descname">wheel</code><span class="sig-paren">(</span><em>fun</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.netapi.NetapiClient.wheel" title="永久链接至目标">¶</a></dt>
+<dd><p>Run <a class="reference internal" href="../../ref/wheel/all/index.html#all-salt-wheel"><span>wheel modules</span></a> synchronously</p>
+<p>Wraps <code class="xref py py-meth docutils literal"><span class="pre">salt.wheel.WheelClient.master_call()</span></code>.</p>
+<p>Note that wheel functions must be called using keyword arguments.
+Positional arguments are not supported.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">返回:</th><td class="field-body">Returns the result from the wheel module</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.netapi.NetapiClient.wheel_async">
+<code class="descname">wheel_async</code><span class="sig-paren">(</span><em>fun</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.netapi.NetapiClient.wheel_async" title="永久链接至目标">¶</a></dt>
+<dd><p>Run <a class="reference internal" href="../../ref/wheel/all/index.html#all-salt-wheel"><span>wheel modules</span></a> asynchronously</p>
+<p>Wraps <code class="xref py py-meth docutils literal"><span class="pre">salt.wheel.WheelClient.master_call()</span></code>.</p>
+<p>Note that wheel functions must be called using keyword arguments.
+Positional arguments are not supported.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">返回:</th><td class="field-body">Returns the result from the wheel module</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/http.html">HTTP Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/http.html#the-salt-utils-http-library">The <code class="docutils literal"><span class="pre">salt.utils.http</span></code> Library</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/http.html#configuring-libraries">Configuring Libraries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/http.html#salt-utils-http-query"><code class="docutils literal"><span class="pre">salt.utils.http.query()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/http.html#return-data">Return Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/http.html#writing-return-data-to-files">Writing Return Data to Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/http.html#ssl-verification">SSL Verification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/http.html#ca-bundles">CA Bundles</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../tutorials/http.html#updating-ca-bundles">Updating CA Bundles</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/http.html#test-mode">Test Mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/http.html#execution-module">Execution Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/http.html#runner-module">Runner Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/http.html#state-module">State Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="writing.html">Writing netapi modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="writing.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing.html#the-virtual-function">The <code class="docutils literal"><span class="pre">__virtual__</span></code> function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing.html#the-start-function">The <code class="docutils literal"><span class="pre">start</span></code> function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing.html#multiple-instances">Multiple instances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing.html#inline-documentation">Inline documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing.html#loader-magic-methods">Loader “magic” methods</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../../ref/clients/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Python client API" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../tutorials/http.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="HTTP Modules" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">APIs</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../ref/clients/index.html">Python client API</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href=""><code class="docutils literal"><span class="pre">netapi</span></code> modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#introduction-to-netapi-modules">Introduction to netapi modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#client-interfaces">Client interfaces</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../tutorials/http.html">HTTP Modules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="writing.html">Writing netapi modules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

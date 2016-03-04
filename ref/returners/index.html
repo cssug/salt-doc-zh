@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>返回器</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Configuring Salt" href="../../topics/configuration/index.html">
+        <link rel="next" title="所有内置的返回接收器模块列表" href="all/index.html">
+        <link rel="prev" title="Master Tops系统" href="../../topics/master_tops/index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../topics/master_tops/index.html" title="Master Tops系统">上一页</a>
+            
+        </li>
+        <li>
+            <a href="all/index.html" title="所有内置的返回接收器模块列表">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="returners">
+<h1>返回器<a class="headerlink" href="#returners" title="永久链接至标题">¶</a></h1>
+<p>By default the return values of the commands sent to the Salt minions are
+returned to the Salt master, however anything at all can be done with the results
+data.</p>
+<p>By using a Salt returner, results data can be redirected to external data-stores
+for analysis and archival.</p>
+<p>Returners pull their configuration values from the Salt minions. Returners are only
+configured once, which is generally at load time.</p>
+<p>The returner interface allows the return data to be sent to any system that
+can receive data. This means that return data can be sent to a Redis server,
+a MongoDB server, a MySQL server, or any system.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参见</p>
+<p class="last"><a class="reference internal" href="all/index.html#all-salt-returners"><span>Full list of builtin returners</span></a></p>
+</div>
+<div class="section" id="using-returners">
+<h2>Using Returners<a class="headerlink" href="#using-returners" title="永久链接至标题">¶</a></h2>
+<p>All Salt commands will return the command data back to the master. Specifying
+returners will ensure that the data is _also_ sent to the specified returner
+interfaces.</p>
+<p>Specifying what returners to use is done when the command is invoked:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> test.ping --return redis_return
+</pre></div>
+</div>
+<p>This command will ensure that the redis_return returner is used.</p>
+<p>It is also possible to specify multiple returners:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> test.ping --return mongo_return,redis_return,cassandra_return
+</pre></div>
+</div>
+<p>In this scenario all three returners will be called and the data from the
+test.ping command will be sent out to the three named returners.</p>
+</div>
+<div class="section" id="writing-a-returner">
+<h2>Writing a Returner<a class="headerlink" href="#writing-a-returner" title="永久链接至标题">¶</a></h2>
+<p>A returner is a Python module containing at minimum a <code class="docutils literal"><span class="pre">returner</span></code> function.
+Other optional functions can be included to add support for
+<span class="xref std std-ref">master_job_cache</span>, <span class="xref std std-ref">external_job_cache</span>, and <a class="reference internal" href="#event-returners">Event Returners</a>.</p>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">returner</span></code></dt>
+<dd>The <code class="docutils literal"><span class="pre">returner</span></code> function must accept a single argument. The argument
+contains return data from the called minion function. If the minion
+function <code class="docutils literal"><span class="pre">test.ping</span></code> is called, the value of the argument will be a
+dictionary. Run the following command from a Salt master to get a sample
+of the dictionary:</dd>
+</dl>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-call --local --metadata test.ping --out<span class="o">=</span>pprint
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">redis</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="k">def</span> <span class="nf">returner</span><span class="p">(</span><span class="n">ret</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return information to a redis server</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Get a redis connection</span>
+    <span class="n">serv</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span>
+                <span class="n">host</span><span class="o">=</span><span class="s1">&#39;redis-serv.example.com&#39;</span><span class="p">,</span>
+                <span class="n">port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span>
+                <span class="n">db</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">)</span>
+    <span class="n">serv</span><span class="o">.</span><span class="n">sadd</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(id)s</span><span class="s2">:jobs&quot;</span> <span class="o">%</span> <span class="n">ret</span><span class="p">,</span> <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;jid&#39;</span><span class="p">])</span>
+    <span class="n">serv</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%(jid)s</span><span class="s2">:</span><span class="si">%(id)s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">ret</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;return&#39;</span><span class="p">]))</span>
+    <span class="n">serv</span><span class="o">.</span><span class="n">sadd</span><span class="p">(</span><span class="s1">&#39;jobs&#39;</span><span class="p">,</span> <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;jid&#39;</span><span class="p">])</span>
+    <span class="n">serv</span><span class="o">.</span><span class="n">sadd</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;jid&#39;</span><span class="p">],</span> <span class="n">ret</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>The above example of a returner set to send the data to a Redis server
+serializes the data as JSON and sets it in redis.</p>
+<div class="section" id="master-job-cache-support">
+<h3>Master Job Cache Support<a class="headerlink" href="#master-job-cache-support" title="永久链接至标题">¶</a></h3>
+<p><span class="xref std std-ref">master_job_cache</span>, <span class="xref std std-ref">external_job_cache</span>, and <a class="reference internal" href="#event-returners">Event Returners</a>.
+Salt's <span class="xref std std-ref">master_job_cache</span> allows returners to be used as a pluggable
+replacement for the <a class="reference internal" href="../../topics/jobs/job_cache.html#default-job-cache"><span>Default Job Cache</span></a>. In order to do so, a returner
+must implement the following functions:</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The code samples contained in this section were taken from the cassandra_cql
+returner.</p>
+</div>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">prep_jid</span></code></dt>
+<dd><p class="first">Ensures that job ids (jid) don't collide, unless passed_jid is provided.</p>
+<p class="last"><code class="docutils literal"><span class="pre">nochache</span></code> is an optional boolean that indicates if return data
+should be cached. <code class="docutils literal"><span class="pre">passed_jid</span></code> is a caller provided jid which should be
+returned unconditionally.</p>
+</dd>
+</dl>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">prep_jid</span><span class="p">(</span><span class="n">nocache</span><span class="p">,</span> <span class="n">passed_jid</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Do any work necessary to prepare a JID, including sending a custom id</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">passed_jid</span> <span class="k">if</span> <span class="n">passed_jid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">jid</span><span class="o">.</span><span class="n">gen_jid</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">save_load</span></code></dt>
+<dd>Save job information.  The <code class="docutils literal"><span class="pre">jid</span></code> is generated by <code class="docutils literal"><span class="pre">prep_jid</span></code> and should
+be considered a unique identifier for the job. The jid, for example, could
+be used as the primary/unique key in a database. The <code class="docutils literal"><span class="pre">load</span></code> is what is
+returned to a Salt master by a minion. The following code example stores
+the load as a JSON string in the salt.jids table.</dd>
+</dl>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">save_load</span><span class="p">(</span><span class="n">jid</span><span class="p">,</span> <span class="n">load</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Save the load to the specified jid id</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;INSERT INTO salt.jids (</span>
+<span class="s1">                 jid, load</span>
+<span class="s1">               ) VALUES (</span>
+<span class="s1">                 &#39;{0}&#39;, &#39;{1}&#39;</span>
+<span class="s1">               );&#39;&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">jid</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">load</span><span class="p">))</span>
+
+    <span class="c1"># cassandra_cql.cql_query may raise a CommandExecutionError</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">__salt__</span><span class="p">[</span><span class="s1">&#39;cassandra_cql.cql_query&#39;</span><span class="p">](</span><span class="n">query</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">CommandExecutionError</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Could not save load in jids table.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;Unexpected error while inserting into</span>
+<span class="s1">         jids: {0}&#39;&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span>
+        <span class="k">raise</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">get_load</span></code></dt>
+<dd>must accept a job id (jid) and return the job load stored by <code class="docutils literal"><span class="pre">save_load</span></code>,
+or an empty dictionary when not found.</dd>
+</dl>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_load</span><span class="p">(</span><span class="n">jid</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return the load data that marks a specified jid</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;SELECT load FROM salt.jids WHERE jid = &#39;{0}&#39;;&#39;&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">jid</span><span class="p">)</span>
+
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># cassandra_cql.cql_query may raise a CommandExecutionError</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">__salt__</span><span class="p">[</span><span class="s1">&#39;cassandra_cql.cql_query&#39;</span><span class="p">](</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">load</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;load&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">load</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">load</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">CommandExecutionError</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;Could not get load from jids table.&#39;</span><span class="p">)</span>
+        <span class="k">raise</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;Unexpected error while getting load from</span>
+<span class="s1">         jids: {0}&#39;&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span>
+        <span class="k">raise</span>
+
+    <span class="k">return</span> <span class="n">ret</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="external-job-cache-support">
+<h3>External Job Cache Support<a class="headerlink" href="#external-job-cache-support" title="永久链接至标题">¶</a></h3>
+<p>Salt's <span class="xref std std-ref">external_job_cache</span> extends the <span class="xref std std-ref">master_job_cache</span>. External
+Job Cache support requires the following functions in addition to what is
+required for Master Job Cache support:</p>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">get_jid</span></code></dt>
+<dd>Return a dictionary containing the information (load) returned by each
+minion when the specified job id was executed.</dd>
+</dl>
+<p>Sample:</p>
+<div class="highlight-JSON"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;master_minion&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;fun_args&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="nt">&quot;jid&quot;</span><span class="p">:</span> <span class="s2">&quot;20150330121011408195&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;return&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nt">&quot;retcode&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="nt">&quot;cmd&quot;</span><span class="p">:</span> <span class="s2">&quot;_return&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;_stamp&quot;</span><span class="p">:</span> <span class="s2">&quot;2015-03-30T12:10:12.708663&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;fun&quot;</span><span class="p">:</span> <span class="s2">&quot;test.ping&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span><span class="p">:</span> <span class="s2">&quot;master_minion&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">get_fun</span></code></dt>
+<dd>Return a dictionary of minions that called a given Salt function as their
+last function call.</dd>
+</dl>
+<p>Sample:</p>
+<div class="highlight-JSON"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;minion1&quot;</span><span class="p">:</span> <span class="s2">&quot;test.ping&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;minion3&quot;</span><span class="p">:</span> <span class="s2">&quot;test.ping&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;minion2&quot;</span><span class="p">:</span> <span class="s2">&quot;test.ping&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">get_jids</span></code></dt>
+<dd>Return a list of all job ids.</dd>
+</dl>
+<p>Sample:</p>
+<div class="highlight-JSON"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;20150330121011408195&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;20150330195922139916&quot;</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">get_minions</span></code></dt>
+<dd>Returns a list of minions</dd>
+</dl>
+<p>Sample:</p>
+<div class="highlight-JSON"><div class="highlight"><pre><span></span><span class="p">{</span>
+     <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="p">[</span>
+         <span class="s2">&quot;minion3&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;minion2&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;minion1&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;master_minion&quot;</span>
+     <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Please refer to one or more of the existing returners (i.e. mysql,
+cassandra_cql) if you need further clarification.</p>
+</div>
+<div class="section" id="event-support">
+<h3>Event Support<a class="headerlink" href="#event-support" title="永久链接至标题">¶</a></h3>
+<p>An <code class="docutils literal"><span class="pre">event_return</span></code> function must be added to the returner module to allow
+events to be logged from a master via the returner. A list of events are passed
+to the function by the master.</p>
+<p>The following example was taken from the MySQL returner. In this example, each
+event is inserted into the salt_events table keyed on the event tag. The tag
+contains the jid and therefore is guaranteed to be unique.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">event_return</span><span class="p">(</span><span class="n">events</span><span class="p">):</span>
+ <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd"> Return event to mysql server</span>
+
+<span class="sd"> Requires that configuration be enabled via &#39;event_return&#39;</span>
+<span class="sd"> option in master config.</span>
+<span class="sd"> &#39;&#39;&#39;</span>
+ <span class="k">with</span> <span class="n">_get_serv</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">commit</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">cur</span><span class="p">:</span>
+     <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
+         <span class="n">tag</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tag&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+         <span class="n">data</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+         <span class="n">sql</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;INSERT INTO `salt_events` (`tag`, `data`, `master_id` )</span>
+<span class="s1">                  VALUES (</span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">)&#39;&#39;&#39;</span>
+         <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">__opts__</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="custom-returners">
+<h3>Custom Returners<a class="headerlink" href="#custom-returners" title="永久链接至标题">¶</a></h3>
+<p>Place custom returners in a <code class="docutils literal"><span class="pre">_returners</span></code> directory within the
+<a class="reference internal" href="../configuration/master.html#std:conf_master-file_roots"><code class="xref std std-conf_master docutils literal"><span class="pre">file_roots</span></code></a> specified by the master config file.</p>
+<dl class="docutils">
+<dt>Custom returners are distributed when any of the following are called:</dt>
+<dd><p class="first"><a class="reference internal" href="../modules/all/salt.modules.state.html#salt.modules.state.highstate" title="salt.modules.state.highstate"><code class="xref py py-mod docutils literal"><span class="pre">state.highstate</span></code></a></p>
+<p><a class="reference internal" href="../modules/all/salt.modules.saltutil.html#salt.modules.saltutil.sync_returners" title="salt.modules.saltutil.sync_returners"><code class="xref py py-mod docutils literal"><span class="pre">saltutil.sync_returners</span></code></a></p>
+<p class="last"><a class="reference internal" href="../modules/all/salt.modules.saltutil.html#salt.modules.saltutil.sync_all" title="salt.modules.saltutil.sync_all"><code class="xref py py-mod docutils literal"><span class="pre">saltutil.sync_all</span></code></a></p>
+</dd>
+</dl>
+<p>Any custom returners which have been synced to a minion that are named the
+same as one of Salt's default set of returners will take the place of the
+default returner with the same name.</p>
+</div>
+<div class="section" id="naming-the-returner">
+<h3>Naming the Returner<a class="headerlink" href="#naming-the-returner" title="永久链接至标题">¶</a></h3>
+<p>Note that a returner's default name is its filename (i.e. <code class="docutils literal"><span class="pre">foo.py</span></code> becomes
+returner <code class="docutils literal"><span class="pre">foo</span></code>), but that its name can be overridden by using a
+<a class="reference internal" href="../modules/index.html#virtual-modules"><span>__virtual__ function</span></a>. A good example of this can be
+found in the <a class="reference external" href="https://github.com/saltstack/salt/tree/develop/salt/returners/redis_return.py">redis</a> returner, which is named <code class="docutils literal"><span class="pre">redis_return.py</span></code> but is
+loaded as simply <code class="docutils literal"><span class="pre">redis</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">redis</span>
+    <span class="n">HAS_REDIS</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">HAS_REDIS</span> <span class="o">=</span> <span class="bp">False</span>
+
+<span class="n">__virtualname__</span> <span class="o">=</span> <span class="s1">&#39;redis&#39;</span>
+
+<span class="k">def</span> <span class="nf">__virtual__</span><span class="p">():</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">HAS_REDIS</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="n">__virtualname__</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="testing-the-returner">
+<h3>Testing the Returner<a class="headerlink" href="#testing-the-returner" title="永久链接至标题">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">returner</span></code>, <code class="docutils literal"><span class="pre">prep_jid</span></code>, <code class="docutils literal"><span class="pre">save_load</span></code>, <code class="docutils literal"><span class="pre">get_load</span></code>, and
+<code class="docutils literal"><span class="pre">event_return</span></code> functions can be tested by configuring the
+<span class="xref std std-ref">master_job_cache</span> and <a class="reference internal" href="#event-returners">Event Returners</a> in the master config
+file and submitting a job to <code class="docutils literal"><span class="pre">test.ping</span></code> each minion from the master.</p>
+<p>Once you have successfully exercised the Master Job Cache functions, test the
+External Job Cache functions using the <code class="docutils literal"><span class="pre">ret</span></code> execution module.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-call ret.get_jids cassandra_cql --output<span class="o">=</span>json
+salt-call ret.get_fun cassandra_cql test.ping --output<span class="o">=</span>json
+salt-call ret.get_minions cassandra_cql --output<span class="o">=</span>json
+salt-call ret.get_jid cassandra_cql <span class="m">20150330121011408195</span> --output<span class="o">=</span>json
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="event-returners">
+<h2>Event Returners<a class="headerlink" href="#event-returners" title="永久链接至标题">¶</a></h2>
+<p>For maximimum visibility into the history of events across a Salt
+infrastructure, all events seen by a salt master may be logged to a returner.</p>
+<p>To enable event logging, set the <code class="docutils literal"><span class="pre">event_return</span></code> configuration option in the
+master config to returner which should be designated as the handler for event
+returns.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Not all returners support event returns. Verify a returner has an
+<code class="docutils literal"><span class="pre">event_return()</span></code> function before using.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">On larger installations, many hundreds of events may be generated on a
+busy master every second. Be certain to closely monitor the storage of
+a given returner as Salt can easily overwhealm an underpowered server
+with thousands of returns.</p>
+</div>
+</div>
+<div class="section" id="full-list-of-returners">
+<h2>Full List of Returners<a class="headerlink" href="#full-list-of-returners" title="永久链接至标题">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="all/index.html">所有内置的返回接收器模块列表</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.carbon_return.html">salt.returners.carbon_return</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.cassandra_cql_return.html">salt.returners.cassandra_cql_return</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.cassandra_return.html">salt.returners.cassandra_return</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.couchbase_return.html">salt.returners.couchbase_return</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.returners.couchbase_return.html#jid">JID</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.returners.couchbase_return.html#jid-minion-id">JID/MINION_ID</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.couchdb_return.html">salt.returners.couchdb_return</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.returners.couchdb_return.html#on-concurrent-database-access">On concurrent database access</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.django_return.html">salt.returners.django_return</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.elasticsearch_return.html">salt.returners.elasticsearch_return</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.etcd_return.html">salt.returners.etcd_return</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.hipchat_return.html">salt.returners.hipchat_return</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.influxdb_return.html">salt.returners.influxdb_return</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.kafka_return.html">salt.returners.kafka_return</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.local.html">salt.returners.local</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.local_cache.html">salt.returners.local_cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.memcache_return.html">salt.returners.memcache_return</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.mongo_future_return.html">salt.returners.mongo_future_return</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.mongo_return.html">salt.returners.mongo_return</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.multi_returner.html">salt.returners.multi_returner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.mysql.html">salt.returners.mysql</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.nagios_return.html">salt.returners.nagios_return</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.odbc.html">salt.returners.odbc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.pgjsonb.html">salt.returners.pgjsonb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.postgres.html">salt.returners.postgres</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.postgres_local_cache.html">salt.returners.postgres_local_cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.pushover_returner.html">salt.returners.pushover_returner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.redis_return.html">salt.returners.redis_return</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.sentry_return.html">salt.returners.sentry_return</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.slack_returner.html">salt.returners.slack_returner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.sms_return.html">salt.returners.sms_return</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.smtp_return.html">salt.returners.smtp_return</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.sqlite3_return.html">salt.returners.sqlite3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.syslog_return.html">salt.returners.syslog_return</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.returners.xmpp_return.html">salt.returners.xmpp_return</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../../topics/master_tops/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Master Tops系统" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="all/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="所有内置的返回接收器模块列表" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../topics/configuration/index.html">Configuring Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../configuration/master.html">配置Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/minion.html">配置Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/examples.html">Configuration file examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/blackout/index.html">Minion Blackout Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/eauth/access_control.html">Access Control System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/jobs/index.html">Job Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/jobs/job_cache.html">Managing the Job Cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/jobs/external_cache.html">Storing Job Results in an External System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/logging/index.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../file_server/index.html">Salt文件服务器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/gitfs.html">Git Fileserver Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/minionfs.html">MinionFS Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/spm/index.html">Salt Package Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/sdb/index.html">Storing Data in Other Databases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/nonroot.html">以非特权用户身份运行Salt Master/Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/cron.html">使用cron运行Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/hardening.html">Hardening Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../security/index.html">Security disclosure policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/transports/index.html">Salt Transport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/master_tops/index.html">Master Tops系统</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">返回器</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-returners">Using Returners</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#writing-a-returner">Writing a Returner</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#master-job-cache-support">Master Job Cache Support</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#external-job-cache-support">External Job Cache Support</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#event-support">Event Support</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#custom-returners">Custom Returners</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#naming-the-returner">Naming the Returner</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#testing-the-returner">Testing the Returner</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#event-returners">Event Returners</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#full-list-of-returners">Full List of Returners</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="all/index.html">所有内置的返回接收器模块列表</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../renderers/index.html">Renderers渲染器</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

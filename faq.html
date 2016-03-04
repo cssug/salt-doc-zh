@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>常见问题</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="_static/css/core.min.css">
+        <link rel="stylesheet" href="_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="index.html">
+        <link rel="up" title="Using Salt" href="topics/using_salt.html">
+        <link rel="next" title="Salt Best Practices" href="topics/best_practices.html">
+        <link rel="prev" title="YAML Idiosyncrasies" href="topics/troubleshooting/yaml_idiosyncrasies.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="topics/troubleshooting/yaml_idiosyncrasies.html" title="YAML Idiosyncrasies">上一页</a>
+            
+        </li>
+        <li>
+            <a href="topics/best_practices.html" title="Salt Best Practices">下一页</a>
+            
+        </li>
+        <li>
+            <a href="salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="frequently-asked-questions">
+<span id="faq"></span><h1><a class="toc-backref" href="#id2">常见问题</a><a class="headerlink" href="#frequently-asked-questions" title="永久链接至标题">¶</a></h1>
+<div class="contents topic" id="id1">
+<p class="topic-title first">FAQ</p>
+<ul class="simple">
+<li><a class="reference internal" href="#frequently-asked-questions" id="id2">常见问题</a><ul>
+<li><a class="reference internal" href="#is-salt-open-core" id="id3">Salt 是只开放核心源码的吗？</a></li>
+<li><a class="reference internal" href="#i-think-i-found-a-bug-what-should-i-do" id="id4">I think I found a bug! What should I do?</a></li>
+<li><a class="reference internal" href="#what-ports-should-i-open-on-my-firewall" id="id5">我需要在防火墙上开放哪些端口？</a></li>
+<li><a class="reference internal" href="#i-m-seeing-weird-behavior-including-but-not-limited-to-packages-not-installing-their-users-properly" id="id6">我看到了一些怪异的行为(包括但不局限在安装包不能正确的安装他们的用户权限)</a></li>
+<li><a class="reference internal" href="#my-script-runs-every-time-i-run-a-state-highstate-why" id="id7">当我运行 <em>state.highstate</em> 命令时，为什么我的脚本每次都会执行？</a></li>
+<li><a class="reference internal" href="#when-i-run-test-ping-why-don-t-the-minions-that-aren-t-responding-return-anything-returning-false-would-be-helpful" id="id8">当我运行 <em>test.ping</em> 时, 为什么Minions没有返回任何结果？返回``False``比这有用多了。</a></li>
+<li><a class="reference internal" href="#how-does-salt-determine-the-minion-s-id" id="id9">Salt默认的Minion id是怎么样生成的?</a></li>
+<li><a class="reference internal" href="#i-m-trying-to-manage-packages-services-but-i-get-an-error-saying-that-the-state-is-not-available-why" id="id10">我尝试通过Salt管理软件包和服务，为什么我得到了一个the state is not available的错误输出？</a></li>
+<li><a class="reference internal" href="#why-aren-t-my-custom-modules-states-etc-available-on-my-minions" id="id11">为什么我自定义的modules/states/等在Minions上不可用？</a></li>
+<li><a class="reference internal" href="#module-x-isn-t-available-even-though-the-shell-command-it-uses-is-installed-why" id="id12">即使已经安装了相应模块，为什么仍然会提示module <code class="docutils literal"><span class="pre">X</span></code> isn't available？</a></li>
+<li><a class="reference internal" href="#can-i-run-different-versions-of-salt-on-my-master-and-minion" id="id13">我可以运行不同版本的Salt在Master端和Minion端吗？</a></li>
+<li><a class="reference internal" href="#does-salt-support-backing-up-managed-files" id="id14">Salt是否支持备份文件管理？</a></li>
+<li><a class="reference internal" href="#is-it-possible-to-deploy-a-file-to-a-specific-minion-without-other-minions-having-access-to-it" id="id15">Is it possible to deploy a file to a specific minion, without other minions having access to it?</a></li>
+<li><a class="reference internal" href="#what-is-the-best-way-to-restart-a-salt-daemon-using-salt" id="id16">使用Salt重启Salt守护进程的最佳方式是什么？</a><ul>
+<li><a class="reference internal" href="#linux-unix" id="id17">Linux/Unix</a></li>
+<li><a class="reference internal" href="#windows" id="id18">Windows</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#salting-the-salt-master" id="id19">Salting Salt Master</a></li>
+<li><a class="reference internal" href="#is-targeting-using-grain-data-secure" id="id20">Is Targeting using Grain Data Secure?</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="is-salt-open-core">
+<h2><a class="toc-backref" href="#id3">Salt 是只开放核心源码的吗？</a><a class="headerlink" href="#is-salt-open-core" title="永久链接至标题">¶</a></h2>
+<p>No. Salt is 100% committed to being open-source, including all of our APIs. It
+is developed under the <a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache 2.0 license</a>, allowing it to be used in both
+open and proprietary projects.</p>
+</div>
+<div class="section" id="i-think-i-found-a-bug-what-should-i-do">
+<h2><a class="toc-backref" href="#id4">I think I found a bug! What should I do?</a><a class="headerlink" href="#i-think-i-found-a-bug-what-should-i-do" title="永久链接至标题">¶</a></h2>
+<p>The salt-users mailing list as well as the salt IRC channel can both be helpful
+resources to confirm if others are seeing the issue and to assist with
+immediate debugging.</p>
+<p>To report a bug to the Salt project, please follow the instructions in
+<a class="reference internal" href="topics/development/reporting_bugs.html"><em>reporting a bug</em></a>.</p>
+</div>
+<div class="section" id="what-ports-should-i-open-on-my-firewall">
+<h2><a class="toc-backref" href="#id5">我需要在防火墙上开放哪些端口？</a><a class="headerlink" href="#what-ports-should-i-open-on-my-firewall" title="永久链接至标题">¶</a></h2>
+<p>Minions需要通过TCP端口4505和4506与Master进行通讯。此外，Minions并不需要开放额外的端口来接受数据。关于防火墙设置的更多细节你可以点击 <a class="reference internal" href="topics/tutorials/firewall.html"><em>这里</em></a>。</p>
+</div>
+<div class="section" id="i-m-seeing-weird-behavior-including-but-not-limited-to-packages-not-installing-their-users-properly">
+<h2><a class="toc-backref" href="#id6">我看到了一些怪异的行为(包括但不局限在安装包不能正确的安装他们的用户权限)</a><a class="headerlink" href="#i-m-seeing-weird-behavior-including-but-not-limited-to-packages-not-installing-their-users-properly" title="永久链接至标题">¶</a></h2>
+<p>这通常是由SELinux引起的。尝试禁用SElinux或者切换到permissive模式，然后看看是否这些怪异的表现消失了。</p>
+</div>
+<div class="section" id="my-script-runs-every-time-i-run-a-state-highstate-why">
+<h2><a class="toc-backref" href="#id7">当我运行 <em>state.highstate</em> 命令时，为什么我的脚本每次都会执行？</a><a class="headerlink" href="#my-script-runs-every-time-i-run-a-state-highstate-why" title="永久链接至标题">¶</a></h2>
+<p>在编写state时，你可能用的是 <a class="reference internal" href="ref/states/all/salt.states.cmd.html#salt.states.cmd.run" title="salt.states.cmd.run"><code class="xref py py-mod docutils literal"><span class="pre">cmd.run</span></code></a> ，而不是 <a class="reference internal" href="ref/states/all/salt.states.cmd.html#salt.states.cmd.wait" title="salt.states.cmd.wait"><code class="xref py py-mod docutils literal"><span class="pre">cmd.wait</span></code></a> 。只有当监视对象的状态发生了变化时， <a class="reference internal" href="ref/states/all/salt.states.cmd.html#salt.states.cmd.wait" title="salt.states.cmd.wait"><code class="xref py py-mod docutils literal"><span class="pre">cmd.wait</span></code></a> state才会执行。</p>
+<p>而 <a class="reference internal" href="ref/states/all/salt.states.cmd.html#salt.states.cmd.run" title="salt.states.cmd.run"><code class="xref py py-mod docutils literal"><span class="pre">cmd.run</span></code></a> state <em>每次</em> 都会执行，(除非它不满足 <code class="docutils literal"><span class="pre">unless</span></code> 或者 <code class="docutils literal"><span class="pre">onlyif</span></code> 参数时才不会执行)。</p>
+<p>更多信息可以在文档中的 <a class="reference internal" href="ref/states/all/salt.states.cmd.html#module-salt.states.cmd" title="salt.states.cmd"><code class="xref py py-mod docutils literal"><span class="pre">cmd</span></code></a> states 找到。</p>
+</div>
+<div class="section" id="when-i-run-test-ping-why-don-t-the-minions-that-aren-t-responding-return-anything-returning-false-would-be-helpful">
+<h2><a class="toc-backref" href="#id8">当我运行 <em>test.ping</em> 时, 为什么Minions没有返回任何结果？返回``False``比这有用多了。</a><a class="headerlink" href="#when-i-run-test-ping-why-don-t-the-minions-that-aren-t-responding-return-anything-returning-false-would-be-helpful" title="永久链接至标题">¶</a></h2>
+<p>当你运行 <em>test.ping</em> 时，Master告诉Minions执行相应的命令或函数，Minion等待接受返回的结果，一旦有返回结果便会输出在屏幕上。如果Minion没有接受到任何返回数据，它将什么也不显示。</p>
+<p>为了应对这种Minions无响应的情况，这里有两种方法。一个就是详细输出选项 (<code class="docutils literal"><span class="pre">-v</span></code>) ，当Minions运行命令超时无返回结果时会显示&quot;Minion did not return&quot;。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt -v <span class="s1">&#39;*&#39;</span> pkg.install zsh
+</pre></div>
+</div>
+<p>另一个方法是用 <a class="reference internal" href="ref/runners/all/salt.runners.manage.html#salt.runners.manage.down" title="salt.runners.manage.down"><code class="xref py py-mod docutils literal"><span class="pre">manage.down</span></code></a> runner:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.down
+</pre></div>
+</div>
+<p>另外，如果Master在高负载下，可能CLI会在没有展示任何目标Minions的返回数据时就退出了。然而，这并不意味着Minions没有返回; 这仅仅意味着Salt CLI等待响应超时了。一旦作业完成，Minions仍然返回他们的数据返回给Master。如果从CLI输出中缺少任何预期的Minions， <a class="reference internal" href="ref/runners/all/salt.runners.jobs.html#salt.runners.jobs.list_jobs" title="salt.runners.jobs.list_jobs"><code class="xref py py-mod docutils literal"><span class="pre">jobs.list_jobs</span></code></a> runner可以用来显示作业的IDs表示作业已经运行, 并且 <a class="reference internal" href="ref/runners/all/salt.runners.jobs.html#salt.runners.jobs.lookup_jid" title="salt.runners.jobs.lookup_jid"><code class="xref py py-mod docutils literal"><span class="pre">jobs.lookup_jid</span></code></a> runner可以用来得到那个作业的返回数据。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run jobs.list_jobs
+salt-run jobs.lookup_jid 20130916125524463507
+</pre></div>
+</div>
+<p>如果你发现在CLI经常丢失Minion的返回数据，只能在作业的runners找到，那么这可能是一个迹象表明在master配置文件中 <a class="reference internal" href="ref/configuration/master.html#std:conf_master-worker_threads"><code class="xref std std-conf_master docutils literal"><span class="pre">worker_threads</span></code></a> 的值需要升高。另外，运行你的Salt CLI命令行使用 <code class="docutils literal"><span class="pre">-t</span></code> 选项，将会使Salt等待返回数据的时间更长。例如，下面的命令将会等待Minions返回的时间多达60秒:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt -t <span class="m">60</span> <span class="s1">&#39;*&#39;</span> test.ping
+</pre></div>
+</div>
+</div>
+<div class="section" id="how-does-salt-determine-the-minion-s-id">
+<h2><a class="toc-backref" href="#id9">Salt默认的Minion id是怎么样生成的?</a><a class="headerlink" href="#how-does-salt-determine-the-minion-s-id" title="永久链接至标题">¶</a></h2>
+<p>如果Minion id并没有明确的配置(使用 <a class="reference internal" href="ref/configuration/minion.html#std:conf_minion-id"><code class="xref std std-conf_minion docutils literal"><span class="pre">id</span></code></a> 参数配置)，Salt将使用主机名作为缺省的id。 究竟Salt是如何精确地在各种操作系统上来命名缺省id，详细描述 <a class="reference internal" href="topics/tutorials/walkthrough.html#minion-id-generation"><span>请点这里</span></a>。</p>
+</div>
+<div class="section" id="i-m-trying-to-manage-packages-services-but-i-get-an-error-saying-that-the-state-is-not-available-why">
+<h2><a class="toc-backref" href="#id10">我尝试通过Salt管理软件包和服务，为什么我得到了一个the state is not available的错误输出？</a><a class="headerlink" href="#i-m-trying-to-manage-packages-services-but-i-get-an-error-saying-that-the-state-is-not-available-why" title="永久链接至标题">¶</a></h2>
+<p>Salt会自动检测Minion的操作系统并安装正确的软件包或服务管理模块。但是，对于一些社区的custom spins OS和衍生操作系统，这些检测很容易失败。在这种情况下，你可以向我们的 <a class="reference external" href="https://github.com/saltstack/salt/issues">tracker</a> 提交issue，其中包含以下信息：</p>
+<ol class="arabic">
+<li><p class="first">以下命令的输出信息：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt &lt;minion_id&gt; grains.items <span class="p">|</span> grep os
+</pre></div>
+</div>
+</li>
+<li><p class="first">如果在Minion上存在文件 <code class="docutils literal"><span class="pre">/etc/lsb-release</span></code> ，贴出这个文件的内容。</p>
+</li>
+</ol>
+</div>
+<div class="section" id="why-aren-t-my-custom-modules-states-etc-available-on-my-minions">
+<h2><a class="toc-backref" href="#id11">为什么我自定义的modules/states/等在Minions上不可用？</a><a class="headerlink" href="#why-aren-t-my-custom-modules-states-etc-available-on-my-minions" title="永久链接至标题">¶</a></h2>
+<p>只有当 <a class="reference internal" href="ref/modules/all/salt.modules.state.html#salt.modules.state.highstate" title="salt.modules.state.highstate"><code class="xref py py-mod docutils literal"><span class="pre">state.highstate</span></code></a>，
+<a class="reference internal" href="ref/modules/all/salt.modules.saltutil.html#salt.modules.saltutil.sync_modules" title="salt.modules.saltutil.sync_modules"><code class="xref py py-mod docutils literal"><span class="pre">saltutil.sync_modules</span></code></a> ，
+或者 <a class="reference internal" href="ref/modules/all/salt.modules.saltutil.html#salt.modules.saltutil.sync_all" title="salt.modules.saltutil.sync_all"><code class="xref py py-mod docutils literal"><span class="pre">saltutil.sync_all</span></code></a> 执行时用户自定义的模块才会同步。
+同样， 只有当 <a class="reference internal" href="ref/modules/all/salt.modules.state.html#salt.modules.state.highstate" title="salt.modules.state.highstate"><code class="xref py py-mod docutils literal"><span class="pre">state.highstate</span></code></a>, <a class="reference internal" href="ref/modules/all/salt.modules.saltutil.html#salt.modules.saltutil.sync_states" title="salt.modules.saltutil.sync_states"><code class="xref py py-mod docutils literal"><span class="pre">saltutil.sync_states</span></code></a> ，
+或 <a class="reference internal" href="ref/modules/all/salt.modules.saltutil.html#salt.modules.saltutil.sync_all" title="salt.modules.saltutil.sync_all"><code class="xref py py-mod docutils literal"><span class="pre">saltutil.sync_all</span></code></a> 执行时自定义的states才会同步。</p>
+<p>其他的自定义类型 (renderers, outputters等) 也类似，
+关于 <a class="reference internal" href="ref/modules/all/salt.modules.saltutil.html#module-salt.modules.saltutil" title="salt.modules.saltutil"><code class="xref py py-mod docutils literal"><span class="pre">saltutil</span></code></a> 模块的更多内容请查看文档。</p>
+</div>
+<div class="section" id="module-x-isn-t-available-even-though-the-shell-command-it-uses-is-installed-why">
+<h2><a class="toc-backref" href="#id12">即使已经安装了相应模块，为什么仍然会提示module <code class="docutils literal"><span class="pre">X</span></code> isn't available？</a><a class="headerlink" href="#module-x-isn-t-available-even-though-the-shell-command-it-uses-is-installed-why" title="永久链接至标题">¶</a></h2>
+<p>这很可能是PATH问题。你是自己编译模块的依赖么？RHEL/CentOS等，会特别覆盖root用户的path在``/etc/init.d/functions``文件中，将其设置为``/sbin:/user/sbin:/bin:/usr/bin``，使得banian安装到``/usr/local/bin``，当Salt通过使用initscript启动时是不可用的。在版本2014.1.0, Salt将会有一个与PATH相关的更好的解决方案，但是目前重编译软件并安装到在PATH中的路径应该同样能解决这个问题。可选地，你可以使用一个:mod:<cite>file.symlink &lt;salt.states.file.symlink&gt;</cite> state创建一个软连接到PATH中的路径。</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/usr/bin/foo</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.symlink</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">target</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/usr/local/bin/foo</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="can-i-run-different-versions-of-salt-on-my-master-and-minion">
+<h2><a class="toc-backref" href="#id13">我可以运行不同版本的Salt在Master端和Minion端吗？</a><a class="headerlink" href="#can-i-run-different-versions-of-salt-on-my-master-and-minion" title="永久链接至标题">¶</a></h2>
+<p>这个依赖于版本。通常情况下，建议Master和Minion版本匹配。</p>
+<p>当升级Salt的时候，master(s)应该首先升级。masters向后兼容，minions运行版本比masters版本新是不能保证运行正常的。</p>
+<p>只要可能，新masters向后兼容旧minions的特性就会被保留下来。一般来说，唯一例外的情况是有安全漏洞的情况下。</p>
+<p>最近一个破坏向后兼容性的例子包含0.17.1版本(因为修复了一个安全性问题被修复，所有向后兼容性被破坏)，和2014.1.0版本(保留2014.1.0 masters和0.17 minions之间的兼容性，但是破坏了2014.1.0 minions和老版本masters之间的兼容性)。</p>
+</div>
+<div class="section" id="does-salt-support-backing-up-managed-files">
+<h2><a class="toc-backref" href="#id14">Salt是否支持备份文件管理？</a><a class="headerlink" href="#does-salt-support-backing-up-managed-files" title="永久链接至标题">¶</a></h2>
+<p>是的。Salt提供一个非常易用的flie.managed states，允许你通过 <a class="reference internal" href="ref/states/backup_mode.html"><em>backup_mode</em></a> 备份文件, backup_mode可以配置在每个state的底层，或者在minion配置中(注意如果设置在minion配置中仅仅说明默认方法被启用，你仍然需要指定需要备份的文件!).</p>
+</div>
+<div class="section" id="is-it-possible-to-deploy-a-file-to-a-specific-minion-without-other-minions-having-access-to-it">
+<h2><a class="toc-backref" href="#id15">Is it possible to deploy a file to a specific minion, without other minions having access to it?</a><a class="headerlink" href="#is-it-possible-to-deploy-a-file-to-a-specific-minion-without-other-minions-having-access-to-it" title="永久链接至标题">¶</a></h2>
+<p>The Salt fileserver does not yet support access control, but it is still
+possible to do this. As of Salt 2015.5.0, the
+<a class="reference internal" href="ref/pillar/all/salt.pillar.file_tree.html#module-salt.pillar.file_tree" title="salt.pillar.file_tree"><code class="xref py py-mod docutils literal"><span class="pre">file_tree</span></code></a> external pillar is available, and
+allows the contents of a file to be loaded as Pillar data. This external pillar
+is capable of assigning Pillar values both to individual minions, and to
+<a class="reference internal" href="topics/targeting/nodegroups.html#targeting-nodegroups"><span>nodegroups</span></a>. See the <a class="reference internal" href="ref/pillar/all/salt.pillar.file_tree.html#module-salt.pillar.file_tree" title="salt.pillar.file_tree"><code class="xref py py-mod docutils literal"><span class="pre">documentation</span></code></a> for details on how to set this up.</p>
+<p>Once the external pillar has been set up, the data can be pushed to a minion
+via a <a class="reference internal" href="ref/states/all/salt.states.file.html#salt.states.file.managed" title="salt.states.file.managed"><code class="xref py py-func docutils literal"><span class="pre">file.managed</span></code></a> state, using the
+<code class="docutils literal"><span class="pre">contents_pillar</span></code> argument:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/my_super_secret_file</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">secret</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">secret</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">600</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">contents_pillar</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">secret_files:my_super_secret_file</span>
+</pre></div>
+</div>
+<p>In this example, the source file would be located in a directory called
+<code class="docutils literal"><span class="pre">secret_files</span></code> underneath the file_tree path for the minion. The syntax for
+specifying the pillar variable is the same one used for <a class="reference internal" href="ref/modules/all/salt.modules.pillar.html#salt.modules.pillar.get" title="salt.modules.pillar.get"><code class="xref py py-func docutils literal"><span class="pre">pillar.get</span></code></a>, with a colon representing a nested dictionary.</p>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">Deploying binary contents using the <a class="reference internal" href="ref/states/all/salt.states.file.html#salt.states.file.managed" title="salt.states.file.managed"><code class="xref py py-func docutils literal"><span class="pre">file.managed</span></code></a> state is only supported in Salt 2015.8.4 and
+newer.</p>
+</div>
+</div>
+<div class="section" id="what-is-the-best-way-to-restart-a-salt-daemon-using-salt">
+<h2><a class="toc-backref" href="#id16">使用Salt重启Salt守护进程的最佳方式是什么？</a><a class="headerlink" href="#what-is-the-best-way-to-restart-a-salt-daemon-using-salt" title="永久链接至标题">¶</a></h2>
+<p>Updating the salt-minion package requires a restart of the salt-minion service.
+But restarting the service while in the middle of a state run interrupts the
+process of the minion running states and sending results back to the master.
+It's a tricky problem to solve, and we're working on it, but in the meantime
+one way of handling this (on Linux and UNIX-based operating systems) is to use
+<strong>at</strong> (a job scheduler which predates cron) to schedule a restart of the
+service. <strong>at</strong> is not installed by default on most distros, and requires a
+service to be running (usually called <strong>atd</strong>) in order to schedule jobs.
+Here's an example of how to upgrade the salt-minion package at the end of a
+Salt run, and schedule a service restart for one minute after the package
+update completes.</p>
+<div class="section" id="linux-unix">
+<h3><a class="toc-backref" href="#id17">Linux/Unix</a><a class="headerlink" href="#linux-unix" title="永久链接至标题">¶</a></h3>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">salt-minion</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt-minion</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">version</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">2014.1.7-3.el6</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">order</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">last</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt-minion</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt-minion</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.wait</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">echo service salt-minion restart | at now + 1 minute</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">watch</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt-minion</span>
+</pre></div>
+</div>
+<p>To ensure that <strong>at</strong> is installed and <strong>atd</strong> is running, the following states
+can be used (be sure to double-check the package name and service name for the
+distro the minion is running, in case they differ from the example below.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">at</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">at</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">atd</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">enable</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>An alternative to using the <strong class="program">atd</strong> daemon is to fork and disown the
+process.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">restart_minion</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">|</span>
+        <span class="no">exec 0&gt;&amp;- # close stdin</span>
+        <span class="no">exec 1&gt;&amp;- # close stdout</span>
+        <span class="no">exec 2&gt;&amp;- # close stderr</span>
+        <span class="no">nohup /bin/sh -c &#39;sleep 10 &amp;&amp; salt-call --local service.restart salt-minion&#39; &amp;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">python_shell</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">order</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">last</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="windows">
+<h3><a class="toc-backref" href="#id18">Windows</a><a class="headerlink" href="#windows" title="永久链接至标题">¶</a></h3>
+<p>For Windows machines, restarting the minion can be accomplished using the
+following state:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">schedule-start</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="s">&#39;start</span><span class="nv"> </span><span class="s">powershell</span><span class="nv"> </span><span class="s">&quot;Restart-Service</span><span class="nv"> </span><span class="s">-Name</span><span class="nv"> </span><span class="s">salt-minion&quot;&#39;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">order</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">last</span>
+</pre></div>
+</div>
+<p>or running immediately from the command line:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt -G kernel:Windows cmd.run <span class="s1">&#39;start powershell &quot;Restart-Service -Name salt-minion&quot;&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="salting-the-salt-master">
+<h2><a class="toc-backref" href="#id19">Salting Salt Master</a><a class="headerlink" href="#salting-the-salt-master" title="永久链接至标题">¶</a></h2>
+<p>为了通过states配置一个master server，Salt master同样可以被&quot;salted&quot;，可以像Salt mininons一样在Salt master执行state。Salting the Salt master需要在Salt master同一机器上安装Salt minion。一旦Salt minion安装完毕，minion配置文件必须指向本地Salt master:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">127.0.0.1</span>
+</pre></div>
+</div>
+<p>一旦Salt master已经用一个Salt minion &quot;salted&quot;过了，就可以想其他minion一样作为目标。如果minion在salted master运行中，该minion可以通过任何平时的 <code class="docutils literal"><span class="pre">salt</span></code> 命令作为目标。此外， <code class="docutils literal"><span class="pre">salt-call</span></code> 命令可以执行state操作在salted master，无需minion运行。</p>
+<p>更多关于salting the Salt master的信息可以在salt-formula找到:</p>
+<p><a class="reference external" href="https://github.com/saltstack-formulas/salt-formula">https://github.com/saltstack-formulas/salt-formula</a></p>
+</div>
+<div class="section" id="is-targeting-using-grain-data-secure">
+<span id="faq-grain-security"></span><h2><a class="toc-backref" href="#id20">Is Targeting using Grain Data Secure?</a><a class="headerlink" href="#is-targeting-using-grain-data-secure" title="永久链接至标题">¶</a></h2>
+<p>Because grains can be set by users that have access to the minion configuration
+files on the local system, grains are considered less secure than other
+identifiers in Salt. Use caution when targeting sensitive operations or setting
+pillar values based on grain data.</p>
+<p>When possible, you should target sensitive operations and data using the Minion
+ID. If the Minion ID of a system changes, the Salt Minion's public key must be
+re-accepted by an administrator on the Salt Master, making it less vulnerable
+to impersonation attacks.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="topics/troubleshooting/yaml_idiosyncrasies.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="YAML Idiosyncrasies" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="topics/best_practices.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt Best Practices" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="topics/using_salt.html">Using Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="topics/grains/index.html">Grains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="topics/pillar/index.html">在Pillar中存储静态数据</a></li>
+<li class="toctree-l2"><a class="reference internal" href="topics/targeting/index.html">Targeting Minions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="topics/mine/index.html">Salt Mine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ref/runners/index.html">Runners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="topics/engines/index.html">Salt Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="topics/yaml/index.html">了解YAML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="topics/troubleshooting/index.html">解决问题</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">常见问题</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#is-salt-open-core">Salt 是只开放核心源码的吗？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i-think-i-found-a-bug-what-should-i-do">I think I found a bug! What should I do?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#what-ports-should-i-open-on-my-firewall">我需要在防火墙上开放哪些端口？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i-m-seeing-weird-behavior-including-but-not-limited-to-packages-not-installing-their-users-properly">我看到了一些怪异的行为(包括但不局限在安装包不能正确的安装他们的用户权限)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#my-script-runs-every-time-i-run-a-state-highstate-why">当我运行 <em>state.highstate</em> 命令时，为什么我的脚本每次都会执行？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#when-i-run-test-ping-why-don-t-the-minions-that-aren-t-responding-return-anything-returning-false-would-be-helpful">当我运行 <em>test.ping</em> 时, 为什么Minions没有返回任何结果？返回``False``比这有用多了。</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-does-salt-determine-the-minion-s-id">Salt默认的Minion id是怎么样生成的?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i-m-trying-to-manage-packages-services-but-i-get-an-error-saying-that-the-state-is-not-available-why">我尝试通过Salt管理软件包和服务，为什么我得到了一个the state is not available的错误输出？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#why-aren-t-my-custom-modules-states-etc-available-on-my-minions">为什么我自定义的modules/states/等在Minions上不可用？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-x-isn-t-available-even-though-the-shell-command-it-uses-is-installed-why">即使已经安装了相应模块，为什么仍然会提示module <code class="docutils literal"><span class="pre">X</span></code> isn't available？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#can-i-run-different-versions-of-salt-on-my-master-and-minion">我可以运行不同版本的Salt在Master端和Minion端吗？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#does-salt-support-backing-up-managed-files">Salt是否支持备份文件管理？</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#is-it-possible-to-deploy-a-file-to-a-specific-minion-without-other-minions-having-access-to-it">Is it possible to deploy a file to a specific minion, without other minions having access to it?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#what-is-the-best-way-to-restart-a-salt-daemon-using-salt">使用Salt重启Salt守护进程的最佳方式是什么？</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#linux-unix">Linux/Unix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#windows">Windows</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#salting-the-salt-master">Salting Salt Master</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#is-targeting-using-grain-data-secure">Is Targeting using Grain Data Secure?</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="topics/best_practices.html">Salt Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    './',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="_static/js/core.min.js"></script>
+
+    <script src="_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

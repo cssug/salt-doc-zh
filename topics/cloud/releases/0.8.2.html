@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt Cloud 0.8.2 Release Notes</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="salt-cloud-0-8-2-release-notes">
+<h1>Salt Cloud 0.8.2 Release Notes<a class="headerlink" href="#salt-cloud-0-8-2-release-notes" title="永久链接至标题">¶</a></h1>
+<p>This is a great release for Salt Cloud! New cloud providers have been added,
+and the deploy functionality has been embiggened! Read on to see the cromulent
+new features.</p>
+<div class="section" id="documentation">
+<h2>文档<a class="headerlink" href="#documentation" title="永久链接至标题">¶</a></h2>
+<p>The documentation for Salt Cloud can be found on Read the Docs:
+<a class="reference external" href="http://salt-cloud.readthedocs.org">http://salt-cloud.readthedocs.org</a></p>
+</div>
+<div class="section" id="download">
+<h2>下载<a class="headerlink" href="#download" title="永久链接至标题">¶</a></h2>
+<p>Salt Cloud can be downloaded and install via pypi or github:</p>
+<p><a class="reference external" href="https://pypi.python.org/packages/source/s/salt-cloud/salt-cloud-0.8.2.tar.gz">https://pypi.python.org/packages/source/s/salt-cloud/salt-cloud-0.8.2.tar.gz</a></p>
+<p><a class="reference external" href="https://cloud.github.com/downloads/saltstack/salt-cloud/salt-cloud-0.8.2.tar.gz">https://cloud.github.com/downloads/saltstack/salt-cloud/salt-cloud-0.8.2.tar.gz</a></p>
+<p>Some packages have been made available for salt-cloud and more on on their
+way. Packages for Arch, and FreeBSD are being made available thanks to the
+work of Christer Edwards, and packages for RHEL and Fedora are being created
+by Clint Savage. Package availability will be announced on the salt mailing list.</p>
+</div>
+<div class="section" id="select-query-option">
+<h2>Select Query Option<a class="headerlink" href="#select-query-option" title="永久链接至标题">¶</a></h2>
+<p>The last release of Salt Cloud added the -F/--full query option, to display
+all information available for a particular instance. We now also have the -S
+or --select-query option, which lets you specify which fields to display. Any
+fields not specified will not be displayed, and if you specify a field that
+doesn't exist on a particular provider, it will be ignored for them. Just
+add a query.selection option to /etc/salt/cloud like such:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">query.selection</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">id</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">state</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">public_ips</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">keyname</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">TOTALXFER</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="os-vs-script">
+<h2>os vs script<a class="headerlink" href="#os-vs-script" title="永久链接至标题">¶</a></h2>
+<p>In a cloud profile, you need to specify which deploy script to use to install
+Salt on the newly-provisioned VM. The option for this has always been 'os',
+which has been confusing to some. As of this release, you may now specify
+'script' instead of 'os'. If you specify both, the value for 'script' will be
+used. See the SmartOS Deploy Script below for an example.</p>
+</div>
+<div class="section" id="smartos-deploy-script">
+<h2>SmartOS Deploy Script<a class="headerlink" href="#smartos-deploy-script" title="永久链接至标题">¶</a></h2>
+<p>Of particular interest to Joyent users may be the new SmartOS deploy script.
+Salt itself is not fully-supported on SmartOS just yet, in part because ZeroMQ
+is also not yet supported. When this script is used for deployment, it will
+automatically install the required libraries and build ZeroMQ, and then use
+easy_install to install the latest versions of PyZMQ and Salt. To use this,
+just specify SmartOS as the 'os' or 'script' option in your cloud.profiles:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">joyent_smartos</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">joyent</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Extra Small 512 MB</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">smartos</span>
+  <span class="l l-Scalar l-Scalar-Plain">script</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">SmartOS</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="openstack-and-ibm-modules">
+<h2>OpenStack and IBM Modules<a class="headerlink" href="#openstack-and-ibm-modules" title="永久链接至标题">¶</a></h2>
+<p>Support has been added for clouds using OpenStack (OPENSTACK) and for IBM's
+SmartCloud Enterprise (IBMSCE) offering. We know that people have already
+started using the OpenStack module, because pull requests have already been
+merged from the community. This module has been tested against both the HP
+and the Rackspace implementations of OpenStack. This can be a tricky module
+to configure, depending on your provider, so some examples are provided here:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># For HP</span>
+<span class="l l-Scalar l-Scalar-Plain">OPENSTACK.identity_url</span><span class="p p-Indicator">:</span> <span class="s">&#39;https://region-a.geo-1.identity.hpcloudsvc.com:35357/v2.0/&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">OPENSTACK.compute_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Compute</span>
+<span class="l l-Scalar l-Scalar-Plain">OPENSTACK.compute_region</span><span class="p p-Indicator">:</span> <span class="s">&#39;az-1.region-a.geo-1&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">OPENSTACK.tenant</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myuser-tenant1</span>
+<span class="l l-Scalar l-Scalar-Plain">OPENSTACK.user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myuser</span>
+<span class="l l-Scalar l-Scalar-Plain">OPENSTACK.ssh_key_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mykey</span>
+<span class="l l-Scalar l-Scalar-Plain">OPENSTACK.ssh_key_file</span><span class="p p-Indicator">:</span> <span class="s">&#39;/etc/salt/hpcloud/mykey.pem&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">OPENSTACK.password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mypass</span>
+
+<span class="c1"># For Rackspace</span>
+<span class="l l-Scalar l-Scalar-Plain">OPENSTACK.identity_url</span><span class="p p-Indicator">:</span> <span class="s">&#39;https://identity.api.rackspacecloud.com/v2.0/tokens&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">OPENSTACK.compute_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">cloudServersOpenStack</span>
+<span class="l l-Scalar l-Scalar-Plain">OPENSTACK.compute_region</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">DFW</span>
+<span class="l l-Scalar l-Scalar-Plain">OPENSTACK.tenant</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">5555555</span>
+<span class="l l-Scalar l-Scalar-Plain">OPENSTACK.user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myuser</span>
+<span class="l l-Scalar l-Scalar-Plain">OPENSTACK.password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mypass</span>
+<span class="l l-Scalar l-Scalar-Plain">OPENSTACK.protocol</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ipv4</span>
+</pre></div>
+</div>
+<p>It is important to note that currently, only password-based authentication is
+provided through the Salt Cloud OpenStack module.</p>
+<p>IBM has fewer things that need to be configured, but setting them up can be
+tricky as well. An example might look like:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">IBMSCE.user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myuser@mycorp.com</span>
+<span class="l l-Scalar l-Scalar-Plain">IBMSCE.password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mypass</span>
+<span class="l l-Scalar l-Scalar-Plain">IBMSCE.ssh_key_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mykey</span>
+<span class="l l-Scalar l-Scalar-Plain">IBMSCE.ssh_key_file</span><span class="p p-Indicator">:</span> <span class="s">&#39;/etc/salt/ibm/mykey.pem&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">IBMSCE.location</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Raleigh</span>
+</pre></div>
+</div>
+<p>The location currently must be configured in order to create an instance, but
+not to query the IBM cloud. This is important, because you need to use
+salt-cloud --list-locations (with the other options already set) in order to
+find the name of the location that you want to use.</p>
+</div>
+<div class="section" id="openstack-with-salt">
+<h2>OpenStack with Salt<a class="headerlink" href="#openstack-with-salt" title="永久链接至标题">¶</a></h2>
+<p>This isn't specifically another Salt Cloud feature, but it should be noted that
+with the release of Salt 0.10.5, OpenStack is not only the first Cloud product,
+but in fact the first piece of software explicitly supported by both Salt Cloud
+(from a user perspective) and Salt itself (from an admin perspective).</p>
+</div>
+<div class="section" id="salt-cloud-logging">
+<h2>Salt Cloud Logging<a class="headerlink" href="#salt-cloud-logging" title="永久链接至标题">¶</a></h2>
+<p>Those who have tried to hack on Salt Cloud may have discovered a complete lack
+of logging support. With this release, Salt Cloud has started to implement
+the logging features already available in Salt. The default log location is
+/var/log/salt/cloud (with a default level of warn), but it can be changed in
+your cloud configuration file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">log_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/var/log/salt/cloud</span>
+<span class="l l-Scalar l-Scalar-Plain">log_level_logfile</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">debug</span>
+</pre></div>
+</div>
+<p>If you would like to change the default logging level for the command line, you
+can also configure that in the same place:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">log_level</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">debug</span>
+</pre></div>
+</div>
+<p>Check salt-cloud --help for a list of logging levels, which can also be
+specified from the command line.</p>
+</div>
+</div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.pillar.cobbler</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+        <link rel="up" title="Full list of builtin pillar modules" href="index.html">
+        <link rel="next" title="salt.pillar.consul_pillar module" href="salt.pillar.consul_pillar.html">
+        <link rel="prev" title="salt.pillar.cmd_yamlex" href="salt.pillar.cmd_yamlex.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="salt.pillar.cmd_yamlex.html" title="salt.pillar.cmd_yamlex">上一页</a>
+            
+        </li>
+        <li>
+            <a href="salt.pillar.consul_pillar.html" title="salt.pillar.consul_pillar module">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.pillar.cobbler">
+<span id="salt-pillar-cobbler"></span><h1>salt.pillar.cobbler<a class="headerlink" href="#module-salt.pillar.cobbler" title="永久链接至标题">¶</a></h1>
+<p>A module to pull data from Cobbler via its API into the Pillar dictionary</p>
+<div class="section" id="configuring-the-cobbler-ext-pillar">
+<h2>Configuring the Cobbler ext_pillar<a class="headerlink" href="#configuring-the-cobbler-ext-pillar" title="永久链接至标题">¶</a></h2>
+<p>The same cobbler.* parameters are used for both the Cobbler tops and Cobbler pillar
+modules.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ext_pillar</span><span class="p p-Indicator">:</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cobbler</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">cobbler</span> <span class="c1"># Nest results within this key. By default, values are not nested.</span>
+    <span class="l l-Scalar l-Scalar-Plain">only</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[</span><span class="nv">parameters</span><span class="p p-Indicator">]</span> <span class="c1"># Add only these keys to pillar.</span>
+
+<span class="l l-Scalar l-Scalar-Plain">cobbler.url</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">https://example.com/cobbler_api</span> <span class="c1">#default is http://localhost/cobbler_api</span>
+<span class="l l-Scalar l-Scalar-Plain">cobbler.user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">username</span> <span class="c1"># default is no username</span>
+<span class="l l-Scalar l-Scalar-Plain">cobbler.password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">password</span> <span class="c1"># default is no password</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="module-documentation">
+<h2>Module Documentation<a class="headerlink" href="#module-documentation" title="永久链接至标题">¶</a></h2>
+<dl class="function">
+<dt id="salt.pillar.cobbler.ext_pillar">
+<code class="descclassname">salt.pillar.cobbler.</code><code class="descname">ext_pillar</code><span class="sig-paren">(</span><em>minion_id</em>, <em>pillar</em>, <em>key=None</em>, <em>only=()</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.pillar.cobbler.ext_pillar" title="永久链接至目标">¶</a></dt>
+<dd><p>Read pillar data from Cobbler via its API.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+                            </div>
+                            <a href="salt.pillar.cmd_yamlex.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.pillar.cmd_yamlex" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="salt.pillar.consul_pillar.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.pillar.consul_pillar module" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Salt Module Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../auth/all/index.html">内建身份认证模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../beacons/all/index.html">Full list of builtin beacon modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../engines/all/index.html">Full list of builtin engine modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../file_server/all/index.html">文件服务内置模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../grains/all/index.html">Full list of builtin grains modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/all/index.html">Full list of builtin execution modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../netapi/all/index.html">Full list of netapi modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../output/all/index.html">完整的内置输出模块的列表</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Full list of builtin pillar modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.cmd_json.html">salt.pillar.cmd_json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.cmd_yaml.html">salt.pillar.cmd_yaml</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.cmd_yamlex.html">salt.pillar.cmd_yamlex</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">salt.pillar.cobbler</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#configuring-the-cobbler-ext-pillar">Configuring the Cobbler ext_pillar</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-documentation">Module Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.consul_pillar.html">salt.pillar.consul_pillar module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.django_orm.html">salt.pillar.django_orm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.ec2_pillar.html">salt.pillar.ec2_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.etcd_pillar.html">salt.pillar.etcd_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.file_tree.html">salt.pillar.file_tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.foreman.html">salt.pillar.foreman</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.git_pillar.html">salt.pillar.git_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.hg_pillar.html">salt.pillar.hg_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.hiera.html">salt.pillar.hiera</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.http_yaml.html">salt.pillar.http_yaml module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.libvirt.html">salt.pillar.libvirt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.mongo.html">salt.pillar.mongo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.mysql.html">salt.pillar.mysql</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.neutron.html">salt.pillar.neutron module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.pepa.html">salt.pillar.pepa</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.pillar_ldap.html">salt.pillar.pillar_ldap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.puppet.html">salt.pillar.puppet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.reclass_adapter.html">salt.pillar.reclass_adapter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.redismod.html">salt.pillar.redismod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.s3.html">salt.pillar.s3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.sql_base.html">salt.pillar.sql_base module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.sqlcipher.html">salt.pillar.sqlcipher module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.sqlite3.html">salt.pillar.sqlite3 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.stack.html">salt.pillar.stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.svn_pillar.html">salt.pillar.svn_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.varstack_pillar.html">salt.pillar.varstack_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.virtkey.html">salt.pillar.virtkey</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../proxy/all/index.html">Full list of builtin proxy modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../queues/all/index.html">Full list of builtin queues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../renderers/all/index.html">Full list of builtin renderer modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../returners/all/index.html">所有内置的返回接收器模块列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../roster/all/index.html">Full list of builtin roster modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../runners/all/index.html">Full list of runner modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sdb/all/index.html">Full list of builtin sdb modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../serializers/all/index.html">Full list of builtin serializers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../states/all/index.html">所有内置的state模块列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tops/all/index.html">master内置顶级模块的全部列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../wheel/all/index.html">Full list of builtin wheel modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

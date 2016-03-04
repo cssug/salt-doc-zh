@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.states.boto_lambda module</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.states.boto_lambda">
+<span id="salt-states-boto-lambda-module"></span><h1>salt.states.boto_lambda module<a class="headerlink" href="#module-salt.states.boto_lambda" title="永久链接至标题">¶</a></h1>
+<div class="section" id="manage-lambda-functions">
+<h2>Manage Lambda Functions<a class="headerlink" href="#manage-lambda-functions" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2016.3.0 新版功能.</span></p>
+</div>
+<p>Create and destroy Lambda Functions. Be aware that this interacts with Amazon's services,
+and so may incur charges.</p>
+<p>This module uses <code class="docutils literal"><span class="pre">boto3</span></code>, which can be installed via package, or pip.</p>
+<p>This module accepts explicit vpc credentials but can also utilize
+IAM roles assigned to the instance through Instance Profiles. Dynamic
+credentials are then automatically obtained from AWS API and no further
+configuration is necessary. More information available <a class="reference external" href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html">here</a>.</p>
+<p>If IAM roles are not used you need to specify them either in a pillar file or
+in the minion's config file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">vpc.keyid</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">GKTADJGHEIQSXMKKRBJ08H</span>
+<span class="l l-Scalar l-Scalar-Plain">vpc.key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">askdjghsdfjkghWupUjasdflkdfklgjsdfjajkghs</span>
+</pre></div>
+</div>
+<p>It's also possible to specify <code class="docutils literal"><span class="pre">key</span></code>, <code class="docutils literal"><span class="pre">keyid</span></code> and <code class="docutils literal"><span class="pre">region</span></code> via a profile,
+either passed in as a dict, or as a string to pull from pillars or minion
+config:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">myprofile</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">keyid</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">GKTADJGHEIQSXMKKRBJ08H</span>
+    <span class="l l-Scalar l-Scalar-Plain">key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">askdjghsdfjkghWupUjasdflkdfklgjsdfjajkghs</span>
+        <span class="l l-Scalar l-Scalar-Plain">region</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">Ensure function exists</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">boto_lambda.function_present</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">FunctionName</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myfunction</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">Runtime</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">python2.7</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">Role</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">iam_role_name</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">Handler</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">entry_function</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ZipFile</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">code.zip</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">S3Bucket</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">bucketname</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">S3Key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">keyname</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">S3ObjectVersion</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">version</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">Description</span><span class="p p-Indicator">:</span> <span class="s">&quot;My</span><span class="nv"> </span><span class="s">Lambda</span><span class="nv"> </span><span class="s">Function&quot;</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">Timeout</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">3</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">MemorySize</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">128</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">region</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">keyid</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">GKTADJGHEIQSXMKKRBJ08H</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">askdjghsdfjkghWupUjasdflkdfklgjsdfjajkghs</span>
+</pre></div>
+</div>
+<dl class="function">
+<dt id="salt.states.boto_lambda.alias_absent">
+<code class="descclassname">salt.states.boto_lambda.</code><code class="descname">alias_absent</code><span class="sig-paren">(</span><em>name</em>, <em>FunctionName</em>, <em>Name</em>, <em>region=None</em>, <em>key=None</em>, <em>keyid=None</em>, <em>profile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.boto_lambda.alias_absent" title="永久链接至目标">¶</a></dt>
+<dd><p>Ensure alias with passed properties is absent.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name of the state definition.</dd>
+<dt>FunctionName</dt>
+<dd>Name of the function.</dd>
+<dt>Name</dt>
+<dd>Name of the alias.</dd>
+<dt>region</dt>
+<dd>Region to connect to.</dd>
+<dt>key</dt>
+<dd>Secret key to be used.</dd>
+<dt>keyid</dt>
+<dd>Access key to be used.</dd>
+<dt>profile</dt>
+<dd>A dict with region, key and keyid, or a pillar key (string) that
+contains a dict with region, key and keyid.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.boto_lambda.alias_present">
+<code class="descclassname">salt.states.boto_lambda.</code><code class="descname">alias_present</code><span class="sig-paren">(</span><em>name</em>, <em>FunctionName</em>, <em>Name</em>, <em>FunctionVersion</em>, <em>Description=''</em>, <em>region=None</em>, <em>key=None</em>, <em>keyid=None</em>, <em>profile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.boto_lambda.alias_present" title="永久链接至目标">¶</a></dt>
+<dd><p>Ensure alias exists.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name of the state definition.</dd>
+<dt>FunctionName</dt>
+<dd>Name of the function for which you want to create an alias.</dd>
+<dt>Name</dt>
+<dd>The name of the alias to be created.</dd>
+<dt>FunctionVersion</dt>
+<dd>Function version for which you are creating the alias.</dd>
+<dt>Description</dt>
+<dd>A short, user-defined function description. Lambda does not use this value. Assign a meaningful
+description as you see fit.</dd>
+<dt>region</dt>
+<dd>Region to connect to.</dd>
+<dt>key</dt>
+<dd>Secret key to be used.</dd>
+<dt>keyid</dt>
+<dd>Access key to be used.</dd>
+<dt>profile</dt>
+<dd>A dict with region, key and keyid, or a pillar key (string) that
+contains a dict with region, key and keyid.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.boto_lambda.event_source_mapping_absent">
+<code class="descclassname">salt.states.boto_lambda.</code><code class="descname">event_source_mapping_absent</code><span class="sig-paren">(</span><em>name</em>, <em>EventSourceArn</em>, <em>FunctionName</em>, <em>region=None</em>, <em>key=None</em>, <em>keyid=None</em>, <em>profile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.boto_lambda.event_source_mapping_absent" title="永久链接至目标">¶</a></dt>
+<dd><p>Ensure event source mapping with passed properties is absent.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name of the state definition.</dd>
+<dt>EventSourceArn</dt>
+<dd>ARN of the event source.</dd>
+<dt>FunctionName</dt>
+<dd>Name of the lambda function.</dd>
+<dt>region</dt>
+<dd>Region to connect to.</dd>
+<dt>key</dt>
+<dd>Secret key to be used.</dd>
+<dt>keyid</dt>
+<dd>Access key to be used.</dd>
+<dt>profile</dt>
+<dd>A dict with region, key and keyid, or a pillar key (string) that
+contains a dict with region, key and keyid.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.boto_lambda.event_source_mapping_present">
+<code class="descclassname">salt.states.boto_lambda.</code><code class="descname">event_source_mapping_present</code><span class="sig-paren">(</span><em>name</em>, <em>EventSourceArn</em>, <em>FunctionName</em>, <em>StartingPosition</em>, <em>Enabled=True</em>, <em>BatchSize=100</em>, <em>region=None</em>, <em>key=None</em>, <em>keyid=None</em>, <em>profile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.boto_lambda.event_source_mapping_present" title="永久链接至目标">¶</a></dt>
+<dd><p>Ensure event source mapping exists.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name of the state definition.</dd>
+<dt>EventSourceArn</dt>
+<dd>The Amazon Resource Name (ARN) of the Amazon Kinesis or the Amazon
+DynamoDB stream that is the event source.</dd>
+<dt>FunctionName</dt>
+<dd><p class="first">The Lambda function to invoke when AWS Lambda detects an event on the
+stream.</p>
+<p class="last">You can specify an unqualified function name (for example, &quot;Thumbnail&quot;)
+or you can specify Amazon Resource Name (ARN) of the function (for
+example, &quot;arn:aws:lambda:us-west-2:account-id:function:ThumbNail&quot;). AWS
+Lambda also allows you to specify only the account ID qualifier (for
+example, &quot;account-id:Thumbnail&quot;). Note that the length constraint
+applies only to the ARN. If you specify only the function name, it is
+limited to 64 character in length.</p>
+</dd>
+<dt>StartingPosition</dt>
+<dd>The position in the stream where AWS Lambda should start reading.
+(TRIM_HORIZON | LATEST)</dd>
+<dt>Enabled</dt>
+<dd>Indicates whether AWS Lambda should begin polling the event source. By
+default, Enabled is true.</dd>
+<dt>BatchSize</dt>
+<dd>The largest number of records that AWS Lambda will retrieve from your
+event source at the time of invoking your function. Your function
+receives an event with all the retrieved records. The default is 100
+records.</dd>
+<dt>region</dt>
+<dd>Region to connect to.</dd>
+<dt>key</dt>
+<dd>Secret key to be used.</dd>
+<dt>keyid</dt>
+<dd>Access key to be used.</dd>
+<dt>profile</dt>
+<dd>A dict with region, key and keyid, or a pillar key (string) that
+contains a dict with region, key and keyid.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.boto_lambda.function_absent">
+<code class="descclassname">salt.states.boto_lambda.</code><code class="descname">function_absent</code><span class="sig-paren">(</span><em>name</em>, <em>FunctionName</em>, <em>region=None</em>, <em>key=None</em>, <em>keyid=None</em>, <em>profile=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.boto_lambda.function_absent" title="永久链接至目标">¶</a></dt>
+<dd><p>Ensure function with passed properties is absent.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name of the state definition.</dd>
+<dt>FunctionName</dt>
+<dd>Name of the function.</dd>
+<dt>region</dt>
+<dd>Region to connect to.</dd>
+<dt>key</dt>
+<dd>Secret key to be used.</dd>
+<dt>keyid</dt>
+<dd>Access key to be used.</dd>
+<dt>profile</dt>
+<dd>A dict with region, key and keyid, or a pillar key (string) that
+contains a dict with region, key and keyid.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.boto_lambda.function_present">
+<code class="descclassname">salt.states.boto_lambda.</code><code class="descname">function_present</code><span class="sig-paren">(</span><em>name</em>, <em>FunctionName</em>, <em>Runtime</em>, <em>Role</em>, <em>Handler</em>, <em>ZipFile=None</em>, <em>S3Bucket=None</em>, <em>S3Key=None</em>, <em>S3ObjectVersion=None</em>, <em>Description=''</em>, <em>Timeout=3</em>, <em>MemorySize=128</em>, <em>Permissions=None</em>, <em>RoleRetries=5</em>, <em>region=None</em>, <em>key=None</em>, <em>keyid=None</em>, <em>profile=None</em>, <em>VpcConfig=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.boto_lambda.function_present" title="永久链接至目标">¶</a></dt>
+<dd><p>Ensure function exists.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name of the state definition</dd>
+<dt>FunctionName</dt>
+<dd>Name of the Function.</dd>
+<dt>Runtime</dt>
+<dd>The Runtime environment for the function. One of
+'nodejs', 'java8', or 'python2.7'</dd>
+<dt>Role</dt>
+<dd>The name or ARN of the IAM role that the function assumes when it executes your
+function to access any other AWS resources.</dd>
+<dt>Handler</dt>
+<dd>The function within your code that Lambda calls to begin execution. For Node.js it is the
+module-name.*export* value in your function. For Java, it can be package.classname::handler or
+package.class-name.</dd>
+<dt>ZipFile</dt>
+<dd>A path to a .zip file containing your deployment package. If this is
+specified, S3Bucket and S3Key must not be specified.</dd>
+<dt>S3Bucket</dt>
+<dd>Amazon S3 bucket name where the .zip file containing your package is
+stored. If this is specified, S3Key must be specified and ZipFile must
+NOT be specified.</dd>
+<dt>S3Key</dt>
+<dd>The Amazon S3 object (the deployment package) key name you want to
+upload. If this is specified, S3Key must be specified and ZipFile must
+NOT be specified.</dd>
+<dt>S3ObjectVersion</dt>
+<dd>The version of S3 object to use. Optional, should only be specified if
+S3Bucket and S3Key are specified.</dd>
+<dt>Description</dt>
+<dd>A short, user-defined function description. Lambda does not use this value. Assign a meaningful
+description as you see fit.</dd>
+<dt>Timeout</dt>
+<dd>The function execution time at which Lambda should terminate this function. Because the execution
+time has cost implications, we recommend you set this value based on your expected execution time.
+The default is 3 seconds.</dd>
+<dt>MemorySize</dt>
+<dd>The amount of memory, in MB, your function is given. Lambda uses this memory size to infer
+the amount of CPU and memory allocated to your function. Your function use-case determines your
+CPU and memory requirements. For example, a database operation might need less memory compared
+to an image processing function. The default value is 128 MB. The value must be a multiple of
+64 MB.</dd>
+<dt>VpcConfig</dt>
+<dd><p class="first">If your Lambda function accesses resources in a VPC, you provide this
+parameter identifying the list of security group IDs and subnet IDs.
+These must belong to the same VPC. You must provide at least one
+security group and one subnet ID.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">Carbon 新版功能.</span></p>
+</div>
+</dd>
+<dt>Permissions</dt>
+<dd>A list of permission definitions to be added to the function's policy</dd>
+<dt>RoleRetries</dt>
+<dd>IAM Roles may take some time to propagate to all regions once created.
+During that time function creation may fail; this state will
+atuomatically retry this number of times. The default is 5.</dd>
+<dt>region</dt>
+<dd>Region to connect to.</dd>
+<dt>key</dt>
+<dd>Secret key to be used.</dd>
+<dt>keyid</dt>
+<dd>Access key to be used.</dd>
+<dt>profile</dt>
+<dd>A dict with region, key and keyid, or a pillar key (string) that
+contains a dict with region, key and keyid.</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

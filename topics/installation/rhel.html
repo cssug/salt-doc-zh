@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>RHEL / CentOS / Scientific Linux / Amazon Linux / Oracle Linux</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="安装教程" href="index.html">
+        <link rel="next" title="Solaris" href="solaris.html">
+        <link rel="prev" title="OS X" href="osx.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="osx.html" title="OS X">上一页</a>
+            
+        </li>
+        <li>
+            <a href="solaris.html" title="Solaris">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="rhel-centos-scientific-linux-amazon-linux-oracle-linux">
+<span id="installation-rhel"></span><h1>RHEL / CentOS / Scientific Linux / Amazon Linux / Oracle Linux<a class="headerlink" href="#rhel-centos-scientific-linux-amazon-linux-oracle-linux" title="永久链接至标题">¶</a></h1>
+<p id="installation-rhel-repo">Salt should work properly with all mainstream derivatives of Red Hat Enterprise
+Linux, including CentOS, Scientific Linux, Oracle Linux, and Amazon Linux.
+Report any bugs or issues on the <a class="reference external" href="https://github.com/saltstack/salt/issues">issue tracker</a>.</p>
+<div class="section" id="installation-from-the-saltstack-repository">
+<h2>Installation from the SaltStack Repository<a class="headerlink" href="#installation-from-the-saltstack-repository" title="永久链接至标题">¶</a></h2>
+<p>2015.5 and later packages for RHEL 5, 6, and 7 are available in the
+SaltStack repository.</p>
+<div class="admonition important">
+<p class="first admonition-title">重要</p>
+<p class="last">The repository folder structure changed in the 2015.8.3 release, though the
+previous repository structure that was documented in 2015.8.1 can continue to
+be used.</p>
+</div>
+<p>To install using the SaltStack repository:</p>
+<ol class="arabic">
+<li><p class="first">Run one of the following commands based on your version to import the SaltStack repository key:</p>
+<p>Version 7:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>rpm --import https://repo.saltstack.com/yum/redhat/7/x86_64/latest/SALTSTACK-GPG-KEY.pub
+</pre></div>
+</div>
+<p>Version 6:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>rpm --import https://repo.saltstack.com/yum/redhat/6/x86_64/latest/SALTSTACK-GPG-KEY.pub
+</pre></div>
+</div>
+<p>Version 5:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>wget https://repo.saltstack.com/yum/redhat/5/x86_64/latest/SALTSTACK-EL5-GPG-KEY.pub
+rpm --import SALTSTACK-EL5-GPG-KEY.pub
+rm -f SALTSTACK-EL5-GPG-KEY.pub
+</pre></div>
+</div>
+</li>
+<li><p class="first">Save the following file to <code class="docutils literal"><span class="pre">/etc/yum.repos.d/saltstack.repo</span></code>:</p>
+<p>Version 7 and 6:</p>
+<div class="highlight-cfg"><div class="highlight"><pre><span></span><span class="k">[saltstack-repo]</span>
+<span class="na">name</span><span class="o">=</span><span class="s">SaltStack repo for RHEL/CentOS $releasever</span>
+<span class="na">baseurl</span><span class="o">=</span><span class="s">https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest</span>
+<span class="na">enabled</span><span class="o">=</span><span class="s">1</span>
+<span class="na">gpgcheck</span><span class="o">=</span><span class="s">1</span>
+<span class="na">gpgkey</span><span class="o">=</span><span class="s">https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/SALTSTACK-GPG-KEY.pub</span>
+</pre></div>
+</div>
+<p>Version 5:</p>
+<div class="highlight-cfg"><div class="highlight"><pre><span></span><span class="k">[saltstack-repo]</span>
+<span class="na">name</span><span class="o">=</span><span class="s">SaltStack repo for RHEL/CentOS $releasever</span>
+<span class="na">baseurl</span><span class="o">=</span><span class="s">https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest</span>
+<span class="na">enabled</span><span class="o">=</span><span class="s">1</span>
+<span class="na">gpgcheck</span><span class="o">=</span><span class="s">1</span>
+<span class="na">gpgkey</span><span class="o">=</span><span class="s">https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/SALTSTACK-EL5-GPG-KEY.pub</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Run <code class="docutils literal"><span class="pre">sudo</span> <span class="pre">yum</span> <span class="pre">clean</span> <span class="pre">expire-cache</span></code>.</p>
+</li>
+<li><p class="first">Run <code class="docutils literal"><span class="pre">sudo</span> <span class="pre">yum</span> <span class="pre">update</span></code>.</p>
+</li>
+<li><p class="first">Install the salt-minion, salt-master, or other Salt components:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">yum</span> <span class="pre">install</span> <span class="pre">salt-master</span></code></li>
+<li><code class="docutils literal"><span class="pre">yum</span> <span class="pre">install</span> <span class="pre">salt-minion</span></code></li>
+<li><code class="docutils literal"><span class="pre">yum</span> <span class="pre">install</span> <span class="pre">salt-ssh</span></code></li>
+<li><code class="docutils literal"><span class="pre">yum</span> <span class="pre">install</span> <span class="pre">salt-syndic</span></code></li>
+<li><code class="docutils literal"><span class="pre">yum</span> <span class="pre">install</span> <span class="pre">salt-cloud</span></code></li>
+</ul>
+</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">As of 2015.8.0, EPEL repository is no longer required for installing on
+RHEL systems. SaltStack repository provides all needed dependencies.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p>If installing on Red Hat Enterprise Linux 7 with disabled (not subscribed on)
+'RHEL Server Releases' or 'RHEL Server Optional Channel' repositories,
+append CentOS 7 GPG key URL to SaltStack yum repository configuration to
+install required base packages:</p>
+<div class="last highlight-cfg"><div class="highlight"><pre><span></span><span class="k">[saltstack-repo]</span>
+<span class="na">name</span><span class="o">=</span><span class="s">SaltStack repo for Red Hat Enterprise Linux $releasever</span>
+<span class="na">baseurl</span><span class="o">=</span><span class="s">https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest</span>
+<span class="na">enabled</span><span class="o">=</span><span class="s">1</span>
+<span class="na">gpgcheck</span><span class="o">=</span><span class="s">1</span>
+<span class="na">gpgkey</span><span class="o">=</span><span class="s">https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/SALTSTACK-GPG-KEY.pub</span>
+<span class="s">       https://repo.saltstack.com/yum/redhat/$releasever/$basearch/latest/base/RPM-GPG-KEY-CentOS-7</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">systemd</span></code> and <code class="docutils literal"><span class="pre">python-systemd</span></code> are required by Salt, but are not
+installed by the Red Hat 7 <code class="docutils literal"><span class="pre">&#64;base</span></code> installation or by the Salt
+installation. These dependencies might need to be installed before Salt.</p>
+</div>
+</div>
+<div class="section" id="installation-from-the-community-repository">
+<h2>Installation from the Community Repository<a class="headerlink" href="#installation-from-the-community-repository" title="永久链接至标题">¶</a></h2>
+<p>Beginning with version 0.9.4, Salt has been available in <a class="reference external" href="http://fedoraproject.org/wiki/EPEL">EPEL</a>. For
+RHEL/CentOS 5, <a class="reference external" href="https://copr.fedorainfracloud.org/coprs/saltstack/salt-el5/">Fedora COPR</a> is a single community repository that provides
+Salt packages due to the removal from EPEL5.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Packages in these repositories are built by community, and it can
+take a little while until the latest stable SaltStack release become
+available.</p>
+</div>
+<div class="section" id="rhel-centos-6-and-7-scientific-linux-etc">
+<h3>RHEL/CentOS 6 and 7, Scientific Linux, etc.<a class="headerlink" href="#rhel-centos-6-and-7-scientific-linux-etc" title="永久链接至标题">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">Salt 2015.8 is currently not available in EPEL due to unsatisfied
+dependencies: <code class="docutils literal"><span class="pre">python-crypto</span></code> 2.6.1 or higher, and <code class="docutils literal"><span class="pre">python-tornado</span></code>
+version 4.2.1 or higher. These packages are not currently available in EPEL
+for Red Hat Enterprise Linux 6 and 7.</p>
+</div>
+<div class="section" id="enabling-epel">
+<h4>Enabling EPEL<a class="headerlink" href="#enabling-epel" title="永久链接至标题">¶</a></h4>
+<p>If the EPEL repository is not installed on your system, you can download the
+RPM for <a class="reference external" href="http://download.fedoraproject.org/pub/epel/6/i386/repoview/epel-release.html">RHEL/CentOS 6</a> or for <a class="reference external" href="http://download.fedoraproject.org/pub/epel/7/x86_64/repoview/epel-release.html">RHEL/CentOS 7</a> and install it
+using the following command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>rpm -Uvh epel-release-X-Y.rpm
+</pre></div>
+</div>
+<p>Replace <code class="docutils literal"><span class="pre">epel-release-X-Y.rpm</span></code> with the appropriate filename.</p>
+</div>
+<div class="section" id="installing-stable-release">
+<h4>安装稳定版<a class="headerlink" href="#installing-stable-release" title="永久链接至标题">¶</a></h4>
+<p>Salt is packaged separately for the minion and the master. It is necessary
+to install only the appropriate package for the role the machine will play.
+Typically, there will be one master and multiple minions.</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">yum</span> <span class="pre">install</span> <span class="pre">salt-master</span></code></li>
+<li><code class="docutils literal"><span class="pre">yum</span> <span class="pre">install</span> <span class="pre">salt-minion</span></code></li>
+<li><code class="docutils literal"><span class="pre">yum</span> <span class="pre">install</span> <span class="pre">salt-ssh</span></code></li>
+<li><code class="docutils literal"><span class="pre">yum</span> <span class="pre">install</span> <span class="pre">salt-syndic</span></code></li>
+<li><code class="docutils literal"><span class="pre">yum</span> <span class="pre">install</span> <span class="pre">salt-cloud</span></code></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="installing-from-epel-testing">
+<h4>从 <code class="docutils literal"><span class="pre">epel-testing</span></code> 安装<a class="headerlink" href="#installing-from-epel-testing" title="永久链接至标题">¶</a></h4>
+<p>When a new Salt release is packaged, it is first admitted into the
+<code class="docutils literal"><span class="pre">epel-testing</span></code> repository, before being moved to the stable EPEL repository.</p>
+<p>To install from <code class="docutils literal"><span class="pre">epel-testing</span></code>, use the <code class="docutils literal"><span class="pre">enablerepo</span></code> argument for <code class="docutils literal"><span class="pre">yum</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>yum --enablerepo<span class="o">=</span>epel-testing install salt-minion
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="installation-using-pip">
+<h2>使用pip安装<a class="headerlink" href="#installation-using-pip" title="永久链接至标题">¶</a></h2>
+<p>Since Salt is on <a class="reference external" href="https://pypi.python.org/pypi/salt">PyPI</a>, it can be installed using pip, though most users
+prefer to install using RPM packages (which can be installed from <a class="reference external" href="http://fedoraproject.org/wiki/EPEL">EPEL</a>).</p>
+<p>Installing from pip has a few additional requirements:</p>
+<ul class="simple">
+<li>Install the group 'Development Tools', <code class="docutils literal"><span class="pre">yum</span> <span class="pre">groupinstall</span> <span class="pre">'Development</span> <span class="pre">Tools'</span></code></li>
+<li>Install the 'zeromq-devel' package if it fails on linking against that
+afterwards as well.</li>
+</ul>
+<p>A pip install does not make the init scripts or the /etc/salt directory, and you
+will need to provide your own systemd service unit.</p>
+<p>Installation from pip:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pip install salt
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">如果从pip安装(或者使用 <code class="docutils literal"><span class="pre">setup.py</span> <span class="pre">install</span></code> 从源码安装)，需要注意 <code class="docutils literal"><span class="pre">yum-utils</span></code> 被Salt依赖，用于管理软件包。同样的，如果Python依赖没有安装，你需要额外安装库/工具来构建一些依赖。更多信息点  <a class="reference internal" href="../development/hacking.html#installing-for-development"><span>这里</span></a>。</p>
+</div>
+</div>
+<div class="section" id="zeromq-4">
+<h2>ZeroMQ 4<a class="headerlink" href="#zeromq-4" title="永久链接至标题">¶</a></h2>
+<p>We recommend using ZeroMQ 4 where available. SaltStack provides ZeroMQ 4.0.5
+and pyzmq 14.5.0 in the <a class="reference internal" href="#installation-rhel-repo"><span>SaltStack Repository</span></a>
+as well as a separate <a class="reference external" href="http://copr.fedorainfracloud.org/coprs/saltstack/zeromq4/">zeromq4 COPR</a> repository.</p>
+<p>If this repository is added <em>before</em> Salt is installed, then installing either
+<code class="docutils literal"><span class="pre">salt-master</span></code> or <code class="docutils literal"><span class="pre">salt-minion</span></code> will automatically pull in ZeroMQ 4.0.5, and
+additional steps to upgrade ZeroMQ and pyzmq are unnecessary.</p>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">RHEL/CentOS 5 Users
+Using COPR repos on RHEL/CentOS 5 requires that the <code class="docutils literal"><span class="pre">python-hashlib</span></code>
+package be installed. Not having it present will result in checksum errors
+because YUM will not be able to process the SHA256 checksums used by COPR.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">For RHEL/CentOS 5 installations, if using the SaltStack repo or Fedora COPR
+to install Salt (as described <a class="reference internal" href="#installation-rhel-repo"><span>above</span></a>),
+then it is not necessary to enable the <a class="reference external" href="http://copr.fedorainfracloud.org/coprs/saltstack/zeromq4/">zeromq4 COPR</a>, because those
+repositories already include ZeroMQ 4.</p>
+</div>
+</div>
+<div class="section" id="package-management">
+<h2>包管理<a class="headerlink" href="#package-management" title="永久链接至标题">¶</a></h2>
+<p>Salt's interface to <a class="reference internal" href="../../ref/modules/all/salt.modules.yumpkg.html#module-salt.modules.yumpkg" title="salt.modules.yumpkg"><code class="xref py py-mod docutils literal"><span class="pre">yum</span></code></a> makes heavy use of the
+<strong>repoquery</strong> utility, from the <a class="reference external" href="http://yum.baseurl.org/wiki/YumUtils">yum-utils</a> package. This package will be
+installed as a dependency if salt is installed via EPEL. However, if salt has
+been installed using pip, or a host is being managed using salt-ssh, then as of
+version 2014.7.0 <a class="reference external" href="http://yum.baseurl.org/wiki/YumUtils">yum-utils</a> will be installed automatically to satisfy this
+dependency.</p>
+</div>
+<div class="section" id="post-installation-tasks">
+<h2>安装后的工作<a class="headerlink" href="#post-installation-tasks" title="永久链接至标题">¶</a></h2>
+<div class="section" id="master">
+<h3>Master<a class="headerlink" href="#master" title="永久链接至标题">¶</a></h3>
+<p>配置master开机自动启动:</p>
+<p><strong>RHEL/CentOS 5 and 6</strong></p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>chkconfig salt-master on
+</pre></div>
+</div>
+<p><strong>RHEL/CentOS 7</strong></p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>systemctl <span class="nb">enable</span> salt-master.service
+</pre></div>
+</div>
+<p>启动Master:</p>
+<p><strong>RHEL/CentOS 5 and 6</strong></p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>service salt-master start
+</pre></div>
+</div>
+<p><strong>RHEL/CentOS 7</strong></p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>systemctl start salt-master.service
+</pre></div>
+</div>
+</div>
+<div class="section" id="minion">
+<h3>Minion<a class="headerlink" href="#minion" title="永久链接至标题">¶</a></h3>
+<p>配置Minion开机自动启动:</p>
+<p><strong>RHEL/CentOS 5 and 6</strong></p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>chkconfig salt-minion on
+</pre></div>
+</div>
+<p><strong>RHEL/CentOS 7</strong></p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>systemctl <span class="nb">enable</span> salt-minion.service
+</pre></div>
+</div>
+<p>启动Minion:</p>
+<p><strong>RHEL/CentOS 5 and 6</strong></p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>service salt-minion start
+</pre></div>
+</div>
+<p><strong>RHEL/CentOS 7</strong></p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>systemctl start salt-minion.service
+</pre></div>
+</div>
+<p>现在前往 :doc: <cite>配置Salt &lt;/ref/configuration/index&gt;</cite> 页面.</p>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="osx.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="OS X" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="solaris.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Solaris" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">安装教程</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#quick-install">快速安装</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#platform-specific-installation-instructions">对应平台的安装教程</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="arch.html">Arch Linux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="debian.html">Debian GNU/Linux / Raspbian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fedora.html">Fedora</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freebsd.html">FreeBSD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gentoo.html">Gentoo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="openbsd.html">OpenBSD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="osx.html">OS X</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">RHEL / CentOS / Scientific Linux / Amazon Linux / Oracle Linux</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#installation-from-the-saltstack-repository">Installation from the SaltStack Repository</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#installation-from-the-community-repository">Installation from the Community Repository</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#rhel-centos-6-and-7-scientific-linux-etc">RHEL/CentOS 6 and 7, Scientific Linux, etc.</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#enabling-epel">Enabling EPEL</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#installing-stable-release">安装稳定版</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#installing-from-epel-testing">从 <code class="docutils literal"><span class="pre">epel-testing</span></code> 安装</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#installation-using-pip">使用pip安装</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#zeromq-4">ZeroMQ 4</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#package-management">包管理</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#post-installation-tasks">安装后的工作</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#master">Master</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#minion">Minion</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="solaris.html">Solaris</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ubuntu.html">Ubuntu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="windows.html">Windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="suse.html">SUSE</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#initial-configuration">Initial Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#additional-installation-guides">Additional Installation Guides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#dependencies">依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#optional-dependencies">可选依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#upgrading-salt">升级Salt</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

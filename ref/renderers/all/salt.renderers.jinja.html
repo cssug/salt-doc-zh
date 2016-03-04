@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.renderers.jinja</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+        <link rel="up" title="Full list of builtin renderer modules" href="index.html">
+        <link rel="next" title="salt.renderers.json" href="salt.renderers.json.html">
+        <link rel="prev" title="salt.renderers.hjson" href="salt.renderers.hjson.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="salt.renderers.hjson.html" title="salt.renderers.hjson">上一页</a>
+            
+        </li>
+        <li>
+            <a href="salt.renderers.json.html" title="salt.renderers.json">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.renderers.jinja">
+<span id="salt-renderers-jinja"></span><h1>salt.renderers.jinja<a class="headerlink" href="#module-salt.renderers.jinja" title="永久链接至标题">¶</a></h1>
+<p>Jinja加载工具为jinja模板提供了一个更强大的后端</p>
+<div class="section" id="jinja-in-states">
+<h2>Jinja在States中的使用<a class="headerlink" href="#jinja-in-states" title="永久链接至标题">¶</a></h2>
+<p>在state文件中Jinja最基本的用法是使用控制结构包装条件或冗余state元素:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% if grains[&#39;os&#39;] != &#39;FreeBSD&#39; %}
+tcsh:
+    pkg:
+        - installed
+{% endif %}
+
+motd:
+  file.managed:
+    {% if grains[&#39;os&#39;] == &#39;FreeBSD&#39; %}
+    - name: /etc/motd
+    {% elif grains[&#39;os&#39;] == &#39;Debian&#39; %}
+    - name: /etc/motd.tail
+    {% endif %}
+    - source: salt://motd
+</pre></div>
+</div>
+<p>在这个例子中，第一个if块将会判断minions非运行在FreeBSD， 第二个块基于 <em>os</em> grain改变文件名。</p>
+<p>编写 <strong>if-else</strong> 块可以加载冗余的state文件。这种情况下，使用 <a class="reference internal" href="../../../topics/pillar/index.html"><em>pillars</em></a> ，或使用一个预定义的变量将会变得更加容易。</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% set motd = [&#39;/etc/motd&#39;] %}
+{% if grains[&#39;os&#39;] == &#39;Debian&#39; %}
+  {% set motd = [&#39;/etc/motd.tail&#39;, &#39;/var/run/motd&#39;] %}
+{% endif %}
+
+{% for motdfile in motd %}
+{{ motdfile }}:
+  file.managed:
+    - source: salt://motd
+{% endfor %}
+</pre></div>
+</div>
+<p>使用一个模板设定的变量， <cite>for循环</cite> 将会遍历MOTD列表中的文件并更新，为每个文件添加一个state块。</p>
+</div>
+<div class="section" id="include-and-import">
+<h2>Include和Import<a class="headerlink" href="#include-and-import" title="永久链接至标题">¶</a></h2>
+<p><a href="#id3"><span class="problematic" id="id4">Includes和imports__</span></a> 可在state文件之间共享，重用state配置。</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% from &#39;lib.sls&#39; import test %}
+</pre></div>
+</div>
+<p>这个范例将会从 <code class="docutils literal"><span class="pre">lib.sls</span></code>  文件导入 <code class="docutils literal"><span class="pre">test</span></code> 模板变量或宏，并不是 <code class="docutils literal"><span class="pre">test</span></code> state元素。 In the case that the included file performs checks again grains, or something else that requires context, passing the context into the included file is required:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% from &#39;lib.sls&#39; import test with context %}
+</pre></div>
+</div>
+</div>
+<div class="section" id="macros">
+<h2>宏<a class="headerlink" href="#macros" title="永久链接至标题">¶</a></h2>
+<p><a class="reference internal" href="#macros">宏</a> 有助于消除冗余代码，however stripping whitespace from the template block, as well as contained blocks, may be necessary to emulate a variable return from the macro.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span># init.sls
+{% from &#39;lib.sls&#39; import pythonpkg with context %}
+
+python-virtualenv:
+  pkg.installed:
+    - name: {{ pythonpkg(&#39;virtualenv&#39;) }}
+
+python-fabric:
+  pkg.installed:
+    - name: {{ pythonpkg(&#39;fabric&#39;) }}
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span># lib.sls
+{% macro pythonpkg(pkg) -%}
+  {%- if grains[&#39;os&#39;] == &#39;FreeBSD&#39; -%}
+    py27-{{ pkg }}
+  {%- elif grains[&#39;os&#39;] == &#39;Debian&#39; -%}
+    python-{{ pkg }}
+  {%- endif -%}
+{%- endmacro %}
+</pre></div>
+</div>
+<p>This would define a <a class="reference external" href="http://jinja.pocoo.org/docs/templates/#macros">macro</a> that would return a string of the full package name,
+depending on the packaging system's naming convention. The whitespace of the
+macro was eliminated, so that the macro would return a string without line
+breaks, using <a class="reference external" href="http://jinja.pocoo.org/docs/templates/#whitespace-control">whitespace control</a>.</p>
+</div>
+<div class="section" id="template-inheritance">
+<h2>模板继承<a class="headerlink" href="#template-inheritance" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="http://jinja.pocoo.org/docs/templates/#template-inheritance">Template inheritance</a> works fine from state files and files. The search path
+starts at the root of the state tree or pillar.</p>
+</div>
+<div class="section" id="filters">
+<h2>过滤器<a class="headerlink" href="#filters" title="永久链接至标题">¶</a></h2>
+<p>Saltstack extends <a class="reference external" href="http://jinja.pocoo.org/docs/templates/#builtin-filters">builtin filters</a> with these custom filters:</p>
+<dl class="docutils">
+<dt>strftime</dt>
+<dd><p class="first">Converts any time related object into a time based string. It requires a
+valid <a class="reference external" href="http://docs.python.org/2/library/datetime.html#strftime-strptime-behavior" title="(在 Python v2.7)"><span class="xref std std-ref">strftime directives</span></a>. An
+<a class="reference external" href="http://docs.python.org/2/library/datetime.html#strftime-strptime-behavior" title="(在 Python v2.7)"><span class="xref std std-ref">exhaustive list</span></a> can be found in
+the official Python documentation.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% set curtime = None | strftime() %}
+</pre></div>
+</div>
+<p>Fuzzy dates require the <a class="reference external" href="https://github.com/pediapress/timelib/">timelib</a> Python module is installed.</p>
+<div class="last highlight-yaml"><div class="highlight"><pre><span></span>{{ &quot;2002/12/25&quot;|strftime(&quot;%y&quot;) }}
+{{ &quot;1040814000&quot;|strftime(&quot;%Y-%m-%d&quot;) }}
+{{ datetime|strftime(&quot;%u&quot;) }}
+{{ &quot;tomorrow&quot;|strftime }}
+</pre></div>
+</div>
+</dd>
+<dt>sequence</dt>
+<dd>Ensure that parsed data is a sequence.</dd>
+<dt>yaml_encode</dt>
+<dd><p class="first">Serializes a single object into a YAML scalar with any necessary
+handling for escaping special characters.  This will work for any
+scalar YAML data type: ints, floats, timestamps, booleans, strings,
+unicode.  It will <em>not</em> work for multi-objects such as sequences or
+maps.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{%- set bar = 7 %}
+{%- set baz = none %}
+{%- set zip = true %}
+{%- set zap = &#39;The word of the day is &quot;salty&quot;&#39; %}
+
+{%- load_yaml as foo %}
+bar: {{ bar|yaml_encode }}
+baz: {{ baz|yaml_encode }}
+baz: {{ zip|yaml_encode }}
+baz: {{ zap|yaml_encode }}
+{%- endload %}
+</pre></div>
+</div>
+<p class="last">In the above case <code class="docutils literal"><span class="pre">{{</span> <span class="pre">bar</span> <span class="pre">}}</span></code> and <code class="docutils literal"><span class="pre">{{</span> <span class="pre">foo.bar</span> <span class="pre">}}</span></code> should be
+identical and <code class="docutils literal"><span class="pre">{{</span> <span class="pre">baz</span> <span class="pre">}}</span></code> and <code class="docutils literal"><span class="pre">{{</span> <span class="pre">foo.baz</span> <span class="pre">}}</span></code> should be
+identical.</p>
+</dd>
+<dt>yaml_dquote</dt>
+<dd><p class="first">Serializes a string into a properly-escaped YAML double-quoted
+string.  This is useful when the contents of a string are unknown
+and may contain quotes or unicode that needs to be preserved.  The
+resulting string will be emitted with opening and closing double
+quotes.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{%- set bar = &#39;&quot;The quick brown fox . . .&quot;&#39; %}
+{%- set baz = &#39;The word of the day is &quot;salty&quot;.&#39; %}
+
+{%- load_yaml as foo %}
+bar: {{ bar|yaml_dquote }}
+baz: {{ baz|yaml_dquote }}
+{%- endload %}
+</pre></div>
+</div>
+<p class="last">In the above case <code class="docutils literal"><span class="pre">{{</span> <span class="pre">bar</span> <span class="pre">}}</span></code> and <code class="docutils literal"><span class="pre">{{</span> <span class="pre">foo.bar</span> <span class="pre">}}</span></code> should be
+identical and <code class="docutils literal"><span class="pre">{{</span> <span class="pre">baz</span> <span class="pre">}}</span></code> and <code class="docutils literal"><span class="pre">{{</span> <span class="pre">foo.baz</span> <span class="pre">}}</span></code> should be
+identical.  If variable contents are not guaranteed to be a string
+then it is better to use <code class="docutils literal"><span class="pre">yaml_encode</span></code> which handles all YAML
+scalar types.</p>
+</dd>
+<dt>yaml_squote</dt>
+<dd>Similar to the <code class="docutils literal"><span class="pre">yaml_dquote</span></code> filter but with single quotes.  Note
+that YAML only allows special escapes inside double quotes so
+<code class="docutils literal"><span class="pre">yaml_squote</span></code> is not nearly as useful (viz. you likely want to
+use <code class="docutils literal"><span class="pre">yaml_encode</span></code> or <code class="docutils literal"><span class="pre">yaml_dquote</span></code>).</dd>
+</dl>
+</div>
+<div class="section" id="jinja-in-files">
+<h2>Jinja在普通文件的使用<a class="headerlink" href="#jinja-in-files" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="http://jinja.pocoo.org/docs/templates/">Jinja</a> 可以以同样的方式用于被管理的文件:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># redis.sls</span>
+<span class="l l-Scalar l-Scalar-Plain">/etc/redis/redis.conf</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://redis.conf</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">jinja</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">context</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">bind</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">127.0.0.1</span>
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span># lib.sls
+{% set port = 6379 %}
+</pre></div>
+</div>
+<div class="highlight-ini"><div class="highlight"><pre><span></span># redis.conf
+{% from &#39;lib.sls&#39; import port with context %}
+port {{ port }}
+bind {{ bind }}
+</pre></div>
+</div>
+<p>As an example, configuration was pulled from the file context and from an
+external template file.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Macros and variables can be shared across templates. They should not be
+starting with one or more underscores, and should be managed by one of the
+following tags: <cite>macro</cite>, <cite>set</cite>, <cite>load_yaml</cite>, <cite>load_json</cite>, <cite>import_yaml</cite> and
+<cite>import_json</cite>.</p>
+</div>
+</div>
+<div class="section" id="calling-salt-functions">
+<h2>调用Salt函数<a class="headerlink" href="#calling-salt-functions" title="永久链接至标题">¶</a></h2>
+<p>The Jinja renderer provides a shorthand lookup syntax for the <code class="docutils literal"><span class="pre">salt</span></code>
+dictionary of <a class="reference internal" href="../../../glossary.html#term-execution-function"><span class="xref std std-term">execution function</span></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># The following two function calls are equivalent.</span>
+<span class="p p-Indicator">{{</span> <span class="nv">salt</span><span class="p p-Indicator">[</span><span class="s">&#39;cmd.run&#39;</span><span class="p p-Indicator">]</span><span class="nv">(&#39;whoami&#39;)</span> <span class="p p-Indicator">}}</span>
+<span class="p p-Indicator">{{</span> <span class="nv">salt.cmd.run(&#39;whoami&#39;)</span> <span class="p p-Indicator">}}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="debugging">
+<h2>Debugging<a class="headerlink" href="#debugging" title="永久链接至标题">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">show_full_context</span></code> function can be used to output all variables present
+in the current Jinja context.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">Context is</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{{</span> <span class="nv">show_full_context()</span> <span class="p p-Indicator">}}</span>
+</pre></div>
+</div>
+<dl class="function">
+<dt id="salt.renderers.jinja.render">
+<code class="descclassname">salt.renderers.jinja.</code><code class="descname">render</code><span class="sig-paren">(</span><em>template_file</em>, <em>saltenv='base'</em>, <em>sls=''</em>, <em>argline=''</em>, <em>context=None</em>, <em>tmplpath=None</em>, <em>**kws</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.renderers.jinja.render" title="永久链接至目标">¶</a></dt>
+<dd><p>Render the template_file, passing the functions and grains into the
+Jinja rendering system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">返回类型:</th><td class="field-body"><a class="reference internal" href="../../states/all/salt.states.redismod.html#salt.states.redismod.string" title="salt.states.redismod.string">string</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<dl class="class">
+<dt id="salt.utils.jinja.SerializerExtension">
+<em class="property">class </em><code class="descclassname">salt.utils.jinja.</code><code class="descname">SerializerExtension</code><span class="sig-paren">(</span><em>environment</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.utils.jinja.SerializerExtension" title="永久链接至目标">¶</a></dt>
+<dd><p>Yaml和Json处理。</p>
+<p><strong>Format filters</strong></p>
+<p>Allows jsonifying or yamlifying any data structure. For example, this dataset:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+    <span class="s1">&#39;bar&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
+    <span class="s1">&#39;baz&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+    <span class="s1">&#39;qux&#39;</span><span class="p">:</span> <span class="mf">2.0</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="x">yaml = </span><span class="cp">{{</span> <span class="nv">data</span><span class="o">|</span><span class="nf">yaml</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">json = </span><span class="cp">{{</span> <span class="nv">data</span><span class="o">|</span><span class="nf">json</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">python = </span><span class="cp">{{</span> <span class="nv">data</span><span class="o">|</span><span class="nf">python</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+</div>
+<p>will be rendered as:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">yaml</span> <span class="o">=</span> <span class="p">{</span><span class="n">bar</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="n">baz</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">foo</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span> <span class="n">qux</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">}</span>
+<span class="n">json</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;baz&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;foo&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span> <span class="s2">&quot;bar&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s2">&quot;qux&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">}</span>
+<span class="n">python</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;bar&#39;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span> <span class="s1">&#39;baz&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span> <span class="s1">&#39;qux&#39;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The yaml filter takes an optional flow_style parameter to control the
+default-flow-style parameter of the YAML dumper.</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="cp">{{</span> <span class="nv">data</span><span class="o">|</span><span class="nf">yaml</span><span class="o">(</span><span class="kp">False</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+</div>
+<p>will be rendered as:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">bar</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">42</span>
+<span class="l l-Scalar l-Scalar-Plain">baz</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">2</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="l l-Scalar l-Scalar-Plain">foo</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="l l-Scalar l-Scalar-Plain">qux</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">2.0</span>
+</pre></div>
+</div>
+<p><strong>Load filters</strong></p>
+<p>Strings and variables can be deserialized with <strong>load_yaml</strong> and
+<strong>load_json</strong> tags and filters. It allows one to manipulate data directly
+in templates, easily:</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="cp">{%</span>- <span class="k">set</span> <span class="nv">yaml_src</span> <span class="o">=</span> <span class="s2">&quot;{foo: it works}&quot;</span><span class="o">|</span><span class="nf">load_yaml</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span>- <span class="k">set</span> <span class="nv">json_src</span> <span class="o">=</span> <span class="s2">&quot;{&#39;bar&#39;: &#39;for real&#39;}&quot;</span><span class="o">|</span><span class="nf">load_json</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">Dude, </span><span class="cp">{{</span> <span class="nv">yaml_src.foo</span> <span class="cp">}}</span><span class="x"> </span><span class="cp">{{</span> <span class="nv">json_src.bar</span> <span class="cp">}}</span><span class="x">!</span>
+</pre></div>
+</div>
+<p>will be rendered as:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>Dude, it works for real!
+</pre></div>
+</div>
+<p><strong>Load tags</strong></p>
+<p>Salt implements <code class="docutils literal"><span class="pre">import_yaml</span></code> and <code class="docutils literal"><span class="pre">import_json</span></code> tags. They work like
+the <a class="reference external" href="http://jinja.pocoo.org/docs/templates/#import">import tag</a>, except that the document is also deserialized.</p>
+<p>Syntaxes are <code class="docutils literal"><span class="pre">{%</span> <span class="pre">load_yaml</span> <span class="pre">as</span> <span class="pre">[VARIABLE]</span> <span class="pre">%}[YOUR</span> <span class="pre">DATA]{%</span> <span class="pre">endload</span> <span class="pre">%}</span></code>
+and <code class="docutils literal"><span class="pre">{%</span> <span class="pre">load_json</span> <span class="pre">as</span> <span class="pre">[VARIABLE]</span> <span class="pre">%}[YOUR</span> <span class="pre">DATA]{%</span> <span class="pre">endload</span> <span class="pre">%}</span></code></p>
+<p>For example:</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">load_yaml</span> <span class="k">as</span> <span class="nv">yaml_src</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    foo: it works</span>
+<span class="cp">{%</span> <span class="k">endload</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">load_json</span> <span class="k">as</span> <span class="nv">json_src</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    {</span>
+<span class="x">        &quot;bar&quot;: &quot;for real&quot;</span>
+<span class="x">    }</span>
+<span class="cp">{%</span> <span class="k">endload</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">Dude, </span><span class="cp">{{</span> <span class="nv">yaml_src.foo</span> <span class="cp">}}</span><span class="x"> </span><span class="cp">{{</span> <span class="nv">json_src.bar</span> <span class="cp">}}</span><span class="x">!</span>
+</pre></div>
+</div>
+<p>will be rendered as:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>Dude, it works for real!
+</pre></div>
+</div>
+<p><strong>Import tags</strong></p>
+<p>External files can be imported and made available as a Jinja variable.</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">import_yaml</span> <span class="s2">&quot;myfile.yml&quot;</span> <span class="k">as</span> <span class="nv">myfile</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">import_json</span> <span class="s2">&quot;defaults.json&quot;</span> <span class="k">as</span> <span class="nv">defaults</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">import_text</span> <span class="s2">&quot;completeworksofshakespeare.txt&quot;</span> <span class="k">as</span> <span class="nv">poems</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+</div>
+<p><strong>Catalog</strong></p>
+<p><code class="docutils literal"><span class="pre">import_*</span></code> and <code class="docutils literal"><span class="pre">load_*</span></code> tags will automatically expose their
+target variable to import. This feature makes catalog of data to
+handle.</p>
+<p>for example:</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="x"># doc1.sls</span>
+<span class="cp">{%</span> <span class="k">load_yaml</span> <span class="k">as</span> <span class="nv">var1</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    foo: it works</span>
+<span class="cp">{%</span> <span class="k">endload</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">load_yaml</span> <span class="k">as</span> <span class="nv">var2</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    bar: for real</span>
+<span class="cp">{%</span> <span class="k">endload</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+</div>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="x"># doc2.sls</span>
+<span class="cp">{%</span> <span class="k">from</span> <span class="s2">&quot;doc1.sls&quot;</span> <span class="k">import</span> <span class="nv">var1</span><span class="o">,</span> <span class="nv">var2</span> <span class="k">as</span> <span class="nv">local2</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{{</span> <span class="nv">var1.foo</span> <span class="cp">}}</span><span class="x"> </span><span class="cp">{{</span> <span class="nv">local2.bar</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+                            </div>
+                            <a href="salt.renderers.hjson.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.renderers.hjson" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="salt.renderers.json.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.renderers.json" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../configuration/master.html">配置Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../configuration/minion.html">配置Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../configuration/examples.html">Configuration file examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/blackout/index.html">Minion Blackout Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/eauth/access_control.html">Access Control System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/jobs/index.html">Job Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/jobs/job_cache.html">Managing the Job Cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/jobs/external_cache.html">Storing Job Results in an External System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../configuration/logging/index.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../file_server/index.html">Salt文件服务器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/tutorials/gitfs.html">Git Fileserver Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/tutorials/minionfs.html">MinionFS Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/spm/index.html">Salt Package Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/sdb/index.html">Storing Data in Other Databases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../configuration/nonroot.html">以非特权用户身份运行Salt Master/Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/tutorials/cron.html">使用cron运行Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/hardening.html">Hardening Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../security/index.html">Security disclosure policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/transports/index.html">Salt Transport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/master_tops/index.html">Master Tops系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../returners/index.html">返回器</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Renderers渲染器</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../index.html#multiple-renderers">Multiple Renderers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#composing-renderers">Composing Renderers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#writing-renderers">Writing Renderers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#examples">Examples</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#full-list-of-renderers">Full List of Renderers</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">Full list of builtin renderer modules</a><ul class="current">
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.cheetah.html">salt.renderers.cheetah</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.genshi.html">salt.renderers.genshi</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.gpg.html">salt.renderers.gpg</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.hjson.html">salt.renderers.hjson</a></li>
+<li class="toctree-l5 current"><a class="current reference internal" href="">salt.renderers.jinja</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#jinja-in-states">Jinja在States中的使用</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#include-and-import">Include和Import</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#macros">宏</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#template-inheritance">模板继承</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#filters">过滤器</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#jinja-in-files">Jinja在普通文件的使用</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#calling-salt-functions">调用Salt函数</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#debugging">Debugging</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.json.html">salt.renderers.json</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.mako.html">salt.renderers.mako</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.msgpack.html">salt.renderers.msgpack</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.py.html">salt.renderers.py</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.pydsl.html">salt.renderers.pydsl</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.pyobjects.html">salt.renderers.pyobjects</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.stateconf.html">salt.renderers.stateconf</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.wempy.html">salt.renderers.wempy</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.yaml.html">salt.renderers.yaml</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.yamlex.html">salt.renderers.yamlex</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

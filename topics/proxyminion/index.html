@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt Proxy Minion</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="next" title="Salt Proxy Minion End-to-End Example" href="demo.html">
+        <link rel="prev" title="Using Salt Cloud with the Event Reactor" href="../cloud/reactor.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../cloud/reactor.html" title="Using Salt Cloud with the Event Reactor">上一页</a>
+            
+        </li>
+        <li>
+            <a href="demo.html" title="Salt Proxy Minion End-to-End Example">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="salt-proxy-minion">
+<span id="proxy-minion"></span><h1>Salt Proxy Minion<a class="headerlink" href="#salt-proxy-minion" title="永久链接至标题">¶</a></h1>
+<p>Proxy minions are a developing Salt feature that enables controlling devices
+that, for whatever reason, cannot run a standard salt-minion.  Examples include
+network gear that has an API but runs a proprietary OS, devices with limited
+CPU or memory, or devices that could run a minion, but for security reasons,
+will not.</p>
+<p><em>Proxy minions are not an &quot;out of the box&quot; feature</em>.  Because there are an
+infinite number of controllable devices, you will most likely have to write the
+interface yourself. Fortunately, this is only as difficult as the actual
+interface to the proxied device.  Devices that have an existing Python module
+(PyUSB for example) would be relatively simple to interface.  Code to control a
+device that has an HTML REST-based interface should be easy.  Code to control
+your typical housecat would be excellent source material for a PhD thesis.</p>
+<p>Salt proxy-minions provide the 'plumbing' that allows device enumeration
+and discovery, control, status, remote execution, and state management.</p>
+<p>See the <a class="reference internal" href="demo.html"><em>Proxy Minion Walkthrough</em></a> for an end-to-end
+demonstration of a working proxy minion.</p>
+<p>See the <a class="reference internal" href="ssh.html"><em>Proxy Minion SSH Walkthrough</em></a> for an end-to-end
+demonstration of a working SSH proxy minion.</p>
+<p>See <a class="reference internal" href="state.html"><em>Proxyminion States</em></a> to configure and
+run <code class="docutils literal"><span class="pre">salt-proxy</span></code> on a remote minion. Specify all your master side
+proxy (pillar) configuration and use this state to remotely configure proxies on one
+or more minions.</p>
+<p>See <a class="reference internal" href="beacon.html"><em>Proxyminion Beacon</em></a> to help
+with easy configuration and management of <code class="docutils literal"><span class="pre">salt-proxy</span></code> processes.</p>
+<div class="section" id="new-in-2015-8-2">
+<h2>New in 2015.8.2<a class="headerlink" href="#new-in-2015-8-2" title="永久链接至标题">¶</a></h2>
+<p><em>BREAKING CHANGE</em>: Adding the <cite>proxymodule</cite> variable  to __opts__ is deprecated.
+The <cite>proxymodule</cite> variable has been moved a new globally-injected variable
+called <cite>__proxy__</cite>.  A related configuration option called
+<cite>add_proxymodule_to_opts</cite> has been added and defaults to <cite>True</cite>.  In the next
+major release, 2016.3.0, this variable will default to False.</p>
+<p>In the meantime, proxies that functioned under 2015.8.0 and .1 should continue
+to work under 2015.8.2.  You should rework your proxy code to use <cite>__proxy__</cite> as
+soon as possible.</p>
+<p>The <cite>rest_sample</cite> example proxy minion has been updated to use <cite>__proxy__</cite>.</p>
+<p>This change was made because proxymodules are a LazyLoader object, but
+LazyLoaders cannot be serialized.  <cite>__opts__</cite> gets serialized, and so things
+like <cite>saltutil.sync_all</cite> and <cite>state.highstate</cite> would throw exceptions.</p>
+<p>Also in this release, proxymodules can be stored on the master in
+/srv/salt/_proxy.  A new saltutil function called <cite>sync_proxies</cite> will transfer
+these to remote proxy minions.  Note that you must restart the salt-proxy
+daemon to pick up these changes.</p>
+<p>In addition, a salt.utils helper function called <cite>is_proxy()</cite> was added to make
+it easier to tell when the running minion is a proxy minion.</p>
+</div>
+<div class="section" id="new-in-2015-8">
+<h2>New in 2015.8<a class="headerlink" href="#new-in-2015-8" title="永久链接至标题">¶</a></h2>
+<p>Starting with the 2015.8 release of Salt, proxy processes are no longer forked off from a controlling minion.
+Instead, they have their own script <code class="docutils literal"><span class="pre">salt-proxy</span></code> which takes mostly the same arguments that the
+standard Salt minion does with the addition of <code class="docutils literal"><span class="pre">--proxyid</span></code>.  This is the id that the salt-proxy will
+use to identify itself to the master.  Proxy configurations are still best kept in Pillar and their format
+has not changed.</p>
+<p>This change allows for better process control and logging.  Proxy processes can now be listed with standard
+process management utilities (<code class="docutils literal"><span class="pre">ps</span></code> from the command line).  Also, a full Salt minion is no longer
+required (though it is still strongly recommended) on machines hosting proxies.</p>
+</div>
+<div class="section" id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="永久链接至标题">¶</a></h2>
+<p>The following diagram may be helpful in understanding the structure of a Salt
+installation that includes proxy-minions:</p>
+<img alt="../../_images/proxy_minions.png" src="../../_images/proxy_minions.png" />
+<p>The key thing to remember is the left-most section of the diagram.  Salt's
+nature is to have a minion connect to a master, then the master may control
+the minion.  However, for proxy minions, the target device cannot run a minion.</p>
+<p>After the proxy minion is started and initiates its connection to the 'dumb'
+device, it connects back to the salt-master and for all intents and purposes
+looks like just another minion to the Salt master.</p>
+<p>To create support for a proxied device one needs to create four things:</p>
+<ol class="arabic simple">
+<li>The <a class="reference internal" href="#proxy-connection-module">proxy_connection_module</a> (located in salt/proxy).</li>
+<li>The <a class="reference internal" href="#grains-support-code">grains support code</a> (located in salt/grains).</li>
+<li><span class="xref std std-ref">Salt modules</span> specific to the controlled
+device.</li>
+<li><a class="reference internal" href="../../ref/states/all/index.html#all-salt-states"><span>Salt states</span></a> specific to the controlled device.</li>
+</ol>
+<div class="section" id="configuration-parameters">
+<h3>Configuration parameters<a class="headerlink" href="#configuration-parameters" title="永久链接至标题">¶</a></h3>
+<p>Proxy minions require no configuration parameters in /etc/salt/master.</p>
+<p>Salt's Pillar system is ideally suited for configuring proxy-minions.  Proxies
+can either be designated via a pillar file in pillar_roots, or through an
+external pillar.  External pillars afford the opportunity for interfacing with
+a configuration management system, database, or other knowledgeable system that
+that may already contain all the details of proxy targets.  To use static files
+in pillar_roots, pattern your files after the following examples, which are
+based on the diagram above:</p>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/top.sls</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">dumbdevice1</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">dumbdevice1</span>
+  <span class="l l-Scalar l-Scalar-Plain">dumbdevice2</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">dumbdevice2</span>
+  <span class="l l-Scalar l-Scalar-Plain">dumbdevice3</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">dumbdevice3</span>
+  <span class="l l-Scalar l-Scalar-Plain">dumbdevice4</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">dumbdevice4</span>
+  <span class="l l-Scalar l-Scalar-Plain">dumbdevice5</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">dumbdevice5</span>
+  <span class="l l-Scalar l-Scalar-Plain">dumbdevice6</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">dumbdevice6</span>
+  <span class="l l-Scalar l-Scalar-Plain">dumbdevice7</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">dumbdevice7</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/dumbdevice1.sls</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">proxy</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">proxytype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">networkswitch</span>
+  <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">172.23.23.5</span>
+  <span class="l l-Scalar l-Scalar-Plain">username</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+  <span class="l l-Scalar l-Scalar-Plain">passwd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">letmein</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/dumbdevice2.sls</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">proxy</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">proxytype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">networkswitch</span>
+  <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">172.23.23.6</span>
+  <span class="l l-Scalar l-Scalar-Plain">username</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+  <span class="l l-Scalar l-Scalar-Plain">passwd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">letmein</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/dumbdevice3.sls</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">proxy</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">proxytype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">networkswitch</span>
+  <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">172.23.23.7</span>
+  <span class="l l-Scalar l-Scalar-Plain">username</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+  <span class="l l-Scalar l-Scalar-Plain">passwd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">letmein</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/dumbdevice4.sls</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">proxy</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">proxytype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">i2c_lightshow</span>
+  <span class="l l-Scalar l-Scalar-Plain">i2c_address</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/dumbdevice5.sls</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">proxy</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">proxytype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">i2c_lightshow</span>
+  <span class="l l-Scalar l-Scalar-Plain">i2c_address</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/dumbdevice6.sls</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">proxy</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">proxytype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">433mhz_wireless</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/dumbdevice7.sls</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">proxy</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">proxytype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">sms_serial</span>
+  <span class="l l-Scalar l-Scalar-Plain">deventry</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/dev/tty04</span>
+</pre></div>
+</div>
+<p>Note the contents of each minioncontroller key may differ widely based on
+the type of device that the proxy-minion is managing.</p>
+<p>In the above example</p>
+<ul class="simple">
+<li>dumbdevices 1, 2, and 3 are network switches that have a management
+interface available at a particular IP address.</li>
+<li>dumbdevices 4 and 5 are very low-level devices controlled over an i2c bus.
+In this case the devices are physically connected to machine
+'minioncontroller2', and are addressable on the i2c bus at their respective
+i2c addresses.</li>
+<li>dumbdevice6 is a 433 MHz wireless transmitter, also physically connected to
+minioncontroller2</li>
+<li>dumbdevice7 is an SMS gateway connected to machine minioncontroller3 via a
+serial port.</li>
+</ul>
+<p>Because of the way pillar works, each of the salt-proxy processes that fork off the
+proxy minions will only see the keys specific to the proxies it will be
+handling.</p>
+<p>Also, in general, proxy-minions are lightweight, so the machines that run them
+could conceivably control a large number of devices.  To run more than one proxy from
+a single machine, simply start an additional proxy process with <code class="docutils literal"><span class="pre">--proxyid</span></code>
+set to the id to which you want the proxy to bind.
+It is possible for the proxy services to be spread across
+many machines if necessary, or intentionally run on machines that need to
+control devices because of some physical interface (e.g. i2c and serial above).
+Another reason to divide proxy services might be security.  In more secure
+environments only certain machines may have a network path to certain devices.</p>
+</div>
+<div class="section" id="proxymodules">
+<span id="proxy-connection-module"></span><h3>Proxymodules<a class="headerlink" href="#proxymodules" title="永久链接至标题">¶</a></h3>
+<p>A proxy module encapsulates all the code necessary to interface with a device.
+Proxymodules are located inside the salt.proxy module.  At a minimum
+a proxymodule object must implement the following functions:</p>
+<p><code class="docutils literal"><span class="pre">__virtual__()</span></code>: This function performs the same duty that it does for other
+types of Salt modules.  Logic goes here to determine if the module can be
+loaded, checking for the presence of Python modules on which the proxy depends.
+Returning <code class="docutils literal"><span class="pre">False</span></code> will prevent the module from loading.</p>
+<p><code class="docutils literal"><span class="pre">init(opts)</span></code>: Perform any initialization that the device needs.  This is
+a good place to bring up a persistent connection to a device, or authenticate
+to create a persistent authorization token.</p>
+<p><code class="docutils literal"><span class="pre">shutdown()</span></code>: Code to cleanly shut down or close a connection to
+a controlled device goes here.  This function must exist, but can contain only
+the keyword <code class="docutils literal"><span class="pre">pass</span></code> if there is no shutdown logic required.</p>
+<p><code class="docutils literal"><span class="pre">ping()</span></code>: While not required, it is highly recommended that this function also
+be defined in the proxymodule. The code for <code class="docutils literal"><span class="pre">ping</span></code> should contact the
+controlled device and make sure it is really available.</p>
+<p>Pre 2015.8 the proxymodule also must have an <code class="docutils literal"><span class="pre">id()</span></code> function.  2015.8 and following don't use
+this function because the proxy's id is required on the command line.</p>
+<p><code class="docutils literal"><span class="pre">id(opts)</span></code>: Returns a unique, unchanging id for the controlled device.  This is
+the &quot;name&quot; of the device, and is used by the salt-master for targeting and key
+authentication.</p>
+<p>Here is an example proxymodule used to interface to a <em>very</em> simple REST
+server.  Code for the server is in the <a class="reference external" href="https://github.com/saltstack/salt-contrib/proxyminion_rest_example">salt-contrib GitHub repository</a></p>
+<p>This proxymodule enables &quot;service&quot; enumeration, starting, stopping, restarting,
+and status; &quot;package&quot; installation, and a ping.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">This is a simple proxy-minion designed to connect to and communicate with</span>
+<span class="sd">the bottle-based web service contained in</span>
+<span class="sd">https://github.com/saltstack/salt-contrib/proxyminion_rest_example</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+
+<span class="c1"># Import python libs</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">salt.utils.http</span>
+
+<span class="n">HAS_REST_EXAMPLE</span> <span class="o">=</span> <span class="bp">True</span>
+
+<span class="c1"># This must be present or the Salt loader won&#39;t load this module</span>
+<span class="n">__proxyenabled__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;rest_sample&#39;</span><span class="p">]</span>
+
+
+<span class="c1"># Variables are scoped to this module so we can have persistent data</span>
+<span class="c1"># across calls to fns in here.</span>
+<span class="n">GRAINS_CACHE</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">DETAILS</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="c1"># Want logging!</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span>
+
+
+<span class="c1"># This does nothing, it&#39;s here just as an example and to provide a log</span>
+<span class="c1"># entry when the module is loaded.</span>
+<span class="k">def</span> <span class="nf">__virtual__</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Only return if all the modules are available</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;rest_sample proxy __virtual__() called...&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">True</span>
+
+<span class="c1"># Every proxy module needs an &#39;init&#39;, though you can</span>
+<span class="c1"># just put a &#39;pass&#39; here if it doesn&#39;t need to do anything.</span>
+<span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="n">opts</span><span class="p">):</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;rest_sample proxy init() called...&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Save the REST URL</span>
+    <span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;proxy&#39;</span><span class="p">][</span><span class="s1">&#39;url&#39;</span><span class="p">]</span>
+
+    <span class="c1"># Make sure the REST URL ends with a &#39;/&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">):</span>
+        <span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39;/&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">id</span><span class="p">(</span><span class="n">opts</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return a unique ID for this proxy minion.  This ID MUST NOT CHANGE.</span>
+<span class="sd">    If it changes while the proxy is running the salt-master will get</span>
+<span class="sd">    really confused and may stop talking to this minion</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;proxy&#39;</span><span class="p">][</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="n">decode_type</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;dict&#39;</span><span class="p">][</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">,</span> <span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">grains</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Get the grains from the proxied device</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">GRAINS_CACHE</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;info&#39;</span><span class="p">,</span> <span class="n">decode_type</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">GRAINS_CACHE</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;dict&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">GRAINS_CACHE</span>
+
+
+<span class="k">def</span> <span class="nf">grains_refresh</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Refresh the grains from the proxied device</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">GRAINS_CACHE</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">return</span> <span class="n">grains</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">service_start</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Start a &quot;service&quot; on the REST server</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;service/start/&#39;</span><span class="o">+</span><span class="n">name</span><span class="p">,</span> <span class="n">decode_type</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;dict&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">service_stop</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Stop a &quot;service&quot; on the REST server</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;service/stop/&#39;</span><span class="o">+</span><span class="n">name</span><span class="p">,</span> <span class="n">decode_type</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;dict&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">service_restart</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Restart a &quot;service&quot; on the REST server</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;service/restart/&#39;</span><span class="o">+</span><span class="n">name</span><span class="p">,</span> <span class="n">decode_type</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;dict&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">service_list</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    List &quot;services&quot; on the REST server</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;service/list&#39;</span><span class="p">,</span> <span class="n">decode_type</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;dict&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">service_status</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Check if a service is running on the REST server</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;service/status/&#39;</span><span class="o">+</span><span class="n">name</span><span class="p">,</span> <span class="n">decode_type</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;dict&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">package_list</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    List &quot;packages&quot; installed on the REST server</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;package/list&#39;</span><span class="p">,</span> <span class="n">decode_type</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;dict&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">package_install</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Install a &quot;package&quot; on the REST server</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;package/install/&#39;</span><span class="o">+</span><span class="n">name</span>
+    <span class="k">if</span> <span class="s1">&#39;version&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;/1.0&#39;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">decode_type</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">package_remove</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Remove a &quot;package&quot; on the REST server</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;package/remove/&#39;</span><span class="o">+</span><span class="n">name</span><span class="p">,</span> <span class="n">decode_type</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;dict&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">package_status</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Check the installation status of a package on the REST server</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;package/status/&#39;</span><span class="o">+</span><span class="n">name</span><span class="p">,</span> <span class="n">decode_type</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;dict&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">ping</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Is the REST server up?</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;ping&#39;</span><span class="p">,</span> <span class="n">decode_type</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;dict&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ret&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+
+<span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="n">opts</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    For this proxy shutdown is a no-op</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;rest_sample proxy shutdown() called...&#39;</span><span class="p">)</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p id="grains-support-code">Grains are data about minions.  Most proxied devices will have a paltry amount
+of data as compared to a typical Linux server.  By default, a proxy minion will
+have several grains taken from the host.  Salt core code requires values for <code class="docutils literal"><span class="pre">kernel</span></code>,
+<code class="docutils literal"><span class="pre">os</span></code>, and <code class="docutils literal"><span class="pre">os_family</span></code>--all of these are forced to be <code class="docutils literal"><span class="pre">proxy</span></code> for proxy-minions.
+To add others to your proxy minion for
+a particular device, create a file in salt/grains named [proxytype].py and place
+inside it the different functions that need to be run to collect the data you
+are interested in.  Here's an example:</p>
+</div>
+</div>
+<div class="section" id="the-proxyenabled-directive">
+<h2>The __proxyenabled__ directive<a class="headerlink" href="#the-proxyenabled-directive" title="永久链接至标题">¶</a></h2>
+<p>Salt execution modules, by, and large, cannot &quot;automatically&quot; work
+with proxied devices.  Execution modules like <code class="docutils literal"><span class="pre">pkg</span></code> or <code class="docutils literal"><span class="pre">sqlite3</span></code> have no
+meaning on a network switch or a housecat.  For an execution module to be
+available to a proxy-minion, the <code class="docutils literal"><span class="pre">__proxyenabled__</span></code> variable must be defined
+in the module as an array containing the names of all the proxytypes that this
+module can support.  The array can contain the special value <code class="docutils literal"><span class="pre">*</span></code> to indicate
+that the module supports all proxies.</p>
+<p>If no <code class="docutils literal"><span class="pre">__proxyenabled__</span></code> variable is defined, then by default, the
+execution module is unavailable to any proxy.</p>
+<p>Here is an excerpt from a module that was modified to support proxy-minions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">__proxyenabled__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">]</span>
+
+<span class="p">[</span><span class="o">...</span><span class="p">]</span>
+<span class="k">def</span> <span class="nf">ping</span><span class="p">():</span>
+
+ <span class="k">if</span> <span class="ow">not</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">is_proxy</span><span class="p">():</span>
+     <span class="k">return</span> <span class="bp">True</span>
+ <span class="k">else</span><span class="p">:</span>
+     <span class="n">ping_cmd</span> <span class="o">=</span> <span class="n">__opts__</span><span class="p">[</span><span class="s1">&#39;proxy&#39;</span><span class="p">][</span><span class="s1">&#39;proxytype&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.ping&#39;</span>
+     <span class="k">if</span> <span class="n">__opts__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;add_proxymodule_to_opts&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">):</span>
+         <span class="k">return</span> <span class="n">__opts__</span><span class="p">[</span><span class="s1">&#39;proxymodule&#39;</span><span class="p">][</span><span class="n">ping_cmd</span><span class="p">]()</span>
+     <span class="k">else</span><span class="p">:</span>
+         <span class="k">return</span> <span class="n">__proxy__</span><span class="p">[</span><span class="n">ping_cmd</span><span class="p">]()</span>
+</pre></div>
+</div>
+<p>And then in salt.proxy.rest_sample.py we find</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ping</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Is the REST server up?</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;ping&#39;</span><span class="p">,</span> <span class="n">decode_type</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="n">decode</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;dict&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ret&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+</pre></div>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="demo.html">Salt Proxy Minion End-to-End Example</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="ssh-proxymodules">
+<h2>SSH Proxymodules<a class="headerlink" href="#ssh-proxymodules" title="永久链接至标题">¶</a></h2>
+<p>See above for a general introduction to writing proxy modules.
+All of the guidelines that apply to REST are the same for SSH.
+This sections specifically talks about the SSH proxy module and
+explains the working of the example proxy module <code class="docutils literal"><span class="pre">ssh_sample</span></code>.</p>
+<p>Here is a simple example proxymodule used to interface to a device over SSH.
+Code for the SSH shell is in the <a class="reference external" href="https://github.com/saltstack/salt-contrib/proxyminion_ssh_example">salt-contrib GitHub repository</a></p>
+<p>This proxymodule enables &quot;package&quot; installation.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">This is a simple proxy-minion designed to connect to and communicate with</span>
+<span class="sd">a server that exposes functionality via SSH.</span>
+<span class="sd">This can be used as an option when the device does not provide</span>
+<span class="sd">an api over HTTP and doesn&#39;t have the python stack to run a minion.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+
+<span class="c1"># Import python libs</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="c1"># Import Salt&#39;s libs</span>
+<span class="kn">from</span> <span class="nn">salt.utils.vt_helper</span> <span class="kn">import</span> <span class="n">SSHConnection</span>
+<span class="kn">from</span> <span class="nn">salt.utils.vt</span> <span class="kn">import</span> <span class="n">TerminalException</span>
+
+<span class="c1"># This must be present or the Salt loader won&#39;t load this module</span>
+<span class="n">__proxyenabled__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ssh_sample&#39;</span><span class="p">]</span>
+
+<span class="n">DETAILS</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="c1"># Want logging!</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__file__</span><span class="p">)</span>
+
+
+<span class="c1"># This does nothing, it&#39;s here just as an example and to provide a log</span>
+<span class="c1"># entry when the module is loaded.</span>
+<span class="k">def</span> <span class="nf">__virtual__</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Only return if all the modules are available</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;ssh_sample proxy __virtual__() called...&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="bp">True</span>
+
+
+<span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="n">opts</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Required.</span>
+<span class="sd">    Can be used to initialize the server connection.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;server&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SSHConnection</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="n">__opts__</span><span class="p">[</span><span class="s1">&#39;proxy&#39;</span><span class="p">][</span><span class="s1">&#39;host&#39;</span><span class="p">],</span>
+                                          <span class="n">username</span><span class="o">=</span><span class="n">__opts__</span><span class="p">[</span><span class="s1">&#39;proxy&#39;</span><span class="p">][</span><span class="s1">&#39;username&#39;</span><span class="p">],</span>
+                                          <span class="n">password</span><span class="o">=</span><span class="n">__opts__</span><span class="p">[</span><span class="s1">&#39;proxy&#39;</span><span class="p">][</span><span class="s1">&#39;password&#39;</span><span class="p">])</span>
+        <span class="c1"># connected to the SSH server</span>
+        <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;server&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="s1">&#39;help&#39;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="n">TerminalException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+
+<span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="n">opts</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Disconnect</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;server&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">close_connection</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">out</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Extract json from out.</span>
+
+<span class="sd">    Parameter</span>
+<span class="sd">        out: Type string. The data returned by the</span>
+<span class="sd">        ssh command.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">jsonret</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">in_json</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="k">for</span> <span class="n">ln_</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;{&#39;</span> <span class="ow">in</span> <span class="n">ln_</span><span class="p">:</span>
+            <span class="n">in_json</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="n">in_json</span><span class="p">:</span>
+            <span class="n">jsonret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ln_</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;}&#39;</span> <span class="ow">in</span> <span class="n">ln_</span><span class="p">:</span>
+            <span class="n">in_json</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">jsonret</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">package_list</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    List &quot;packages&quot; by executing a command via ssh</span>
+<span class="sd">    This function is called in response to the salt command</span>
+
+<span class="sd">    ..code-block::bash</span>
+<span class="sd">        salt target_minion pkg.list_pkgs</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Send the command to execute</span>
+    <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;server&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="s1">&#39;pkg_list&#39;</span><span class="p">)</span>
+
+    <span class="c1"># &quot;scrape&quot; the output and return the right fields as a dict</span>
+    <span class="k">return</span> <span class="n">parse</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">package_install</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Install a &quot;package&quot; on the REST server</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;pkg_install &#39;</span> <span class="o">+</span> <span class="n">name</span>
+    <span class="k">if</span> <span class="s1">&#39;version&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cmd</span> <span class="o">+=</span> <span class="s1">&#39;/1.0&#39;</span>
+
+    <span class="c1"># Send the command to execute</span>
+    <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;server&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+    <span class="c1"># &quot;scrape&quot; the output and return the right fields as a dict</span>
+    <span class="k">return</span> <span class="n">parse</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">package_remove</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Remove a &quot;package&quot; on the REST server</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;pkg_remove &#39;</span> <span class="o">+</span> <span class="n">name</span>
+
+    <span class="c1"># Send the command to execute</span>
+    <span class="n">out</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">DETAILS</span><span class="p">[</span><span class="s1">&#39;server&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+    <span class="c1"># &quot;scrape&quot; the output and return the right fields as a dict</span>
+    <span class="k">return</span> <span class="n">parse</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="connection-setup">
+<h3>Connection Setup<a class="headerlink" href="#connection-setup" title="永久链接至标题">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">init()</span></code> method is responsible for connection setup. It uses the <code class="docutils literal"><span class="pre">host</span></code>, <code class="docutils literal"><span class="pre">username</span></code> and <code class="docutils literal"><span class="pre">password</span></code> config variables defined in the pillar data. The <code class="docutils literal"><span class="pre">prompt</span></code> kwarg can be passed to <code class="docutils literal"><span class="pre">SSHConnection</span></code> if your SSH server's prompt differs from the example's prompt <code class="docutils literal"><span class="pre">(Cmd)</span></code>. Instantiating the <code class="docutils literal"><span class="pre">SSHConnection</span></code> class establishes an SSH connection to the ssh server (using Salt VT).</p>
+</div>
+<div class="section" id="command-execution">
+<h3>Command execution<a class="headerlink" href="#command-execution" title="永久链接至标题">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">package_*</span></code> methods use the SSH connection (established in <code class="docutils literal"><span class="pre">init()</span></code>) to send commands out to the SSH server. The <code class="docutils literal"><span class="pre">sendline()</span></code> method of <code class="docutils literal"><span class="pre">SSHConnection</span></code> class can be used to send commands out to the server. In the above example we send commands like <code class="docutils literal"><span class="pre">pkg_list</span></code> or <code class="docutils literal"><span class="pre">pkg_install</span></code>. You can send any SSH command via this utility.</p>
+</div>
+<div class="section" id="output-parsing">
+<h3>Output parsing<a class="headerlink" href="#output-parsing" title="永久链接至标题">¶</a></h3>
+<p>Output returned by <code class="docutils literal"><span class="pre">sendline()</span></code> is a tuple of strings representing the stdout and the stderr respectively. In the toy example shown we simply scrape the output and convert it to a python dictionary, as shown in the <code class="docutils literal"><span class="pre">parse</span></code> method. You can tailor this method to match your parsing logic.</p>
+</div>
+<div class="section" id="connection-teardown">
+<h3>Connection teardown<a class="headerlink" href="#connection-teardown" title="永久链接至标题">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">shutdown</span></code> method is responsible for calling the <code class="docutils literal"><span class="pre">close_connection()</span></code> method of <code class="docutils literal"><span class="pre">SSHConnection</span></code> class. This ends the SSH connection to the server.</p>
+<p>For more information please refer to class <a class="reference external" href="https://github.com/saltstack/salt/blob/b8271c7512da7e048019ee26422be9e7d6b795ab/salt/utils/vt_helper.py#L28">SSHConnection</a>.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ssh.html">Salt Proxy Minion SSH End-to-End Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="beacon.html">Proxy Minion Beacon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state.html">Proxy Minion States</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/esxi_proxy_minion.html">ESXi Proxy Minion</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/esxi_proxy_minion.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/esxi_proxy_minion.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/esxi_proxy_minion.html#starting-the-proxy-minion">Starting the Proxy Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/esxi_proxy_minion.html#executing-commands">Executing Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/esxi_proxy_minion.html#relevant-salt-files-and-resources">Relevant Salt Files and Resources</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../cloud/reactor.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Using Salt Cloud with the Event Reactor" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="demo.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt Proxy Minion End-to-End Example" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Salt Proxy Minion</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#new-in-2015-8-2">New in 2015.8.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#new-in-2015-8">New in 2015.8</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configuration-parameters">Configuration parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#proxymodules">Proxymodules</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#the-proxyenabled-directive">The __proxyenabled__ directive</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="demo.html">Salt Proxy Minion End-to-End Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#ssh-proxymodules">SSH Proxymodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#connection-setup">Connection Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#command-execution">Command execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#output-parsing">Output parsing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#connection-teardown">Connection teardown</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ssh.html">Salt Proxy Minion SSH End-to-End Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="beacon.html">Proxy Minion Beacon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="state.html">Proxy Minion States</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../tutorials/esxi_proxy_minion.html">ESXi Proxy Minion</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

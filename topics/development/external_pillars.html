@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>External Pillars</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt开发" href="index.html">
+        <link rel="next" title="Installing Salt for development" href="hacking.html">
+        <link rel="prev" title="Dunder Dictionaries" href="dunder_dictionaries.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="dunder_dictionaries.html" title="Dunder Dictionaries">上一页</a>
+            
+        </li>
+        <li>
+            <a href="hacking.html" title="Installing Salt for development">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="external-pillars">
+<span id="id1"></span><h1>External Pillars<a class="headerlink" href="#external-pillars" title="永久链接至标题">¶</a></h1>
+<p>Salt provides a mechanism for generating pillar data by calling external
+pillar interfaces. This document will describe an outline of an ext_pillar
+module.</p>
+<div class="section" id="location">
+<h2>Location<a class="headerlink" href="#location" title="永久链接至标题">¶</a></h2>
+<p>Salt expects to find your <code class="docutils literal"><span class="pre">ext_pillar</span></code> module in the same location where it
+looks for other python modules. If the <code class="docutils literal"><span class="pre">extension_modules</span></code> option in your
+Salt master configuration is set, Salt will look for a <code class="docutils literal"><span class="pre">pillar</span></code> directory
+under there and load all the modules it finds. Otherwise, it will look in
+your Python site-packages <code class="docutils literal"><span class="pre">salt/pillar</span></code> directory.</p>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="永久链接至标题">¶</a></h2>
+<p>The external pillars that are called when a minion refreshes its pillars is
+controlled by the <code class="docutils literal"><span class="pre">ext_pillar</span></code> option in the Salt master configuration. You
+can pass a single argument, a list of arguments or a dictionary of arguments
+to your pillar:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ext_pillar</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">example_a</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">some argument</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">example_b</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">argumentA</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">argumentB</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">example_c</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">keyA</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">valueA</span>
+      <span class="l l-Scalar l-Scalar-Plain">keyB</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">valueB</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-module">
+<h2>The Module<a class="headerlink" href="#the-module" title="永久链接至标题">¶</a></h2>
+</div>
+<div class="section" id="imports-and-logging">
+<h2>Imports and Logging<a class="headerlink" href="#imports-and-logging" title="永久链接至标题">¶</a></h2>
+<p>Import modules your external pillar module needs. You should first include
+generic modules that come with stock Python:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+</pre></div>
+</div>
+<p>And then start logging. This is an idiomatic way of setting up logging in Salt:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, load modules that are specific to what you are doing. You should catch
+import errors and set a flag that the <code class="docutils literal"><span class="pre">__virtual__</span></code> function can use later.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">weird_thing</span>
+    <span class="n">EXAMPLE_A_LOADED</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">EXAMPLE_A_LOADED</span> <span class="o">=</span> <span class="bp">False</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="options">
+<h2>选项<a class="headerlink" href="#options" title="永久链接至标题">¶</a></h2>
+<p>If you define an <code class="docutils literal"><span class="pre">__opts__</span></code> dictionary, it will be merged into the
+<code class="docutils literal"><span class="pre">__opts__</span></code> dictionary handed to the <code class="docutils literal"><span class="pre">ext_pillar</span></code> function later. This is a
+good place to put default configuration items. The convention is to name
+things <code class="docutils literal"><span class="pre">modulename.option</span></code>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">__opts__</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;example_a.someconfig&#39;</span><span class="p">:</span> <span class="mi">137</span> <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="initialization">
+<h2>Initialization<a class="headerlink" href="#initialization" title="永久链接至标题">¶</a></h2>
+<p>If you define an <code class="docutils literal"><span class="pre">__init__</span></code> function, it will be called with the following
+signature:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span> <span class="n">__opts__</span> <span class="p">):</span>
+    <span class="c1"># Do init work here</span>
+</pre></div>
+</div>
+<p><strong>Note</strong>: The <code class="docutils literal"><span class="pre">__init__</span></code> function is ran every time a particular minion causes
+the external pillar to be called, so don't put heavy initialization code here.
+The <code class="docutils literal"><span class="pre">__init__</span></code> functionality is a side-effect of the Salt loader, so it may
+not be as useful in pillars as it is in other Salt items.</p>
+</div>
+<div class="section" id="virtual">
+<h2>__virtual__<a class="headerlink" href="#virtual" title="永久链接至标题">¶</a></h2>
+<p>If you define a <code class="docutils literal"><span class="pre">__virtual__</span></code> function, you can control whether or not this
+module is visible. If it returns <code class="docutils literal"><span class="pre">False</span></code> then Salt ignores this module. If
+it returns a string, then that string will be how Salt identifies this external
+pillar in its <code class="docutils literal"><span class="pre">ext_pillar</span></code> configuration. If you're not renaming the module,
+simply return <code class="docutils literal"><span class="pre">True</span></code> in the <code class="docutils literal"><span class="pre">__virtual__</span></code> function, which is the same as if
+this function did not exist, then, the name Salt's <code class="docutils literal"><span class="pre">ext_pillar</span></code> will use to
+identify this module is its conventional name in Python.</p>
+<p>This is useful to write modules that can be installed on all Salt masters, but
+will only be visible if a particular piece of software your module requires is
+installed.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># This external pillar will be known as `example_a`</span>
+<span class="k">def</span> <span class="nf">__virtual__</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">EXAMPLE_A_LOADED</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">return</span> <span class="bp">False</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># This external pillar will be known as `something_else`</span>
+<span class="n">__virtualname__</span> <span class="o">=</span> <span class="s1">&#39;something_else&#39;</span>
+
+<span class="k">def</span> <span class="nf">__virtual__</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">EXAMPLE_A_LOADED</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">__virtualname__</span>
+    <span class="k">return</span> <span class="bp">False</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ext-pillar">
+<h2>ext_pillar<a class="headerlink" href="#ext-pillar" title="永久链接至标题">¶</a></h2>
+<p>This is where the real work of an external pillar is done. If this module is
+active and has a function called <code class="docutils literal"><span class="pre">ext_pillar</span></code>, whenever a minion updates its
+pillar this function is called.</p>
+<p>How it is called depends on how it is configured in the Salt master
+configuration. The first argument is always the current pillar dictionary, this
+contains pillar items that have already been added, starting with the data from
+<code class="docutils literal"><span class="pre">pillar_roots</span></code>, and then from any already-ran external pillars.</p>
+<p>Using our example above:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">ext_pillar</span><span class="p">(</span> <span class="nb">id</span><span class="p">,</span> <span class="n">pillar</span><span class="p">,</span> <span class="s1">&#39;some argument&#39;</span> <span class="p">)</span>                   <span class="c1"># example_a</span>
+<span class="n">ext_pillar</span><span class="p">(</span> <span class="nb">id</span><span class="p">,</span> <span class="n">pillar</span><span class="p">,</span> <span class="s1">&#39;argumentA&#39;</span><span class="p">,</span> <span class="s1">&#39;argumentB&#39;</span> <span class="p">)</span>          <span class="c1"># example_b</span>
+<span class="n">ext_pillar</span><span class="p">(</span> <span class="nb">id</span><span class="p">,</span> <span class="n">pillar</span><span class="p">,</span> <span class="n">keyA</span><span class="o">=</span><span class="s1">&#39;valueA&#39;</span><span class="p">,</span> <span class="n">keyB</span><span class="o">=</span><span class="s1">&#39;valueB&#39;</span> <span class="p">}</span> <span class="p">)</span>    <span class="c1"># example_c</span>
+</pre></div>
+</div>
+<p>In the <code class="docutils literal"><span class="pre">example_a</span></code> case, <code class="docutils literal"><span class="pre">pillar</span></code> will contain the items from the
+<code class="docutils literal"><span class="pre">pillar_roots</span></code>, in <code class="docutils literal"><span class="pre">example_b</span></code> <code class="docutils literal"><span class="pre">pillar</span></code>  will contain that plus the items
+added by <code class="docutils literal"><span class="pre">example_a</span></code>, and in <code class="docutils literal"><span class="pre">example_c</span></code> <code class="docutils literal"><span class="pre">pillar</span></code> will contain that plus
+the items added by <code class="docutils literal"><span class="pre">example_b</span></code>. In all three cases, <code class="docutils literal"><span class="pre">id</span></code> will contain the
+ID of the minion making the pillar request.</p>
+<p>This function should return a dictionary, the contents of which are merged in
+with all of the other pillars and returned to the minion. <strong>Note</strong>: this function
+is called once for each minion that fetches its pillar data.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ext_pillar</span><span class="p">(</span> <span class="n">minion_id</span><span class="p">,</span> <span class="n">pillar</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span> <span class="p">):</span>
+
+    <span class="n">my_pillar</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;external_pillar&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+
+    <span class="n">my_pillar</span><span class="p">[</span><span class="s1">&#39;external_pillar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_external_pillar_dictionary</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">my_pillar</span>
+</pre></div>
+</div>
+<p>You can call pillar with the dictionary's top name to retrieve its data.
+From above example, 'external_pillar' is the top dictionary name. Therefore:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-call <span class="s1">&#39;*&#39;</span> pillar.get external_pillar
+</pre></div>
+</div>
+<p>You shouldn't just add items to <code class="docutils literal"><span class="pre">pillar</span></code> and return that, since that will
+cause Salt to merge data that already exists. Rather, just return the items
+you are adding or changing. You could, however, use <code class="docutils literal"><span class="pre">pillar</span></code> in your module
+to make some decision based on pillar data that already exists.</p>
+<p>This function has access to some useful globals:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">__opts__:</th><td class="field-body">A dictionary of mostly Salt configuration options. If you had an
+<code class="docutils literal"><span class="pre">__opts__</span></code> dictionary defined in your module, those values will be
+included.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">__salt__:</th><td class="field-body">A dictionary of Salt module functions, useful so you don't have to
+duplicate functions that already exist. E.g.
+<code class="docutils literal"><span class="pre">__salt__['cmd.run'](</span> <span class="pre">'ls</span> <span class="pre">-l'</span> <span class="pre">)</span></code> <strong>Note</strong>, runs on the <em>master</em></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">__grains__:</th><td class="field-body">A dictionary of the grains of the minion making this pillar call.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="example-configuration">
+<h2>Example configuration<a class="headerlink" href="#example-configuration" title="永久链接至标题">¶</a></h2>
+<p>As an example, if you wanted to add external pillar via the <code class="docutils literal"><span class="pre">cmd_json</span></code>
+external pillar, add something like this to your master config:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ext_pillar</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cmd_json</span><span class="p p-Indicator">:</span> <span class="s">&#39;echo</span><span class="nv"> </span><span class="s">{\&quot;arg\&quot;:\&quot;value\&quot;}&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reminder">
+<h2>Reminder<a class="headerlink" href="#reminder" title="永久链接至标题">¶</a></h2>
+<p>Just as with traditional pillars, external pillars must be refreshed in order for
+minions to see any fresh data:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> saltutil.refresh_pillar
+</pre></div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="dunder_dictionaries.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Dunder Dictionaries" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="hacking.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Installing Salt for development" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt开发</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="architecture.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#salt-client">Salt Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#salt-master">Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#salt-minion">Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#a-note-on-clearfuncs-vs-aesfuncs">A Note on ClearFuncs vs. AESFuncs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deprecations.html">代码弃用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dunder_dictionaries.html">Dunder Dictionaries</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">External Pillars</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#location">Location</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-module">The Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#imports-and-logging">Imports and Logging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#options">选项</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#initialization">Initialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#virtual">__virtual__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ext-pillar">ext_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example-configuration">Example configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reminder">Reminder</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hacking.html">Installing Salt for development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="labels.html">GitHub Labels and Milestones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logging.html">内部日志</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular_systems.html">模块化系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="package_providers.html">Package Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reporting_bugs.html">Reporting Bugs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salt_projects.html">Community Projects That Use Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="topology.html">Salt Topology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="translating.html">翻译文档</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html">Developing Salt Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html">Running The Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html#automated-test-runs">Automated Test Runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raet/index.html">raet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="git/index.html">SaltStack Git Policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions/index.html">Salt Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/internals/index.html">Salt code and internals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../projects/index.html">Salt Based Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/writing_tests.html">编写Salt测试</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt as a Cloud Controller</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt Virt" href="../virt/index.html">
+        <link rel="next" title="Command Line Reference" href="../../ref/cli/index.html">
+        <link rel="prev" title="虚拟机网络配置" href="../virt/nic.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../virt/nic.html" title="虚拟机网络配置">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../../ref/cli/index.html" title="Command Line Reference">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="salt-as-a-cloud-controller">
+<h1>Salt as a Cloud Controller<a class="headerlink" href="#salt-as-a-cloud-controller" title="永久链接至标题">¶</a></h1>
+<p>In Salt 0.14.0, an advanced cloud control system were introduced, allow
+private cloud vms to be managed directly with Salt. This system is generally
+referred to as <strong>Salt Virt</strong>.</p>
+<p>The Salt Virt system already exists and is installed within Salt itself, this
+means that beside setting up Salt, no additional salt code needs to be
+deployed.</p>
+<p>The main goal of Salt Virt is to facilitate a very fast and simple cloud. The
+cloud that can scale and fully featured. Salt Virt comes with the
+ability to set up and manage complex virtual machine networking, powerful
+image, and disk management, as well as virtual machine migration with and without
+shared storage.</p>
+<p>This means that Salt Virt can be used to create a cloud from a blade center
+and a SAN, but can also create a cloud out of a swarm of Linux Desktops
+without a single shared storage system. Salt Virt can make clouds from
+truly commodity hardware, but can also stand up the power of specialized
+hardware as well.</p>
+<div class="section" id="setting-up-hypervisors">
+<h2>Setting up Hypervisors<a class="headerlink" href="#setting-up-hypervisors" title="永久链接至标题">¶</a></h2>
+<p>The first step to set up the hypervisors involves getting the correct software
+installed and setting up the hypervisor network interfaces.</p>
+<div class="section" id="installing-hypervisor-software">
+<h3>Installing Hypervisor Software<a class="headerlink" href="#installing-hypervisor-software" title="永久链接至标题">¶</a></h3>
+<p>Salt Virt is made to be hypervisor agnostic but currently the only fully
+implemented hypervisor is KVM via libvirt.</p>
+<p>The required software for a hypervisor is libvirt and kvm. For advanced
+features install libguestfs or qemu-nbd.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Libguestfs and qemu-nbd allow for virtual machine images to be mounted
+before startup and get pre-seeded with configurations and a salt minion</p>
+</div>
+<p>This sls will set up the needed software for a hypervisor, and run the routines
+to set up the libvirt pki keys.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Package names and setup used is Red Hat specific, different package names
+will be required for different platforms</p>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">libvirt</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/sysconfig/libvirtd</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">contents</span><span class="p p-Indicator">:</span> <span class="s">&#39;LIBVIRTD_ARGS=&quot;--listen&quot;&#39;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">libvirt</span>
+  <span class="l l-Scalar l-Scalar-Plain">libvirt.keys</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">libvirt</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">libvirtd</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">libvirt</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">network</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">br0</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">libvirt</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">libvirt</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">watch</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">libvirt</span>
+
+<span class="l l-Scalar l-Scalar-Plain">libvirt-python</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+
+<span class="l l-Scalar l-Scalar-Plain">libguestfs</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkgs</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">libguestfs</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">libguestfs-tools</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="hypervisor-network-setup">
+<h3>Hypervisor Network Setup<a class="headerlink" href="#hypervisor-network-setup" title="永久链接至标题">¶</a></h3>
+<p>The hypervisors will need to be running a network bridge to serve up network
+devices for virtual machines, this formula will set up a standard bridge on
+a hypervisor connecting the bridge to eth0:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">eth0</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">network.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">enabled</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">type</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">eth</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bridge</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">br0</span>
+
+<span class="l l-Scalar l-Scalar-Plain">br0</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">network.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">enabled</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">type</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">bridge</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">proto</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">dhcp</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">network</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">eth0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="virtual-machine-network-setup">
+<h3>Virtual Machine Network Setup<a class="headerlink" href="#virtual-machine-network-setup" title="永久链接至标题">¶</a></h3>
+<p>Salt Virt comes with a system to model the network interfaces used by the
+deployed virtual machines; by default a single interface is created for the
+deployed virtual machine and is bridged to <code class="docutils literal"><span class="pre">br0</span></code>. To get going with the
+default networking setup, ensure that the bridge interface named <code class="docutils literal"><span class="pre">br0</span></code> exists
+on the hypervisor and is bridged to an active network device.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>To use more advanced networking in Salt Virt, read the <cite>Salt Virt
+Networking</cite> document:</p>
+<p class="last"><a class="reference internal" href="../virt/nic.html"><em>Salt Virt Networking</em></a></p>
+</div>
+</div>
+<div class="section" id="libvirt-state">
+<h3>Libvirt State<a class="headerlink" href="#libvirt-state" title="永久链接至标题">¶</a></h3>
+<p>One of the challenges of deploying a libvirt based cloud is the distribution
+of libvirt certificates. These certificates allow for virtual machine
+migration. Salt comes with a system used to auto deploy these certificates.
+Salt manages the signing authority key and generates keys for libvirt clients
+on the master, signs them with the certificate authority and uses pillar to
+distribute them. This is managed via the <code class="docutils literal"><span class="pre">libvirt</span></code> state. Simply execute this
+formula on the minion to ensure that the certificate is in place and up to
+date:</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The above formula includes the calls needed to set up libvirt keys.</p>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">libvirt_keys</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">libvirt.keys</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="getting-virtual-machine-images-ready">
+<h2>Getting Virtual Machine Images Ready<a class="headerlink" href="#getting-virtual-machine-images-ready" title="永久链接至标题">¶</a></h2>
+<p>Salt Virt, requires that virtual machine images be provided as these are not
+generated on the fly. Generating these virtual machine images differs greatly
+based on the underlying platform.</p>
+<p>Virtual machine images can be manually created using KVM and running through
+the installer, but this process is not recommended since it is very manual and
+prone to errors.</p>
+<p>Virtual Machine generation applications are available for many platforms:</p>
+<dl class="docutils">
+<dt>vm-builder:</dt>
+<dd><p class="first"><a class="reference external" href="https://wiki.debian.org/VMBuilder">https://wiki.debian.org/VMBuilder</a></p>
+<div class="last admonition seealso">
+<p class="first admonition-title">参见</p>
+<p class="last"><a class="reference external" href="https://github.com/saltstack-formulas/vmbuilder-formula">vmbuilder-formula</a></p>
+</div>
+</dd>
+</dl>
+<p>Once virtual machine images are available, the easiest way to make them
+available to Salt Virt is to place them in the Salt file server. Just copy an
+image into <code class="docutils literal"><span class="pre">/srv/salt</span></code> and it can now be used by Salt Virt.</p>
+<p>For purposes of this demo, the file name <code class="docutils literal"><span class="pre">centos.img</span></code> will be used.</p>
+<div class="section" id="existing-virtual-machine-images">
+<h3>Existing Virtual Machine Images<a class="headerlink" href="#existing-virtual-machine-images" title="永久链接至标题">¶</a></h3>
+<p>Many existing Linux distributions distribute virtual machine images which
+can be used with Salt Virt. Please be advised that NONE OF THESE IMAGES ARE
+SUPPORTED BY SALTSTACK.</p>
+<div class="section" id="centos">
+<h4>CentOS<a class="headerlink" href="#centos" title="永久链接至标题">¶</a></h4>
+<p>These images have been prepared for OpenNebula but should work without issue with
+Salt Virt, only the raw qcow image file is needed:
+<a class="reference external" href="http://wiki.centos.org/Cloud/OpenNebula">http://wiki.centos.org/Cloud/OpenNebula</a></p>
+</div>
+<div class="section" id="fedora-linux">
+<h4>Fedora Linux<a class="headerlink" href="#fedora-linux" title="永久链接至标题">¶</a></h4>
+<p>Images for Fedora Linux can be found here:
+<a class="reference external" href="http://fedoraproject.org/en/get-fedora#clouds">http://fedoraproject.org/en/get-fedora#clouds</a></p>
+</div>
+<div class="section" id="ubuntu-linux">
+<h4>Ubuntu Linux<a class="headerlink" href="#ubuntu-linux" title="永久链接至标题">¶</a></h4>
+<p>Images for Ubuntu Linux can be found here:
+<a class="reference external" href="http://cloud-images.ubuntu.com/">http://cloud-images.ubuntu.com/</a></p>
+</div>
+</div>
+</div>
+<div class="section" id="using-salt-virt">
+<h2>Using Salt Virt<a class="headerlink" href="#using-salt-virt" title="永久链接至标题">¶</a></h2>
+<p>With hypervisors set up and virtual machine images ready, Salt can start
+issuing cloud commands.</p>
+<p>Start by running a Salt Virt hypervisor info command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run virt.hyper_info
+</pre></div>
+</div>
+<p>This will query what the running hypervisor stats are and display information
+for all configured hypervisors. This command will also validate that the
+hypervisors are properly configured.</p>
+<p>Now that hypervisors are available a virtual machine can be provisioned. The
+<code class="docutils literal"><span class="pre">virt.init</span></code> routine will create a new virtual machine:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run virt.init centos1 <span class="m">2</span> <span class="m">512</span> salt://centos.img
+</pre></div>
+</div>
+<p>This command assumes that the CentOS virtual machine image is sitting in the
+root of the Salt fileserver. Salt Virt will now select a hypervisor to deploy
+the new virtual machine on and copy the virtual machine image down to the
+hypervisor.</p>
+<p>Once the VM image has been copied down the new virtual machine will be seeded.
+Seeding the VMs involves setting pre-authenticated Salt keys on the new VM and
+if needed, will install the Salt Minion on the new VM before it is started.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The biggest bottleneck in starting VMs is when the Salt Minion needs to be
+installed. Making sure that the source VM images already have Salt
+installed will GREATLY speed up virtual machine deployment.</p>
+</div>
+<p>Now that the new VM has been prepared, it can be seen via the <code class="docutils literal"><span class="pre">virt.query</span></code>
+command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run virt.query
+</pre></div>
+</div>
+<p>This command will return data about all of the hypervisors and respective
+virtual machines.</p>
+<p>Now that the new VM is booted it should have contacted the Salt Master, a
+<code class="docutils literal"><span class="pre">test.ping</span></code> will reveal if the new VM is running.</p>
+</div>
+<div class="section" id="migrating-virtual-machines">
+<h2>Migrating Virtual Machines<a class="headerlink" href="#migrating-virtual-machines" title="永久链接至标题">¶</a></h2>
+<p>Salt Virt comes with full support for virtual machine migration, and using
+the libvirt state in the above formula makes migration possible.</p>
+<p>A few things need to be available to support migration. Many operating systems
+turn on firewalls when originally set up, the firewall needs to be opened up
+to allow for libvirt and kvm to cross communicate and execution migration
+routines. On Red Hat based hypervisors in particular port 16514 needs to be
+opened on hypervisors:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>iptables -A INPUT -m state --state NEW -m tcp -p tcp --dport <span class="m">16514</span> -j ACCEPT
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>More in-depth information regarding distribution specific firewall settings can read in:</p>
+<p class="last"><a class="reference internal" href="firewall.html"><em>Opening the Firewall up for Salt</em></a></p>
+</div>
+<p>Salt also needs an additional flag to be turned on as well. The <code class="docutils literal"><span class="pre">virt.tunnel</span></code>
+option needs to be turned on. This flag tells Salt to run migrations securely
+via the libvirt TLS tunnel and to use port 16514. Without <code class="docutils literal"><span class="pre">virt.tunnel</span></code> libvirt
+tries to bind to random ports when running migrations. To turn on <code class="docutils literal"><span class="pre">virt.tunnel</span></code>
+simple apply it to the master config file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">virt.tunnel</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>Once the master config has been updated, restart the master and send out a call
+to the minions to refresh the pillar to pick up on the change:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="se">\*</span> saltutil.refresh_modules
+</pre></div>
+</div>
+<p>Now, migration routines can be run! To migrate a VM, simply run the Salt Virt
+migrate routine:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run virt.migrate centos &lt;new hypervisor&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="vnc-consoles">
+<h2>VNC Consoles<a class="headerlink" href="#vnc-consoles" title="永久链接至标题">¶</a></h2>
+<p>Salt Virt also sets up VNC consoles by default, allowing for remote visual
+consoles to be oped up. The information from a <code class="docutils literal"><span class="pre">virt.query</span></code> routine will
+display the vnc console port for the specific vms:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">centos</span>
+  <span class="l l-Scalar l-Scalar-Plain">CPU</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span>
+  <span class="l l-Scalar l-Scalar-Plain">Memory</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">524288</span>
+  <span class="l l-Scalar l-Scalar-Plain">State</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">running</span>
+  <span class="l l-Scalar l-Scalar-Plain">Graphics</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">vnc - hyper6:5900</span>
+  <span class="l l-Scalar l-Scalar-Plain">Disk - vda</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">Size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">2.0G</span>
+    <span class="l l-Scalar l-Scalar-Plain">File</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt-images/ubuntu2/system.qcow2</span>
+    <span class="l l-Scalar l-Scalar-Plain">File Format</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">qcow2</span>
+<span class=" -Error">  </span><span class="l l-Scalar l-Scalar-Plain">Nic - ac:de:48:98:08:77</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">Source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">br0</span>
+    <span class="l l-Scalar l-Scalar-Plain">Type</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">bridge</span>
+</pre></div>
+</div>
+<p>The line <cite>Graphics: vnc - hyper6:5900</cite> holds the key. First the port named,
+in this case 5900, will need to be available in the hypervisor's firewall.
+Once the port is open, then the console can be easily opened via vncviewer:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>vncviewer hyper6:5900
+</pre></div>
+</div>
+<p>By default there is no VNC security set up on these ports, which suggests that
+keeping them firewalled and mandating that SSH tunnels be used to access these
+VNC interfaces. Keep in mind that activity on a VNC interface that is accessed
+can be viewed by any other user that accesses that same VNC interface, and any other
+user logging in can also operate with the logged in user on the virtual
+machine.</p>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="永久链接至标题">¶</a></h2>
+<p>Now with Salt Virt running, new hypervisors can be seamlessly added just by
+running the above states on new bare metal machines, and these machines will be
+instantly available to Salt Virt.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../virt/nic.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="虚拟机网络配置" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../../ref/cli/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Command Line Reference" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../virt/index.html">Salt Virt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../virt/index.html#salt-virt-tutorial">Salt virt教程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../virt/index.html#the-salt-virt-runner">Salt虚拟机运行器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../virt/index.html#based-on-live-state-data">基于实时状态数据</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../virt/index.html#deploy-from-network-or-disk">从网络或本地磁盘部署</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../virt/disk.html">虚拟机磁盘配置文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../virt/nic.html">虚拟机网络配置</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Salt as a Cloud Controller</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#setting-up-hypervisors">Setting up Hypervisors</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#installing-hypervisor-software">Installing Hypervisor Software</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#hypervisor-network-setup">Hypervisor Network Setup</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#virtual-machine-network-setup">Virtual Machine Network Setup</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#libvirt-state">Libvirt State</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#getting-virtual-machine-images-ready">Getting Virtual Machine Images Ready</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#existing-virtual-machine-images">Existing Virtual Machine Images</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#centos">CentOS</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#fedora-linux">Fedora Linux</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#ubuntu-linux">Ubuntu Linux</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#using-salt-virt">Using Salt Virt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#migrating-virtual-machines">Migrating Virtual Machines</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#vnc-consoles">VNC Consoles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Getting Started With Linode</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt云端" href="index.html">
+        <link rel="next" title="Getting Started with OpenNebula" href="opennebula.html">
+        <link rel="prev" title="Getting Started With LXC" href="lxc.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="lxc.html" title="Getting Started With LXC">上一页</a>
+            
+        </li>
+        <li>
+            <a href="opennebula.html" title="Getting Started with OpenNebula">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="getting-started-with-linode">
+<h1>Getting Started With Linode<a class="headerlink" href="#getting-started-with-linode" title="永久链接至标题">¶</a></h1>
+<p>Linode is a public cloud host with a focus on Linux instances.</p>
+<p>Starting with the 2015.8.0 release of Salt, the Linode driver uses Linode's
+native REST API. There are no external dependencies required to use the
+Linode driver, other than a Linode account.</p>
+<div class="section" id="provider-configuration">
+<h2>Provider Configuration<a class="headerlink" href="#provider-configuration" title="永久链接至标题">¶</a></h2>
+<p>Linode requires a single API key, but the default root password for new
+instances also needs to be set. The password needs to be eight characters
+and contain lowercase, uppercase, and numbers.</p>
+<p>Set up the provider cloud configuration file at <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers</span></code> or
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/*.conf</span></code>.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-linode-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">apikey</span><span class="p p-Indicator">:</span> <span class="s">&#39;asldkgfakl;sdfjsjaslfjaklsdjf;askldjfaaklsjdfhasldsadfghdkf&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="s">&#39;F00barbaz&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">linode</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<div class="versionchanged">
+<p><span class="versionmodified">在 2015.8.0 版更改.</span></p>
+</div>
+<p class="last">The <code class="docutils literal"><span class="pre">provider</span></code> parameter in cloud provider definitions was renamed to <code class="docutils literal"><span class="pre">driver</span></code>. This
+change was made to avoid confusion with the <code class="docutils literal"><span class="pre">provider</span></code> parameter that is used in cloud profile
+definitions. Cloud provider definitions now use <code class="docutils literal"><span class="pre">driver</span></code> to refer to the Salt cloud module that
+provides the underlying functionality to connect to a cloud host, while cloud profiles continue
+to use <code class="docutils literal"><span class="pre">provider</span></code> to refer to provider configurations that you define.</p>
+</div>
+</div>
+<div class="section" id="profile-configuration">
+<h2>Profile Configuration<a class="headerlink" href="#profile-configuration" title="永久链接至标题">¶</a></h2>
+<p>Linode profiles require a <code class="docutils literal"><span class="pre">provider</span></code>, <code class="docutils literal"><span class="pre">size</span></code>, <code class="docutils literal"><span class="pre">image</span></code>, and <code class="docutils literal"><span class="pre">location</span></code>. Set up an initial profile
+at <code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles</span></code> or in the <code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles.d/</span></code> directory:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">linode_1024</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-linode-config</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Linode 2048</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">CentOS 7</span>
+  <span class="l l-Scalar l-Scalar-Plain">location</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">London, England, UK</span>
+</pre></div>
+</div>
+<p>The profile can be realized now with a salt command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -p linode_1024 linode-instance
+</pre></div>
+</div>
+<p>This will create an salt minion instance named <code class="docutils literal"><span class="pre">linode-instance</span></code> in Linode. If the command was
+executed on the salt-master, its Salt key will automatically be signed on the master.</p>
+<p>Once the instance has been created with a salt-minion installed, connectivity to
+it can be verified with Salt:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt linode-instance test.ping
+</pre></div>
+</div>
+<div class="section" id="listing-sizes">
+<h3>Listing Sizes<a class="headerlink" href="#listing-sizes" title="永久链接至标题">¶</a></h3>
+<p>Sizes can be obtained using the <code class="docutils literal"><span class="pre">--list-sizes</span></code> option for the <code class="docutils literal"><span class="pre">salt-cloud</span></code>
+command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-cloud --list-sizes my-linode-config</span>
+my-linode-config:
+    ----------
+    linode:
+        ----------
+        Linode 1024:
+            ----------
+            AVAIL:
+                ----------
+                10:
+                    500
+                2:
+                    500
+                3:
+                    500
+                4:
+                    500
+                6:
+                    500
+                7:
+                    500
+                8:
+                    500
+                9:
+                    500
+            CORES:
+                1
+            DISK:
+                24
+            HOURLY:
+                0.015
+            LABEL:
+                Linode 1024
+...SNIP...
+</pre></div>
+</div>
+</div>
+<div class="section" id="listing-images">
+<h3>Listing Images<a class="headerlink" href="#listing-images" title="永久链接至标题">¶</a></h3>
+<p>Images can be obtained using the <code class="docutils literal"><span class="pre">--list-images</span></code> option for the <code class="docutils literal"><span class="pre">salt-cloud</span></code>
+command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-cloud --list-images my-linode-config</span>
+my-linode-config:
+    ----------
+    linode:
+        ----------
+        Arch Linux 2015.02:
+            ----------
+            CREATE_DT:
+                2015-02-20 14:17:16.0
+            DISTRIBUTIONID:
+                138
+            IS64BIT:
+                1
+            LABEL:
+                Arch Linux 2015.02
+            MINIMAGESIZE:
+                800
+            REQUIRESPVOPSKERNEL:
+                1
+...SNIP...
+</pre></div>
+</div>
+</div>
+<div class="section" id="listing-locations">
+<h3>Listing Locations<a class="headerlink" href="#listing-locations" title="永久链接至标题">¶</a></h3>
+<p>Locations can be obtained using the <code class="docutils literal"><span class="pre">--list-locations</span></code> option for the <code class="docutils literal"><span class="pre">salt-cloud</span></code>
+command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-cloud --list-locations my-linode-config</span>
+my-linode-config:
+    ----------
+    linode:
+        ----------
+        Atlanta, GA, USA:
+            ----------
+            ABBR:
+                atlanta
+            DATACENTERID:
+                4
+            LOCATION:
+                Atlanta, GA, USA
+...SNIP...
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="linode-specific-settings">
+<h2>Linode Specific Settings<a class="headerlink" href="#linode-specific-settings" title="永久链接至标题">¶</a></h2>
+<p>There are several options outlined below that can be added to either the Linode
+provider of profile configuration files. Some options are mandatory and are
+properly labeled below but typically also include a hard-coded default.</p>
+<div class="section" id="image">
+<h3>image<a class="headerlink" href="#image" title="永久链接至标题">¶</a></h3>
+<p>Image is used to define what Operating System image should be used for the
+instance. Examples are <code class="docutils literal"><span class="pre">Ubuntu</span> <span class="pre">14.04</span> <span class="pre">LTS</span></code> and <code class="docutils literal"><span class="pre">CentOS</span> <span class="pre">7</span></code>. This option should
+be specified in the profile config. Required.</p>
+</div>
+<div class="section" id="location">
+<h3>location<a class="headerlink" href="#location" title="永久链接至标题">¶</a></h3>
+<p>Location is used to define which Linode data center the instance will reside in.
+Required.</p>
+</div>
+<div class="section" id="size">
+<h3>size<a class="headerlink" href="#size" title="永久链接至标题">¶</a></h3>
+<p>Size is used to define the instance's &quot;plan type&quot; which includes memory, storage,
+and price. Required.</p>
+</div>
+<div class="section" id="assign-private-ip">
+<h3>assign_private_ip<a class="headerlink" href="#assign-private-ip" title="永久链接至标题">¶</a></h3>
+<div class="versionadded">
+<p><span class="versionmodified">2016.3.0 新版功能.</span></p>
+</div>
+<p>Assigns a private IP address to a Linode when set to True. Default is False.</p>
+</div>
+<div class="section" id="private-ip">
+<h3>private_ip<a class="headerlink" href="#private-ip" title="永久链接至标题">¶</a></h3>
+<p>Deprecated in favor of <a class="reference internal" href="#assign-private-ip">assign_private_ip</a> in Salt 2016.3.0.</p>
+</div>
+<div class="section" id="ssh-interface">
+<h3>ssh_interface<a class="headerlink" href="#ssh-interface" title="永久链接至标题">¶</a></h3>
+<div class="versionadded">
+<p><span class="versionmodified">2016.3.0 新版功能.</span></p>
+</div>
+<p>Specify whether to use a public or private IP for the deploy script. Valid options
+are:</p>
+<ul class="simple">
+<li>public_ips: The salt-master is hosted outside of Linode. Default.</li>
+<li>private_ips: The salt-master is also hosted within Linode.</li>
+</ul>
+<p>If specifying <code class="docutils literal"><span class="pre">private_ips</span></code>, the Linodes must be hosted within the same data
+center and have the Network Helper enabled on your entire account. The instance
+that is running the Salt-Cloud provisioning command must also have a private IP
+assigned to it.</p>
+<p>Newer accounts created on Linode have the Network Helper setting enabled by default,
+account-wide. Legacy accounts do not have this setting enabled by default. To enable
+the Network Helper on your Linode account, please see <a class="reference external" href="https://www.linode.com/docs/platform/network-helper">Linode's Network Helper</a>
+documentation.</p>
+<p>If you're running into problems, be sure to restart the instance that is running
+Salt Cloud after adding its own private IP address or enabling the Network
+Helper.</p>
+</div>
+<div class="section" id="clonefrom">
+<h3>clonefrom<a class="headerlink" href="#clonefrom" title="永久链接至标题">¶</a></h3>
+<p>Setting the clonefrom option to a specified instance enables the new instance to be
+cloned from the named instance instead of being created from scratch. If using the
+clonefrom option, it is likely a good idea to also specify <code class="docutils literal"><span class="pre">script_args:</span> <span class="pre">-C</span></code> if a
+minion is already installed on the to-be-cloned instance. See the <a class="reference internal" href="#cloning">Cloning</a> section
+below for more information.</p>
+</div>
+</div>
+<div class="section" id="cloning">
+<h2>Cloning<a class="headerlink" href="#cloning" title="永久链接至标题">¶</a></h2>
+<p>To clone a Linode, add a profile with a <code class="docutils literal"><span class="pre">clonefrom</span></code> key, and a <code class="docutils literal"><span class="pre">script_args:</span> <span class="pre">-C</span></code>.
+<code class="docutils literal"><span class="pre">clonefrom</span></code> should be the name of the Linode that is the source for the clone.
+<code class="docutils literal"><span class="pre">script_args:</span> <span class="pre">-C</span></code> passes a -C to the salt-bootstrap script, which only configures
+the minion and doesn't try to install a new copy of salt-minion. This way the minion
+gets new keys and the keys get pre-seeded on the master, and the <code class="docutils literal"><span class="pre">/etc/salt/minion</span></code>
+file has the right minion 'id:' declaration.</p>
+<p>Cloning requires a post 2015-02-01 salt-bootstrap.</p>
+<p>It is safest to clone a stopped machine. To stop a machine run</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a stop machine_to_clone
+</pre></div>
+</div>
+<p>To create a new machine based on another machine, add an entry to your linode
+cloud profile that looks like this:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">li-clone</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-linode-config</span>
+  <span class="l l-Scalar l-Scalar-Plain">clonefrom</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">machine_to_clone</span>
+  <span class="l l-Scalar l-Scalar-Plain">script_args</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">-C -F</span>
+</pre></div>
+</div>
+<p>Then run salt-cloud as normal, specifying <code class="docutils literal"><span class="pre">-p</span> <span class="pre">li-clone</span></code>. The profile name can
+be anything; It doesn't have to be <code class="docutils literal"><span class="pre">li-clone</span></code>.</p>
+<p><code class="docutils literal"><span class="pre">clonefrom:</span></code> is the name of an existing machine in Linode from which to clone.
+<code class="docutils literal"><span class="pre">Script_args:</span> <span class="pre">-C</span> <span class="pre">-F</span></code> is necessary to avoid re-deploying Salt via salt-bootstrap.
+<code class="docutils literal"><span class="pre">-C</span></code> will just re-deploy keys so the new minion will not have a duplicate key
+or minion_id on the Master, and <code class="docutils literal"><span class="pre">-F</span></code> will force a rewrite of the Minion config
+file on the new Minion. If <code class="docutils literal"><span class="pre">-F</span></code> isn't provided, the new Minion will have the
+<code class="docutils literal"><span class="pre">machine_to_clone</span></code>'s Minion ID, instead of its own Minion ID, which can cause
+problems.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><a class="reference external" href="https://github.com/saltstack/salt-bootstrap/pull/733">Pull Request #733</a> to the salt-bootstrap repo makes the <code class="docutils literal"><span class="pre">-F</span></code> argument
+non-necessary. Once that change is released into a stable version of the
+Bootstrap Script, the <code class="docutils literal"><span class="pre">-C</span></code> argument will be sufficient for the <code class="docutils literal"><span class="pre">script_args</span></code>
+setting.</p>
+</div>
+<p>If the <code class="docutils literal"><span class="pre">machine_to_clone</span></code> does not have Salt installed on it, refrain from using
+the <code class="docutils literal"><span class="pre">script_args:</span> <span class="pre">-C</span> <span class="pre">-F</span></code> altogether, because the new machine will need to have
+Salt installed.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="lxc.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started With LXC" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="opennebula.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started with OpenNebula" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt云端</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">入门指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud">Using Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#core-configuration">Cloud核心配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#windows-configuration">Windows Configuration</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#cloud-provider-specifics">Cloud Provider Specifics</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aliyun.html">    Getting Started With Aliyun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html">    Getting Started With Azure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="digitalocean.html">    Getting Started With DigitalOcean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html">    Getting Started With EC2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gogrid.html">    Getting Started With GoGrid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html">    Getting Started With Google Compute Engine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hpcloud.html">    Getting Started With HP Cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="joyent.html">    Getting Started With Joyent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lxc.html">    Getting Started With LXC</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">    Getting Started With Linode</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#provider-configuration">Provider Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#profile-configuration">Profile Configuration</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#listing-sizes">Listing Sizes</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#listing-images">Listing Images</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#listing-locations">Listing Locations</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#linode-specific-settings">Linode Specific Settings</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#image">image</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#location">location</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#size">size</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#assign-private-ip">assign_private_ip</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#private-ip">private_ip</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#ssh-interface">ssh_interface</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#clonefrom">clonefrom</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#cloning">Cloning</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="opennebula.html">    Getting Started With OpenNebula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="openstack.html">    Getting Started With OpenStack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parallels.html">    Getting Started With Parallels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="profitbricks.html">    Getting Started With Profitbricks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="proxmox.html">    Getting Started With Proxmox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rackspace.html">    Getting Started With Rackspace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="saltify.html">    Getting Started With Saltify</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scaleway.html">    Getting Started With Scaleway</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html">    Getting Started With SoftLayer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vexxhost.html">    Getting Started With Vexxhost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="virtualbox.html">    Getting Started With Virtualbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vmware.html">    Getting Started With VMware</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vsphere.html">    Getting Started With vSphere</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#miscellaneous-options">Miscellaneous Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#troubleshooting-steps">Troubleshooting Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#extending-salt-cloud">Extending Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud-from-salt">Using Salt Cloud from Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#feature-comparison">Feature Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorials">Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

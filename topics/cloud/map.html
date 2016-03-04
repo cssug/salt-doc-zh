@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Cloud Map File</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt云端" href="index.html">
+        <link rel="next" title="Cloud Actions" href="action.html">
+        <link rel="prev" title="VM Profiles" href="profiles.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="profiles.html" title="VM Profiles">上一页</a>
+            
+        </li>
+        <li>
+            <a href="action.html" title="Cloud Actions">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="cloud-map-file">
+<h1>Cloud Map File<a class="headerlink" href="#cloud-map-file" title="永久链接至标题">¶</a></h1>
+<p>A number of options exist when creating virtual machines. They can be managed
+directly from profiles and the command line execution, or a more complex map
+file can be created. The map file allows for a number of virtual machines to
+be created and associated with specific profiles.</p>
+<p>Map files have a simple format, specify a profile and then a list of virtual
+machines to make from said profile:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">fedora_small</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">web1</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">web2</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">web3</span>
+<span class="l l-Scalar l-Scalar-Plain">fedora_high</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">redis1</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">redis2</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">redis3</span>
+<span class="l l-Scalar l-Scalar-Plain">cent_high</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">riak1</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">riak2</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">riak3</span>
+</pre></div>
+</div>
+<p>This map file can then be called to roll out all of these virtual machines. Map
+files are called from the salt-cloud command with the -m option:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ salt-cloud -m /path/to/mapfile
+</pre></div>
+</div>
+<p>Remember, that as with direct profile provisioning the -P option can be passed
+to create the virtual machines in parallel:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ salt-cloud -m /path/to/mapfile -P
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Due to limitations in the GoGrid API, instances cannot be provisioned in parallel
+with the GoGrid driver. Map files will work with GoGrid, but the <code class="docutils literal"><span class="pre">-P</span></code>
+argument should not be used on maps referencing GoGrid instances.</p>
+</div>
+<p>A map file can also be enforced to represent the total state of a cloud
+deployment by using the <code class="docutils literal"><span class="pre">--hard</span></code> option. When using the hard option any vms
+that exist but are not specified in the map file will be destroyed:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ salt-cloud -m /path/to/mapfile -P -H
+</pre></div>
+</div>
+<p>Be careful with this argument, it is very dangerous! In fact, it is so
+dangerous that in order to use it, you must explicitly enable it in the main
+configuration file.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">enable_hard_maps</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>A map file can include grains and minion configuration options:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">fedora_small</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">web1</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">log_level</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">debug</span>
+      <span class="l l-Scalar l-Scalar-Plain">grains</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">cheese</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">tasty</span>
+        <span class="l l-Scalar l-Scalar-Plain">omelet</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">du fromage</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">web2</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">log_level</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">warn</span>
+      <span class="l l-Scalar l-Scalar-Plain">grains</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">cheese</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">more tasty</span>
+        <span class="l l-Scalar l-Scalar-Plain">omelet</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">with peppers</span>
+</pre></div>
+</div>
+<p>A map file may also be used with the various query options:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ salt-cloud -m /path/to/mapfile -Q
+<span class="o">{</span><span class="s1">&#39;ec2&#39;</span>: <span class="o">{</span><span class="s1">&#39;web1&#39;</span>: <span class="o">{</span><span class="s1">&#39;id&#39;</span>: <span class="s1">&#39;i-e6aqfegb&#39;</span>,
+                     <span class="s1">&#39;image&#39;</span>: None,
+                     <span class="s1">&#39;private_ips&#39;</span>: <span class="o">[]</span>,
+                     <span class="s1">&#39;public_ips&#39;</span>: <span class="o">[]</span>,
+                     <span class="s1">&#39;size&#39;</span>: None,
+                     <span class="s1">&#39;state&#39;</span>: 0<span class="o">}}</span>,
+         <span class="s1">&#39;web2&#39;</span>: <span class="o">{</span><span class="s1">&#39;Absent&#39;</span><span class="o">}}</span>
+</pre></div>
+</div>
+<p>...or with the delete option:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ salt-cloud -m /path/to/mapfile -d
+The following virtual machines are <span class="nb">set</span> to be destroyed:
+  web1
+  web2
+
+Proceed? <span class="o">[</span>N/y<span class="o">]</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">Specifying Nodes with Maps on the Command Line
+Specifying the name of a node or nodes with the maps options on the command
+line is <em>not</em> supported. This is especially important to remember when
+using <code class="docutils literal"><span class="pre">--destroy</span></code> with maps; <code class="docutils literal"><span class="pre">salt-cloud</span></code> will ignore any arguments
+passed in which are not directly relevant to the map file. <em>When using
+``--destroy`` with a map, every node in the map file will be deleted!</em>
+Maps don't provide any useful information for destroying individual nodes,
+and should not be used to destroy a subset of a map.</p>
+</div>
+<div class="section" id="setting-up-new-salt-masters">
+<h2>Setting up New Salt Masters<a class="headerlink" href="#setting-up-new-salt-masters" title="永久链接至标题">¶</a></h2>
+<p>Bootstrapping a new master in the map is as simple as:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">fedora_small</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">web1</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">make_master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">web2</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">web3</span>
+</pre></div>
+</div>
+<p>Notice that <strong>ALL</strong> bootstrapped minions from the map will answer to the newly
+created salt-master.</p>
+<p>To make any of the bootstrapped minions answer to the bootstrapping salt-master
+as opposed to the newly created salt-master, as an example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">fedora_small</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">web1</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">make_master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+      <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;the local master ip address&gt;</span>
+        <span class="l l-Scalar l-Scalar-Plain">local_master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">web2</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">web3</span>
+</pre></div>
+</div>
+<p>The above says the minion running on the newly created salt-master responds to
+the local master, ie, the master used to bootstrap these VMs.</p>
+<p>Another example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">fedora_small</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">web1</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">make_master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">web2</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">web3</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;the local master ip address&gt;</span>
+        <span class="l l-Scalar l-Scalar-Plain">local_master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>The above example makes the <code class="docutils literal"><span class="pre">web3</span></code> minion answer to the local master, not the
+newly created master.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="profiles.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="VM Profiles" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="action.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Cloud Actions" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt云端</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">入门指南</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#using-salt-cloud">Using Salt Cloud</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../../ref/cli/salt-cloud.html">Command Line Reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basic.html">Basic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="profiles.html">Profiles</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Maps</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#setting-up-new-salt-masters">Setting up New Salt Masters</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="action.html">Actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="function.html">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#core-configuration">Cloud核心配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#windows-configuration">Windows Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#cloud-provider-specifics">Cloud Provider Specifics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#miscellaneous-options">Miscellaneous Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#troubleshooting-steps">Troubleshooting Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#extending-salt-cloud">Extending Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud-from-salt">Using Salt Cloud from Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#feature-comparison">Feature Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorials">Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

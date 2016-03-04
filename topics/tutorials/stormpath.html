@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Using Salt with Stormpath</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="using-salt-with-stormpath">
+<h1>Using Salt with Stormpath<a class="headerlink" href="#using-salt-with-stormpath" title="永久链接至标题">¶</a></h1>
+<p><a class="reference external" href="https://stormpath.com/">Stormpath</a> is a user management and authentication
+service. This tutorial covers using SaltStack to manage and take advantage of
+Stormpath's features.</p>
+<div class="section" id="external-authentication">
+<h2>External Authentication<a class="headerlink" href="#external-authentication" title="永久链接至标题">¶</a></h2>
+<p>Stormpath can be used for Salt's external authentication system. In order to do
+this, the master should be configured with an <code class="docutils literal"><span class="pre">apiid</span></code>, <code class="docutils literal"><span class="pre">apikey</span></code>, and the ID
+of the <code class="docutils literal"><span class="pre">application</span></code> that is associated with the users to be authenticated:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">stormpath</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">apiid</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">367DFSF4FRJ8767FSF4G34FGH</span>
+  <span class="l l-Scalar l-Scalar-Plain">apikey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">FEFREF43t3FEFRe/f323fwer4FWF3445gferWRWEer1</span>
+  <span class="l l-Scalar l-Scalar-Plain">application</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">786786FREFrefreg435fr1</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">These values can be found in the <cite>Stormpath dashboard
+&lt;https://api.stormpath.com/ui2/index.html#/&gt;`_</cite>.</p>
+</div>
+<p>Users that are to be authenticated should be set up under the <code class="docutils literal"><span class="pre">stormpath</span></code>
+dict under <code class="docutils literal"><span class="pre">external_auth</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">external_auth</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">stormpath</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">larry</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
+      <span class="p p-Indicator">-</span> <span class="s">&#39;@runner&#39;</span>
+      <span class="p p-Indicator">-</span> <span class="s">&#39;@wheel&#39;</span>
+</pre></div>
+</div>
+<p>Keep in mind that while Stormpath defaults the username associated with the
+account to the email address, it is better to use a username without an <code class="docutils literal"><span class="pre">&#64;</span></code>
+sign in it.</p>
+</div>
+<div class="section" id="configuring-stormpath-modules">
+<h2>Configuring Stormpath Modules<a class="headerlink" href="#configuring-stormpath-modules" title="永久链接至标题">¶</a></h2>
+<p>Stormpath accounts can be managed via either an execution or state module. In
+order to use either, a minion must be configured with an API ID and key.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">stormpath</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">apiid</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">367DFSF4FRJ8767FSF4G34FGH</span>
+  <span class="l l-Scalar l-Scalar-Plain">apikey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">FEFREF43t3FEFRe/f323fwer4FWF3445gferWRWEer1</span>
+  <span class="l l-Scalar l-Scalar-Plain">directory</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">efreg435fr1786786FREFr</span>
+  <span class="l l-Scalar l-Scalar-Plain">application</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">786786FREFrefreg435fr1</span>
+</pre></div>
+</div>
+<p>Some functions in the <code class="docutils literal"><span class="pre">stormpath</span></code> modules can make use of other options. The
+following options are also available.</p>
+<div class="section" id="directory">
+<h3>directory<a class="headerlink" href="#directory" title="永久链接至标题">¶</a></h3>
+<p>The ID of the directory that is to be used with this minion. Many functions
+require an ID to be specified to do their work. However, if the ID of a
+<code class="docutils literal"><span class="pre">directory</span></code> is specified, then Salt can often look up the resource in
+question.</p>
+</div>
+<div class="section" id="application">
+<h3>application<a class="headerlink" href="#application" title="永久链接至标题">¶</a></h3>
+<p>The ID of the application that is to be used with this minion. Many functions
+require an ID to be specified to do their work. However, if the ID of a
+<code class="docutils literal"><span class="pre">application</span></code> is specified, then Salt can often look up the resource in
+question.</p>
+</div>
+</div>
+<div class="section" id="managing-stormpath-accounts">
+<h2>Managing Stormpath Accounts<a class="headerlink" href="#managing-stormpath-accounts" title="永久链接至标题">¶</a></h2>
+<p>With the <code class="docutils literal"><span class="pre">stormpath</span></code> configuration in place, Salt can be used to configure
+accounts (which may be thought of as users) on the Stormpath service. The
+following functions are available.</p>
+<div class="section" id="stormpath-create-account">
+<h3>stormpath.create_account<a class="headerlink" href="#stormpath-create-account" title="永久链接至标题">¶</a></h3>
+<p>Create an account on the Stormpath service. This requires a <code class="docutils literal"><span class="pre">directory_id</span></code> as
+the first argument; it will not be retrieved from the minion configuration. An
+<code class="docutils literal"><span class="pre">email</span></code> address, <code class="docutils literal"><span class="pre">password</span></code>, first name (<code class="docutils literal"><span class="pre">givenName</span></code>) and last name
+(<code class="docutils literal"><span class="pre">surname</span></code>) are also required. For the full list of other parameters that may
+be specified, see:</p>
+<p><a class="reference external" href="http://docs.stormpath.com/rest/product-guide/#account-resource">http://docs.stormpath.com/rest/product-guide/#account-resource</a></p>
+<p>When executed with no errors, this function will return the information about
+the account, from Stormpath.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion stormpath.create_account &lt;directory_id&gt; shemp@example.com letmein Shemp Howard
+</pre></div>
+</div>
+</div>
+<div class="section" id="stormpath-list-accounts">
+<h3>stormpath.list_accounts<a class="headerlink" href="#stormpath-list-accounts" title="永久链接至标题">¶</a></h3>
+<p>Show all accounts on the Stormpath service. This will return all accounts,
+regardless of directory, application, or group.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion stormpath.list_accounts
+&#39;&#39;&#39;
+</pre></div>
+</div>
+</div>
+<div class="section" id="stormpath-show-account">
+<h3>stormpath.show_account<a class="headerlink" href="#stormpath-show-account" title="永久链接至标题">¶</a></h3>
+<p>Show the details for a specific Stormpath account. An <code class="docutils literal"><span class="pre">account_id</span></code> is normally
+required. However, if am <code class="docutils literal"><span class="pre">email</span></code> is provided instead, along with either a
+<code class="docutils literal"><span class="pre">directory_id</span></code>, <code class="docutils literal"><span class="pre">application_id</span></code>, or <code class="docutils literal"><span class="pre">group_id</span></code>, then Salt will search the
+specified resource to try and locate the <code class="docutils literal"><span class="pre">account_id</span></code>.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion stormpath.show_account &lt;account_id&gt;
+salt myminion stormpath.show_account <span class="nv">email</span><span class="o">=</span>&lt;email&gt; <span class="nv">directory_id</span><span class="o">=</span>&lt;directory_id&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="stormpath-update-account">
+<h3>stormpath.update_account<a class="headerlink" href="#stormpath-update-account" title="永久链接至标题">¶</a></h3>
+<p>Update one or more items for this account. Specifying an empty value will clear
+it for that account. This function may be used in one of two ways. In order to
+update only one key/value pair, specify them in order:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion stormpath.update_account &lt;account_id&gt; givenName shemp
+salt myminion stormpath.update_account &lt;account_id&gt; middleName <span class="s1">&#39;&#39;</span>
+</pre></div>
+</div>
+<p>In order to specify multiple items, they need to be passed in as a dict. From
+the command line, it is best to do this as a JSON string:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion stormpath.update_account &lt;account_id&gt; <span class="nv">items</span><span class="o">=</span><span class="s1">&#39;{&quot;givenName&quot;: &quot;Shemp&quot;}</span>
+<span class="s1">salt myminion stormpath.update_account &lt;account_id&gt; items=&#39;</span><span class="o">{</span><span class="s2">&quot;middlename&quot;</span>: <span class="s2">&quot;&quot;</span><span class="o">}</span>
+</pre></div>
+</div>
+<p>When executed with no errors, this function will return the information about
+the account, from Stormpath.</p>
+</div>
+<div class="section" id="stormpath-delete-account">
+<h3>stormpath.delete_account<a class="headerlink" href="#stormpath-delete-account" title="永久链接至标题">¶</a></h3>
+<p>Delete an account from Stormpath.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion stormpath.delete_account &lt;account_id&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="stormpath-list-directories">
+<h3>stormpath.list_directories<a class="headerlink" href="#stormpath-list-directories" title="永久链接至标题">¶</a></h3>
+<p>Show all directories associated with this tenant.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion stormpath.list_directories
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="using-stormpath-states">
+<h2>Using Stormpath States<a class="headerlink" href="#using-stormpath-states" title="永久链接至标题">¶</a></h2>
+<p>Stormpath resources may be managed using the state system. The following states
+are available.</p>
+<div class="section" id="stormpath-account-present">
+<h3>stormpath_account.present<a class="headerlink" href="#stormpath-account-present" title="永久链接至标题">¶</a></h3>
+<p>Ensure that an account exists on the Stormpath service. All options that are
+available with the <code class="docutils literal"><span class="pre">stormpath.create_account</span></code> function are available here.
+If an account needs to be created, then this function will require the same
+fields that <code class="docutils literal"><span class="pre">stormpath.create_account</span></code> requires, including the <code class="docutils literal"><span class="pre">password</span></code>.
+However, if a password changes for an existing account, it will NOT be updated
+by this state.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>curly@example.com:
+  stormpath_account.present:
+    - directory_id: efreg435fr1786786FREFr
+    - password: badpass
+    - firstName: Curly
+    - surname: Howard
+    - nickname: curly
+</pre></div>
+</div>
+<p>It is advisable to always set a <code class="docutils literal"><span class="pre">nickname</span></code> that is not also an email address,
+so that it can be used by Salt's external authentication module.</p>
+</div>
+<div class="section" id="stormpath-account-absent">
+<h3>stormpath_account.absent<a class="headerlink" href="#stormpath-account-absent" title="永久链接至标题">¶</a></h3>
+<p>Ensure that an account does not exist on Stormpath. As with
+<code class="docutils literal"><span class="pre">stormpath_account.present</span></code>, the <code class="docutils literal"><span class="pre">name</span></code> supplied to this state is the
+<code class="docutils literal"><span class="pre">email</span></code> address associated with this account. Salt will use this, with or
+without the <code class="docutils literal"><span class="pre">directory</span></code> ID that is configured for the minion. However, lookups
+will be much faster with a directory ID specified.</p>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

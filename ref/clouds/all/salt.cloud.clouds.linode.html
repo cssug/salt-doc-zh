@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.cloud.clouds.linode</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.cloud.clouds.linode">
+<span id="salt-cloud-clouds-linode"></span><h1>salt.cloud.clouds.linode<a class="headerlink" href="#module-salt.cloud.clouds.linode" title="永久链接至标题">¶</a></h1>
+<div class="section" id="linode-cloud-module-using-linode-s-rest-api">
+<h2>Linode Cloud Module using Linode's REST API<a class="headerlink" href="#linode-cloud-module-using-linode-s-rest-api" title="永久链接至标题">¶</a></h2>
+<p>The Linode cloud module is used to control access to the Linode VPS system.</p>
+<p>Use of this module only requires the <code class="docutils literal"><span class="pre">apikey</span></code> parameter. However, the default root password for new instances
+also needs to be set. The password needs to be 8 characters and contain lowercase, uppercase, and numbers.</p>
+<p>Set up the cloud configuration at <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers</span></code> or <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/linode.conf</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-linode-provider</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">apikey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">f4ZsmwtB1c7f85Jdu43RgXVDFlNjuJaeIYV8QMftTqKScEB2vSosFSr...</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">F00barbaz</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">linode</span>
+
+<span class="l l-Scalar l-Scalar-Plain">linode-profile</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-linode-provider</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Linode 1024</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">CentOS 7</span>
+  <span class="l l-Scalar l-Scalar-Plain">location</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">London, England, UK</span>
+</pre></div>
+</div>
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.avail_images">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">avail_images</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.avail_images" title="永久链接至目标">¶</a></dt>
+<dd><p>Return available Linode images.</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud --list-images my-linode-config
+salt-cloud -f avail_images my-linode-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.avail_locations">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">avail_locations</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.avail_locations" title="永久链接至目标">¶</a></dt>
+<dd><p>Return available Linode datacenter locations.</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud --list-locations my-linode-config
+salt-cloud -f avail_locations my-linode-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.avail_sizes">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">avail_sizes</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.avail_sizes" title="永久链接至目标">¶</a></dt>
+<dd><p>Return available Linode sizes.</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud --list-sizes my-linode-config
+salt-cloud -f avail_sizes my-linode-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.boot">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">boot</code><span class="sig-paren">(</span><em>name=None</em>, <em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.boot" title="永久链接至目标">¶</a></dt>
+<dd><p>Boot a Linode.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name of the Linode to boot. Can be used instead of <code class="docutils literal"><span class="pre">linode_id</span></code>.</dd>
+<dt>linode_id</dt>
+<dd>The ID of the Linode to boot. If provided, will be used as an
+alternative to <code class="docutils literal"><span class="pre">name</span></code> and reduces the number of API calls to
+Linode by one. Will be preferred over <code class="docutils literal"><span class="pre">name</span></code>.</dd>
+<dt>config_id</dt>
+<dd>The ID of the Config to boot. Required.</dd>
+<dt>check_running</dt>
+<dd>Defaults to True. If set to False, overrides the call to check if
+the VM is running before calling the linode.boot API call. Change
+<code class="docutils literal"><span class="pre">check_running</span></code> to True is useful during the boot call in the
+create function, since the new VM will not be running yet.</dd>
+</dl>
+<p>Can be called as an action (which requires a name):</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a boot my-instance <span class="nv">config_id</span><span class="o">=</span>10
+</pre></div>
+</div>
+<p>...or as a function (which requires either a name or linode_id):</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f boot my-linode-config <span class="nv">name</span><span class="o">=</span>my-instance <span class="nv">config_id</span><span class="o">=</span>10
+salt-cloud -f boot my-linode-config <span class="nv">linode_id</span><span class="o">=</span><span class="m">1225876</span> <span class="nv">config_id</span><span class="o">=</span>10
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.clone">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">clone</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.clone" title="永久链接至目标">¶</a></dt>
+<dd><p>Clone a Linode.</p>
+<dl class="docutils">
+<dt>linode_id</dt>
+<dd>The ID of the Linode to clone. Required.</dd>
+<dt>datacenter_id</dt>
+<dd>The ID of the Datacenter where the Linode will be placed. Required.</dd>
+<dt>plan_id</dt>
+<dd>The ID of the plan (size) of the Linode. Required.</dd>
+</dl>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f clone my-linode-config <span class="nv">linode_id</span><span class="o">=</span><span class="m">1234567</span> <span class="nv">datacenter_id</span><span class="o">=</span><span class="m">2</span> <span class="nv">plan_id</span><span class="o">=</span>5
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.create">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">create</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.create" title="永久链接至目标">¶</a></dt>
+<dd><p>Create a single Linode VM.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.create_config">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">create_config</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.create_config" title="永久链接至目标">¶</a></dt>
+<dd><p>Creates a Linode Configuration Profile.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name of the VM to create the config for.</dd>
+<dt>linode_id</dt>
+<dd>The ID of the Linode to create the configuration for.</dd>
+<dt>root_disk_id</dt>
+<dd>The Root Disk ID to be used for this config.</dd>
+<dt>swap_disk_id</dt>
+<dd>The Swap Disk ID to be used for this config.</dd>
+<dt>data_disk_id</dt>
+<dd>The Data Disk ID to be used for this config.</dd>
+</dl>
+<div class="versionadded">
+<p><span class="versionmodified">2016.3.0 新版功能.</span></p>
+</div>
+<dl class="docutils">
+<dt>kernel_id</dt>
+<dd>The ID of the kernel to use for this configuration profile.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.create_data_disk">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">create_data_disk</code><span class="sig-paren">(</span><em>vm_=None</em>, <em>linode_id=None</em>, <em>data_size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.create_data_disk" title="永久链接至目标">¶</a></dt>
+<dd><p>Create a data disk for the linode (type is hardcoded to ext4 at the moment)</p>
+<div class="versionadded">
+<p><span class="versionmodified">2016.3.0 新版功能.</span></p>
+</div>
+<dl class="docutils">
+<dt>vm_</dt>
+<dd>The VM profile to create the data disk for.</dd>
+<dt>linode_id</dt>
+<dd>The ID of the Linode to create the data disk for.</dd>
+<dt>data_size</dt>
+<dd>The size of the disk, in MB.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.create_disk_from_distro">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">create_disk_from_distro</code><span class="sig-paren">(</span><em>vm_</em>, <em>linode_id</em>, <em>swap_size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.create_disk_from_distro" title="永久链接至目标">¶</a></dt>
+<dd><p>Creates the disk for the Linode from the distribution.</p>
+<dl class="docutils">
+<dt>vm_</dt>
+<dd>The VM profile to create the disk for.</dd>
+<dt>linode_id</dt>
+<dd>The ID of the Linode to create the distribution disk for. Required.</dd>
+<dt>swap_size</dt>
+<dd>The size of the disk, in MB.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.create_private_ip">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">create_private_ip</code><span class="sig-paren">(</span><em>linode_id</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.create_private_ip" title="永久链接至目标">¶</a></dt>
+<dd><p>Creates a private IP for the specified Linode.</p>
+<dl class="docutils">
+<dt>linode_id</dt>
+<dd>The ID of the Linode to create the IP address for.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.create_swap_disk">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">create_swap_disk</code><span class="sig-paren">(</span><em>vm_</em>, <em>linode_id</em>, <em>swap_size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.create_swap_disk" title="永久链接至目标">¶</a></dt>
+<dd><p>Creates the disk for the specified Linode.</p>
+<dl class="docutils">
+<dt>vm_</dt>
+<dd>The VM profile to create the swap disk for.</dd>
+<dt>linode_id</dt>
+<dd>The ID of the Linode to create the swap disk for.</dd>
+<dt>swap_size</dt>
+<dd>The size of the disk, in MB.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.destroy">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">destroy</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.destroy" title="永久链接至目标">¶</a></dt>
+<dd><p>Destroys a Linode by name.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name of VM to be be destroyed.</dd>
+</dl>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -d vm_name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.get_config_id">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">get_config_id</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.get_config_id" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns a config_id for a given linode.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name of the Linode for which to get the config_id. Can be used instead
+of <code class="docutils literal"><span class="pre">linode_id</span></code>.h</dd>
+<dt>linode_id</dt>
+<dd>The ID of the Linode for which to get the config_id. Can be used instead
+of <code class="docutils literal"><span class="pre">name</span></code>.</dd>
+</dl>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f get_config_id my-linode-config <span class="nv">name</span><span class="o">=</span>my-linode
+salt-cloud -f get_config_id my-linode-config <span class="nv">linode_id</span><span class="o">=</span>1234567
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.get_configured_provider">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">get_configured_provider</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.get_configured_provider" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the first configured instance.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.get_data_disk">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">get_data_disk</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.get_data_disk" title="永久链接至目标">¶</a></dt>
+<dd><p>Return True if a data disk is requested</p>
+<div class="versionadded">
+<p><span class="versionmodified">2016.3.0 新版功能.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.get_data_disk_size">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">get_data_disk_size</code><span class="sig-paren">(</span><em>vm_</em>, <em>swap</em>, <em>linode_id</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.get_data_disk_size" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the size of of the data disk in MB</p>
+<div class="versionadded">
+<p><span class="versionmodified">2016.3.0 新版功能.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.get_datacenter_id">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">get_datacenter_id</code><span class="sig-paren">(</span><em>location</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.get_datacenter_id" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns the Linode Datacenter ID.</p>
+<dl class="docutils">
+<dt>location</dt>
+<dd>The location, or name, of the datacenter to get the ID from.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.get_disk_size">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">get_disk_size</code><span class="sig-paren">(</span><em>vm_</em>, <em>swap</em>, <em>linode_id</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.get_disk_size" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns the size of of the root disk in MB.</p>
+<dl class="docutils">
+<dt>vm_</dt>
+<dd>The VM to get the disk size for.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.get_distribution_id">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">get_distribution_id</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.get_distribution_id" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns the distribution ID for a VM</p>
+<dl class="docutils">
+<dt>vm_</dt>
+<dd>The VM to get the distribution ID for</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.get_ips">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">get_ips</code><span class="sig-paren">(</span><em>linode_id=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.get_ips" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns public and private IP addresses.</p>
+<dl class="docutils">
+<dt>linode_id</dt>
+<dd>Limits the IP addresses returned to the specified Linode ID.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.get_linode">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">get_linode</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.get_linode" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns data for a single named Linode.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name of the Linode for which to get data. Can be used instead
+<code class="docutils literal"><span class="pre">linode_id</span></code>. Note this will induce an additional API call
+compared to using <code class="docutils literal"><span class="pre">linode_id</span></code>.</dd>
+<dt>linode_id</dt>
+<dd>The ID of the Linode for which to get data. Can be used instead of
+<code class="docutils literal"><span class="pre">name</span></code>.</dd>
+</dl>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f get_linode my-linode-config <span class="nv">name</span><span class="o">=</span>my-instance
+salt-cloud -f get_linode my-linode-config <span class="nv">linode_id</span><span class="o">=</span>1234567
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.get_linode_id_from_name">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">get_linode_id_from_name</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.get_linode_id_from_name" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns the Linode ID for a VM from the provided name.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name of the Linode from which to get the Linode ID. Required.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.get_password">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">get_password</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.get_password" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the password to use for a VM.</p>
+<dl class="docutils">
+<dt>vm_</dt>
+<dd>The configuration to obtain the password from.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.get_plan_id">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">get_plan_id</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.get_plan_id" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns the Linode Plan ID.</p>
+<dl class="docutils">
+<dt>label</dt>
+<dd>The label, or name, of the plan to get the ID from.</dd>
+</dl>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f get_plan_id linode <span class="nv">label</span><span class="o">=</span><span class="s2">&quot;Linode 1024&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.get_private_ip">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">get_private_ip</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.get_private_ip" title="永久链接至目标">¶</a></dt>
+<dd><p>Return True if a private ip address is requested</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.get_pub_key">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">get_pub_key</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.get_pub_key" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the SSH pubkey.</p>
+<dl class="docutils">
+<dt>vm_</dt>
+<dd>The configuration to obtain the public key from.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.get_swap_size">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">get_swap_size</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.get_swap_size" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns the amoutn of swap space to be used in MB.</p>
+<dl class="docutils">
+<dt>vm_</dt>
+<dd>The VM profile to obtain the swap size from.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.get_vm_size">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">get_vm_size</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.get_vm_size" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns the VM's size.</p>
+<dl class="docutils">
+<dt>vm_</dt>
+<dd>The VM to get the size for.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.list_nodes">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">list_nodes</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.list_nodes" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns a list of linodes, keeping only a brief listing.</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -Q
+salt-cloud --query
+salt-cloud -f list_nodes my-linode-config
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The <code class="docutils literal"><span class="pre">image</span></code> label only displays information about the VM's distribution vendor,
+such as &quot;Debian&quot; or &quot;RHEL&quot; and does not display the actual image name. This is
+due to a limitation of the Linode API.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.list_nodes_full">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">list_nodes_full</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.list_nodes_full" title="永久链接至目标">¶</a></dt>
+<dd><p>List linodes, with all available information.</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -F
+salt-cloud --full-query
+salt-cloud -f list_nodes_full my-linode-config
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The <code class="docutils literal"><span class="pre">image</span></code> label only displays information about the VM's distribution vendor,
+such as &quot;Debian&quot; or &quot;RHEL&quot; and does not display the actual image name. This is
+due to a limitation of the Linode API.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.list_nodes_min">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">list_nodes_min</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.list_nodes_min" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of the VMs that are on the provider. Only a list of VM names and
+their state is returned. This is the minimum amount of information needed to
+check for existing VMs.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_nodes_min my-linode-config
+salt-cloud --function list_nodes_min my-linode-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.list_nodes_select">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">list_nodes_select</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.list_nodes_select" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of the VMs that are on the provider, with select fields.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.reboot">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">reboot</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.reboot" title="永久链接至目标">¶</a></dt>
+<dd><p>Reboot a linode.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name of the VM to reboot.</dd>
+</dl>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a reboot vm_name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.show_instance">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">show_instance</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.show_instance" title="永久链接至目标">¶</a></dt>
+<dd><p>Displays details about a particular Linode VM. Either a name or a linode_id must
+be provided.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name of the VM for which to display details.</dd>
+</dl>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a show_instance vm_name
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The <code class="docutils literal"><span class="pre">image</span></code> label only displays information about the VM's distribution vendor,
+such as &quot;Debian&quot; or &quot;RHEL&quot; and does not display the actual image name. This is
+due to a limitation of the Linode API.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.show_pricing">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">show_pricing</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.show_pricing" title="永久链接至目标">¶</a></dt>
+<dd><p>Show pricing for a particular profile. This is only an estimate, based on
+unofficial pricing sources.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_pricing my-linode-config <span class="nv">profile</span><span class="o">=</span>my-linode-profile
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.start">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">start</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.start" title="永久链接至目标">¶</a></dt>
+<dd><p>Start a VM in Linode.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name of the VM to start.</dd>
+</dl>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a stop vm_name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.stop">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">stop</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.stop" title="永久链接至目标">¶</a></dt>
+<dd><p>Stop a VM in Linode.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name of the VM to stop.</dd>
+</dl>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a stop vm_name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.linode.update_linode">
+<code class="descclassname">salt.cloud.clouds.linode.</code><code class="descname">update_linode</code><span class="sig-paren">(</span><em>linode_id</em>, <em>update_args=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.linode.update_linode" title="永久链接至目标">¶</a></dt>
+<dd><p>Updates a Linode's properties.</p>
+<dl class="docutils">
+<dt>linode_id</dt>
+<dd>The ID of the Linode to shutdown. Required.</dd>
+<dt>update_args</dt>
+<dd>The args to update the Linode with. Must be in dictionary form.</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

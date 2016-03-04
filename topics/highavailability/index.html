@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>High Availability Features in Salt</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Architecture" href="../topology/index.html">
+        <link rel="next" title="Salt Syndic" href="../topology/syndic.html">
+        <link rel="prev" title="Architecture" href="../topology/index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../topology/index.html" title="Architecture">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../topology/syndic.html" title="Salt Syndic">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="high-availability-features-in-salt">
+<span id="highavailability"></span><h1>High Availability Features in Salt<a class="headerlink" href="#high-availability-features-in-salt" title="永久链接至标题">¶</a></h1>
+<p>Salt supports several features for high availability and fault tolerance.
+Brief documentation for these features is listed alongside their configuration
+parameters in <span class="xref std std-ref">Configuration file examples</span>.</p>
+<div class="section" id="multimaster">
+<h2>Multimaster<a class="headerlink" href="#multimaster" title="永久链接至标题">¶</a></h2>
+<p>Salt minions can connect to multiple masters at one time by configuring the
+<cite>master</cite> configuration parameter as a YAML list of all the available masters.  By
+default, all masters are &quot;hot&quot;, meaning that any master can direct commands to
+the Salt infrastructure.</p>
+<p>In a multimaster configuration, each master must have the same cryptographic
+keys, and minion keys must be accepted on all masters separately.  The contents
+of file_roots and pillar_roots need to be kept in sync with processes external
+to Salt as well</p>
+<p>A tutorial on setting up multimaster with &quot;hot&quot; masters is here:</p>
+<p><a class="reference internal" href="../tutorials/multimaster.html"><em>Multimaster Tutorial</em></a></p>
+</div>
+<div class="section" id="multimaster-with-failover">
+<h2>Multimaster with Failover<a class="headerlink" href="#multimaster-with-failover" title="永久链接至标题">¶</a></h2>
+<p>Changing the <code class="docutils literal"><span class="pre">master_type</span></code> parameter from <code class="docutils literal"><span class="pre">str</span></code> to <code class="docutils literal"><span class="pre">failover</span></code> will
+cause minions to connect to the first responding master in the list of masters.
+Every <code class="docutils literal"><span class="pre">master_alive_check</span></code> seconds the minions will check to make sure
+the current master is still responding.  If the master does not respond,
+the minion will attempt to connect to the next master in the list.  If the
+minion runs out of masters, the list will be recycled in case dead masters
+have been restored.  Note that <code class="docutils literal"><span class="pre">master_alive_check</span></code> must be present in the
+minion configuration, or else the recurring job to check master status
+will not get scheduled.</p>
+<p>Failover can be combined with PKI-style encrypted keys, but PKI is NOT
+REQUIRED to use failover.</p>
+<p>Multimaster with PKI and Failover is discussed in
+<a class="reference internal" href="../tutorials/multimaster_pki.html"><em>this tutorial</em></a></p>
+<p><code class="docutils literal"><span class="pre">master_type:</span> <span class="pre">failover</span></code> can be combined with <code class="docutils literal"><span class="pre">master_shuffle:</span> <span class="pre">True</span></code>
+to spread minion connections across all masters (one master per
+minion, not each minion connecting to all masters).  Adding Salt Syndics
+into the mix makes it possible to create a load-balanced Salt infrastructure.
+If a master fails, minions will notice and select another master from the
+available list.</p>
+</div>
+<div class="section" id="syndic">
+<h2>Syndic<a class="headerlink" href="#syndic" title="永久链接至标题">¶</a></h2>
+<p>Salt's Syndic feature is a way to create differing infrastructure
+topologies.  It is not strictly an HA feature, but can be treated as such.</p>
+<p>With the syndic, a Salt infrastructure can be partitioned in such a way that
+certain masters control certain segments of the infrastructure, and &quot;Master
+of Masters&quot; nodes can control multiple segments underneath them.</p>
+<p>Syndics are covered in depth in <a class="reference internal" href="../topology/syndic.html"><em>Salt Syndic</em></a>.</p>
+</div>
+<div class="section" id="syndic-with-multimaster">
+<h2>Syndic with Multimaster<a class="headerlink" href="#syndic-with-multimaster" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2015.5.0 新版功能.</span></p>
+</div>
+<p>Syndic with Multimaster lets you connect a syndic to multiple masters to provide
+an additional layer of redundancy in a syndic configuration.</p>
+<p>Syndics are covered in depth in <a class="reference internal" href="../topology/syndic.html"><em>Salt Syndic</em></a>.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../topology/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Architecture" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../topology/syndic.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt Syndic" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../topology/index.html">Architecture</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">High Availability Features in Salt</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#multimaster">Multimaster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multimaster-with-failover">Multimaster with Failover</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syndic">Syndic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syndic-with-multimaster">Syndic with Multimaster</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../topology/syndic.html">Salt Syndic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/intro_scale.html">Using Salt at scale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/multimaster.html">Multi Master Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/multimaster_pki.html">Multi-Master-PKI Tutorial With Failover</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

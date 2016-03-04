@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Mod Aggregate State Runtime Modifications</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="State System Reference" href="index.html">
+        <link rel="next" title="Altering States" href="altering_states.html">
+        <link rel="prev" title="State System Reference" href="index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="index.html" title="State System Reference">上一页</a>
+            
+        </li>
+        <li>
+            <a href="altering_states.html" title="Altering States">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="mod-aggregate-state-runtime-modifications">
+<h1>Mod Aggregate State Runtime Modifications<a class="headerlink" href="#mod-aggregate-state-runtime-modifications" title="永久链接至标题">¶</a></h1>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<p>The mod_aggregate system was added in the 2014.7.0 release of Salt and allows for
+runtime modification of the executing state data. Simply put, it allows for the
+data used by Salt's state system to be changed on the fly at runtime, kind of
+like a configuration management JIT compiler or a runtime import system. All in
+all, it makes Salt much more dynamic.</p>
+<div class="section" id="how-it-works">
+<h2>How it Works<a class="headerlink" href="#how-it-works" title="永久链接至标题">¶</a></h2>
+<p>The best example is the <code class="docutils literal"><span class="pre">pkg</span></code> state. One of the major requests in Salt has long
+been adding the ability to install all packages defined at the same time. The
+mod_aggregate system makes this a reality. While executing Salt's state system,
+when a <code class="docutils literal"><span class="pre">pkg</span></code> state is reached the <code class="docutils literal"><span class="pre">mod_aggregate</span></code> function in the state module
+is called. For <code class="docutils literal"><span class="pre">pkg</span></code> this function scans all of the other states that are slated
+to run, and picks up the references to <code class="docutils literal"><span class="pre">name</span></code> and <code class="docutils literal"><span class="pre">pkgs</span></code>, then adds them to
+<code class="docutils literal"><span class="pre">pkgs</span></code> in the first state. The result is a single call to yum, apt-get,
+pacman, etc as part of the first package install.</p>
+</div>
+<div class="section" id="how-to-use-it">
+<h2>How to Use it<a class="headerlink" href="#how-to-use-it" title="永久链接至标题">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Since this option changes the basic behavior of the state runtime, after
+it is enabled states should be executed using <cite>test=True</cite> to ensure that
+the desired behavior is preserved.</p>
+</div>
+<div class="section" id="in-config-files">
+<h3>In config files<a class="headerlink" href="#in-config-files" title="永久链接至标题">¶</a></h3>
+<p>The first way to enable aggregation is with a configuration option in either
+the master or minion configuration files. Salt will invoke <code class="docutils literal"><span class="pre">mod_aggregate</span></code>
+the first time it encounters a state module that has aggregate support.</p>
+<p>If this option is set in the master config it will apply to all state runs on
+all minions, if set in the minion config it will only apply to said minion.</p>
+<p>Enable for all states:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">state_aggregate</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>Enable for only specific state modules:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">state_aggregate</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="in-states">
+<h3>In states<a class="headerlink" href="#in-states" title="永久链接至标题">¶</a></h3>
+<p>The second way to enable aggregation is with the state-level <code class="docutils literal"><span class="pre">aggregate</span></code>
+keyword. In this configuration, Salt will invoke the <code class="docutils literal"><span class="pre">mod_aggregate</span></code> function
+the first time it encounters this keyword. Any additional occurrences of the
+keyword will be ignored as the aggregation has already taken place.</p>
+<p>The following example will trigger <code class="docutils literal"><span class="pre">mod_aggregate</span></code> when the <code class="docutils literal"><span class="pre">lamp_stack</span></code>
+state is processed resulting in a single call to the underlying package
+manager.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">lamp_stack</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkgs</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">php</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mysql-client</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">aggregate</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+
+<span class="l l-Scalar l-Scalar-Plain">memcached</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">memcached</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="adding-mod-aggregate-to-a-state-module">
+<h2>Adding mod_aggregate to a State Module<a class="headerlink" href="#adding-mod-aggregate-to-a-state-module" title="永久链接至标题">¶</a></h2>
+<p>Adding a mod_aggregate routine to an existing state module only requires adding
+an additional function to the state module called mod_aggregate.</p>
+<p>The mod_aggregate function just needs to accept three parameters and return the
+low data to use. Since mod_aggregate is working on the state runtime level it
+does need to manipulate <cite>low data</cite>.</p>
+<p>The three parameters are <cite>low</cite>, <cite>chunks</cite>, and <cite>running</cite>. The <cite>low</cite> option is the
+low data for the state execution which is about to be called. The <cite>chunks</cite> is
+the list of all of the low data dictionaries which are being executed by the
+runtime and the <cite>running</cite> dictionary is the return data from all of the state
+executions which have already be executed.</p>
+<p>This example, simplified from the pkg state, shows how to create mod_aggregate functions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">mod_aggregate</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">chunks</span><span class="p">,</span> <span class="n">running</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The mod_aggregate function which looks up all packages in the available</span>
+<span class="sd">    low chunks and merges them into a single pkgs ref in the present low data</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">pkgs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># What functions should we aggregate?</span>
+    <span class="n">agg_enabled</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;installed&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;latest&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;removed&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;purged&#39;</span><span class="p">,</span>
+            <span class="p">]</span>
+    <span class="c1"># The `low` data is just a dict with the state, function (fun) and</span>
+    <span class="c1"># arguments passed in from the sls</span>
+    <span class="k">if</span> <span class="n">low</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fun&#39;</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">agg_enabled</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">low</span>
+    <span class="c1"># Now look into what other things are set to execute</span>
+    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">:</span>
+        <span class="c1"># The state runtime uses &quot;tags&quot; to track completed jobs, it may</span>
+        <span class="c1"># look familiar with the _|-</span>
+        <span class="n">tag</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">gen_state_tag</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">running</span><span class="p">:</span>
+            <span class="c1"># Already ran the pkg state, skip aggregation</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">chunk</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;pkg&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;__agg__&#39;</span> <span class="ow">in</span> <span class="n">chunk</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="c1"># Check for the same function</span>
+            <span class="k">if</span> <span class="n">chunk</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fun&#39;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">low</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fun&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="c1"># Pull out the pkg names!</span>
+            <span class="k">if</span> <span class="s1">&#39;pkgs&#39;</span> <span class="ow">in</span> <span class="n">chunk</span><span class="p">:</span>
+                <span class="n">pkgs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">chunk</span><span class="p">[</span><span class="s1">&#39;pkgs&#39;</span><span class="p">])</span>
+                <span class="n">chunk</span><span class="p">[</span><span class="s1">&#39;__agg__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">elif</span> <span class="s1">&#39;name&#39;</span> <span class="ow">in</span> <span class="n">chunk</span><span class="p">:</span>
+                <span class="n">pkgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chunk</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+                <span class="n">chunk</span><span class="p">[</span><span class="s1">&#39;__agg__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">if</span> <span class="n">pkgs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;pkgs&#39;</span> <span class="ow">in</span> <span class="n">low</span><span class="p">:</span>
+            <span class="n">low</span><span class="p">[</span><span class="s1">&#39;pkgs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">pkgs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">low</span><span class="p">[</span><span class="s1">&#39;pkgs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pkgs</span>
+    <span class="c1"># The low has been modified and needs to be returned to the state</span>
+    <span class="c1"># runtime for execution</span>
+    <span class="k">return</span> <span class="n">low</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="State System Reference" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="altering_states.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Altering States" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../topics/states/index.html">Configuration Management</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/starting_states.html">我们如何使用Salt States？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt1.html">States教程，第1部分 - 基础用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt2.html">States tutorial, part 2 - More Complex States, Requisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt3.html">States tutorial, part 3 - Templating, Includes, Extends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt4.html">States tutorial, part 4</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">State System Reference</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="">Mod Aggregate State Runtime Modifications</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#how-it-works">How it Works</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#how-to-use-it">How to Use it</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#in-config-files">In config files</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#in-states">In states</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#adding-mod-aggregate-to-a-state-module">Adding mod_aggregate to a State Module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="altering_states.html">Altering States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="backup_mode.html">File State Backups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compiler_ordering.html">Understanding State Compiler Ordering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extend.html">Extending External SLS Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="failhard.html">Failhard Global Option</a></li>
+<li class="toctree-l3"><a class="reference internal" href="global_state_arguments.html">Global State Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html">Highstate data structure definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="include.html">Include and Exclude</a></li>
+<li class="toctree-l3"><a class="reference internal" href="layers.html">State System Layers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="master_side.html">The Orchestrate Runner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ordering.html">Ordering States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="providers.html">State Providers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="requisites.html">Requisites and Other Global State Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="startup.html">Startup States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html">State Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="top.html">顶级配置文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vars.html">SLS Template Variable Reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="writing.html">State Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#state-management">State Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#understanding-the-salt-state-system-components">理解Salt状态系统组件</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

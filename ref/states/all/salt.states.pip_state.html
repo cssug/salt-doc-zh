@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.states.pip_state</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+        <link rel="up" title="所有内置的state模块列表" href="index.html">
+        <link rel="next" title="salt.states.pkg" href="salt.states.pkg.html">
+        <link rel="prev" title="salt.states.pecl" href="salt.states.pecl.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="salt.states.pecl.html" title="salt.states.pecl">上一页</a>
+            
+        </li>
+        <li>
+            <a href="salt.states.pkg.html" title="salt.states.pkg">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.states.pip_state">
+<span id="salt-states-pip-state"></span><h1>salt.states.pip_state<a class="headerlink" href="#module-salt.states.pip_state" title="永久链接至标题">¶</a></h1>
+<div class="section" id="installation-of-python-packages-using-pip">
+<h2>Installation of Python Packages Using pip<a class="headerlink" href="#installation-of-python-packages-using-pip" title="永久链接至标题">¶</a></h2>
+<p>These states manage system installed python packages. Note that pip must be
+installed for these states to be available, so pip states should include a
+requisite to a pkg.installed state for the package which provides pip
+(<code class="docutils literal"><span class="pre">python-pip</span></code> in most cases). Example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">python-pip</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span>
+
+<span class="l l-Scalar l-Scalar-Plain">virtualenvwrapper</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pip.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">python-pip</span>
+</pre></div>
+</div>
+<dl class="function">
+<dt id="salt.states.pip_state.installed">
+<code class="descclassname">salt.states.pip_state.</code><code class="descname">installed</code><span class="sig-paren">(</span><em>name</em>, <em>pkgs=None</em>, <em>pip_bin=None</em>, <em>requirements=None</em>, <em>env=None</em>, <em>bin_env=None</em>, <em>use_wheel=False</em>, <em>no_use_wheel=False</em>, <em>log=None</em>, <em>proxy=None</em>, <em>timeout=None</em>, <em>repo=None</em>, <em>editable=None</em>, <em>find_links=None</em>, <em>index_url=None</em>, <em>extra_index_url=None</em>, <em>no_index=False</em>, <em>mirrors=None</em>, <em>build=None</em>, <em>target=None</em>, <em>download=None</em>, <em>download_cache=None</em>, <em>source=None</em>, <em>upgrade=False</em>, <em>force_reinstall=False</em>, <em>ignore_installed=False</em>, <em>exists_action=None</em>, <em>no_deps=False</em>, <em>no_install=False</em>, <em>no_download=False</em>, <em>install_options=None</em>, <em>global_options=None</em>, <em>user=None</em>, <em>no_chown=False</em>, <em>cwd=None</em>, <em>activate=False</em>, <em>pre_releases=False</em>, <em>cert=None</em>, <em>allow_all_external=False</em>, <em>allow_external=None</em>, <em>allow_unverified=None</em>, <em>process_dependency_links=False</em>, <em>env_vars=None</em>, <em>use_vt=False</em>, <em>trusted_host=None</em>, <em>no_cache_dir=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.pip_state.installed" title="永久链接至目标">¶</a></dt>
+<dd><p>Make sure the package is installed</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name of the python package to install. You can also specify version
+numbers here using the standard operators <code class="docutils literal"><span class="pre">==,</span> <span class="pre">&gt;=,</span> <span class="pre">&lt;=</span></code>. If
+<code class="docutils literal"><span class="pre">requirements</span></code> is given, this parameter will be ignored.</dd>
+</dl>
+<p>范例:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">django</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pip.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">django &gt;= 1.6, &lt;= 1.7</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">python-pip</span>
+</pre></div>
+</div>
+<p>This will install the latest Django version greater than 1.6 but less
+than 1.7.</p>
+<dl class="docutils">
+<dt>requirements</dt>
+<dd>Path to a pip requirements file. If the path begins with salt://
+the file will be transferred from the master file server.</dd>
+<dt>user</dt>
+<dd>The user under which to run pip</dd>
+<dt>use_wheel <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd>Prefer wheel archives (requires pip&gt;=1.4)</dd>
+<dt>no_use_wheel <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd>Force to not use wheel archives (requires pip&gt;=1.4)</dd>
+<dt>log</dt>
+<dd>Log file where a complete (maximum verbosity) record will be kept</dd>
+<dt>proxy</dt>
+<dd>Specify a proxy in the form
+user:passwd&#64;proxy.server:port. Note that the
+user:password&#64; is optional and required only if you
+are behind an authenticated proxy.  If you provide
+user&#64;proxy.server:port then you will be prompted for a
+password.</dd>
+<dt>timeout</dt>
+<dd>Set the socket timeout (default 15 seconds)</dd>
+<dt>editable</dt>
+<dd>install something editable (i.e.
+git+https://github.com/worldcompany/djangoembed.git#egg=djangoembed)</dd>
+<dt>find_links</dt>
+<dd>URL to look for packages at</dd>
+<dt>index_url</dt>
+<dd>Base URL of Python Package Index</dd>
+<dt>extra_index_url</dt>
+<dd>Extra URLs of package indexes to use in addition to <code class="docutils literal"><span class="pre">index_url</span></code></dd>
+<dt>no_index</dt>
+<dd>Ignore package index</dd>
+<dt>mirrors</dt>
+<dd>Specific mirror URL(s) to query (automatically adds --use-mirrors)</dd>
+<dt>build</dt>
+<dd>Unpack packages into <code class="docutils literal"><span class="pre">build</span></code> dir</dd>
+<dt>target</dt>
+<dd>Install packages into <code class="docutils literal"><span class="pre">target</span></code> dir</dd>
+<dt>download</dt>
+<dd>Download packages into <code class="docutils literal"><span class="pre">download</span></code> instead of installing them</dd>
+<dt>download_cache</dt>
+<dd>Cache downloaded packages in <code class="docutils literal"><span class="pre">download_cache</span></code> dir</dd>
+<dt>source</dt>
+<dd>Check out <code class="docutils literal"><span class="pre">editable</span></code> packages into <code class="docutils literal"><span class="pre">source</span></code> dir</dd>
+<dt>upgrade</dt>
+<dd>Upgrade all packages to the newest available version</dd>
+<dt>force_reinstall</dt>
+<dd>When upgrading, reinstall all packages even if they are already
+up-to-date.</dd>
+<dt>ignore_installed</dt>
+<dd>Ignore the installed packages (reinstalling instead)</dd>
+<dt>exists_action</dt>
+<dd>Default action when a path already exists: (s)witch, (i)gnore, (w)ipe,
+(b)ackup</dd>
+<dt>no_deps</dt>
+<dd>Ignore package dependencies</dd>
+<dt>no_install</dt>
+<dd>Download and unpack all packages, but don't actually install them</dd>
+<dt>no_chown</dt>
+<dd>When user is given, do not attempt to copy and chown
+a requirements file</dd>
+<dt>no_cache_dir:</dt>
+<dd>Disable the cache.</dd>
+<dt>cwd</dt>
+<dd>Current working directory to run pip from</dd>
+<dt>activate</dt>
+<dd><p class="first">Activates the virtual environment, if given via bin_env,
+before running install.</p>
+<div class="last deprecated">
+<p><span class="versionmodified">2014.7.2 版后已移除: </span>If <cite>bin_env</cite> is given, pip will already be sourced from that
+virtualenv, making <cite>activate</cite> effectively a noop.</p>
+</div>
+</dd>
+<dt>pre_releases</dt>
+<dd>Include pre-releases in the available versions</dd>
+<dt>cert</dt>
+<dd>Provide a path to an alternate CA bundle</dd>
+<dt>allow_all_external</dt>
+<dd>Allow the installation of all externally hosted files</dd>
+<dt>allow_external</dt>
+<dd>Allow the installation of externally hosted files (comma separated list)</dd>
+<dt>allow_unverified</dt>
+<dd>Allow the installation of insecure and unverifiable files (comma separated list)</dd>
+<dt>process_dependency_links</dt>
+<dd>Enable the processing of dependency links</dd>
+<dt>bin_env <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>Absolute path to a virtual environment directory or absolute path to
+a pip executable. The example below assumes a virtual environment
+has been created at <code class="docutils literal"><span class="pre">/foo/.virtualenvs/bar</span></code>.</dd>
+<dt>env_vars</dt>
+<dd><p class="first">Add or modify environment variables. Useful for tweaking build steps,
+such as specifying INCLUDE or LIBRARY paths in Makefiles, build scripts or
+compiler calls.  This must be in the form of a dictionary or a mapping.</p>
+<p>范例:</p>
+<div class="last highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">django</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pip.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">django_app</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">env_vars</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">CUSTOM_PATH</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/opt/django_app</span>
+        <span class="l l-Scalar l-Scalar-Plain">VERBOSE</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+</dd>
+<dt>use_vt</dt>
+<dd>Use VT terminal emulation (see output while installing)</dd>
+<dt>trusted_host</dt>
+<dd>Mark this host as trusted, even though it does not have valid or any
+HTTPS.</dd>
+</dl>
+<p>范例:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">django</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pip.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">django &gt;= 1.6, &lt;= 1.7</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bin_env</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/foo/.virtualenvs/bar</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">python-pip</span>
+</pre></div>
+</div>
+<p>Or</p>
+<p>范例:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">django</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pip.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">django &gt;= 1.6, &lt;= 1.7</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bin_env</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/foo/.virtualenvs/bar/bin/pip</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">python-pip</span>
+</pre></div>
+</div>
+<div class="admonition-attention admonition">
+<p class="first admonition-title">Attention</p>
+<p class="last">The following arguments are deprecated, do not use.</p>
+</div>
+<dl class="docutils">
+<dt>pip_bin <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>Deprecated, use <code class="docutils literal"><span class="pre">bin_env</span></code></dd>
+<dt>env <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>Deprecated, use <code class="docutils literal"><span class="pre">bin_env</span></code></dd>
+</dl>
+<div class="versionchanged">
+<p><span class="versionmodified">在 0.17.0 版更改: </span><code class="docutils literal"><span class="pre">use_wheel</span></code> option added.</p>
+</div>
+<p>install_options</p>
+<blockquote>
+<div><p>Extra arguments to be supplied to the setup.py install command.
+If you are using an option with a directory path, be sure to use
+absolute path.</p>
+<p>范例:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">django</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pip.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">django</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">install_options</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">--prefix=/blah</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">python-pip</span>
+</pre></div>
+</div>
+</div></blockquote>
+<dl class="docutils">
+<dt>global_options</dt>
+<dd><p class="first">Extra global options to be supplied to the setup.py call before the
+install command.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2014.1.3 新版功能.</span></p>
+</div>
+</dd>
+</dl>
+<div class="admonition-attention admonition">
+<p class="first admonition-title">Attention</p>
+<p>As of Salt 0.17.0 the pip state <strong>needs</strong> an importable pip module.
+This usually means having the system's pip package installed or running
+Salt from an active <a class="reference external" href="http://www.virtualenv.org/en/latest/">virtualenv</a>.</p>
+<p class="last">The reason for this requirement is because <code class="docutils literal"><span class="pre">pip</span></code> already does a
+pretty good job parsing its own requirements. It makes no sense for
+Salt to do <code class="docutils literal"><span class="pre">pip</span></code> requirements parsing and validation before passing
+them to the <code class="docutils literal"><span class="pre">pip</span></code> library. It's functionality duplication and it's
+more error prone.</p>
+</div>
+<div class="admonition-attention admonition">
+<p class="first admonition-title">Attention</p>
+<p class="last">Please set <code class="docutils literal"><span class="pre">reload_modules:</span> <span class="pre">True</span></code> to have the salt minion
+import this module after installation.</p>
+</div>
+<p>范例:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">pyopenssl</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">pip.installed</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">pyOpenSSL</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">reload_modules</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">exists_action</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">i</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.pip_state.removed">
+<code class="descclassname">salt.states.pip_state.</code><code class="descname">removed</code><span class="sig-paren">(</span><em>name</em>, <em>requirements=None</em>, <em>bin_env=None</em>, <em>log=None</em>, <em>proxy=None</em>, <em>timeout=None</em>, <em>user=None</em>, <em>cwd=None</em>, <em>use_vt=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.pip_state.removed" title="永久链接至目标">¶</a></dt>
+<dd><p>Make sure that a package is not installed.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name of the package to uninstall</dd>
+<dt>user</dt>
+<dd>The user under which to run pip</dd>
+<dt>bin_env <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>the pip executable or virtualenenv to use</dd>
+<dt>use_vt</dt>
+<dd>Use VT terminal emulation (see output while installing)</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.pip_state.uptodate">
+<code class="descclassname">salt.states.pip_state.</code><code class="descname">uptodate</code><span class="sig-paren">(</span><em>name</em>, <em>bin_env=None</em>, <em>user=None</em>, <em>cwd=None</em>, <em>use_vt=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.pip_state.uptodate" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.5.0 新版功能.</span></p>
+</div>
+<p>Verify that the system is completely up to date.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The name has no functional value and is only used as a tracking
+reference</dd>
+<dt>user</dt>
+<dd>The user under which to run pip</dd>
+<dt>bin_env</dt>
+<dd>the pip executable or virtualenenv to use</dd>
+<dt>use_vt</dt>
+<dd>Use VT terminal emulation (see output while installing)</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+                            </div>
+                            <a href="salt.states.pecl.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.states.pecl" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="salt.states.pkg.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.states.pkg" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Salt Module Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../auth/all/index.html">内建身份认证模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../beacons/all/index.html">Full list of builtin beacon modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../engines/all/index.html">Full list of builtin engine modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../file_server/all/index.html">文件服务内置模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../grains/all/index.html">Full list of builtin grains modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/all/index.html">Full list of builtin execution modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../netapi/all/index.html">Full list of netapi modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../output/all/index.html">完整的内置输出模块的列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../pillar/all/index.html">Full list of builtin pillar modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../proxy/all/index.html">Full list of builtin proxy modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../queues/all/index.html">Full list of builtin queues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../renderers/all/index.html">Full list of builtin renderer modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../returners/all/index.html">所有内置的返回接收器模块列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../roster/all/index.html">Full list of builtin roster modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../runners/all/index.html">Full list of runner modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sdb/all/index.html">Full list of builtin sdb modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../serializers/all/index.html">Full list of builtin serializers</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">所有内置的state模块列表</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="salt.states.alias.html">salt.states.alias</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.alternatives.html">salt.states.alternatives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.apache.html">salt.states.apache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.apache_conf.html">salt.states.apache_conf module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.apache_module.html">salt.states.apache_module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.apache_site.html">salt.states.apache_site module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.aptpkg.html">salt.states.aptpkg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.archive.html">salt.states.archive</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.artifactory.html">salt.states.artifactory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.at.html">salt.states.at</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.augeas.html">salt.states.augeas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.aws_sqs.html">salt.states.aws_sqs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.beacon.html">salt.states.beacon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.bigip.html">salt.states.bigip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.blockdev.html">salt.states.blockdev</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_asg.html">salt.states.boto_asg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_cfn.html">salt.states.boto_cfn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_cloudtrail.html">salt.states.boto_cloudtrail module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_cloudwatch_alarm.html">salt.states.boto_cloudwatch_alarm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_datapipeline.html">salt.states.boto_datapipeline module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_dynamodb.html">salt.states.boto_dynamodb</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_ec2.html">salt.states.boto_ec2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_elasticache.html">salt.states.boto_elasticache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_elb.html">salt.states.boto_elb</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_iam.html">salt.states.boto_iam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_iam_role.html">salt.states.boto_iam_role</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_iot.html">salt.states.boto_iot module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_kms.html">salt.states.boto_kms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_lc.html">salt.states.boto_lc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_rds.html">salt.states.boto_rds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_route53.html">salt.states.boto_route53</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_secgroup.html">salt.states.boto_secgroup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_sns.html">salt.states.boto_sns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_sqs.html">salt.states.boto_sqs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_vpc.html">salt.states.boto_vpc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.bower.html">salt.states.bower</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.cabal.html">salt.states.cabal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.chef.html">salt.states.chef</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.chocolatey.html">salt.states.chocolatey module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.chronos_job.html">salt.states.chronos_job module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.cloud.html">salt.states.cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.cmd.html">salt.states.cmd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.composer.html">salt.states.composer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.cron.html">Salt states 的cron 类型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.cyg.html">salt.states.cyg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ddns.html">salt.states.ddns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.debconfmod.html">salt.states.debconfmod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.dellchassis.html">salt.states.dellchassis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.disk.html">salt.states.disk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.dockerio.html">salt.states.dockerio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.dockerng.html">salt.states.dockerng</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.drac.html">salt.states.drac</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.elasticsearch_index.html">salt.states.elasticsearch_index</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.elasticsearch_index_template.html">salt.states.elasticsearch_index_template</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.environ.html">salt.states.environ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.eselect.html">salt.states.eselect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.etcd_mod.html">salt.states.etcd_mod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.esxi.html">salt.states.esxi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.event.html">salt.states.event</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.file.html">salt.states.file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.firewall.html">salt.states.firewall module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.firewalld.html">salt.states.firewalld</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.gem.html">salt.states.gem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.git.html">salt.states.git</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.github.html">salt.states.github module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.glance.html">salt.states.glance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.glusterfs.html">salt.states.glusterfs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.gnomedesktop.html">salt.states.gnomedesktop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.gpg.html">salt.states.gpg module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.grafana.html">salt.states.grafana</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.grafana_dashboard.html">salt.states.grafana_dashboard module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.grafana_datasource.html">salt.states.grafana_datasource module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.grains.html">salt.states.grains</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.group.html">salt.states.group</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.hg.html">salt.states.hg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.hipchat.html">salt.states.hipchat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.host.html">salt.states.host</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.htpasswd.html">salt.states.htpasswd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.http.html">salt.states.http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ifttt.html">salt.states.ifttt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.incron.html">salt.states.incron</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.influxdb_database.html">salt.states.influxdb_database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.influxdb_user.html">salt.states.influxdb_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.infoblox.html">salt.states.infoblox module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ini_manage.html">salt.states.ini_manage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ipmi.html">salt.states.ipmi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ipset.html">salt.states.ipset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.iptables.html">salt.states.iptables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.jboss7.html">salt.states.jboss7</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.jenkins.html">salt.states.jenkins module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.keyboard.html">salt.states.keyboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.keystone.html">salt.states.keystone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.kmod.html">salt.states.kmod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.layman.html">salt.states.layman</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ldap.html">salt.states.ldap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.linux_acl.html">salt.states.linux_acl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.locale.html">salt.states.locale</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.lvm.html">salt.states.lvm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.lvs_server.html">salt.states.lvs_server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.lvs_service.html">salt.states.lvs_service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.lxc.html">salt.states.lxc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.makeconf.html">salt.states.makeconf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.marathon_app.html">salt.states.marathon_app module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mdadm.html">salt.states.mdadm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.memcached.html">salt.states.memcached</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.modjk.html">salt.states.modjk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.modjk_worker.html">salt.states.modjk_worker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.module.html">salt.states.module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mongodb_database.html">salt.states.mongodb_database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mongodb_user.html">salt.states.mongodb_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.monit.html">salt.states.monit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mount.html">salt.states.mount</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mysql_database.html">salt.states.mysql_database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mysql_grants.html">salt.states.mysql_grants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mysql_query.html">salt.states.mysql_query</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mysql_user.html">salt.states.mysql_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.network.html">salt.states.network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.nftables.html">salt.states.nftables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.npm.html">salt.states.npm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ntp.html">salt.states.ntp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.openstack_config.html">salt.states.openstack_config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.openvswitch_bridge.html">salt.states.openvswitch_bridge module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.openvswitch_port.html">salt.states.openvswitch_port module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pagerduty.html">salt.states.pagerduty</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pagerduty_escalation_policy.html">salt.states.pagerduty_escalation_policy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pagerduty_schedule.html">salt.states.pagerduty_schedule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pagerduty_service.html">salt.states.pagerduty_service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pagerduty_user.html">salt.states.pagerduty_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pecl.html">salt.states.pecl</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">salt.states.pip_state</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#installation-of-python-packages-using-pip">Installation of Python Packages Using pip</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pkg.html">salt.states.pkg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pkgbuild.html">salt.states.pkgbuild</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pkgng.html">salt.states.pkgng</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pkgrepo.html">salt.states.pkgrepo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.portage_config.html">salt.states.portage_config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ports.html">salt.states.ports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_cluster.html">salt.states.postgres_cluster module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_database.html">salt.states.postgres_database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_extension.html">salt.states.postgres_extension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_group.html">salt.states.postgres_group</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_initdb.html">salt.states.postgres_initdb</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_language.html">salt.states.postgres_language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_privileges.html">salt.states.postgres_privileges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_schema.html">salt.states.postgres_schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_tablespace.html">salt.states.postgres_tablespace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_user.html">salt.states.postgres_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.powerpath.html">salt.states.powerpath</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.process.html">salt.states.process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pushover.html">salt.states.pushover</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pyenv.html">salt.states.pyenv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pyrax_queues.html">salt.states.pyrax_queues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.quota.html">salt.states.quota</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rabbitmq_cluster.html">salt.states.rabbitmq_cluster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rabbitmq_plugin.html">salt.states.rabbitmq_plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rabbitmq_policy.html">salt.states.rabbitmq_policy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rabbitmq_user.html">salt.states.rabbitmq_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rabbitmq_vhost.html">salt.states.rabbitmq_vhost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rbenv.html">salt.states.rbenv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rdp.html">salt.states.rdp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.redismod.html">salt.states.redismod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.reg.html">salt.states.reg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rsync.html">salt.states.rsync</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rvm.html">salt.states.rvm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.salt_proxy.html">salt.states.salt_proxy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.saltmod.html">salt.states.saltmod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.schedule.html">salt.states.schedule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.selinux.html">salt.states.selinux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.serverdensity_device.html">salt.states.serverdensity_device</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.service.html">salt.states.service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.slack.html">salt.states.slack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.smartos.html">salt.states.smartos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.smtp.html">salt.states.smtp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.splunk.html">salt.states.splunk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.splunk_search.html">salt.states.splunk_search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.sqlite3.html">salt.states.sqlite3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ssh_auth.html">salt.states.ssh_auth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ssh_known_hosts.html">salt.states.ssh_known_hosts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.stateconf.html">salt.states.stateconf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.status.html">salt.states.status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.stormpath_account.html">salt.states.stormpath_account</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.supervisord.html">salt.states.supervisord</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.svn.html">salt.states.svn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.sysctl.html">salt.states.sysctl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.syslog_ng.html">salt.states.syslog_ng</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.sysrc.html">salt.states.sysrc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.telemetry_alert.html">salt.states.telemetry_alert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.test.html">salt.states.test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.timezone.html">salt.states.timezone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.tls.html">salt.states.tls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.tomcat.html">salt.states.tomcat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.trafficserver.html">salt.states.trafficserver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.tuned.html">salt.states.tuned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.uptime.html">salt.states.uptime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.user.html">salt.states.user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.vbox_guest.html">salt.states.vbox_guest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.victorops.html">salt.states.victorops</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.virt.html">salt.states.virt module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.virtualenv_mod.html">salt.states.virtualenv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_dacl.html">salt.states.win_dacl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_dns_client.html">salt.states.win_dns_client</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_firewall.html">防火墙文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_network.html">salt.states.win_network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_path.html">salt.states.win_path</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_powercfg.html">salt.states.win_powercfg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_servermanager.html">salt.states.win_servermanager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_system.html">salt.states.win_system</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_update.html">salt.states.win_update</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.winrepo.html">salt.states.winrepo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.x509.html">salt.states.x509</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.xmpp.html">salt.states.xmpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zabbix_host.html">salt.states.zabbix_host module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zabbix_hostgroup.html">salt.states.zabbix_hostgroup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zabbix_user.html">salt.states.zabbix_user module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zabbix_usergroup.html">salt.states.zabbix_usergroup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zcbuildout.html">salt.states.zcbuildout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zenoss.html">salt.states.zenoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zk_concurrency.html">salt.states.zk_concurrency</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zfs.html">salt.states.zfs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zpool.html">salt.states.zpool</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../tops/all/index.html">master内置顶级模块的全部列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../wheel/all/index.html">Full list of builtin wheel modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

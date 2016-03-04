@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Getting Started With OpenStack</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt云端" href="index.html">
+        <link rel="next" title="Getting Started With Parallels" href="parallels.html">
+        <link rel="prev" title="Getting Started with OpenNebula" href="opennebula.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="opennebula.html" title="Getting Started with OpenNebula">上一页</a>
+            
+        </li>
+        <li>
+            <a href="parallels.html" title="Getting Started With Parallels">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="getting-started-with-openstack">
+<h1>Getting Started With OpenStack<a class="headerlink" href="#getting-started-with-openstack" title="永久链接至标题">¶</a></h1>
+<p>OpenStack is one the most popular cloud projects. It's an open source project
+to build public and/or private clouds. You can use Salt Cloud to launch
+OpenStack instances.</p>
+<div class="section" id="dependencies">
+<h2>依赖<a class="headerlink" href="#dependencies" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>Libcloud &gt;= 0.13.2</li>
+</ul>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>Using the new format, set up the cloud configuration at
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.providers</span></code> or
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/openstack.conf</span></code>:</li>
+</ul>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-openstack-config</span><span class="p p-Indicator">:</span>
+  <span class="c1"># Set the location of the salt-master</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">saltmaster.example.com</span>
+
+  <span class="c1"># Configure the OpenStack driver</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">identity_url</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">http://identity.youopenstack.com/v2.0/tokens</span>
+  <span class="l l-Scalar l-Scalar-Plain">compute_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">nova</span>
+  <span class="l l-Scalar l-Scalar-Plain">protocol</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ipv4</span>
+
+  <span class="l l-Scalar l-Scalar-Plain">compute_region</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">RegionOne</span>
+
+  <span class="c1"># Configure Openstack authentication credentials</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myname</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">123456</span>
+  <span class="c1"># tenant is the project name</span>
+  <span class="l l-Scalar l-Scalar-Plain">tenant</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myproject</span>
+
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack</span>
+
+  <span class="c1"># skip SSL certificate validation (default false)</span>
+  <span class="l l-Scalar l-Scalar-Plain">insecure</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<div class="versionchanged">
+<p><span class="versionmodified">在 2015.8.0 版更改.</span></p>
+</div>
+<p class="last">The <code class="docutils literal"><span class="pre">provider</span></code> parameter in cloud provider definitions was renamed to <code class="docutils literal"><span class="pre">driver</span></code>. This
+change was made to avoid confusion with the <code class="docutils literal"><span class="pre">provider</span></code> parameter that is used in cloud profile
+definitions. Cloud provider definitions now use <code class="docutils literal"><span class="pre">driver</span></code> to refer to the Salt cloud module that
+provides the underlying functionality to connect to a cloud host, while cloud profiles continue
+to use <code class="docutils literal"><span class="pre">provider</span></code> to refer to provider configurations that you define.</p>
+</div>
+</div>
+<div class="section" id="using-nova-client-to-get-information-from-openstack">
+<h2>Using nova client to get information from OpenStack<a class="headerlink" href="#using-nova-client-to-get-information-from-openstack" title="永久链接至标题">¶</a></h2>
+<p>One of the best ways to get information about OpenStack is using the novaclient
+python package (available in pypi as python-novaclient). The client
+configuration is a set of environment variables that you can get from the
+Dashboard. Log in and then go to Project -&gt; Access &amp; security -&gt; API Access and
+download the &quot;OpenStack RC file&quot;. Then:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">source /path/to/your/rcfile</span>
+<span class="l l-Scalar l-Scalar-Plain">nova credentials</span>
+<span class="l l-Scalar l-Scalar-Plain">nova endpoints</span>
+</pre></div>
+</div>
+<p>In the <code class="docutils literal"><span class="pre">nova</span> <span class="pre">endpoints</span></code> output you can see the information about
+<code class="docutils literal"><span class="pre">compute_region</span></code> and <code class="docutils literal"><span class="pre">compute_name</span></code>.</p>
+</div>
+<div class="section" id="compute-region">
+<h2>Compute Region<a class="headerlink" href="#compute-region" title="永久链接至标题">¶</a></h2>
+<p>It depends on the OpenStack cluster that you are using. Please, have a look at
+the previous sections.</p>
+</div>
+<div class="section" id="authentication">
+<h2>Authentication<a class="headerlink" href="#authentication" title="永久链接至标题">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">user</span></code> and <code class="docutils literal"><span class="pre">password</span></code> is the same user as is used to log into the
+OpenStack Dashboard.</p>
+</div>
+<div class="section" id="profiles">
+<h2>Profiles<a class="headerlink" href="#profiles" title="永久链接至标题">¶</a></h2>
+<p>Here is an example of a profile:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">openstack_512</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-openstack-config</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">m1.tiny</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">cirros-0.3.1-x86_64-uec</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_key_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/test.pem</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_key_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">test</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_interface</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">private_ips</span>
+</pre></div>
+</div>
+<p>The following list explains some of the important properties.</p>
+<dl class="docutils">
+<dt>size</dt>
+<dd>can be one of the options listed in the output of <code class="docutils literal"><span class="pre">nova</span> <span class="pre">flavor-list</span></code>.</dd>
+<dt>image</dt>
+<dd>can be one of the options listed in the output of <code class="docutils literal"><span class="pre">nova</span> <span class="pre">image-list</span></code>.</dd>
+<dt>ssh_key_file</dt>
+<dd>The SSH private key that the salt-cloud uses to SSH into the VM after its
+first booted in order to execute a command or script. This private key's
+<em>public key</em> must be the openstack public key inserted into the
+authorized_key's file of the VM's root user account.</dd>
+<dt>ssh_key_name</dt>
+<dd>The name of the openstack SSH public key that is inserted into the
+authorized_keys file of the VM's root user account. Prior to using this
+public key, you must use openstack commands or the horizon web UI to load
+that key into the tenant's account. Note that this openstack tenant must be
+the one you defined in the cloud provider.</dd>
+<dt>ssh_interface</dt>
+<dd>This option allows you to create a VM without a public IP. If this option
+is omitted and the VM does not have a public IP, then the salt-cloud waits
+for a certain period of time and then destroys the VM. With the nova drive,
+private cloud networks can be defined here.</dd>
+</dl>
+<p>For more information concerning cloud profiles, see <a class="reference internal" href="profiles.html"><em>here</em></a>.</p>
+<div class="section" id="change-password">
+<h3>change_password<a class="headerlink" href="#change-password" title="永久链接至标题">¶</a></h3>
+<p>If no ssh_key_file is provided, and the server already exists, change_password
+will use the api to change the root password of the server so that it can be
+bootstrapped.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">change_password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="userdata-file">
+<h3>userdata_file<a class="headerlink" href="#userdata-file" title="永久链接至标题">¶</a></h3>
+<p>Use <cite>userdata_file</cite> to specify the userdata file to upload for use with
+cloud-init if available.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">userdata_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/salt/cloud-init/packages.yml</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="opennebula.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started with OpenNebula" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="parallels.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started With Parallels" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt云端</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">入门指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud">Using Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#core-configuration">Cloud核心配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#windows-configuration">Windows Configuration</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#cloud-provider-specifics">Cloud Provider Specifics</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aliyun.html">    Getting Started With Aliyun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html">    Getting Started With Azure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="digitalocean.html">    Getting Started With DigitalOcean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html">    Getting Started With EC2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gogrid.html">    Getting Started With GoGrid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html">    Getting Started With Google Compute Engine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hpcloud.html">    Getting Started With HP Cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="joyent.html">    Getting Started With Joyent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lxc.html">    Getting Started With LXC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linode.html">    Getting Started With Linode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="opennebula.html">    Getting Started With OpenNebula</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">    Getting Started With OpenStack</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dependencies">依赖</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#using-nova-client-to-get-information-from-openstack">Using nova client to get information from OpenStack</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#compute-region">Compute Region</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#authentication">Authentication</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#profiles">Profiles</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#change-password">change_password</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#userdata-file">userdata_file</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="parallels.html">    Getting Started With Parallels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="profitbricks.html">    Getting Started With Profitbricks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="proxmox.html">    Getting Started With Proxmox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rackspace.html">    Getting Started With Rackspace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="saltify.html">    Getting Started With Saltify</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scaleway.html">    Getting Started With Scaleway</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html">    Getting Started With SoftLayer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vexxhost.html">    Getting Started With Vexxhost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="virtualbox.html">    Getting Started With Virtualbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vmware.html">    Getting Started With VMware</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vsphere.html">    Getting Started With vSphere</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#miscellaneous-options">Miscellaneous Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#troubleshooting-steps">Troubleshooting Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#extending-salt-cloud">Extending Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud-from-salt">Using Salt Cloud from Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#feature-comparison">Feature Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorials">Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

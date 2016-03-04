@@ -1,0 +1,2215 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.states.file</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+        <link rel="up" title="所有内置的state模块列表" href="index.html">
+        <link rel="next" title="salt.states.firewall module" href="salt.states.firewall.html">
+        <link rel="prev" title="salt.states.event" href="salt.states.event.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="salt.states.event.html" title="salt.states.event">上一页</a>
+            
+        </li>
+        <li>
+            <a href="salt.states.firewall.html" title="salt.states.firewall module">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.states.file">
+<span id="salt-states-file"></span><h1>salt.states.file<a class="headerlink" href="#module-salt.states.file" title="永久链接至标题">¶</a></h1>
+<div class="section" id="operations-on-regular-files-special-files-directories-and-symlinks">
+<h2>Operations on regular files, special files, directories, and symlinks<a class="headerlink" href="#operations-on-regular-files-special-files-directories-and-symlinks" title="永久链接至标题">¶</a></h2>
+<p>Salt States可以在系统中主动操纵文件。已经有许多方式可以管理文件。</p>
+<p>Regular files can be enforced with the <a class="reference internal" href="#salt.states.file.managed" title="salt.states.file.managed"><code class="xref py py-mod docutils literal"><span class="pre">file.managed</span></code></a> state. This state downloads files from the salt
+master and places them on the target system. Managed files can be rendered as a
+jinja, mako, or wempy template, adding a dynamic component to file management.
+An example of <a class="reference internal" href="#salt.states.file.managed" title="salt.states.file.managed"><code class="xref py py-mod docutils literal"><span class="pre">file.managed</span></code></a> which makes use of
+the jinja templating system would look like this:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>/etc/http/conf/http.conf:
+  file.managed:
+    - source: salt://apache/http.conf
+    - user: root
+    - group: root
+    - mode: 644
+    - template: jinja
+    - defaults:
+        custom_var: &quot;default value&quot;
+        other_var: 123
+{% if grains[&#39;os&#39;] == &#39;Ubuntu&#39; %}
+    - context:
+        custom_var: &quot;override&quot;
+{% endif %}
+</pre></div>
+</div>
+<p>It is also possible to use the <a class="reference internal" href="../../renderers/all/salt.renderers.py.html#module-salt.renderers.py" title="salt.renderers.py"><code class="xref py py-mod docutils literal"><span class="pre">py</span> <span class="pre">renderer</span></code></a> as a
+templating option. The template would be a Python script which would need to
+contain a function called <code class="docutils literal"><span class="pre">run()</span></code>, which returns a string. All arguments
+to the state will be made available to the Python script as globals. The
+returned string will be the contents of the managed file. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;foo&#39;</span><span class="p">,</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;baz&#39;</span><span class="p">]</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">source</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">context</span><span class="p">])</span>  <span class="c1"># Arguments as globals</span>
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The <code class="docutils literal"><span class="pre">defaults</span></code> and <code class="docutils literal"><span class="pre">context</span></code> arguments require extra indentation (four
+spaces instead of the normal two) in order to create a nested dictionary.
+<a class="reference internal" href="../../../topics/troubleshooting/yaml_idiosyncrasies.html#nested-dict-indentation"><span>More information</span></a>.</p>
+</div>
+<p>如果使用模板，任何自定义的模板变量定义在 <code class="docutils literal"><span class="pre">source</span></code> 文件必须通过使用 <code class="docutils literal"><span class="pre">defaults</span></code> 和/或 <code class="docutils literal"><span class="pre">context</span></code> 参数。通常最佳实践是定义默认值在 <code class="docutils literal"><span class="pre">defaults</span></code> ，然后条件覆盖写在 <code class="docutils literal"><span class="pre">context</span></code> ，就像上面看到的那样。</p>
+<p>The template will receive a variable <code class="docutils literal"><span class="pre">custom_var</span></code>, which would be accessed in
+the template using <code class="docutils literal"><span class="pre">{{</span> <span class="pre">custom_var</span> <span class="pre">}}</span></code>. If the operating system is Ubuntu, the
+value of the variable <code class="docutils literal"><span class="pre">custom_var</span></code> would be <em>override</em>, otherwise it is the
+default <em>default value</em></p>
+<p><code class="docutils literal"><span class="pre">source</span></code> 参数可以作为一个列表指定。如果这样做的话，那么会使用第一个匹配到的文件。这个特性允许你如果请求的文件不存在于salt文件服务器时有一个默认的文件回溯。以下是一个范例:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/foo.conf</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt://foo.conf.{{ grains[&#39;fqdn&#39;] }}</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt://foo.conf.fallback</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">foo</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">users</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">644</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">backup</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">minion</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Salt supports backing up managed files via the backup option. For more
+details on this functionality please review the
+<a class="reference internal" href="../backup_mode.html"><em>backup_mode documentation</em></a>.</p>
+</div>
+<p><code class="docutils literal"><span class="pre">source</span></code> 参数同样可以指定一个在另一个Salt环境的文件。在这个例子中 <code class="docutils literal"><span class="pre">foo.conf</span></code> 将会使用 <code class="docutils literal"><span class="pre">dev</span></code> 环境中的来替代。</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/foo.conf</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt://foo.conf?saltenv=dev</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">foo</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">users</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="s">&#39;0644&#39;</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">当使用一个包含一个前导零 <em>0</em> 的模式时你必须用单引号引起这个值。如果没有用引号引起这个值，会被YAML作为一个八进制整数读取。</p>
+</div>
+<p>特殊文件可以通过 <code class="docutils literal"><span class="pre">mknod</span></code> 函数管理。这个函数会创建特殊文件并赋予权限。这个函数支持创建字符设备，块设备，和fifo管道。如果这个文件被minion需要时，该函数会为这个特殊文件创建相应的目录结构。这个函数不会对已存在的特殊文件覆盖或操作(更改主/次数字)，除了用户，组，和权限。在大多数情况下，创建特殊文件需要在minion上有root权限。这将要求minion使用root用户运行。这是一个关于字符设备的范例:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/var/named/chroot/dev/random</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.mknod</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ntype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">c</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">major</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">minor</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">8</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">named</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">named</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">660</span>
+</pre></div>
+</div>
+<p>这是一个关于块设备的例子:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/var/named/chroot/dev/loop0</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.mknod</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ntype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">b</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">major</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">7</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">minor</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">named</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">named</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">660</span>
+</pre></div>
+</div>
+<p>这是一个关于fifo管道的例子:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/var/named/chroot/var/log/logfifo</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.mknod</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ntype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">p</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">named</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">named</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">660</span>
+</pre></div>
+</div>
+<p>目录可以通过 <code class="docutils literal"><span class="pre">directory</span></code> 函数管理。这个函数可以创建一个目录并赋予权限。一个目录声明会看起来像这样:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/srv/stuff/substuf</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.directory</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">fred</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">users</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">755</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">makedirs</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>如果你需要递归目录结构更改用户和/或组所有者或权限，你可以通过添加一个 <code class="docutils literal"><span class="pre">recurse</span></code> 指令实现:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/srv/stuff/substuf</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.directory</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">fred</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">users</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">755</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">makedirs</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">recurse</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span>
+</pre></div>
+</div>
+<p>默认情况下， <code class="docutils literal"><span class="pre">mode</span></code> 会决定 <code class="docutils literal"><span class="pre">dir_mode</span></code> 和 <code class="docutils literal"><span class="pre">file_mode</span></code>，同时指定目录和文件的权限，使用这个形式:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/srv/stuff/substuf</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.directory</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">fred</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">users</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file_mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">744</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">dir_mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">755</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">makedirs</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">recurse</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span>
+</pre></div>
+</div>
+<p>软连接可以很容易的创建；软连接功能非常简单，只需要几个参数:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/grub.conf</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.symlink</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">target</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/boot/grub/grub.conf</span>
+</pre></div>
+</div>
+<p>递归目录管理同样可以通过设置 <code class="docutils literal"><span class="pre">recurse</span></code> 函数完成。递归目录管理允许一个在salt master上的目录递归的复制到minion。这是一个部署大型代码和配置系统的强大的工具。一个使用 <code class="docutils literal"><span class="pre">recurse</span></code> 的state看起来会是这样:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/opt/code/flask</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.recurse</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://code/flask</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">include_empty</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>A more complex <code class="docutils literal"><span class="pre">recurse</span></code> example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% set site_user = &#39;testuser&#39; %}
+{% set site_name = &#39;test_site&#39; %}
+{% set project_name = &#39;test_proj&#39; %}
+{% set sites_dir = &#39;test_dir&#39; %}
+
+django-project:
+  file.recurse:
+    - name: {{ sites_dir }}/{{ site_name }}/{{ project_name }}
+    - user: {{ site_user }}
+    - dir_mode: 2775
+    - file_mode: &#39;0644&#39;
+    - template: jinja
+    - source: salt://project/templates_dir
+    - include_empty: True
+</pre></div>
+</div>
+<dl class="function">
+<dt id="salt.states.file.absent">
+<code class="descclassname">salt.states.file.</code><code class="descname">absent</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.absent" title="永久链接至目标">¶</a></dt>
+<dd><p>Make sure that the named file or directory is absent. If it exists, it will
+be deleted. This will work to reverse any of the functions in the file
+state module. If a directory is supplied, it will be recursively deleted.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd><p class="first last">应该被删除的路径</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.accumulated">
+<code class="descclassname">salt.states.file.</code><code class="descname">accumulated</code><span class="sig-paren">(</span><em>name</em>, <em>filename</em>, <em>text</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.accumulated" title="永久链接至目标">¶</a></dt>
+<dd><p>Prepare accumulator which can be used in template in file.managed state.
+Accumulator dictionary becomes available in template. It can also be used
+in file.blockreplace.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd><p class="first last">累加器的名字</p>
+</dd>
+<dt>filename</dt>
+<dd><p class="first last">将会收到这个累加器中的文件名 (参见file.managed state文档关于 <code class="docutils literal"><span class="pre">name</span></code> 的部分)</p>
+</dd>
+<dt>text</dt>
+<dd><p class="first last">要加入累加器的字符串或列表</p>
+</dd>
+<dt>require_in / watch_in</dt>
+<dd><p class="first last">当中一个必须确保在我们管理文件之前装填进累加器。可能与filename相同</p>
+</dd>
+</dl>
+<p>范例:</p>
+<p>Given the following:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">animals_doing_things</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.accumulated</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">filename</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/animal_file.txt</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">text</span><span class="p p-Indicator">:</span> <span class="s">&#39;</span><span class="nv"> </span><span class="s">jumps</span><span class="nv"> </span><span class="s">over</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">lazy</span><span class="nv"> </span><span class="s">dog.&#39;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require_in</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">animal_file</span>
+
+<span class="l l-Scalar l-Scalar-Plain">animal_file</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/animal_file.txt</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://animal_file.txt</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">jinja</span>
+</pre></div>
+</div>
+<p>One might write a template for <code class="docutils literal"><span class="pre">animal_file.txt</span></code> like the following:</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="x">The quick brown fox</span><span class="cp">{%</span> <span class="k">for</span> <span class="nv">animal</span> <span class="k">in</span> <span class="nv">accumulator</span><span class="o">[</span><span class="s1">&#39;animals_doing_things&#39;</span><span class="o">]</span> <span class="cp">%}{{</span> <span class="nv">animal</span> <span class="cp">}}{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+</div>
+<p>Collectively, the above states and template file will produce:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>The quick brown fox jumps over the lazy dog.
+</pre></div>
+</div>
+<p>Multiple accumulators can be &quot;chained&quot; together.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The 'accumulator' data structure is a Python dictionary.
+Do not expect any loop over the keys in a deterministic order!</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.append">
+<code class="descclassname">salt.states.file.</code><code class="descname">append</code><span class="sig-paren">(</span><em>name</em>, <em>text=None</em>, <em>makedirs=False</em>, <em>source=None</em>, <em>source_hash=None</em>, <em>template='jinja'</em>, <em>sources=None</em>, <em>source_hashes=None</em>, <em>defaults=None</em>, <em>context=None</em>, <em>ignore_whitespace=True</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.append" title="永久链接至目标">¶</a></dt>
+<dd><p>Ensure that some text appears at the end of a file.</p>
+<p>The text will not be appended if it already exists in the file.
+A single string of text or a list of strings may be appended.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The location of the file to append to.</dd>
+<dt>text</dt>
+<dd>The text to be appended, which can be a single string or a list
+of strings.</dd>
+<dt>makedirs</dt>
+<dd>If the file is located in a path without a parent directory,
+then the state will fail. If makedirs is set to True, then
+the parent directories will be created to facilitate the
+creation of the named file. Defaults to False.</dd>
+<dt>source</dt>
+<dd><p class="first">A single source file to append. This source file can be hosted on either
+the salt master server, or on an HTTP or FTP server. Both HTTPS and
+HTTP are supported as well as downloading directly from Amazon S3
+compatible URLs with both pre-configured and automatic IAM credentials
+(see s3.get state documentation). File retrieval from Openstack Swift
+object storage is supported via swift://container/object_path URLs
+(see swift.get documentation).</p>
+<p>For files hosted on the salt file server, if the file is located on
+the master in the directory named spam, and is called eggs, the source
+string is salt://spam/eggs.</p>
+<p class="last">If the file is hosted on an HTTP or FTP server, the source_hash argument
+is also required.</p>
+</dd>
+<dt>source_hash</dt>
+<dd><dl class="first docutils">
+<dt>This can be one of the following:</dt>
+<dd><ol class="first last arabic simple">
+<li>a source hash string</li>
+<li>the URI of a file that contains source hash strings</li>
+</ol>
+</dd>
+</dl>
+<p>The function accepts the first encountered long unbroken alphanumeric
+string of correct length as a valid hash, in order from most secure to
+least secure:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>Type    Length
+======  ======
+sha512     128
+sha384      96
+sha256      64
+sha224      56
+sha1        40
+md5         32
+</pre></div>
+</div>
+<p>The file can contain several checksums for several files. Each line
+must contain both the file name and the hash.  If no file name is
+matched, the first hash encountered will be used, otherwise the most
+secure hash with the correct source file name will be used.</p>
+<p>Debian file type <code class="docutils literal"><span class="pre">*.dsc</span></code> is supported.</p>
+<p>Examples:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>/etc/rc.conf ef6e82e4006dee563d98ada2a2a80a27
+sha254c8525aee419eb649f0233be91c151178b30f0dff8ebbdcc8de71b1d5c8bcc06a  /etc/resolv.conf
+ead48423703509d37c4a90e6a0d53e143b6fc268
+</pre></div>
+</div>
+<dl class="last docutils">
+<dt>Known issues:</dt>
+<dd><p class="first">If the remote server URL has the hash file as an apparent
+sub-directory of the source file, the module will discover that it
+has already cached a directory where a file should be cached. For
+example:</p>
+<div class="last highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">tomdroid-src-0.7.3.tar.gz</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/tomdroid-src-0.7.3.tar.gz</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">https://launchpad.net/tomdroid/beta/0.7.3/+download/tomdroid-src-0.7.3.tar.gz</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source_hash</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">https://launchpad.net/tomdroid/beta/0.7.3/+download/tomdroid-src-0.7.3.tar.gz/+md5</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>template <span class="classifier-delimiter">:</span> <span class="classifier"><code class="docutils literal"><span class="pre">jinja</span></code></span></dt>
+<dd>The named templating engine will be used to render the appended-to
+file. Defaults to jinja.</dd>
+<dt>sources</dt>
+<dd>A list of source files to append. If the files are hosted on an HTTP or
+FTP server, the source_hashes argument is also required.</dd>
+<dt>source_hashes</dt>
+<dd>A list of source_hashes corresponding to the sources list specified in
+the sources argument.</dd>
+<dt>defaults</dt>
+<dd>Default context passed to the template.</dd>
+<dt>context</dt>
+<dd>Overrides default context variables passed to the template.</dd>
+<dt>ignore_whitespace</dt>
+<dd><div class="first versionadded">
+<p><span class="versionmodified">2015.8.4 新版功能.</span></p>
+</div>
+<p class="last">Spaces and Tabs in text are ignored by default, when searching for the
+appending content, one space or multiple tabs are the same for salt.
+Set this option to <code class="docutils literal"><span class="pre">False</span></code> if you want to change this behavior.</p>
+</dd>
+</dl>
+<p>Multi-line example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/motd</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.append</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">text</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">|</span>
+        <span class="no">Thou hadst better eat salt with the Philosophers of Greece,</span>
+        <span class="no">than sugar with the Courtiers of Italy.</span>
+        <span class="no">- Benjamin Franklin</span>
+</pre></div>
+</div>
+<p>Multiple lines of text:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/motd</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.append</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">text</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">Trust no one unless you have eaten much salt with him.</span>
+      <span class="p p-Indicator">-</span> <span class="s">&quot;Salt</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">born</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">purest</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">parents:</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">sun</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">sea.&quot;</span>
+</pre></div>
+</div>
+<p>Gather text from multiple template files:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/motd</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">append</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">jinja</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">sources</span><span class="p p-Indicator">:</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt://motd/devops-messages.tmpl</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt://motd/hr-messages.tmpl</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt://motd/general-messages.tmpl</span>
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">0.9.5 新版功能.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.blockreplace">
+<code class="descclassname">salt.states.file.</code><code class="descname">blockreplace</code><span class="sig-paren">(</span><em>name</em>, <em>marker_start='#-- start managed zone --'</em>, <em>marker_end='#-- end managed zone --'</em>, <em>source=None</em>, <em>source_hash=None</em>, <em>template='jinja'</em>, <em>sources=None</em>, <em>source_hashes=None</em>, <em>defaults=None</em>, <em>context=None</em>, <em>content=''</em>, <em>append_if_not_found=False</em>, <em>prepend_if_not_found=False</em>, <em>backup='.bak'</em>, <em>show_changes=True</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.blockreplace" title="永久链接至目标">¶</a></dt>
+<dd><p>Maintain an edit in a file in a zone delimited by two line markers</p>
+<div class="versionadded">
+<p><span class="versionmodified">2014.1.0 新版功能.</span></p>
+</div>
+<p>A block of content delimited by comments can help you manage several lines
+entries without worrying about old entries removal. This can help you
+maintaining an un-managed file containing manual edits.
+Note: this function will store two copies of the file in-memory
+(the original version and the edited version) in order to detect changes
+and only edit the targeted file if necessary.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>Filesystem path to the file to be edited</dd>
+<dt>marker_start</dt>
+<dd>The line content identifying a line as the start of the content block.
+Note that the whole line containing this marker will be considered, so
+whitespace or extra content before or after the marker is included in
+final output</dd>
+<dt>marker_end</dt>
+<dd>The line content identifying a line as the end of the content block.
+Note that the whole line containing this marker will be considered, so
+whitespace or extra content before or after the marker is included in
+final output. Note: you can use file.accumulated and target this state.
+All accumulated data dictionaries content will be added as new lines in
+the content</dd>
+<dt>content</dt>
+<dd>The content to be used between the two lines identified by
+<code class="docutils literal"><span class="pre">marker_start</span></code> and <code class="docutils literal"><span class="pre">marker_end</span></code></dd>
+<dt>source</dt>
+<dd><p class="first">The source file to download to the minion, this source file can be
+hosted on either the salt master server, or on an HTTP or FTP server.
+Both HTTPS and HTTP are supported as well as downloading directly
+from Amazon S3 compatible URLs with both pre-configured and automatic
+IAM credentials. (see s3.get state documentation)
+File retrieval from Openstack Swift object storage is supported via
+swift://container/object_path URLs, see swift.get documentation.
+For files hosted on the salt file server, if the file is located on
+the master in the directory named spam, and is called eggs, the source
+string is salt://spam/eggs. If source is left blank or None
+(use ~ in YAML), the file will be created as an empty file and
+the content will not be managed. This is also the case when a file
+already exists and the source is undefined; the contents of the file
+will not be changed or managed.</p>
+<p>If the file is hosted on a HTTP or FTP server then the source_hash
+argument is also required</p>
+<p>A list of sources can also be passed in to provide a default source and
+a set of fallbacks. The first source in the list that is found to exist
+will be used and subsequent entries in the list will be ignored.</p>
+<div class="last highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">file_override_example</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt://file_that_does_not_exist</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt://file_that_exists</span>
+</pre></div>
+</div>
+</dd>
+<dt>source_hash</dt>
+<dd><dl class="first docutils">
+<dt>This can be one of the following:</dt>
+<dd><ol class="first last arabic simple">
+<li>a source hash string</li>
+<li>the URI of a file that contains source hash strings</li>
+</ol>
+</dd>
+</dl>
+<p>The function accepts the first encountered long unbroken alphanumeric
+string of correct length as a valid hash, in order from most secure to
+least secure:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>Type    Length
+======  ======
+sha512     128
+sha384      96
+sha256      64
+sha224      56
+sha1        40
+md5         32
+</pre></div>
+</div>
+<dl class="last docutils">
+<dt><strong>Using a Source Hash File</strong></dt>
+<dd><p class="first">The file can contain several checksums for several files. Each line
+must contain both the file name and the hash.  If no file name is
+matched, the first hash encountered will be used, otherwise the most
+secure hash with the correct source file name will be used.</p>
+<p>When using a source hash file the source_hash argument needs to be a
+url, the standard download urls are supported, ftp, http, salt etc:</p>
+<p>范例:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">tomdroid-src-0.7.3.tar.gz</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/tomdroid-src-0.7.3.tar.gz</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">https://launchpad.net/tomdroid/beta/0.7.3/+download/tomdroid-src-0.7.3.tar.gz</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source_hash</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">https://launchpad.net/tomdroid/beta/0.7.3/+download/tomdroid-src-0.7.3.hash</span>
+</pre></div>
+</div>
+<p>The following is an example of the supported source_hash format:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>/etc/rc.conf ef6e82e4006dee563d98ada2a2a80a27
+sha254c8525aee419eb649f0233be91c151178b30f0dff8ebbdcc8de71b1d5c8bcc06a  /etc/resolv.conf
+ead48423703509d37c4a90e6a0d53e143b6fc268
+</pre></div>
+</div>
+<p class="last">Debian file type <code class="docutils literal"><span class="pre">*.dsc</span></code> files are also supported.</p>
+</dd>
+<dt><strong>Inserting the Source Hash in the sls Data</strong></dt>
+<dd><p class="first">Examples:</p>
+<div class="last highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">tomdroid-src-0.7.3.tar.gz</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/tomdroid-src-0.7.3.tar.gz</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">https://launchpad.net/tomdroid/beta/0.7.3/+download/tomdroid-src-0.7.3.tar.gz</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source_hash</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">md5=79eef25f9b0b2c642c62b7f737d4f53f</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>template</dt>
+<dd>If this setting is applied then the named templating engine will be
+used to render the downloaded file, currently jinja, mako, and wempy
+are supported</dd>
+<dt>context</dt>
+<dd>Overrides default context variables passed to the template.</dd>
+<dt>defaults</dt>
+<dd>Default context passed to the template.</dd>
+<dt>append_if_not_found</dt>
+<dd>If markers are not found and set to True then the markers and content
+will be appended to the file. Default is <code class="docutils literal"><span class="pre">False</span></code></dd>
+<dt>prepend_if_not_found</dt>
+<dd>If markers are not found and set to True then the markers and content
+will be prepended to the file. Default is <code class="docutils literal"><span class="pre">False</span></code></dd>
+<dt>backup</dt>
+<dd>The file extension to use for a backup of the file if any edit is made.
+Set this to <code class="docutils literal"><span class="pre">False</span></code> to skip making a backup.</dd>
+<dt>dry_run</dt>
+<dd>Don't make any edits to the file</dd>
+<dt>show_changes</dt>
+<dd>Output a unified diff of the old file and the new file. If <code class="docutils literal"><span class="pre">False</span></code>
+return a boolean if any changes were made</dd>
+</dl>
+<p>Example of usage with an accumulator and with a variable:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% set myvar = 42 %}
+hosts-config-block-{{ myvar }}:
+  file.blockreplace:
+    - name: /etc/hosts
+    - marker_start: &quot;# START managed zone {{ myvar }} -DO-NOT-EDIT-&quot;
+    - marker_end: &quot;# END managed zone {{ myvar }} --&quot;
+    - content: &#39;First line of content&#39;
+    - append_if_not_found: True
+    - backup: &#39;.bak&#39;
+    - show_changes: True
+
+hosts-config-block-{{ myvar }}-accumulated1:
+  file.accumulated:
+    - filename: /etc/hosts
+    - name: my-accumulator-{{ myvar }}
+    - text: &quot;text 2&quot;
+    - require_in:
+      - file: hosts-config-block-{{ myvar }}
+
+hosts-config-block-{{ myvar }}-accumulated2:
+  file.accumulated:
+    - filename: /etc/hosts
+    - name: my-accumulator-{{ myvar }}
+    - text: |
+         text 3
+         text 4
+    - require_in:
+      - file: hosts-config-block-{{ myvar }}
+</pre></div>
+</div>
+<p>will generate and maintain a block of content in <code class="docutils literal"><span class="pre">/etc/hosts</span></code>:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span># START managed zone 42 -DO-NOT-EDIT-
+First line of content
+text 2
+text 3
+text 4
+# END managed zone 42 --
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.comment">
+<code class="descclassname">salt.states.file.</code><code class="descname">comment</code><span class="sig-paren">(</span><em>name</em>, <em>regex</em>, <em>char='#'</em>, <em>backup='.bak'</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.comment" title="永久链接至目标">¶</a></dt>
+<dd><p>在文件中注释掉指定行。</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd><p class="first last">要编辑的文件的完整路径</p>
+</dd>
+<dt>regex</dt>
+<dd>A regular expression used to find the lines that are to be commented;
+this pattern will be wrapped in parenthesis and will move any
+preceding/trailing <code class="docutils literal"><span class="pre">^</span></code> or <code class="docutils literal"><span class="pre">$</span></code> characters outside the parenthesis
+(e.g., the pattern <code class="docutils literal"><span class="pre">^foo$</span></code> will be rewritten as <code class="docutils literal"><span class="pre">^(foo)$</span></code>)
+Note that you _need_ the leading ^, otherwise each time you run
+highstate, another comment char will be inserted.</dd>
+<dt>char <span class="classifier-delimiter">:</span> <span class="classifier"><code class="docutils literal"><span class="pre">#</span></code></span></dt>
+<dd>The character to be inserted at the beginning of a line in order to
+comment it out</dd>
+<dt>backup <span class="classifier-delimiter">:</span> <span class="classifier"><code class="docutils literal"><span class="pre">.bak</span></code></span></dt>
+<dd><p class="first">The file will be backed up before edit with this file extension</p>
+<div class="last admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">This backup will be overwritten each time <code class="docutils literal"><span class="pre">sed</span></code> / <code class="docutils literal"><span class="pre">comment</span></code> /
+<code class="docutils literal"><span class="pre">uncomment</span></code> is called. Meaning the backup will only be useful
+after the first invocation.</p>
+</div>
+</dd>
+</dl>
+<p>Usage:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/fstab</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.comment</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">regex</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">^bind 127.0.0.1</span>
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">0.9.5 新版功能.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.copy">
+<code class="descclassname">salt.states.file.</code><code class="descname">copy</code><span class="sig-paren">(</span><em>name</em>, <em>source</em>, <em>force=False</em>, <em>makedirs=False</em>, <em>preserve=False</em>, <em>user=None</em>, <em>group=None</em>, <em>mode=None</em>, <em>subdir=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.copy" title="永久链接至目标">¶</a></dt>
+<dd><p>If the source file exists on the system, copy it to the named file. The
+named file will not be overwritten if it already exists unless the force
+option is set to True.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The location of the file to copy to</dd>
+<dt>source</dt>
+<dd>The location of the file to copy to the location specified with name</dd>
+<dt>force</dt>
+<dd>If the target location is present then the file will not be moved,
+specify &quot;force: True&quot; to overwrite the target file</dd>
+<dt>makedirs</dt>
+<dd>If the target subdirectories don't exist create them</dd>
+<dt>preserve</dt>
+<dd><div class="first versionadded">
+<p><span class="versionmodified">2015.5.0 新版功能.</span></p>
+</div>
+<p class="last">Set <code class="docutils literal"><span class="pre">preserve:</span> <span class="pre">True</span></code> to preserve user/group ownership and mode
+after copying. Default is <code class="docutils literal"><span class="pre">False</span></code>. If <code class="docutils literal"><span class="pre">preserve</span></code> is set to <code class="docutils literal"><span class="pre">True</span></code>,
+then user/group/mode attributes will be ignored.</p>
+</dd>
+<dt>user</dt>
+<dd><div class="first versionadded">
+<p><span class="versionmodified">2015.5.0 新版功能.</span></p>
+</div>
+<p class="last">The user to own the copied file, this defaults to the user salt is
+running as on the minion. If <code class="docutils literal"><span class="pre">preserve</span></code> is set to <code class="docutils literal"><span class="pre">True</span></code>, then
+this will be ignored</p>
+</dd>
+<dt>group</dt>
+<dd><div class="first versionadded">
+<p><span class="versionmodified">2015.5.0 新版功能.</span></p>
+</div>
+<p class="last">The group to own the copied file, this defaults to the group salt is
+running as on the minion. If <code class="docutils literal"><span class="pre">preserve</span></code> is set to <code class="docutils literal"><span class="pre">True</span></code> or on
+Windows this will be ignored</p>
+</dd>
+<dt>mode</dt>
+<dd><div class="first versionadded">
+<p><span class="versionmodified">2015.5.0 新版功能.</span></p>
+</div>
+<p class="last">The permissions to set on the copied file, aka 644, '0775', '4664'.
+If <code class="docutils literal"><span class="pre">preserve</span></code> is set to <code class="docutils literal"><span class="pre">True</span></code>, then this will be ignored.
+Not supported on Windows</p>
+</dd>
+<dt>subdir</dt>
+<dd><div class="first versionadded">
+<p><span class="versionmodified">2015.5.0 新版功能.</span></p>
+</div>
+<p class="last">If the name is a directory then place the file inside the named
+directory</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.decode">
+<code class="descclassname">salt.states.file.</code><code class="descname">decode</code><span class="sig-paren">(</span><em>name</em>, <em>encoded_data=None</em>, <em>contents_pillar=None</em>, <em>encoding_type='base64'</em>, <em>checksum='md5'</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.decode" title="永久链接至目标">¶</a></dt>
+<dd><p>Decode an encoded file and write it to disk</p>
+<div class="versionadded">
+<p><span class="versionmodified">2016.3.0 新版功能.</span></p>
+</div>
+<dl class="docutils">
+<dt>name</dt>
+<dd>Path of the file to be written.</dd>
+<dt>encoded_data</dt>
+<dd>The encoded file. Either this option or <code class="docutils literal"><span class="pre">contents_pillar</span></code> must be
+specified.</dd>
+<dt>contents_pillar</dt>
+<dd>A Pillar path to the encoded file. Uses the same path syntax as
+<a class="reference internal" href="../../modules/all/salt.modules.pillar.html#salt.modules.pillar.get" title="salt.modules.pillar.get"><code class="xref py py-func docutils literal"><span class="pre">pillar.get</span></code></a>. The
+<a class="reference internal" href="../../modules/all/salt.modules.hashutil.html#salt.modules.hashutil.base64_encodefile" title="salt.modules.hashutil.base64_encodefile"><code class="xref py py-func docutils literal"><span class="pre">hashutil.base64_encodefile</span></code></a> function can load encoded
+content into Pillar. Either this option or <code class="docutils literal"><span class="pre">encoded_data</span></code> must be
+specified.</dd>
+<dt>encoding_type <span class="classifier-delimiter">:</span> <span class="classifier"><code class="docutils literal"><span class="pre">base64</span></code></span></dt>
+<dd>The type of encoding.</dd>
+<dt>checksum <span class="classifier-delimiter">:</span> <span class="classifier"><code class="docutils literal"><span class="pre">md5</span></code></span></dt>
+<dd>The hashing algorithm to use to generate checksums. Wraps the
+<a class="reference internal" href="../../modules/all/salt.modules.hashutil.html#salt.modules.hashutil.digest" title="salt.modules.hashutil.digest"><code class="xref py py-func docutils literal"><span class="pre">hashutil.digest</span></code></a> execution
+function.</dd>
+</dl>
+<p>Usage:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">write_base64_encoded_string_to_a_file</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.decode</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/new_file</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">encoding_type</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">base64</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">contents_pillar</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mypillar:thefile</span>
+
+<span class="c1"># or</span>
+
+<span class="l l-Scalar l-Scalar-Plain">write_base64_encoded_string_to_a_file</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.decode</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/new_file</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">encoding_type</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">base64</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">encoded_data</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">|</span>
+        <span class="no">Z2V0IHNhbHRlZAo=</span>
+</pre></div>
+</div>
+<p>Be careful with multi-line strings that the YAML indentation is correct.
+E.g.,</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">write_base64_encoded_string_to_a_file</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.decode</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/new_file</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">encoding_type</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">base64</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">encoded_data</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">|</span>
+        <span class="no">{{ salt.pillar.get(&#39;path:to:data&#39;) | indent(8) }}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.directory">
+<code class="descclassname">salt.states.file.</code><code class="descname">directory</code><span class="sig-paren">(</span><em>name</em>, <em>user=None</em>, <em>group=None</em>, <em>recurse=None</em>, <em>dir_mode=None</em>, <em>file_mode=None</em>, <em>makedirs=False</em>, <em>clean=False</em>, <em>require=None</em>, <em>exclude_pat=None</em>, <em>follow_symlinks=False</em>, <em>force=False</em>, <em>backupname=None</em>, <em>allow_symlink=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.directory" title="永久链接至目标">¶</a></dt>
+<dd><p>Ensure that a named directory is present and has the right perms</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The location to create or manage a directory</dd>
+<dt>user</dt>
+<dd>The user to own the directory; this defaults to the user salt is
+running as on the minion</dd>
+<dt>group</dt>
+<dd>The group ownership set for the directory; this defaults to the group
+salt is running as on the minion. On Windows, this is ignored</dd>
+<dt>recurse</dt>
+<dd><p class="first">Enforce user/group ownership and mode of directory recursively. Accepts
+a list of strings representing what you would like to recurse.  If
+<code class="docutils literal"><span class="pre">mode</span></code> is defined, will recurse on both <code class="docutils literal"><span class="pre">file_mode</span></code> and <code class="docutils literal"><span class="pre">dir_mode</span></code> if
+they are defined.  If <code class="docutils literal"><span class="pre">ignore_files</span></code> or <code class="docutils literal"><span class="pre">ignore_dirs</span></code> is included, files or
+directories will be left unchanged respectively.
+Example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/var/log/httpd</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">file.directory</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">dir_mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">755</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file_mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">644</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">recurse</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span>
+</pre></div>
+</div>
+<p>Leave files or directories unchanged:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/var/log/httpd</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">file.directory</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">dir_mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">755</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file_mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">644</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">recurse</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ignore_dirs</span>
+</pre></div>
+</div>
+<div class="last versionadded">
+<p><span class="versionmodified">2015.5.0 新版功能.</span></p>
+</div>
+</dd>
+<dt>dir_mode / mode</dt>
+<dd>The permissions mode to set any directories created. Not supported on
+Windows</dd>
+<dt>file_mode</dt>
+<dd>The permissions mode to set any files created if 'mode' is run in
+'recurse'. This defaults to dir_mode. Not supported on Windows</dd>
+<dt>makedirs</dt>
+<dd>If the directory is located in a path without a parent directory, then
+the state will fail. If makedirs is set to True, then the parent
+directories will be created to facilitate the creation of the named
+file.</dd>
+<dt>clean</dt>
+<dd>Make sure that only files that are set up by salt and required by this
+function are kept. If this option is set then everything in this
+directory will be deleted unless it is required.</dd>
+<dt>require</dt>
+<dd>Require other resources such as packages or files</dd>
+<dt>exclude_pat</dt>
+<dd>When 'clean' is set to True, exclude this pattern from removal list
+and preserve in the destination.</dd>
+<dt>follow_symlinks <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd><p class="first">If the desired path is a symlink (or <code class="docutils literal"><span class="pre">recurse</span></code> is defined and a
+symlink is encountered while recursing), follow it and check the
+permissions of the directory/file to which the symlink points.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2014.1.4 新版功能.</span></p>
+</div>
+</dd>
+<dt>force</dt>
+<dd><p class="first">If the name of the directory exists and is not a directory and
+force is set to False, the state will fail. If force is set to
+True, the file in the way of the directory will be deleted to
+make room for the directory, unless backupname is set,
+then it will be renamed.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+</dd>
+<dt>backupname</dt>
+<dd><p class="first">If the name of the directory exists and is not a directory, it will be
+renamed to the backupname. If the backupname already
+exists and force is False, the state will fail. Otherwise, the
+backupname will be removed first.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+</dd>
+<dt>allow_symlink <span class="classifier-delimiter">:</span> <span class="classifier">True</span></dt>
+<dd><p class="first">If allow_symlink is True and the specified path is a symlink, it will be
+allowed to remain if it points to a directory. If allow_symlink is False
+then the state will fail, unless force is also set to True, in which case
+it will be removed or renamed, depending on the value of the backupname
+argument.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.exists">
+<code class="descclassname">salt.states.file.</code><code class="descname">exists</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.exists" title="永久链接至目标">¶</a></dt>
+<dd><p>Verify that the named file or directory is present or exists.
+Ensures pre-requisites outside of Salt's purview
+(e.g., keytabs, private keys, etc.) have been previously satisfied before
+deployment.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>Absolute path which must exist</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.line">
+<code class="descclassname">salt.states.file.</code><code class="descname">line</code><span class="sig-paren">(</span><em>name</em>, <em>content</em>, <em>match=None</em>, <em>mode=None</em>, <em>location=None</em>, <em>before=None</em>, <em>after=None</em>, <em>show_changes=True</em>, <em>backup=False</em>, <em>quiet=False</em>, <em>indent=True</em>, <em>create=False</em>, <em>user=None</em>, <em>group=None</em>, <em>file_mode=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.line" title="永久链接至目标">¶</a></dt>
+<dd><p>Line-based editing of a file.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> -- Filesystem path to the file to be edited.</li>
+<li><strong>content</strong> -- Content of the line.</li>
+<li><strong>match</strong> -- Match the target line for an action by
+a fragment of a string or regular expression.</li>
+<li><strong>mode</strong> -- <table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Ensure:</th><td class="field-body">If line does not exist, it will be added.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Replace:</th><td class="field-body">If line already exist, it will be replaced.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Delete:</th><td class="field-body">Delete the line, once found.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Insert:</th><td class="field-body">Insert a line.</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><strong>location</strong> -- <table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">start:</th><td class="field-body">Place the content at the beginning of the file.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">end:</th><td class="field-body">Place the content at the end of the file.</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li><strong>before</strong> -- Regular expression or an exact case-sensitive fragment of the string.</li>
+<li><strong>after</strong> -- Regular expression or an exact case-sensitive fragment of the string.</li>
+<li><strong>show_changes</strong> -- <p>Output a unified diff of the old file and the new file.
+If <code class="docutils literal"><span class="pre">False</span></code> return a boolean if any changes were made.
+Default is <code class="docutils literal"><span class="pre">True</span></code></p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Using this option will store two copies of the file in-memory
+(the original version and the edited version) in order to generate the diff.</p>
+</div>
+</li>
+<li><strong>backup</strong> -- Create a backup of the original file with the extension:
+&quot;Year-Month-Day-Hour-Minutes-Seconds&quot;.</li>
+<li><strong>quiet</strong> -- Do not raise any exceptions. E.g. ignore the fact that the file that is
+tried to be edited does not exist and nothing really happened.</li>
+<li><strong>indent</strong> -- Keep indentation with the previous line.</li>
+<li><strong>create</strong> -- <p>Create an empty file if doesn't exists.</p>
+<div class="versionadded">
+<p><span class="versionmodified">Carbon 新版功能.</span></p>
+</div>
+</li>
+<li><strong>user</strong> -- <p>The user to own the file, this defaults to the user salt is running as
+on the minion.</p>
+<div class="versionadded">
+<p><span class="versionmodified">Carbon 新版功能.</span></p>
+</div>
+</li>
+<li><strong>group</strong> -- <p>The group ownership set for the file, this defaults to the group salt
+is running as on the minion On Windows, this is ignored.</p>
+<div class="versionadded">
+<p><span class="versionmodified">Carbon 新版功能.</span></p>
+</div>
+</li>
+<li><strong>file_mode</strong> -- <p>The permissions to set on this file, aka 644, 0775, 4664. Not supported
+on Windows.</p>
+<div class="versionadded">
+<p><span class="versionmodified">Carbon 新版功能.</span></p>
+</div>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>If an equal sign (<code class="docutils literal"><span class="pre">=</span></code>) appears in an argument to a Salt command, it is
+interpreted as a keyword argument in the format of <code class="docutils literal"><span class="pre">key=val</span></code>. That
+processing can be bypassed in order to pass an equal sign through to the
+remote shell command by manually specifying the kwarg:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.managed">
+<code class="descclassname">salt.states.file.</code><code class="descname">managed</code><span class="sig-paren">(</span><em>name</em>, <em>source=None</em>, <em>source_hash=''</em>, <em>user=None</em>, <em>group=None</em>, <em>mode=None</em>, <em>template=None</em>, <em>makedirs=False</em>, <em>dir_mode=None</em>, <em>context=None</em>, <em>replace=True</em>, <em>defaults=None</em>, <em>backup=''</em>, <em>show_changes=True</em>, <em>create=True</em>, <em>contents=None</em>, <em>contents_pillar=None</em>, <em>contents_grains=None</em>, <em>contents_newline=True</em>, <em>contents_delimiter=':'</em>, <em>allow_empty=True</em>, <em>follow_symlinks=True</em>, <em>check_cmd=None</em>, <em>skip_verify=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.managed" title="永久链接至目标">¶</a></dt>
+<dd><p>Manage a given file, this function allows for a file to be downloaded from
+the salt master and potentially run through a templating system.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The location of the file to manage</dd>
+<dt>source</dt>
+<dd><p class="first">The source file to download to the minion, this source file can be
+hosted on either the salt master server, or on an HTTP or FTP server.
+Both HTTPS and HTTP are supported as well as downloading directly
+from Amazon S3 compatible URLs with both pre-configured and automatic
+IAM credentials. (see s3.get state documentation)
+File retrieval from Openstack Swift object storage is supported via
+swift://container/object_path URLs, see swift.get documentation.
+For files hosted on the salt file server, if the file is located on
+the master in the directory named spam, and is called eggs, the source
+string is salt://spam/eggs. If source is left blank or None
+(use ~ in YAML), the file will be created as an empty file and
+the content will not be managed. This is also the case when a file
+already exists and the source is undefined; the contents of the file
+will not be changed or managed.</p>
+<p>If the file is hosted on a HTTP or FTP server then the source_hash
+argument is also required</p>
+<p>A list of sources can also be passed in to provide a default source and
+a set of fallbacks. The first source in the list that is found to exist
+will be used and subsequent entries in the list will be ignored. Source
+list functionality only supports local files and remote files hosted on
+the salt master server or retrievable via HTTP, HTTPS, or FTP.</p>
+<div class="last highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">file_override_example</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt://file_that_does_not_exist</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt://file_that_exists</span>
+</pre></div>
+</div>
+</dd>
+<dt>source_hash</dt>
+<dd><dl class="first docutils">
+<dt>This can be one of the following:</dt>
+<dd><ol class="first last arabic simple">
+<li>a source hash string</li>
+<li>the URI of a file that contains source hash strings</li>
+</ol>
+</dd>
+</dl>
+<p>The function accepts the first encountered long unbroken alphanumeric
+string of correct length as a valid hash, in order from most secure to
+least secure:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>Type    Length
+======  ======
+sha512     128
+sha384      96
+sha256      64
+sha224      56
+sha1        40
+md5         32
+</pre></div>
+</div>
+<dl class="last docutils">
+<dt><strong>Using a Source Hash File</strong></dt>
+<dd><p class="first">The file can contain several checksums for several files. Each line
+must contain both the file name and the hash.  If no file name is
+matched, the first hash encountered will be used, otherwise the most
+secure hash with the correct source file name will be used.</p>
+<p>When using a source hash file the source_hash argument needs to be a
+url, the standard download urls are supported, ftp, http, salt etc:</p>
+<p>范例:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">tomdroid-src-0.7.3.tar.gz</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/tomdroid-src-0.7.3.tar.gz</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">https://launchpad.net/tomdroid/beta/0.7.3/+download/tomdroid-src-0.7.3.tar.gz</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source_hash</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">https://launchpad.net/tomdroid/beta/0.7.3/+download/tomdroid-src-0.7.3.hash</span>
+</pre></div>
+</div>
+<p>The following is an example of the supported source_hash format:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>/etc/rc.conf ef6e82e4006dee563d98ada2a2a80a27
+sha254c8525aee419eb649f0233be91c151178b30f0dff8ebbdcc8de71b1d5c8bcc06a  /etc/resolv.conf
+ead48423703509d37c4a90e6a0d53e143b6fc268
+</pre></div>
+</div>
+<p class="last">Debian file type <code class="docutils literal"><span class="pre">*.dsc</span></code> files are also supported.</p>
+</dd>
+<dt><strong>Inserting the Source Hash in the sls Data</strong></dt>
+<dd><p class="first">Examples:</p>
+<div class="last highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">tomdroid-src-0.7.3.tar.gz</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/tomdroid-src-0.7.3.tar.gz</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">https://launchpad.net/tomdroid/beta/0.7.3/+download/tomdroid-src-0.7.3.tar.gz</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source_hash</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">md5=79eef25f9b0b2c642c62b7f737d4f53f</span>
+</pre></div>
+</div>
+</dd>
+<dt>Known issues:</dt>
+<dd><p class="first">If the remote server URL has the hash file as an apparent
+sub-directory of the source file, the module will discover that it
+has already cached a directory where a file should be cached. For
+example:</p>
+<div class="last highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">tomdroid-src-0.7.3.tar.gz</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/tomdroid-src-0.7.3.tar.gz</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">https://launchpad.net/tomdroid/beta/0.7.3/+download/tomdroid-src-0.7.3.tar.gz</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source_hash</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">https://launchpad.net/tomdroid/beta/0.7.3/+download/tomdroid-src-0.7.3.tar.gz/+md5</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>user</dt>
+<dd>The user to own the file, this defaults to the user salt is running as
+on the minion</dd>
+<dt>group</dt>
+<dd>The group ownership set for the file, this defaults to the group salt
+is running as on the minion On Windows, this is ignored</dd>
+<dt>mode</dt>
+<dd>The permissions to set on this file, aka 644, 0775, 4664. Not supported
+on Windows</dd>
+<dt>template</dt>
+<dd>If this setting is applied then the named templating engine will be
+used to render the downloaded file, currently jinja, mako, and wempy
+are supported</dd>
+<dt>makedirs <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd>If set to <code class="docutils literal"><span class="pre">True</span></code>, then the parent directories will be created to
+facilitate the creation of the named file. If <code class="docutils literal"><span class="pre">False</span></code>, and the parent
+directory of the destination file doesn't exist, the state will fail.</dd>
+<dt>dir_mode</dt>
+<dd>If directories are to be created, passing this option specifies the
+permissions for those directories. If this is not set, directories
+will be assigned permissions from the 'mode' argument.</dd>
+<dt>replace <span class="classifier-delimiter">:</span> <span class="classifier">True</span></dt>
+<dd>If set to <code class="docutils literal"><span class="pre">False</span></code> and the file already exists, the file will not be
+modified even if changes would otherwise be made. Permissions and
+ownership will still be enforced, however.</dd>
+<dt>context</dt>
+<dd>Overrides default context variables passed to the template.</dd>
+<dt>defaults</dt>
+<dd>Default context passed to the template.</dd>
+<dt>backup</dt>
+<dd>Overrides the default backup mode for this specific file.</dd>
+<dt>show_changes</dt>
+<dd>Output a unified diff of the old file and the new file. If <code class="docutils literal"><span class="pre">False</span></code>
+return a boolean if any changes were made.</dd>
+<dt>create <span class="classifier-delimiter">:</span> <span class="classifier">True</span></dt>
+<dd>If set to <code class="docutils literal"><span class="pre">False</span></code>, then the file will only be managed if the file
+already exists on the system.</dd>
+<dt>contents</dt>
+<dd><p class="first">Specify the contents of the file. Cannot be used in combination with
+<code class="docutils literal"><span class="pre">source</span></code>. Ignores hashes and does not use a templating engine.</p>
+<p>This value can be either a single string, a multiline YAML string or a
+list of strings.  If a list of strings, then the strings will be joined
+together with newlines in the resulting file. For example, the below
+two example states would result in identical file contents:</p>
+<div class="last highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/path/to/file1</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">contents</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">This is line 1</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">This is line 2</span>
+
+<span class="l l-Scalar l-Scalar-Plain">/path/to/file2</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">contents</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">|</span>
+      <span class="l l-Scalar l-Scalar-Plain">This is line 1</span>
+      <span class="l l-Scalar l-Scalar-Plain">This is line 2</span>
+</pre></div>
+</div>
+</dd>
+<dt>contents_pillar</dt>
+<dd><div class="first versionadded">
+<p><span class="versionmodified">0.17.0 新版功能.</span></p>
+</div>
+<p>Operates like <code class="docutils literal"><span class="pre">contents</span></code>, but draws from a value stored in pillar,
+using the pillar path syntax used in <a class="reference internal" href="../../modules/all/salt.modules.pillar.html#salt.modules.pillar.get" title="salt.modules.pillar.get"><code class="xref py py-mod docutils literal"><span class="pre">pillar.get</span></code></a>. This is useful when the pillar value
+contains newlines, as referencing a pillar variable using a jinja/mako
+template can result in YAML formatting issues due to the newlines
+causing indentation mismatches.</p>
+<p>For example, the following could be used to deploy an SSH private key:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/home/deployer/.ssh/id_rsa</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">deployer</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">deployer</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">600</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">contents_pillar</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">userdata:deployer:id_rsa</span>
+</pre></div>
+</div>
+<p>This would populate <code class="docutils literal"><span class="pre">/home/deployer/.ssh/id_rsa</span></code> with the contents of
+<code class="docutils literal"><span class="pre">pillar['userdata']['deployer']['id_rsa']</span></code>. An example of this pillar
+setup would be like so:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">userdata</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">deployer</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">id_rsa</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">|</span>
+      <span class="no">-----BEGIN RSA PRIVATE KEY-----</span>
+      <span class="no">MIIEowIBAAKCAQEAoQiwO3JhBquPAalQF9qP1lLZNXVjYMIswrMe2HcWUVBgh+vY</span>
+      <span class="no">U7sCwx/dH6+VvNwmCoqmNnP+8gTPKGl1vgAObJAnMT623dMXjVKwnEagZPRJIxDy</span>
+      <span class="no">B/HaAre9euNiY3LvIzBTWRSeMfT+rWvIKVBpvwlgGrfgz70m0pqxu+UyFbAGLin+</span>
+      <span class="no">GpxzZAMaFpZw4sSbIlRuissXZj/sHpQb8p9M5IeO4Z3rjkCP1cxI</span>
+      <span class="no">-----END RSA PRIVATE KEY-----</span>
+</pre></div>
+</div>
+<div class="last admonition note">
+<p class="first admonition-title">注解</p>
+<p>The private key above is shortened to keep the example brief, but
+shows how to do multiline string in YAML. The key is followed by a
+pipe character, and the mutliline string is indented two more
+spaces.</p>
+<p class="last">To avoid the hassle of creating an indented multiline YAML string,
+the <a class="reference internal" href="../../pillar/all/salt.pillar.file_tree.html#module-salt.pillar.file_tree" title="salt.pillar.file_tree"><code class="xref py py-mod docutils literal"><span class="pre">file_tree</span> <span class="pre">external</span> <span class="pre">pillar</span></code></a> can
+be used instead. However, this will not work for binary files in
+Salt releases before 2015.8.4.</p>
+</div>
+</dd>
+<dt>contents_grains</dt>
+<dd><div class="first versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<p class="last">Same as <code class="docutils literal"><span class="pre">contents_pillar</span></code>, but with grains</p>
+</dd>
+<dt>contents_newline <span class="classifier-delimiter">:</span> <span class="classifier">True</span></dt>
+<dd><div class="first versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified">在 2015.8.4 版更改: </span>This option is now ignored if the contents being deployed contain
+binary data.</p>
+</div>
+<p class="last">If <code class="docutils literal"><span class="pre">True</span></code>, files managed using <code class="docutils literal"><span class="pre">contents</span></code>, <code class="docutils literal"><span class="pre">contents_pillar</span></code>, or
+<code class="docutils literal"><span class="pre">contents_grains</span></code> will have a newline added to the end of the file if
+one is not present. Setting this option to <code class="docutils literal"><span class="pre">False</span></code> will omit this
+final newline.</p>
+</dd>
+<dt>contents_delimiter</dt>
+<dd><div class="first versionadded">
+<p><span class="versionmodified">2015.8.4 新版功能.</span></p>
+</div>
+<p class="last">Can be used to specify an alternate delimiter for <code class="docutils literal"><span class="pre">contents_pillar</span></code>
+or <code class="docutils literal"><span class="pre">contents_grains</span></code>. This delimiter will be passed through to
+<a class="reference internal" href="../../modules/all/salt.modules.pillar.html#salt.modules.pillar.get" title="salt.modules.pillar.get"><code class="xref py py-func docutils literal"><span class="pre">pillar.get</span></code></a> or <a class="reference internal" href="../../modules/all/salt.modules.grains.html#salt.modules.grains.get" title="salt.modules.grains.get"><code class="xref py py-func docutils literal"><span class="pre">grains.get</span></code></a> when retrieving the contents.</p>
+</dd>
+<dt>allow_empty <span class="classifier-delimiter">:</span> <span class="classifier">True</span></dt>
+<dd><div class="first versionadded">
+<p><span class="versionmodified">2015.8.4 新版功能.</span></p>
+</div>
+<p class="last">If set to <code class="docutils literal"><span class="pre">False</span></code>, then the state will fail if the contents specified
+by <code class="docutils literal"><span class="pre">contents_pillar</span></code> or <code class="docutils literal"><span class="pre">contents_grains</span></code> are empty.</p>
+</dd>
+<dt>follow_symlinks <span class="classifier-delimiter">:</span> <span class="classifier">True</span></dt>
+<dd><div class="first versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<p class="last">If the desired path is a symlink follow it and make changes to the
+file to which the symlink points.</p>
+</dd>
+<dt>check_cmd</dt>
+<dd><div class="first versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<p>The specified command will be run with an appended argument of a
+<em>temporary</em> file containing the new managed contents.  If the command
+exits with a zero status the new managed contents will be written to
+the managed destination. If the command exits with a nonzero exit
+code, the state will fail and no changes will be made to the file.</p>
+<p>For example, the following could be used to verify sudoers before making
+changes:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/sudoers</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">0440</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://sudoers/files/sudoers.jinja</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">jinja</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">check_cmd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/usr/sbin/visudo -c -f</span>
+</pre></div>
+</div>
+<p class="last"><strong>NOTE</strong>: This <code class="docutils literal"><span class="pre">check_cmd</span></code> functions differently than the requisite
+<code class="docutils literal"><span class="pre">check_cmd</span></code>.</p>
+</dd>
+<dt>skip_verify <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd><p class="first">If <code class="docutils literal"><span class="pre">True</span></code>, hash verification of remote file sources (<code class="docutils literal"><span class="pre">http://</span></code>,
+<code class="docutils literal"><span class="pre">https://</span></code>, <code class="docutils literal"><span class="pre">ftp://</span></code>) will be skipped, and the <code class="docutils literal"><span class="pre">source_hash</span></code>
+argument will be ignored.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2016.3.0 新版功能.</span></p>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.missing">
+<code class="descclassname">salt.states.file.</code><code class="descname">missing</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.missing" title="永久链接至目标">¶</a></dt>
+<dd><p>Verify that the named file or directory is missing, this returns True only
+if the named file is missing but does not remove the file if it is present.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>Absolute path which must NOT exist</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.mknod">
+<code class="descclassname">salt.states.file.</code><code class="descname">mknod</code><span class="sig-paren">(</span><em>name</em>, <em>ntype</em>, <em>major=0</em>, <em>minor=0</em>, <em>user=None</em>, <em>group=None</em>, <em>mode='0600'</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.mknod" title="永久链接至目标">¶</a></dt>
+<dd><p>Create a special file similar to the 'nix mknod command. The supported
+device types are <code class="docutils literal"><span class="pre">p</span></code> (fifo pipe), <code class="docutils literal"><span class="pre">c</span></code> (character device), and <code class="docutils literal"><span class="pre">b</span></code>
+(block device). Provide the major and minor numbers when specifying a
+character device or block device. A fifo pipe does not require this
+information. The command will create the necessary dirs if needed. If a
+file of the same name not of the same type/major/minor exists, it will not
+be overwritten or unlinked (deleted). This is logically in place as a
+safety measure because you can really shoot yourself in the foot here and
+it is the behavior of 'nix <code class="docutils literal"><span class="pre">mknod</span></code>. It is also important to note that not
+just anyone can create special devices. Usually this is only done as root.
+If the state is executed as none other than root on a minion, you may
+receive a permission error.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>name of the file</dd>
+<dt>ntype</dt>
+<dd>node type 'p' (fifo pipe), 'c' (character device), or 'b'
+(block device)</dd>
+<dt>major</dt>
+<dd>major number of the device
+does not apply to a fifo pipe</dd>
+<dt>minor</dt>
+<dd>minor number of the device
+does not apply to a fifo pipe</dd>
+<dt>user</dt>
+<dd>owning user of the device/pipe</dd>
+<dt>group</dt>
+<dd>owning group of the device/pipe</dd>
+<dt>mode</dt>
+<dd>permissions on the device/pipe</dd>
+</dl>
+<p>Usage:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span> <span class="l l-Scalar l-Scalar-Plain">/dev/chr</span><span class="p p-Indicator">:</span>
+   <span class="l l-Scalar l-Scalar-Plain">file.mknod</span><span class="p p-Indicator">:</span>
+     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ntype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">c</span>
+     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">major</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">180</span>
+     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">minor</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">31</span>
+     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">660</span>
+
+ <span class="l l-Scalar l-Scalar-Plain">/dev/blk</span><span class="p p-Indicator">:</span>
+   <span class="l l-Scalar l-Scalar-Plain">file.mknod</span><span class="p p-Indicator">:</span>
+     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ntype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">b</span>
+     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">major</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">8</span>
+     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">minor</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">999</span>
+     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+     <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">660</span>
+
+<span class="l l-Scalar l-Scalar-Plain">/dev/fifo</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.mknod</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ntype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">p</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">660</span>
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">0.17.0 新版功能.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.mod_run_check_cmd">
+<code class="descclassname">salt.states.file.</code><code class="descname">mod_run_check_cmd</code><span class="sig-paren">(</span><em>cmd</em>, <em>filename</em>, <em>**check_cmd_opts</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.mod_run_check_cmd" title="永久链接至目标">¶</a></dt>
+<dd><p>Execute the check_cmd logic.</p>
+<p>Return a result dict if <code class="docutils literal"><span class="pre">check_cmd</span></code> succeeds (check_cmd == 0)
+otherwise return True</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.patch">
+<code class="descclassname">salt.states.file.</code><code class="descname">patch</code><span class="sig-paren">(</span><em>name</em>, <em>source=None</em>, <em>hash=None</em>, <em>options=''</em>, <em>dry_run_first=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.patch" title="永久链接至目标">¶</a></dt>
+<dd><p>Apply a patch to a file or directory.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">A suitable <code class="docutils literal"><span class="pre">patch</span></code> executable must be available on the minion when
+using this state function.</p>
+</div>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The file or directory to which the patch will be applied.</dd>
+<dt>source</dt>
+<dd>The source patch to download to the minion, this source file must be
+hosted on the salt master server. If the file is located in the
+directory named spam, and is called eggs, the source string is
+salt://spam/eggs. A source is required.</dd>
+<dt>hash</dt>
+<dd>Hash of the patched file. If the hash of the target file matches this
+value then the patch is assumed to have been applied. The hash string
+is the hash algorithm followed by the hash of the file:
+md5=e138491e9d5b97023cea823fe17bac22</dd>
+<dt>options</dt>
+<dd>Extra options to pass to patch.</dd>
+<dt>dry_run_first <span class="classifier-delimiter">:</span> <span class="classifier"><code class="docutils literal"><span class="pre">True</span></code></span></dt>
+<dd>Run patch with <code class="docutils literal"><span class="pre">--dry-run</span></code> first to check if it will apply cleanly.</dd>
+<dt>saltenv</dt>
+<dd>Specify the environment from which to retrieve the patch file indicated
+by the <code class="docutils literal"><span class="pre">source</span></code> parameter. If not provided, this defaults to the
+environment from which the state is being executed.</dd>
+</dl>
+<p>Usage:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># Equivalent to ``patch --forward /opt/file.txt file.patch``</span>
+<span class="l l-Scalar l-Scalar-Plain">/opt/file.txt</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.patch</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://file.patch</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">hash</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">md5=e138491e9d5b97023cea823fe17bac22</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.prepend">
+<code class="descclassname">salt.states.file.</code><code class="descname">prepend</code><span class="sig-paren">(</span><em>name</em>, <em>text=None</em>, <em>makedirs=False</em>, <em>source=None</em>, <em>source_hash=None</em>, <em>template='jinja'</em>, <em>sources=None</em>, <em>source_hashes=None</em>, <em>defaults=None</em>, <em>context=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.prepend" title="永久链接至目标">¶</a></dt>
+<dd><p>Ensure that some text appears at the beginning of a file</p>
+<p>The text will not be prepended again if it already exists in the file. You
+may specify a single line of text or a list of lines to append.</p>
+<p>Multi-line example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/motd</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.prepend</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">text</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">|</span>
+        <span class="no">Thou hadst better eat salt with the Philosophers of Greece,</span>
+        <span class="no">than sugar with the Courtiers of Italy.</span>
+        <span class="no">- Benjamin Franklin</span>
+</pre></div>
+</div>
+<p>Multiple lines of text:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/motd</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.prepend</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">text</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">Trust no one unless you have eaten much salt with him.</span>
+      <span class="p p-Indicator">-</span> <span class="s">&quot;Salt</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">born</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">purest</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">parents:</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">sun</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">sea.&quot;</span>
+</pre></div>
+</div>
+<p>Gather text from multiple template files:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/motd</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">prepend</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">jinja</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">sources</span><span class="p p-Indicator">:</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt://motd/devops-messages.tmpl</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt://motd/hr-messages.tmpl</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt://motd/general-messages.tmpl</span>
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.recurse">
+<code class="descclassname">salt.states.file.</code><code class="descname">recurse</code><span class="sig-paren">(</span><em>name</em>, <em>source</em>, <em>clean=False</em>, <em>require=None</em>, <em>user=None</em>, <em>group=None</em>, <em>dir_mode=None</em>, <em>file_mode=None</em>, <em>sym_mode=None</em>, <em>template=None</em>, <em>context=None</em>, <em>defaults=None</em>, <em>include_empty=False</em>, <em>backup=''</em>, <em>include_pat=None</em>, <em>exclude_pat=None</em>, <em>maxdepth=None</em>, <em>keep_symlinks=False</em>, <em>force_symlinks=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.recurse" title="永久链接至目标">¶</a></dt>
+<dd><p>Recurse through a subdirectory on the master and copy said subdirectory
+over to the specified path.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The directory to set the recursion in</dd>
+<dt>source</dt>
+<dd>The source directory, this directory is located on the salt master file
+server and is specified with the salt:// protocol. If the directory is
+located on the master in the directory named spam, and is called eggs,
+the source string is salt://spam/eggs</dd>
+<dt>clean</dt>
+<dd>Make sure that only files that are set up by salt and required by this
+function are kept. If this option is set then everything in this
+directory will be deleted unless it is required.</dd>
+<dt>require</dt>
+<dd>Require other resources such as packages or files</dd>
+<dt>user</dt>
+<dd>The user to own the directory. This defaults to the user salt is
+running as on the minion</dd>
+<dt>group</dt>
+<dd>The group ownership set for the directory. This defaults to the group
+salt is running as on the minion. On Windows, this is ignored</dd>
+<dt>dir_mode</dt>
+<dd>The permissions mode to set on any directories created. Not supported on
+Windows</dd>
+<dt>file_mode</dt>
+<dd>The permissions mode to set on any files created. Not supported on
+Windows</dd>
+<dt>sym_mode</dt>
+<dd>The permissions mode to set on any symlink created. Not supported on
+Windows</dd>
+<dt>template</dt>
+<dd>If this setting is applied then the named templating engine will be
+used to render the downloaded file. Supported templates are:
+<cite>jinja</cite>, <cite>mako</cite> and <cite>wempy</cite>.</dd>
+</dl>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The template option is required when recursively applying templates.</p>
+</div>
+<dl class="docutils">
+<dt>context</dt>
+<dd>Overrides default context variables passed to the template.</dd>
+<dt>defaults</dt>
+<dd>Default context passed to the template.</dd>
+<dt>include_empty</dt>
+<dd>Set this to True if empty directories should also be created
+(default is False)</dd>
+<dt>include_pat</dt>
+<dd><p class="first">When copying, include only this pattern from the source. Default
+is glob match; if prefixed with 'E&#64;', then regexp match.
+Example:</p>
+<div class="last highlight-yaml"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">include_pat</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">hello*       :</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">glob matches &#39;hello01&#39;, &#39;hello02&#39;</span>
+                               <span class="l l-Scalar l-Scalar-Plain">... but not &#39;otherhello&#39;</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">include_pat</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">E@hello      :</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">regexp matches &#39;otherhello&#39;,</span>
+                               <span class="l l-Scalar l-Scalar-Plain">&#39;hello01&#39; ...</span>
+</pre></div>
+</div>
+</dd>
+<dt>exclude_pat</dt>
+<dd><p class="first">Exclude this pattern from the source when copying. If both
+<cite>include_pat</cite> and <cite>exclude_pat</cite> are supplied, then it will apply
+conditions cumulatively. i.e. first select based on include_pat, and
+then within that result apply exclude_pat.</p>
+<p>Also, when 'clean=True', exclude this pattern from the removal
+list and preserve in the destination.
+Example:</p>
+<div class="last highlight-yaml"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">exclude_pat</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">APPDATA*               :</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">glob matches APPDATA.01,</span>
+                                         <span class="l l-Scalar l-Scalar-Plain">APPDATA.02,.. for exclusion</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">exclude_pat</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">E@(APPDATA)|(TEMPDATA) :</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">regexp matches APPDATA</span>
+                                         <span class="l l-Scalar l-Scalar-Plain">or TEMPDATA for exclusion</span>
+</pre></div>
+</div>
+</dd>
+<dt>maxdepth</dt>
+<dd><p class="first">When copying, only copy paths which are of depth <cite>maxdepth</cite> from the
+source path.
+Example:</p>
+<div class="last highlight-yaml"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">maxdepth</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">0      :</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Only include files located in the source</span>
+                      <span class="l l-Scalar l-Scalar-Plain">directory</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">maxdepth</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1      :</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Only include files located in the source</span>
+                      <span class="l l-Scalar l-Scalar-Plain">or immediate subdirectories</span>
+</pre></div>
+</div>
+</dd>
+<dt>keep_symlinks</dt>
+<dd>Keep symlinks when copying from the source. This option will cause
+the copy operation to terminate at the symlink. If desire behavior
+similar to rsync, then set this to True.</dd>
+<dt>force_symlinks</dt>
+<dd>Force symlink creation. This option will force the symlink creation.
+If a file or directory is obstructing symlink creation it will be
+recursively removed so that symlink creation can proceed. This
+option is usually not needed except in special circumstances.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.rename">
+<code class="descclassname">salt.states.file.</code><code class="descname">rename</code><span class="sig-paren">(</span><em>name</em>, <em>source</em>, <em>force=False</em>, <em>makedirs=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.rename" title="永久链接至目标">¶</a></dt>
+<dd><p>If the source file exists on the system, rename it to the named file. The
+named file will not be overwritten if it already exists unless the force
+option is set to True.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The location of the file to rename to</dd>
+<dt>source</dt>
+<dd>The location of the file to move to the location specified with name</dd>
+<dt>force</dt>
+<dd>If the target location is present then the file will not be moved,
+specify &quot;force: True&quot; to overwrite the target file</dd>
+<dt>makedirs</dt>
+<dd>If the target subdirectories don't exist create them</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.replace">
+<code class="descclassname">salt.states.file.</code><code class="descname">replace</code><span class="sig-paren">(</span><em>name</em>, <em>pattern</em>, <em>repl</em>, <em>count=0</em>, <em>flags=8</em>, <em>bufsize=1</em>, <em>append_if_not_found=False</em>, <em>prepend_if_not_found=False</em>, <em>not_found_content=None</em>, <em>backup='.bak'</em>, <em>show_changes=True</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.replace" title="永久链接至目标">¶</a></dt>
+<dd><p>Maintain an edit in a file.</p>
+<div class="versionadded">
+<p><span class="versionmodified">0.17.0 新版功能.</span></p>
+</div>
+<dl class="docutils">
+<dt>name</dt>
+<dd>Filesystem path to the file to be edited.</dd>
+<dt>pattern</dt>
+<dd>A regular expression, to be matched using Python's
+<a class="reference external" href="http://docs.python.org/3/library/re.html#re.search" title="(在 Python v3.5)"><code class="xref py py-func docutils literal"><span class="pre">search()</span></code></a>.</dd>
+<dt>repl</dt>
+<dd>The replacement text</dd>
+<dt>count</dt>
+<dd>Maximum number of pattern occurrences to be replaced.  Defaults to 0.
+If count is a positive integer n, no more than n occurrences will be
+replaced, otherwise all occurrences will be replaced.</dd>
+<dt>flags</dt>
+<dd>A list of flags defined in the <a class="reference external" href="http://docs.python.org/3/library/re.html#contents-of-module-re" title="(在 Python v3.5)"><span class="xref std std-ref">re module documentation</span></a>. Each list item should be a string that will
+correlate to the human-friendly flag name. E.g., <code class="docutils literal"><span class="pre">['IGNORECASE',</span>
+<span class="pre">'MULTILINE']</span></code>. Optionally, <code class="docutils literal"><span class="pre">flags</span></code> may be an int, with a value
+corresponding to the XOR (<code class="docutils literal"><span class="pre">|</span></code>) of all the desired flags. Defaults to
+8 (which supports 'MULTILINE').</dd>
+<dt>bufsize</dt>
+<dd>How much of the file to buffer into memory at once. The default value
+<code class="docutils literal"><span class="pre">1</span></code> processes one line at a time. The special value <code class="docutils literal"><span class="pre">file</span></code> may be
+specified which will read the entire file into memory before
+processing.</dd>
+<dt>append_if_not_found <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd><p class="first">If set to <code class="docutils literal"><span class="pre">True</span></code>, and pattern is not found, then the content will be
+appended to the file.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+</dd>
+<dt>prepend_if_not_found <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd><p class="first">If set to <code class="docutils literal"><span class="pre">True</span></code> and pattern is not found, then the content will be
+prepended to the file.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+</dd>
+<dt>not_found_content</dt>
+<dd><p class="first">Content to use for append/prepend if not found. If <code class="docutils literal"><span class="pre">None</span></code> (default),
+uses <code class="docutils literal"><span class="pre">repl</span></code>. Useful when <code class="docutils literal"><span class="pre">repl</span></code> uses references to group in
+pattern.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+</dd>
+<dt>backup</dt>
+<dd>The file extension to use for a backup of the file before editing. Set
+to <code class="docutils literal"><span class="pre">False</span></code> to skip making a backup.</dd>
+<dt>show_changes <span class="classifier-delimiter">:</span> <span class="classifier">True</span></dt>
+<dd>Output a unified diff of the old file and the new file. If <code class="docutils literal"><span class="pre">False</span></code>
+return a boolean if any changes were made. Returns a boolean or a
+string.</dd>
+</dl>
+<p>For complex regex patterns, it can be useful to avoid the need for complex
+quoting and escape sequences by making use of YAML's multiline string
+syntax.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">complex_search_and_replace</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.replace</span><span class="p p-Indicator">:</span>
+    <span class="c1"># &lt;...snip...&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pattern</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">|</span>
+        <span class="no">CentOS \(2.6.32[^\n]+\n\s+root[^\n]+\n\)+</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">When using YAML multiline string syntax in <code class="docutils literal"><span class="pre">pattern:</span></code>, make sure to
+also use that syntax in the <code class="docutils literal"><span class="pre">repl:</span></code> part, or you might loose line
+feeds.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.serialize">
+<code class="descclassname">salt.states.file.</code><code class="descname">serialize</code><span class="sig-paren">(</span><em>name</em>, <em>dataset=None</em>, <em>dataset_pillar=None</em>, <em>user=None</em>, <em>group=None</em>, <em>mode=None</em>, <em>backup=''</em>, <em>makedirs=False</em>, <em>show_diff=True</em>, <em>create=True</em>, <em>merge_if_exists=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.serialize" title="永久链接至目标">¶</a></dt>
+<dd><p>Serializes dataset and store it into managed file. Useful for sharing
+simple configuration files.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The location of the file to create</dd>
+<dt>dataset</dt>
+<dd>The dataset that will be serialized</dd>
+<dt>dataset_pillar</dt>
+<dd><p class="first">Operates like <code class="docutils literal"><span class="pre">dataset</span></code>, but draws from a value stored in pillar,
+using the pillar path syntax used in <a class="reference internal" href="../../modules/all/salt.modules.pillar.html#salt.modules.pillar.get" title="salt.modules.pillar.get"><code class="xref py py-mod docutils literal"><span class="pre">pillar.get</span></code></a>. This is useful when the pillar value
+contains newlines, as referencing a pillar variable using a jinja/mako
+template can result in YAML formatting issues due to the newlines
+causing indentation mismatches.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">FIXME 新版功能.</span></p>
+</div>
+</dd>
+<dt>formatter</dt>
+<dd><p class="first">Write the data as this format. Supported output formats:</p>
+<ul class="last simple">
+<li>JSON</li>
+<li>YAML</li>
+<li>Python (via pprint.pformat)</li>
+</ul>
+</dd>
+<dt>user</dt>
+<dd>The user to own the directory, this defaults to the user salt is
+running as on the minion</dd>
+<dt>group</dt>
+<dd>The group ownership set for the directory, this defaults to the group
+salt is running as on the minion</dd>
+<dt>mode</dt>
+<dd>The permissions to set on this file, aka 644, 0775, 4664</dd>
+<dt>backup</dt>
+<dd>Overrides the default backup mode for this specific file.</dd>
+<dt>makedirs</dt>
+<dd><p class="first">Create parent directories for destination file.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2014.1.3 新版功能.</span></p>
+</div>
+</dd>
+<dt>show_diff</dt>
+<dd>If set to False, the diff will not be shown.</dd>
+<dt>create</dt>
+<dd>Default is True, if create is set to False then the file will only be
+managed if the file already exists on the system.</dd>
+<dt>merge_if_exists</dt>
+<dd><p class="first">Default is False, if merge_if_exists is True then the existing file will
+be parsed and the dataset passed in will be merged with the existing
+content</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+</dd>
+</dl>
+<p>For example, this state:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>/etc/dummy/package.json:
+  file.serialize:
+    - dataset:
+        name: naive
+        description: A package using naive versioning
+        author: A confused individual &lt;iam@confused.com&gt;
+        dependencies:
+            express: &gt;= 1.2.0
+            optimist: &gt;= 0.1.0
+        engine: node 0.4.1
+    - formatter: json
+</pre></div>
+</div>
+<p>will manage the file <code class="docutils literal"><span class="pre">/etc/dummy/package.json</span></code>:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;author&quot;</span><span class="p">:</span> <span class="s2">&quot;A confused individual &lt;iam@confused.com&gt;&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;express&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;= 1.2.0&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;optimist&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;= 0.1.0&quot;</span>
+  <span class="p">},</span>
+  <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;A package using naive versioning&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;node 0.4.1&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;naive&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.symlink">
+<code class="descclassname">salt.states.file.</code><code class="descname">symlink</code><span class="sig-paren">(</span><em>name</em>, <em>target</em>, <em>force=False</em>, <em>backupname=None</em>, <em>makedirs=False</em>, <em>user=None</em>, <em>group=None</em>, <em>mode=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.symlink" title="永久链接至目标">¶</a></dt>
+<dd><p>Create a symbolic link (symlink, soft link)</p>
+<p>If the file already exists and is a symlink pointing to any location other
+than the specified target, the symlink will be replaced. If the symlink is
+a regular file or directory then the state will return False. If the
+regular file or directory is desired to be replaced with a symlink pass
+force: True, if it is to be renamed, pass a backupname.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>The location of the symlink to create</dd>
+<dt>target</dt>
+<dd>The location that the symlink points to</dd>
+<dt>force</dt>
+<dd>If the name of the symlink exists and is not a symlink and
+force is set to False, the state will fail. If force is set to
+True, the file or directory in the way of the symlink file
+will be deleted to make room for the symlink, unless
+backupname is set, when it will be renamed</dd>
+<dt>backupname</dt>
+<dd>If the name of the symlink exists and is not a symlink, it will be
+renamed to the backupname. If the backupname already
+exists and force is False, the state will fail. Otherwise, the
+backupname will be removed first.</dd>
+<dt>makedirs</dt>
+<dd>If the location of the symlink does not already have a parent directory
+then the state will fail, setting makedirs to True will allow Salt to
+create the parent directory</dd>
+<dt>user</dt>
+<dd>The user to own the file, this defaults to the user salt is running as
+on the minion</dd>
+<dt>group</dt>
+<dd>The group ownership set for the file, this defaults to the group salt
+is running as on the minion. On Windows, this is ignored</dd>
+<dt>mode</dt>
+<dd>The permissions to set on this file, aka 644, 0775, 4664. Not supported
+on Windows</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.touch">
+<code class="descclassname">salt.states.file.</code><code class="descname">touch</code><span class="sig-paren">(</span><em>name</em>, <em>atime=None</em>, <em>mtime=None</em>, <em>makedirs=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.touch" title="永久链接至目标">¶</a></dt>
+<dd><p>Replicate the 'nix &quot;touch&quot; command to create a new empty
+file or update the atime and mtime of an existing file.</p>
+<p>Note that if you just want to create a file and don't care about atime or
+mtime, you should use <code class="docutils literal"><span class="pre">file.managed</span></code> instead, as it is more
+feature-complete.  (Just leave out the <code class="docutils literal"><span class="pre">source</span></code>/<code class="docutils literal"><span class="pre">template</span></code>/<code class="docutils literal"><span class="pre">contents</span></code>
+arguments, and it will just create the file and/or check its permissions,
+without messing with contents)</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>name of the file</dd>
+<dt>atime</dt>
+<dd>atime of the file</dd>
+<dt>mtime</dt>
+<dd>mtime of the file</dd>
+<dt>makedirs</dt>
+<dd>whether we should create the parent directory/directories in order to
+touch the file</dd>
+</dl>
+<p>Usage:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/var/log/httpd/logrotate.empty</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.touch</span>
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">0.9.5 新版功能.</span></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.file.uncomment">
+<code class="descclassname">salt.states.file.</code><code class="descname">uncomment</code><span class="sig-paren">(</span><em>name</em>, <em>regex</em>, <em>char='#'</em>, <em>backup='.bak'</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.file.uncomment" title="永久链接至目标">¶</a></dt>
+<dd><p>Uncomment specified commented lines in a file</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd><p class="first last">要编辑的文件的完整路径</p>
+</dd>
+<dt>regex</dt>
+<dd>A regular expression used to find the lines that are to be uncommented.
+This regex should not include the comment character. A leading <code class="docutils literal"><span class="pre">^</span></code>
+character will be stripped for convenience (for easily switching
+between comment() and uncomment()).  The regex will be searched for
+from the beginning of the line, ignoring leading spaces (we prepend
+'^[ t]*')</dd>
+<dt>char <span class="classifier-delimiter">:</span> <span class="classifier"><code class="docutils literal"><span class="pre">#</span></code></span></dt>
+<dd>The character to remove in order to uncomment a line</dd>
+<dt>backup <span class="classifier-delimiter">:</span> <span class="classifier"><code class="docutils literal"><span class="pre">.bak</span></code></span></dt>
+<dd><p class="first">The file will be backed up before edit with this file extension;</p>
+<div class="last admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">This backup will be overwritten each time <code class="docutils literal"><span class="pre">sed</span></code> / <code class="docutils literal"><span class="pre">comment</span></code> /
+<code class="docutils literal"><span class="pre">uncomment</span></code> is called. Meaning the backup will only be useful
+after the first invocation.</p>
+</div>
+</dd>
+</dl>
+<p>Usage:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/adduser.conf</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.uncomment</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">regex</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">EXTRA_GROUPS</span>
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">0.9.5 新版功能.</span></p>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+                            </div>
+                            <a href="salt.states.event.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.states.event" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="salt.states.firewall.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.states.firewall module" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Salt Module Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../auth/all/index.html">内建身份认证模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../beacons/all/index.html">Full list of builtin beacon modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../engines/all/index.html">Full list of builtin engine modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../file_server/all/index.html">文件服务内置模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../grains/all/index.html">Full list of builtin grains modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/all/index.html">Full list of builtin execution modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../netapi/all/index.html">Full list of netapi modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../output/all/index.html">完整的内置输出模块的列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../pillar/all/index.html">Full list of builtin pillar modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../proxy/all/index.html">Full list of builtin proxy modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../queues/all/index.html">Full list of builtin queues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../renderers/all/index.html">Full list of builtin renderer modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../returners/all/index.html">所有内置的返回接收器模块列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../roster/all/index.html">Full list of builtin roster modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../runners/all/index.html">Full list of runner modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sdb/all/index.html">Full list of builtin sdb modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../serializers/all/index.html">Full list of builtin serializers</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">所有内置的state模块列表</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="salt.states.alias.html">salt.states.alias</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.alternatives.html">salt.states.alternatives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.apache.html">salt.states.apache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.apache_conf.html">salt.states.apache_conf module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.apache_module.html">salt.states.apache_module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.apache_site.html">salt.states.apache_site module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.aptpkg.html">salt.states.aptpkg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.archive.html">salt.states.archive</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.artifactory.html">salt.states.artifactory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.at.html">salt.states.at</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.augeas.html">salt.states.augeas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.aws_sqs.html">salt.states.aws_sqs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.beacon.html">salt.states.beacon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.bigip.html">salt.states.bigip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.blockdev.html">salt.states.blockdev</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_asg.html">salt.states.boto_asg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_cfn.html">salt.states.boto_cfn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_cloudtrail.html">salt.states.boto_cloudtrail module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_cloudwatch_alarm.html">salt.states.boto_cloudwatch_alarm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_datapipeline.html">salt.states.boto_datapipeline module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_dynamodb.html">salt.states.boto_dynamodb</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_ec2.html">salt.states.boto_ec2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_elasticache.html">salt.states.boto_elasticache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_elb.html">salt.states.boto_elb</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_iam.html">salt.states.boto_iam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_iam_role.html">salt.states.boto_iam_role</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_iot.html">salt.states.boto_iot module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_kms.html">salt.states.boto_kms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_lc.html">salt.states.boto_lc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_rds.html">salt.states.boto_rds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_route53.html">salt.states.boto_route53</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_secgroup.html">salt.states.boto_secgroup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_sns.html">salt.states.boto_sns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_sqs.html">salt.states.boto_sqs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_vpc.html">salt.states.boto_vpc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.bower.html">salt.states.bower</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.cabal.html">salt.states.cabal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.chef.html">salt.states.chef</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.chocolatey.html">salt.states.chocolatey module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.chronos_job.html">salt.states.chronos_job module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.cloud.html">salt.states.cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.cmd.html">salt.states.cmd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.composer.html">salt.states.composer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.cron.html">Salt states 的cron 类型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.cyg.html">salt.states.cyg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ddns.html">salt.states.ddns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.debconfmod.html">salt.states.debconfmod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.dellchassis.html">salt.states.dellchassis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.disk.html">salt.states.disk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.dockerio.html">salt.states.dockerio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.dockerng.html">salt.states.dockerng</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.drac.html">salt.states.drac</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.elasticsearch_index.html">salt.states.elasticsearch_index</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.elasticsearch_index_template.html">salt.states.elasticsearch_index_template</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.environ.html">salt.states.environ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.eselect.html">salt.states.eselect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.etcd_mod.html">salt.states.etcd_mod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.esxi.html">salt.states.esxi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.event.html">salt.states.event</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">salt.states.file</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#operations-on-regular-files-special-files-directories-and-symlinks">Operations on regular files, special files, directories, and symlinks</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.firewall.html">salt.states.firewall module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.firewalld.html">salt.states.firewalld</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.gem.html">salt.states.gem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.git.html">salt.states.git</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.github.html">salt.states.github module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.glance.html">salt.states.glance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.glusterfs.html">salt.states.glusterfs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.gnomedesktop.html">salt.states.gnomedesktop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.gpg.html">salt.states.gpg module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.grafana.html">salt.states.grafana</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.grafana_dashboard.html">salt.states.grafana_dashboard module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.grafana_datasource.html">salt.states.grafana_datasource module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.grains.html">salt.states.grains</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.group.html">salt.states.group</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.hg.html">salt.states.hg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.hipchat.html">salt.states.hipchat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.host.html">salt.states.host</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.htpasswd.html">salt.states.htpasswd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.http.html">salt.states.http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ifttt.html">salt.states.ifttt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.incron.html">salt.states.incron</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.influxdb_database.html">salt.states.influxdb_database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.influxdb_user.html">salt.states.influxdb_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.infoblox.html">salt.states.infoblox module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ini_manage.html">salt.states.ini_manage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ipmi.html">salt.states.ipmi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ipset.html">salt.states.ipset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.iptables.html">salt.states.iptables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.jboss7.html">salt.states.jboss7</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.jenkins.html">salt.states.jenkins module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.keyboard.html">salt.states.keyboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.keystone.html">salt.states.keystone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.kmod.html">salt.states.kmod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.layman.html">salt.states.layman</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ldap.html">salt.states.ldap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.linux_acl.html">salt.states.linux_acl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.locale.html">salt.states.locale</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.lvm.html">salt.states.lvm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.lvs_server.html">salt.states.lvs_server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.lvs_service.html">salt.states.lvs_service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.lxc.html">salt.states.lxc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.makeconf.html">salt.states.makeconf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.marathon_app.html">salt.states.marathon_app module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mdadm.html">salt.states.mdadm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.memcached.html">salt.states.memcached</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.modjk.html">salt.states.modjk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.modjk_worker.html">salt.states.modjk_worker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.module.html">salt.states.module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mongodb_database.html">salt.states.mongodb_database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mongodb_user.html">salt.states.mongodb_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.monit.html">salt.states.monit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mount.html">salt.states.mount</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mysql_database.html">salt.states.mysql_database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mysql_grants.html">salt.states.mysql_grants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mysql_query.html">salt.states.mysql_query</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mysql_user.html">salt.states.mysql_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.network.html">salt.states.network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.nftables.html">salt.states.nftables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.npm.html">salt.states.npm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ntp.html">salt.states.ntp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.openstack_config.html">salt.states.openstack_config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.openvswitch_bridge.html">salt.states.openvswitch_bridge module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.openvswitch_port.html">salt.states.openvswitch_port module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pagerduty.html">salt.states.pagerduty</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pagerduty_escalation_policy.html">salt.states.pagerduty_escalation_policy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pagerduty_schedule.html">salt.states.pagerduty_schedule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pagerduty_service.html">salt.states.pagerduty_service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pagerduty_user.html">salt.states.pagerduty_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pecl.html">salt.states.pecl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pip_state.html">salt.states.pip_state</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pkg.html">salt.states.pkg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pkgbuild.html">salt.states.pkgbuild</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pkgng.html">salt.states.pkgng</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pkgrepo.html">salt.states.pkgrepo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.portage_config.html">salt.states.portage_config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ports.html">salt.states.ports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_cluster.html">salt.states.postgres_cluster module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_database.html">salt.states.postgres_database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_extension.html">salt.states.postgres_extension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_group.html">salt.states.postgres_group</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_initdb.html">salt.states.postgres_initdb</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_language.html">salt.states.postgres_language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_privileges.html">salt.states.postgres_privileges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_schema.html">salt.states.postgres_schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_tablespace.html">salt.states.postgres_tablespace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_user.html">salt.states.postgres_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.powerpath.html">salt.states.powerpath</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.process.html">salt.states.process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pushover.html">salt.states.pushover</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pyenv.html">salt.states.pyenv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pyrax_queues.html">salt.states.pyrax_queues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.quota.html">salt.states.quota</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rabbitmq_cluster.html">salt.states.rabbitmq_cluster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rabbitmq_plugin.html">salt.states.rabbitmq_plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rabbitmq_policy.html">salt.states.rabbitmq_policy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rabbitmq_user.html">salt.states.rabbitmq_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rabbitmq_vhost.html">salt.states.rabbitmq_vhost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rbenv.html">salt.states.rbenv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rdp.html">salt.states.rdp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.redismod.html">salt.states.redismod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.reg.html">salt.states.reg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rsync.html">salt.states.rsync</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rvm.html">salt.states.rvm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.salt_proxy.html">salt.states.salt_proxy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.saltmod.html">salt.states.saltmod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.schedule.html">salt.states.schedule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.selinux.html">salt.states.selinux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.serverdensity_device.html">salt.states.serverdensity_device</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.service.html">salt.states.service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.slack.html">salt.states.slack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.smartos.html">salt.states.smartos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.smtp.html">salt.states.smtp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.splunk.html">salt.states.splunk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.splunk_search.html">salt.states.splunk_search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.sqlite3.html">salt.states.sqlite3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ssh_auth.html">salt.states.ssh_auth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ssh_known_hosts.html">salt.states.ssh_known_hosts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.stateconf.html">salt.states.stateconf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.status.html">salt.states.status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.stormpath_account.html">salt.states.stormpath_account</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.supervisord.html">salt.states.supervisord</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.svn.html">salt.states.svn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.sysctl.html">salt.states.sysctl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.syslog_ng.html">salt.states.syslog_ng</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.sysrc.html">salt.states.sysrc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.telemetry_alert.html">salt.states.telemetry_alert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.test.html">salt.states.test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.timezone.html">salt.states.timezone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.tls.html">salt.states.tls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.tomcat.html">salt.states.tomcat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.trafficserver.html">salt.states.trafficserver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.tuned.html">salt.states.tuned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.uptime.html">salt.states.uptime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.user.html">salt.states.user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.vbox_guest.html">salt.states.vbox_guest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.victorops.html">salt.states.victorops</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.virt.html">salt.states.virt module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.virtualenv_mod.html">salt.states.virtualenv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_dacl.html">salt.states.win_dacl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_dns_client.html">salt.states.win_dns_client</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_firewall.html">防火墙文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_network.html">salt.states.win_network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_path.html">salt.states.win_path</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_powercfg.html">salt.states.win_powercfg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_servermanager.html">salt.states.win_servermanager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_system.html">salt.states.win_system</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_update.html">salt.states.win_update</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.winrepo.html">salt.states.winrepo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.x509.html">salt.states.x509</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.xmpp.html">salt.states.xmpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zabbix_host.html">salt.states.zabbix_host module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zabbix_hostgroup.html">salt.states.zabbix_hostgroup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zabbix_user.html">salt.states.zabbix_user module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zabbix_usergroup.html">salt.states.zabbix_usergroup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zcbuildout.html">salt.states.zcbuildout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zenoss.html">salt.states.zenoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zk_concurrency.html">salt.states.zk_concurrency</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zfs.html">salt.states.zfs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zpool.html">salt.states.zpool</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../tops/all/index.html">master内置顶级模块的全部列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../wheel/all/index.html">Full list of builtin wheel modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

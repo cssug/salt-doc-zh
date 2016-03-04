@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt Cloud 0.6.0 Release Notes</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="salt-cloud-0-6-0-release-notes">
+<h1>Salt Cloud 0.6.0 Release Notes<a class="headerlink" href="#salt-cloud-0-6-0-release-notes" title="永久链接至标题">¶</a></h1>
+<p>The new Salt project, Salt Cloud, is introduced with version 0.6.0. Salt Cloud
+has been developed to ease the automation and integration of Salt with public
+cloud providers by allowing cloud vms to be cleanly defined, created, and
+automatically hooked back into a Salt Master.</p>
+<p>While Salt Cloud is primarily made to build cloud vms to tie into a Salt Mater,
+it has been created in a generic way, so that it can be used to provision and
+hook systems of any type via the familiar Salt modules system.</p>
+<p>This release supports three public cloud providers (all via libcloud),
+Amazon EC2, Rackspace Cloud and Linode.</p>
+<div class="section" id="documentation">
+<h2>文档<a class="headerlink" href="#documentation" title="永久链接至标题">¶</a></h2>
+<p>The documentation for Salt Cloud can be found on Read the Docs:
+<a class="reference external" href="http://salt-cloud.readthedocs.org">http://salt-cloud.readthedocs.org</a></p>
+</div>
+<div class="section" id="download">
+<h2>下载<a class="headerlink" href="#download" title="永久链接至标题">¶</a></h2>
+<p>Salt Cloud can be downloaded and install via pypi or github:</p>
+<p><a class="reference external" href="https://pypi.python.org/packages/source/s/salt-cloud/salt-cloud-0.6.0.tar.gz">https://pypi.python.org/packages/source/s/salt-cloud/salt-cloud-0.6.0.tar.gz</a></p>
+<p><a class="reference external" href="https://cloud.github.com/downloads/saltstack/salt-cloud/salt-cloud-0.6.0.tar.gz">https://cloud.github.com/downloads/saltstack/salt-cloud/salt-cloud-0.6.0.tar.gz</a></p>
+<p>Packages are not yet available, Salt Cloud requires three dependencies, the
+salt libs, libcloud, and paramiko.</p>
+</div>
+<div class="section" id="extensible-with-cloud-modules">
+<h2>Extensible With Cloud Modules<a class="headerlink" href="#extensible-with-cloud-modules" title="永久链接至标题">¶</a></h2>
+<p>The Salt loader system has been employed to make adding support for additional
+public cloud systems just as modular and simple as adding support for new
+package managers in Salt.</p>
+<p>Adding support for a new cloud provider is extremely simple, just add a cloud
+module and everything cleanly links together.</p>
+</div>
+<div class="section" id="define-vm-profiles">
+<h2>Define VM Profiles<a class="headerlink" href="#define-vm-profiles" title="永久链接至标题">¶</a></h2>
+<p>The way a vms is created is done via profiles. Profiles are used to define what
+properties a vm will have, the cloud provider, the size and the image.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">centos_rackspace</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">rackspace</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">CentOS 6.2</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1024 server</span>
+  <span class="l l-Scalar l-Scalar-Plain">os</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">RHEL6</span>
+  <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">grains</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">role</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">webserver</span>
+    <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt.example.com</span>
+</pre></div>
+</div>
+<p>This profile will be used to create vms on Rackspace cloud with the CentOS 6.2
+image and the Rackspace 1024 vm size. Particulars of the minion config can
+also be specified.</p>
+<p>Individual vms can be created from profiles:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-cloud -p centos_rackspace web1</span>
+</pre></div>
+</div>
+<p>This command creates a vms with the name web1 on the Rackspace cloud and
+connects the new vm to a Salt Master located at salt.example.com. The new VM
+has the Salt id of web1.</p>
+</div>
+<div class="section" id="define-maps-of-profiles">
+<h2>Define Maps of Profiles<a class="headerlink" href="#define-maps-of-profiles" title="永久链接至标题">¶</a></h2>
+<p>When it is desired to have a predefined mapping of many, or a specific group
+of vms then a cloud map can be defined:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">centos_rackspace</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">web1</span>
+  <span class="l l-Scalar l-Scalar-Plain">web2</span>
+  <span class="l l-Scalar l-Scalar-Plain">web3</span>
+  <span class="l l-Scalar l-Scalar-Plain">web4</span>
+<span class="l l-Scalar l-Scalar-Plain">centos_linode</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">redis1</span>
+  <span class="l l-Scalar l-Scalar-Plain">riak1</span>
+  <span class="l l-Scalar l-Scalar-Plain">riak2</span>
+  <span class="l l-Scalar l-Scalar-Plain">riak3</span>
+<span class="l l-Scalar l-Scalar-Plain">ubuntu_ec2</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">dev1</span>
+  <span class="l l-Scalar l-Scalar-Plain">dev2</span>
+  <span class="l l-Scalar l-Scalar-Plain">cassandra1</span>
+  <span class="l l-Scalar l-Scalar-Plain">cassandra2</span>
+  <span class="l l-Scalar l-Scalar-Plain">cassandra3</span>
+</pre></div>
+</div>
+<p>This map file will create vms named web 1-4 using the centos_rackspace profile
+on rackspace, the redis and riak vms on linode and the dev and Cassandra vms on
+ec2. It can be run with salt-cloud:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-cloud -m mapfile</span>
+</pre></div>
+</div>
+<p>When creating more than one vm the -P option can be passed, to make the vms
+provision in parallel, greatly speeding up large scale expansions of vms.</p>
+</div>
+</div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

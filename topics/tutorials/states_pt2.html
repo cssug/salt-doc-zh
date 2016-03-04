@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>States tutorial, part 2 - More Complex States, Requisites</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Configuration Management" href="../states/index.html">
+        <link rel="next" title="States tutorial, part 3 - Templating, Includes, Extends" href="states_pt3.html">
+        <link rel="prev" title="States教程，第1部分 - 基础用法" href="states_pt1.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="states_pt1.html" title="States教程，第1部分 - 基础用法">上一页</a>
+            
+        </li>
+        <li>
+            <a href="states_pt3.html" title="States tutorial, part 3 - Templating, Includes, Extends">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="states-tutorial-part-2-more-complex-states-requisites">
+<h1>States tutorial, part 2 - More Complex States, Requisites<a class="headerlink" href="#states-tutorial-part-2-more-complex-states-requisites" title="永久链接至标题">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">本教程建立在 :doc:<a href="#id1"><span class="problematic" id="id2">`</span></a>part 1 &lt;states_pt1&gt;`之上，建议从第一章开始阅读。</p>
+</div>
+<p>在 <code class="xref doc docutils literal"><span class="pre">last</span> <span class="pre">part</span> <span class="pre">&lt;states_pt1&gt;`我们简单的介绍了基本的安装一个软件包，现在我们将改变我们的``webserver.sls`</span></code> 设置他的依赖和或则其他更多的salt 状态。</p>
+<div class="section" id="call-multiple-states">
+<h2>调用多状态<a class="headerlink" href="#call-multiple-states" title="永久链接至标题">¶</a></h2>
+<p>You can specify multiple <a class="reference internal" href="../../ref/states/highstate.html#state-declaration"><span>State declaration</span></a> under an
+<a class="reference internal" href="../../ref/states/highstate.html#id-declaration"><span>ID declaration</span></a>. For example, a quick modification to our
+<code class="docutils literal"><span class="pre">webserver.sls</span></code> to also start Apache if it is not running:</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">apache</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+<span class="hll">    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+</span><span class="hll">      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">apache</span>
+</span></pre></div>
+</td></tr></table></div>
+<p>尝试先关闭正在运行的apache服务 然后运行``state.highstate`` 仔细看看的输出.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">For those running RedhatOS derivatives (Centos, AWS), you will want to specify the
+service name to be httpd. More on state service here, <a class="reference internal" href="../../ref/states/all/salt.states.service.html#module-salt.states.service" title="salt.states.service"><code class="xref py py-mod docutils literal"><span class="pre">service</span> <span class="pre">state</span></code></a>.  With the example above, just add &quot;- name: httpd&quot;
+above the require line and with the same spacing.</p>
+</div>
+</div>
+<div class="section" id="require-other-states">
+<h2>依赖其他的状态<a class="headerlink" href="#require-other-states" title="永久链接至标题">¶</a></h2>
+<p>我们现在只是进行一个apache应用的安装工作，所以接下来我们将添加一个html 文件来定制我们的web 服务器。我们不想直到使用salt 安装和保持运行的时还没有一个Html文件我们的webserver下面，这不是一个完整的web服务器， 我们可以在 <a href="#id1"><span class="problematic" id="id2">``</span></a>webserver/init.sls``的底部添加下面的内容：</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">apache</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">apache</span>
+
+<span class="hll"><span class="l l-Scalar l-Scalar-Plain">/var/www/index.html</span><span class="p p-Indicator">:</span>                        <span class="c1"># ID declaration</span>
+</span>  <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>                                     <span class="c1"># state declaration</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">managed</span>                               <span class="c1"># function</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://webserver/index.html</span>   <span class="c1"># function arg</span>
+<span class="hll">    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>                              <span class="c1"># requisite declaration</span>
+</span>      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">apache</span>                         <span class="c1"># requisite reference</span>
+</pre></div>
+</td></tr></table></div>
+<p><strong>line 7</strong> is the <a class="reference internal" href="../../ref/states/highstate.html#id-declaration"><span>ID declaration</span></a>. In this example it is the location we
+want to install our custom HTML file. (<strong>Note:</strong> the default location that
+Apache serves may differ from the above on your OS or distro. <code class="docutils literal"><span class="pre">/srv/www</span></code>
+could also be a likely place to look.)</p>
+<p><strong>Line 8</strong> the <a class="reference internal" href="../../ref/states/highstate.html#state-declaration"><span>State declaration</span></a>. This example uses the Salt <a class="reference internal" href="../../ref/states/all/salt.states.file.html#module-salt.states.file" title="salt.states.file"><code class="xref py py-mod docutils literal"><span class="pre">file</span>
+<span class="pre">state</span></code></a>.</p>
+<p><strong>Line 9</strong> is the <a class="reference internal" href="../../ref/states/highstate.html#function-declaration"><span>Function declaration</span></a>. The <a class="reference internal" href="../../ref/states/all/salt.states.file.html#salt.states.file.managed" title="salt.states.file.managed"><code class="xref py py-func docutils literal"><span class="pre">managed</span> <span class="pre">function</span></code></a> will download a file from the master and install it
+in the location specified.</p>
+<p><strong>Line 10</strong> is a <a class="reference internal" href="../../ref/states/highstate.html#function-arg-declaration"><span>Function arg declaration</span></a> which, in this example, passes
+the <code class="docutils literal"><span class="pre">source</span></code> argument to the <a class="reference internal" href="../../ref/states/all/salt.states.file.html#salt.states.file.managed" title="salt.states.file.managed"><code class="xref py py-func docutils literal"><span class="pre">managed</span> <span class="pre">function</span></code></a>.</p>
+<p><strong>Line 11</strong> is a <a class="reference internal" href="../../ref/states/highstate.html#requisite-declaration"><span>Requisite declaration</span></a>.</p>
+<p><strong>Line 12</strong> is a <a class="reference internal" href="../../ref/states/highstate.html#requisite-reference"><span>Requisite reference</span></a> which refers to a state and an ID.
+In this example, it is referring to the <code class="docutils literal"><span class="pre">ID</span> <span class="pre">declaration</span></code> from our example in
+<a class="reference internal" href="states_pt1.html"><em>part 1</em></a>. This declaration tells Salt not to install the HTML
+file until Apache is installed.</p>
+<p>接下来我们来创建``index.html``这个文件并保存到``webserver``  目录里面：</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Salt rocks<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>This file brought to you by Salt<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<p>最后，我们再次运行  <a class="reference internal" href="../../ref/modules/all/salt.modules.state.html#salt.modules.state.highstate" title="salt.modules.state.highstate"><code class="xref py py-func docutils literal"><span class="pre">state.highstate</span></code></a> minion 将接受并运行highstate 通过master的文件服务器来安装我们的html文件。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> state.highstate
+</pre></div>
+</div>
+<p>最后我们看到apache 服务器运行着我们自定义的html。</p>
+<div class="admonition-require-vs-watch admonition">
+<p class="first admonition-title"><code class="docutils literal"><span class="pre">require</span></code> VS <code class="docutils literal"><span class="pre">watch</span></code></p>
+<p>There are two <a class="reference internal" href="../../ref/states/highstate.html#requisite-declaration"><span>Requisite declaration</span></a>, “require”, and “watch”. Not
+every state supports “watch”. The <a class="reference internal" href="../../ref/states/all/salt.states.service.html#module-salt.states.service" title="salt.states.service"><code class="xref py py-mod docutils literal"><span class="pre">service</span> <span class="pre">state</span></code></a> does support “watch” and will restart a service
+based on the watch condition.</p>
+<p>例如，如果你想使用**Salt**创建一个虚拟主机配置文件并希望当文件发生改变时重启apache web服务 ，你可以我们之前的apache 配置 ，示例如下：</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="hll"><span class="l l-Scalar l-Scalar-Plain">/etc/httpd/extra/httpd-vhosts.conf</span><span class="p p-Indicator">:</span>
+</span><span class="hll">  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+</span><span class="hll">    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://webserver/httpd-vhosts.conf</span>
+</span><span class="hll">
+</span><span class="l l-Scalar l-Scalar-Plain">apache</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">watch</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/httpd/extra/httpd-vhosts.conf</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+<span class="hll">      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">apache</span>
+</span></pre></div>
+</div>
+<p class="last">If the pkg and service names differ on your OS or distro of choice you can
+specify each one separately using a <a class="reference internal" href="../../ref/states/highstate.html#name-declaration"><span>Name declaration</span></a> which explained
+in <a class="reference internal" href="states_pt3.html"><em>Part 3</em></a>.</p>
+</div>
+</div>
+<div class="section" id="next-steps">
+<h2>下一章<a class="headerlink" href="#next-steps" title="永久链接至标题">¶</a></h2>
+<p>In <a class="reference internal" href="states_pt3.html"><em>part 3</em></a> we will discuss how to use includes, extends, and
+templating to make a more complete State Tree configuration.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="states_pt1.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="States教程，第1部分 - 基础用法" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="states_pt3.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="States tutorial, part 3 - Templating, Includes, Extends" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../states/index.html">Configuration Management</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="starting_states.html">我们如何使用Salt States？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="states_pt1.html">States教程，第1部分 - 基础用法</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">States tutorial, part 2 - More Complex States, Requisites</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#call-multiple-states">调用多状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#require-other-states">依赖其他的状态</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#next-steps">下一章</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="states_pt3.html">States tutorial, part 3 - Templating, Includes, Extends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="states_pt4.html">States tutorial, part 4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/states/index.html">State System Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

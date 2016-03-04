@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>安装教程</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="next" title="Arch Linux" href="arch.html">
+        <link rel="prev" title="Salt in 10 Minutes" href="../tutorials/walkthrough.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../tutorials/walkthrough.html" title="Salt in 10 Minutes">上一页</a>
+            
+        </li>
+        <li>
+            <a href="arch.html" title="Arch Linux">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="installation">
+<span id="id1"></span><h1>安装教程<a class="headerlink" href="#installation" title="永久链接至标题">¶</a></h1>
+<p>This section contains instructions to install Salt. If you are setting up your
+environment for the first time, you should install a Salt master on
+a dedicated management server or VM, and then install a Salt minion on each
+system that you want to manage using Salt. For now you don't need to worry
+about your <a class="reference internal" href="../topology/index.html#architecture-overview"><span>architecture</span></a>, you can easily add
+components and modify your configuration later without needing to reinstall
+anything.</p>
+<p>The general installation process is as follows:</p>
+<ol class="arabic simple">
+<li>Install a Salt master using the instructions for your platform or by running
+the Salt bootstrap script. If you use the bootstrap script, be sure to
+include the <code class="docutils literal"><span class="pre">-M</span></code> option to install the Salt master.</li>
+<li>Make sure that your Salt minions can <a class="reference internal" href="../tutorials/walkthrough.html#master-dns"><span>find the Salt master</span></a>.</li>
+<li>Install the Salt minion on each system that you want to manage.</li>
+<li>Accept the Salt <a class="reference internal" href="../tutorials/walkthrough.html#using-salt-key"><span>minion keys</span></a> after the Salt minion
+connects.</li>
+</ol>
+<p>After this, you should be able to run a simple command and receive returns from
+all connected Salt minions.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> test.ping
+</pre></div>
+</div>
+<div class="section" id="quick-install">
+<h2>快速安装<a class="headerlink" href="#quick-install" title="永久链接至标题">¶</a></h2>
+<p>On most distributions, you can set up a <strong>Salt Minion</strong> with the
+<a class="reference internal" href="../tutorials/salt_bootstrap.html#salt-bootstrap"><span>Salt bootstrap</span></a>.</p>
+</div>
+<div class="section" id="platform-specific-installation-instructions">
+<h2>对应平台的安装教程<a class="headerlink" href="#platform-specific-installation-instructions" title="永久链接至标题">¶</a></h2>
+<p>这些指引将带你了解在给定的平台中如何安装Salt.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="arch.html">Arch Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="debian.html">Debian GNU/Linux / Raspbian</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fedora.html">Fedora</a></li>
+<li class="toctree-l1"><a class="reference internal" href="freebsd.html">FreeBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gentoo.html">Gentoo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="openbsd.html">OpenBSD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="osx.html">OS X</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rhel.html">RHEL / CentOS / Scientific Linux / Amazon Linux / Oracle Linux</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solaris.html">Solaris</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ubuntu.html">Ubuntu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="windows.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="suse.html">SUSE</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="initial-configuration">
+<h2>Initial Configuration<a class="headerlink" href="#initial-configuration" title="永久链接至标题">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/configuration/index.html">配置Salt</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="additional-installation-guides">
+<h2>Additional Installation Guides<a class="headerlink" href="#additional-installation-guides" title="永久链接至标题">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/salt_bootstrap.html">Salt Bootstrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/firewall.html">为Salt开启防火墙配置</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/firewall.html#whitelist-communication-to-master">Master端白名单</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/preseed_key.html">Preseed Minion with Accepted Key</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/walkthrough_macosx.html">The MacOS X (Maverick) Developer Step By Step Guide To Salt Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/rooted.html">running salt as normal user tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/standalone_minion.html">Standalone Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/quickstart.html">Salt无Master快速入门</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="dependencies">
+<h2>依赖<a class="headerlink" href="#dependencies" title="永久链接至标题">¶</a></h2>
+<p>Salt可以运行在类Unix平台，安装时需要解决如下依赖:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://python.org/download/">Python 2.6</a> &gt;= 2.6 &lt;3.0</li>
+<li><p class="first"><a class="reference external" href="https://pypi.python.org/pypi/msgpack-python/">msgpack-python</a> - 高性能的消息交换格式</p>
+</li>
+<li><a class="reference external" href="http://pyyaml.org/">YAML</a> - Python YAML bindings</li>
+<li><p class="first"><a class="reference external" href="http://jinja.pocoo.org/">Jinja2</a> - 解析Salt States (在master配置文件中配置)</p>
+</li>
+<li><a class="reference external" href="https://pypi.python.org/pypi/MarkupSafe">MarkupSafe</a> - Implements a XML/HTML/XHTML Markup safe string for Python</li>
+<li><p class="first"><a class="reference external" href="http://libcloud.apache.org">apache-libcloud</a> - 与大量的主流云服务提供者进行交互时统一API的Python类</p>
+</li>
+<li><a class="reference external" href="http://docs.python-requests.org/en/latest">Requests</a> - HTTP library</li>
+<li><a class="reference external" href="http://www.tornadoweb.org/en/stable/">Tornado</a> - Web framework and asynchronous networking library</li>
+<li><a class="reference external" href="https://github.com/agronholm/pythonfutures">futures</a> - Backport of the concurrent.futures package from Python 3.2</li>
+</ul>
+<p>Depending on the chosen Salt transport, <a class="reference external" href="http://zeromq.org/">ZeroMQ</a> or <a class="reference external" href="https://github.com/saltstack/raet">RAET</a>, dependencies
+vary:</p>
+<ul class="simple">
+<li>ZeroMQ:<ul>
+<li><a class="reference external" href="http://zeromq.org/">ZeroMQ</a> &gt;= 3.2.0</li>
+<li><a class="reference external" href="https://github.com/zeromq/pyzmq">pyzmq</a> &gt;= 2.2.0 - ZeroMQ Python bindings</li>
+<li><p class="first"><a class="reference external" href="https://www.dlitz.net/software/pycrypto/">PyCrypto</a> - Python密码工具包</p>
+</li>
+</ul>
+</li>
+<li>RAET:<ul>
+<li><a class="reference external" href="https://github.com/saltstack/libnacl">libnacl</a> - Python bindings to <a class="reference external" href="https://github.com/jedisct1/libsodium">libsodium</a></li>
+<li><a class="reference external" href="https://github.com/ioflo/ioflo">ioflo</a> - The flo programming interface raet and salt-raet is built on</li>
+<li><a class="reference external" href="https://github.com/saltstack/raet">RAET</a> - The worlds most awesome UDP protocol</li>
+</ul>
+</li>
+</ul>
+<p>Salt defaults to the <a class="reference external" href="http://zeromq.org/">ZeroMQ</a> transport, and the choice can be made at install
+time, for example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>python setup.py --salt-transport<span class="o">=</span>raet install
+</pre></div>
+</div>
+<p>This way, only the required dependencies are pulled by the setup script if need
+be.</p>
+<p>If installing using pip, the <code class="docutils literal"><span class="pre">--salt-transport</span></code> install option can be
+provided like:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pip install --install-option<span class="o">=</span><span class="s2">&quot;--salt-transport=raet&quot;</span> salt
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Salt does not bundle dependencies that are typically distributed as part of
+the base OS. If you have unmet dependencies and are using a custom or
+minimal installation, you might need to install some additional packages
+from your OS vendor.</p>
+</div>
+</div>
+<div class="section" id="optional-dependencies">
+<h2>可选依赖<a class="headerlink" href="#optional-dependencies" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><p class="first"><a class="reference external" href="http://www.makotemplates.org/">mako</a> - 一个可选的Salt States解析器(在master配置文件中配置)</p>
+</li>
+<li><p class="first">gcc - 动态 <a class="reference external" href="http://cython.org/">Cython</a> 模块编译器</p>
+</li>
+</ul>
+</div>
+<div class="section" id="upgrading-salt">
+<h2>升级Salt<a class="headerlink" href="#upgrading-salt" title="永久链接至标题">¶</a></h2>
+<p>当升级Salt的时候，master(s)应该首先升级。masters向后兼容，minions运行版本比masters版本新是不能保证运行正常的。</p>
+<p>只要可能，新masters向后兼容旧minions的特性就会被保留下来。一般来说，唯一例外的情况是有安全漏洞的情况下。</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参见</p>
+<p class="last"><a class="reference internal" href="../development/hacking.html"><em>Installing Salt for development</em></a>  并且给项目做贡献。</p>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../tutorials/walkthrough.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt in 10 Minutes" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="arch.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Arch Linux" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">安装教程</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quick-install">快速安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#platform-specific-installation-instructions">对应平台的安装教程</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="arch.html">Arch Linux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="debian.html">Debian GNU/Linux / Raspbian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fedora.html">Fedora</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freebsd.html">FreeBSD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gentoo.html">Gentoo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="openbsd.html">OpenBSD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="osx.html">OS X</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rhel.html">RHEL / CentOS / Scientific Linux / Amazon Linux / Oracle Linux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solaris.html">Solaris</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ubuntu.html">Ubuntu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="windows.html">Windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="suse.html">SUSE</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#initial-configuration">Initial Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ref/configuration/index.html">配置Salt</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-installation-guides">Additional Installation Guides</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/salt_bootstrap.html">Salt Bootstrap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/firewall.html">为Salt开启防火墙配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/firewall.html#whitelist-communication-to-master">Master端白名单</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/preseed_key.html">Preseed Minion with Accepted Key</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/walkthrough_macosx.html">The MacOS X (Maverick) Developer Step By Step Guide To Salt Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/rooted.html">running salt as normal user tutorial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/standalone_minion.html">Standalone Minion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tutorials/quickstart.html">Salt无Master快速入门</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies">依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optional-dependencies">可选依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#upgrading-salt">升级Salt</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

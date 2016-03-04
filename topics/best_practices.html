@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt Best Practices</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../_static/css/core.min.css">
+        <link rel="stylesheet" href="../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../index.html">
+        <link rel="up" title="Using Salt" href="using_salt.html">
+        <link rel="next" title="Remote Execution" href="execution/index.html">
+        <link rel="prev" title="常见问题" href="../faq.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../faq.html" title="常见问题">上一页</a>
+            
+        </li>
+        <li>
+            <a href="execution/index.html" title="Remote Execution">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="salt-best-practices">
+<span id="best-practices"></span><h1>Salt <span class="target" id="index-0"></span>Best Practices<a class="headerlink" href="#salt-best-practices" title="永久链接至标题">¶</a></h1>
+<p>Salt's extreme flexibility leads to many questions concerning the structure of
+configuration files.</p>
+<p>This document exists to clarify these points through examples and
+code.</p>
+<div class="section" id="general-rules">
+<h2>General rules<a class="headerlink" href="#general-rules" title="永久链接至标题">¶</a></h2>
+<ol class="arabic simple">
+<li>Modularity and clarity should be emphasized whenever possible.</li>
+<li>Create clear relations between pillars and states.</li>
+<li>Use variables when it makes sense but don't overuse them.</li>
+<li>Store sensitive data in pillar.</li>
+<li>Don't use grains for matching in your pillar top file for any sensitive
+pillars.</li>
+</ol>
+</div>
+<div class="section" id="structuring-states-and-formulas">
+<h2>Structuring States and Formulas<a class="headerlink" href="#structuring-states-and-formulas" title="永久链接至标题">¶</a></h2>
+<p>When structuring Salt States and Formulas it is important to begin with the
+directory structure. A proper directory structure clearly defines the
+functionality of each state to the user via visual inspection of the state's
+name.</p>
+<p>Reviewing the <a class="reference external" href="https://github.com/saltstack-formulas/mysql-formula">MySQL Salt Formula</a>
+it is clear to see the benefits to the end-user when reviewing a sample of the
+available states:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>/srv/salt/mysql/files/
+/srv/salt/mysql/client.sls
+/srv/salt/mysql/map.jinja
+/srv/salt/mysql/python.sls
+/srv/salt/mysql/server.sls
+</pre></div>
+</div>
+<p>This directory structure would lead to these states being referenced in a top
+file in the following way:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;web*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mysql.client</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mysql.python</span>
+  <span class="s">&#39;db*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mysql.server</span>
+</pre></div>
+</div>
+<p>This clear definition ensures that the user is properly informed of what each
+state will do.</p>
+<p>Another example comes from the <a class="reference external" href="https://github.com/saltstack-formulas/vim-formula">vim-formula</a>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>/srv/salt/vim/files/
+/srv/salt/vim/absent.sls
+/srv/salt/vim/init.sls
+/srv/salt/vim/map.jinja
+/srv/salt/vim/nerdtree.sls
+/srv/salt/vim/pyflakes.sls
+/srv/salt/vim/salt.sls
+</pre></div>
+</div>
+<p>Once again viewing how this would look in a top file:</p>
+<p>/srv/salt/top.sls:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;web*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">vim</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">vim.nerdtree</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">vim.pyflakes</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">vim.salt</span>
+  <span class="s">&#39;db*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">vim.absent</span>
+</pre></div>
+</div>
+<p>The usage of a clear top-level directory as well as properly named states
+reduces the overall complexity and leads a user to both understand what will
+be included at a glance and where it is located.</p>
+<p>In addition <a class="reference internal" href="development/conventions/formulas.html#conventions-formula"><span>Formulas</span></a> should
+be used as often as possible.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Formulas repositories on the saltstack-formulas GitHub organization should
+not be pointed to directly from systems that automatically fetch new
+updates such as GitFS or similar tooling. Instead formulas repositories
+should be forked on GitHub or cloned locally, where unintended, automatic
+changes will not take place.</p>
+</div>
+</div>
+<div class="section" id="structuring-pillar-files">
+<h2>Structuring Pillar Files<a class="headerlink" href="#structuring-pillar-files" title="永久链接至标题">¶</a></h2>
+<p><a class="reference internal" href="pillar/index.html#pillar"><span>Pillars</span></a> are used to store
+secure and insecure data pertaining to minions. When designing the structure
+of the <code class="docutils literal"><span class="pre">/srv/pillar</span></code> directory, the pillars contained within
+should once again be focused on clear and concise data which users can easily
+review, modify, and understand.</p>
+<p>The <code class="docutils literal"><span class="pre">/srv/pillar/</span></code> directory is primarily controlled by <code class="docutils literal"><span class="pre">top.sls</span></code>. It
+should be noted that the pillar <code class="docutils literal"><span class="pre">top.sls</span></code> is not used as a location to
+declare variables and their values. The <code class="docutils literal"><span class="pre">top.sls</span></code> is used as a way to
+include other pillar files and organize the way they are matched based on
+environments or grains.</p>
+<p>An example <code class="docutils literal"><span class="pre">top.sls</span></code> may be as simple as the following:</p>
+<p>/srv/pillar/top.sls:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">packages</span>
+</pre></div>
+</div>
+<p>Any number of matchers can be added to the base environment. For example, here
+is an expanded version of the Pillar top file stated above:</p>
+<p>/srv/pillar/top.sls:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">packages</span>
+  <span class="s">&#39;web*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">apache</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">vim</span>
+</pre></div>
+</div>
+<p>Or an even more complicated example, using a variety of matchers in numerous
+environments:</p>
+<p>/srv/pillar/top.sls:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">apache</span>
+<span class="l l-Scalar l-Scalar-Plain">dev</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;os:Debian&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">grain</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">vim</span>
+<span class="l l-Scalar l-Scalar-Plain">test</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;*</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">G@os:</span><span class="nv"> </span><span class="s">Debian&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">compound</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">emacs</span>
+</pre></div>
+</div>
+<p>It is clear to see through these examples how the top file provides users with
+power but when used incorrectly it can lead to confusing configurations. This
+is why it is important to understand that the top file for pillar is not used
+for variable definitions.</p>
+<p>Each SLS file within the <code class="docutils literal"><span class="pre">/srv/pillar/</span></code> directory should correspond to the
+states which it matches.</p>
+<p>This would mean that the <code class="docutils literal"><span class="pre">apache</span></code> pillar file should contain data relevant to
+Apache. Structuring files in this way once again ensures modularity, and
+creates a consistent understanding throughout our Salt environment. Users can
+expect that pillar variables found in an Apache state will live inside of an
+Apache pillar:</p>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/apache.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">apache</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">lookup</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">httpd</span>
+    <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">tmpl</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/httpd/httpd.conf</span>
+</pre></div>
+</div>
+<p>While this pillar file is simple, it shows how a pillar file explicitly
+relates to the state it is associated with.</p>
+</div>
+<div class="section" id="variable-flexibility">
+<h2>Variable Flexibility<a class="headerlink" href="#variable-flexibility" title="永久链接至标题">¶</a></h2>
+<p>Salt allows users to define variables in SLS files. When creating a state
+variables should provide users with as much flexibility as possible. This
+means that variables should be clearly defined and easy to manipulate, and
+that sane defaults should exist in the event a variable is not properly
+defined. Looking at several examples shows how these different items can
+lead to extensive flexibility.</p>
+<p>Although it is possible to set variables locally, this is generally not
+preferred:</p>
+<p><code class="docutils literal"><span class="pre">/srv/salt/apache/conf.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% set name = &#39;httpd&#39; %}
+{% set tmpl = &#39;salt://apache/files/httpd.conf&#39; %}
+
+include:
+  - apache
+
+apache_conf:
+  file.managed:
+    - name: {{ name }}
+    - source: {{ tmpl }}
+    - template: jinja
+    - user: root
+    - watch_in:
+      - service: apache
+</pre></div>
+</div>
+<p>When generating this information it can be easily transitioned to the pillar
+where data can be overwritten, modified, and applied to multiple states, or
+locations within a single state:</p>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/apache.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">apache</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">lookup</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">httpd</span>
+    <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">tmpl</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://apache/files/httpd.conf</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/salt/apache/conf.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% from &quot;apache/map.jinja&quot; import apache with context %}
+
+include:
+  - apache
+
+apache_conf:
+  file.managed:
+    - name: {{ salt[&#39;pillar.get&#39;](&#39;apache:lookup:name&#39;) }}
+    - source: {{ salt[&#39;pillar.get&#39;](&#39;apache:lookup:config:tmpl&#39;) }}
+    - template: jinja
+    - user: root
+    - watch_in:
+      - service: apache
+</pre></div>
+</div>
+<p>This flexibility provides users with a centralized location to modify
+variables, which is extremely important as an environment grows.</p>
+</div>
+<div class="section" id="modularity-within-states">
+<h2>Modularity Within States<a class="headerlink" href="#modularity-within-states" title="永久链接至标题">¶</a></h2>
+<p>Ensuring that states are modular is one of the key concepts to understand
+within Salt. When creating a state a user must consider how many times the
+state could be re-used, and what it relies on to operate. Below are several
+examples which will iteratively explain how a user can go from a state which
+is not very modular to one that is:</p>
+<p><code class="docutils literal"><span class="pre">/srv/salt/apache/init.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">httpd</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">enable</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+
+<span class="l l-Scalar l-Scalar-Plain">/etc/httpd/httpd.conf</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://apache/files/httpd.conf</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">jinja</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">watch_in</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">service</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">httpd</span>
+</pre></div>
+</div>
+<p>The example above is probably the worst-case scenario when writing a state.
+There is a clear lack of focus by naming both the pkg/service, and managed
+file directly as the state ID. This would lead to changing multiple requires
+within this state, as well as others that may depend upon the state.</p>
+<p>Imagine if a require was used for the <code class="docutils literal"><span class="pre">httpd</span></code> package in another state, and
+then suddenly it's a custom package. Now changes need to be made in multiple
+locations which increases the complexity and leads to a more error prone
+configuration.</p>
+<p>There is also the issue of having the configuration file located in the init,
+as a user would be unable to simply install the service and use the default
+conf file.</p>
+<p>Our second revision begins to address the referencing by using <code class="docutils literal"><span class="pre">-</span> <span class="pre">name</span></code>, as
+opposed to direct ID references:</p>
+<p><code class="docutils literal"><span class="pre">/srv/salt/apache/init.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">apache</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">httpd</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">httpd</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">enable</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+
+<span class="l l-Scalar l-Scalar-Plain">apache_conf</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/httpd/httpd.conf</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://apache/files/httpd.conf</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">jinja</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">watch_in</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">service</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">apache</span>
+</pre></div>
+</div>
+<p>The above init file is better than our original, yet it has several issues
+which lead to a lack of modularity. The first of these problems is the usage
+of static values for items such as the name of the service, the name of the
+managed file, and the source of the managed file. When these items are hard
+coded they become difficult to modify and the opportunity to make mistakes
+arises. It also leads to multiple edits that need to occur when changing
+these items (imagine if there were dozens of these occurrences throughout the
+state!). There is also still the concern of the configuration file data living
+in the same state as the service and package.</p>
+<p>In the next example steps will be taken to begin addressing these issues.
+Starting with the addition of a map.jinja file (as noted in the
+<a class="reference internal" href="development/conventions/formulas.html#conventions-formula"><span>Formula documentation</span></a>), and
+modification of static values:</p>
+<p><code class="docutils literal"><span class="pre">/srv/salt/apache/map.jinja</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% set apache = salt[&#39;grains.filter_by&#39;]({
+    &#39;Debian&#39;: {
+        &#39;server&#39;: &#39;apache2&#39;,
+        &#39;service&#39;: &#39;apache2&#39;,
+        &#39;conf&#39;: &#39;/etc/apache2/apache.conf&#39;,
+    },
+    &#39;RedHat&#39;: {
+        &#39;server&#39;: &#39;httpd&#39;,
+        &#39;service&#39;: &#39;httpd&#39;,
+        &#39;conf&#39;: &#39;/etc/httpd/httpd.conf&#39;,
+    },
+}, merge=salt[&#39;pillar.get&#39;](&#39;apache:lookup&#39;)) %}
+</pre></div>
+</div>
+<p>/srv/pillar/apache.sls:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">apache</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">lookup</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">tmpl</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://apache/files/httpd.conf</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/salt/apache/init.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% from &quot;apache/map.jinja&quot; import apache with context %}
+
+apache:
+  pkg.installed:
+    - name: {{ apache.server }}
+  service.running:
+    - name: {{ apache.service }}
+    - enable: True
+
+apache_conf:
+  file.managed:
+    - name: {{ apache.conf }}
+    - source: {{ salt[&#39;pillar.get&#39;](&#39;apache:lookup:config:tmpl&#39;) }}
+    - template: jinja
+    - user: root
+    - watch_in:
+      - service: apache
+</pre></div>
+</div>
+<p>The changes to this state now allow us to easily identify the location of the
+variables, as well as ensuring they are flexible and easy to modify.
+While this takes another step in the right direction, it is not yet complete.
+Suppose the user did not want to use the provided conf file, or even their own
+configuration file, but the default apache conf. With the current state setup
+this is not possible. To attain this level of modularity this state will need
+to be broken into two states.</p>
+<p><code class="docutils literal"><span class="pre">/srv/salt/apache/map.jinja</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% set apache = salt[&#39;grains.filter_by&#39;]({
+    &#39;Debian&#39;: {
+        &#39;server&#39;: &#39;apache2&#39;,
+        &#39;service&#39;: &#39;apache2&#39;,
+        &#39;conf&#39;: &#39;/etc/apache2/apache.conf&#39;,
+    },
+    &#39;RedHat&#39;: {
+        &#39;server&#39;: &#39;httpd&#39;,
+        &#39;service&#39;: &#39;httpd&#39;,
+        &#39;conf&#39;: &#39;/etc/httpd/httpd.conf&#39;,
+    },
+}, merge=salt[&#39;pillar.get&#39;](&#39;apache:lookup&#39;)) %}
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/apache.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">apache</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">lookup</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">tmpl</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://apache/files/httpd.conf</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/salt/apache/init.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% from &quot;apache/map.jinja&quot; import apache with context %}
+
+apache:
+  pkg.installed:
+    - name: {{ apache.server }}
+  service.running:
+    - name: {{ apache.service }}
+    - enable: True
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/salt/apache/conf.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% from &quot;apache/map.jinja&quot; import apache with context %}
+
+include:
+  - apache
+
+apache_conf:
+  file.managed:
+    - name: {{ apache.conf }}
+    - source: {{ salt[&#39;pillar.get&#39;](&#39;apache:lookup:config:tmpl&#39;) }}
+    - template: jinja
+    - user: root
+    - watch_in:
+      - service: apache
+</pre></div>
+</div>
+<p>This new structure now allows users to choose whether they only wish to
+install the default Apache, or if they wish, overwrite the default package,
+service, configuration file location, or the configuration file itself. In
+addition to this the data has been broken between multiple files allowing for
+users to identify where they need to change the associated data.</p>
+</div>
+<div class="section" id="storing-secure-data">
+<h2>Storing Secure Data<a class="headerlink" href="#storing-secure-data" title="永久链接至标题">¶</a></h2>
+<p>Secure data refers to any information that you would not wish to share with
+anyone accessing a server. This could include data such as passwords,
+keys, or other information.</p>
+<p>As all data within a state is accessible by EVERY server that is connected
+it is important to store secure data within pillar. This will ensure that only
+those servers which require this secure data have access to it. In this
+example a use can go from an insecure configuration to one which is only
+accessible by the appropriate hosts:</p>
+<p><code class="docutils literal"><span class="pre">/srv/salt/mysql/testerdb.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">testdb</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">mysql_database.present</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">testerdb</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/salt/mysql/user.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">include</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mysql.testerdb</span>
+
+<span class="l l-Scalar l-Scalar-Plain">testdb_user</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">mysql_user.present</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">frank</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="s">&quot;test3rdb&quot;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">localhost</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">sls</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mysql.testerdb</span>
+</pre></div>
+</div>
+<p>Many users would review this state and see that the password is there in plain
+text, which is quite problematic. It results in several issues which may not
+be immediately visible.</p>
+<p>The first of these issues is clear to most users -- the password being visible
+in this state. This  means that any minion will have a copy of this, and
+therefore the password which is a major security concern as minions may not
+be locked down as tightly as the master server.</p>
+<p>The other issue that can be encountered is access by users on the master. If
+everyone has access to the states (or their repository), then they are able to
+review this password. Keeping your password data accessible by only a few
+users is critical for both security and peace of mind.</p>
+<p>There is also the issue of portability. When a state is configured this way
+it results in multiple changes needing to be made. This was discussed in the
+sections above but it is a critical idea to drive home. If states are not
+portable it may result in more work later!</p>
+<p>Fixing this issue is relatively simple, the content just needs to be moved to
+the associated pillar:</p>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/mysql.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">mysql</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">lookup</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">testerdb</span>
+    <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">test3rdb</span>
+    <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">frank</span>
+    <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">localhost</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/salt/mysql/testerdb.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">testdb</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">mysql_database.present</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{{</span> <span class="nv">salt</span><span class="p p-Indicator">[</span><span class="s">&#39;pillar.get&#39;</span><span class="p p-Indicator">]</span><span class="nv">(&#39;mysql</span><span class="p p-Indicator">:</span><span class="nv">lookup</span><span class="p p-Indicator">:</span><span class="nv">name&#39;)</span> <span class="p p-Indicator">}}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/salt/mysql/user.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">include</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mysql.testerdb</span>
+
+<span class="l l-Scalar l-Scalar-Plain">testdb_user</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">mysql_user.present</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{{</span> <span class="nv">salt</span><span class="p p-Indicator">[</span><span class="s">&#39;pillar.get&#39;</span><span class="p p-Indicator">]</span><span class="nv">(&#39;mysql</span><span class="p p-Indicator">:</span><span class="nv">lookup</span><span class="p p-Indicator">:</span><span class="nv">user&#39;)</span> <span class="p p-Indicator">}}</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{{</span> <span class="nv">salt</span><span class="p p-Indicator">[</span><span class="s">&#39;pillar.get&#39;</span><span class="p p-Indicator">]</span><span class="nv">(&#39;mysql</span><span class="p p-Indicator">:</span><span class="nv">lookup</span><span class="p p-Indicator">:</span><span class="nv">password&#39;)</span> <span class="p p-Indicator">}}</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{{</span> <span class="nv">salt</span><span class="p p-Indicator">[</span><span class="s">&#39;pillar.get&#39;</span><span class="p p-Indicator">]</span><span class="nv">(&#39;mysql</span><span class="p p-Indicator">:</span><span class="nv">lookup</span><span class="p p-Indicator">:</span><span class="nv">host&#39;)</span> <span class="p p-Indicator">}}</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">sls</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mysql.testerdb</span>
+</pre></div>
+</div>
+<p>Now that the database details have been moved to the associated pillar file,
+only machines which are targeted via pillar will have access to these details.
+Access to users who should not be able to review these details can also be
+prevented while ensuring that they are still able to write states which take
+advantage of this information.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../faq.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="常见问题" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="execution/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Remote Execution" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="using_salt.html">Using Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="grains/index.html">Grains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pillar/index.html">在Pillar中存储静态数据</a></li>
+<li class="toctree-l2"><a class="reference internal" href="targeting/index.html">Targeting Minions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mine/index.html">Salt Mine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ref/runners/index.html">Runners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="engines/index.html">Salt Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="yaml/index.html">了解YAML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting/index.html">解决问题</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../faq.html">常见问题</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Salt Best Practices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#general-rules">General rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#structuring-states-and-formulas">Structuring States and Formulas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#structuring-pillar-files">Structuring Pillar Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#variable-flexibility">Variable Flexibility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#modularity-within-states">Modularity Within States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#storing-secure-data">Storing Secure Data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../_static/js/core.min.js"></script>
+
+    <script src="../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>States tutorial, part 3 - Templating, Includes, Extends</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Configuration Management" href="../states/index.html">
+        <link rel="next" title="States tutorial, part 4" href="states_pt4.html">
+        <link rel="prev" title="States tutorial, part 2 - More Complex States, Requisites" href="states_pt2.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="states_pt2.html" title="States tutorial, part 2 - More Complex States, Requisites">上一页</a>
+            
+        </li>
+        <li>
+            <a href="states_pt4.html" title="States tutorial, part 4">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="states-tutorial-part-3-templating-includes-extends">
+<h1>States tutorial, part 3 - Templating, Includes, Extends<a class="headerlink" href="#states-tutorial-part-3-templating-includes-extends" title="永久链接至标题">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">提示： 本教程建立在:doc:<cite>part 1 &lt;states_pt1&gt;</cite> 和:doc:<a href="#id1"><span class="problematic" id="id2">`</span></a>part 2 &lt;states_pt2&gt;`之上，建议从它们开始阅读</p>
+</div>
+<p>这章教程我们将讨论更多 <a href="#id1"><span class="problematic" id="id2">``</span></a>sls``文件的扩展模板和配置技巧。</p>
+<div class="section" id="templating-sls-modules">
+<h2>模板SLS的模块<a class="headerlink" href="#templating-sls-modules" title="永久链接至标题">¶</a></h2>
+<p>SLS模板块可能需要编程的逻辑或则嵌套的执行。这是通过模块的模板，默认的模块模板系统使用的是`Jinja2`， 我们可以通过更改主配置的:conf_master:<a href="#id1"><span class="problematic" id="id2">`</span></a>renderer`值来改变这个。</p>
+<p>当初始化时所有的状态类型都是通过模板系统获得。使用模板系统只需要简单的添加一些模板标记。SLS模板与模板标记的一个例子，看起来像下面这样。</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">for</span> <span class="nv">usr</span> <span class="k">in</span> <span class="o">[</span><span class="s1">&#39;moe&#39;</span><span class="o">,</span><span class="s1">&#39;larry&#39;</span><span class="o">,</span><span class="s1">&#39;curly&#39;</span><span class="o">]</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{{</span> <span class="nv">usr</span> <span class="cp">}}</span><span class="x">:</span>
+<span class="x">  user.present</span>
+<span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+</div>
+<p>这个SLS模板文件一次性构造了如下的内容：</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">moe</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">user.present</span>
+<span class="l l-Scalar l-Scalar-Plain">larry</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">user.present</span>
+<span class="l l-Scalar l-Scalar-Plain">curly</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">user.present</span>
+</pre></div>
+</div>
+<p>这里有个更复杂点的例子：</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="x"># Comments in yaml start with a hash symbol.</span>
+<span class="x"># Since jinja rendering occurs before yaml parsing, if you want to include jinja</span>
+<span class="x"># in the comments you may need to escape them using &#39;jinja&#39; comments to prevent</span>
+<span class="x"># jinja from trying to render something which is not well-defined jinja.</span>
+<span class="x"># e.g.</span>
+<span class="x"># </span><span class="c">{# iterate over the Three Stooges using a {% for %}..{% endfor %} loop</span>
+<span class="c"># with the iterator variable {{ usr }} becoming the state ID. #}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">for</span> <span class="nv">usr</span> <span class="k">in</span> <span class="s1">&#39;moe&#39;</span><span class="o">,</span><span class="s1">&#39;larry&#39;</span><span class="o">,</span><span class="s1">&#39;curly&#39;</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{{</span> <span class="nv">usr</span> <span class="cp">}}</span><span class="x">:</span>
+<span class="x">  group:</span>
+<span class="x">    - present</span>
+<span class="x">  user:</span>
+<span class="x">    - present</span>
+<span class="x">    - gid_from_name: True</span>
+<span class="x">    - require:</span>
+<span class="x">      - group: </span><span class="cp">{{</span> <span class="nv">usr</span> <span class="cp">}}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-grains-in-sls-modules">
+<h2>使用grains模板<a class="headerlink" href="#using-grains-in-sls-modules" title="永久链接至标题">¶</a></h2>
+<p>很多时候一个state 在不同的系统上行为要不一样， <a class="reference internal" href="../targeting/grains.html"><em>Salt grains</em></a> 在模板文本中将可以被应用，<a href="#id1"><span class="problematic" id="id2">`</span></a>grains`可以被使用在模板内。</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="x">apache:</span>
+<span class="x">  pkg.installed:</span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">if</span> <span class="nv">grains</span><span class="o">[</span><span class="s1">&#39;os&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;RedHat&#39;</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    - name: httpd</span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">elif</span> <span class="nv">grains</span><span class="o">[</span><span class="s1">&#39;os&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;Ubuntu&#39;</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    - name: apache2</span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-environment-variables-in-sls-modules">
+<h2>Using Environment Variables in SLS modules<a class="headerlink" href="#using-environment-variables-in-sls-modules" title="永久链接至标题">¶</a></h2>
+<p>You can use <code class="docutils literal"><span class="pre">salt['environ.get']('VARNAME')</span></code> to use an environment
+variable in a Salt state.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nv">MYENVVAR</span><span class="o">=</span><span class="s2">&quot;world&quot;</span> salt-call state.template test.sls
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span> <span class="l l-Scalar l-Scalar-Plain">Create a file with contents from an environment variable</span><span class="p p-Indicator">:</span>
+<span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/hello</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">contents</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{{</span> <span class="nv">salt</span><span class="p p-Indicator">[</span><span class="s">&#39;environ.get&#39;</span><span class="p p-Indicator">]</span><span class="nv">(&#39;MYENVVAR&#39;)</span> <span class="p p-Indicator">}}</span>
+</pre></div>
+</div>
+<p>Error checking:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% set myenvvar = salt[&#39;environ.get&#39;](&#39;MYENVVAR&#39;) %}
+{% if myenvvar %}
+
+Create a file with contents from an environment variable:
+  file.managed:
+    - name: /tmp/hello
+    - contents: {{ salt[&#39;environ.get&#39;](&#39;MYENVVAR&#39;) }}
+
+{% else %}
+
+Fail - no environment passed in:
+  test:
+    A. fail_without_changes
+
+{% endif %}
+</pre></div>
+</div>
+</div>
+<div class="section" id="calling-salt-modules-from-templates">
+<h2>在模板中调用模块<a class="headerlink" href="#calling-salt-modules-from-templates" title="永久链接至标题">¶</a></h2>
+<p>所有的minion从模板系统中调用可用的模块。他们允许实时在目标机器上搜集数据。同时也允许运行简单shell命令在SLS模块中。</p>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a>salt:<a href="#id3"><span class="problematic" id="id4">``</span></a>一个可用的模块函数在salt模板中,就像下面这样。</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="x">moe:</span>
+<span class="x">  user.present:</span>
+<span class="x">    - gid: </span><span class="cp">{{</span> <span class="nv">salt</span><span class="o">[</span><span class="s1">&#39;file.group_to_gid&#39;</span><span class="o">](</span><span class="s1">&#39;some_group_that_exists&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+</div>
+<p>提示：在上面的例子运行中，<code class="docutils literal"><span class="pre">some_group_that_exists</span></code> 必须在状态文件模板引擎处理之前必须存在。</p>
+<p>在下面的例子中使用``network.hw_addr``函数取回eth0的MAC地址。</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="p">[</span><span class="s1">&#39;network.hw_addr&#39;</span><span class="p">](</span><span class="s1">&#39;eth0&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="advanced-sls-module-syntax">
+<h2>更高级的SLS模块语法<a class="headerlink" href="#advanced-sls-module-syntax" title="永久链接至标题">¶</a></h2>
+<p>在最后，我们将讨论一些不可思议的好技巧在更复杂的state 树中。</p>
+<div class="section" id="include-declaration">
+<h3>Include declaration<a class="headerlink" href="#include-declaration" title="永久链接至标题">¶</a></h3>
+<p>A previous example showed how to spread a Salt tree across several files.
+Similarly, <a class="reference internal" href="../../ref/states/requisites.html"><em>requisites</em></a> span multiple files by
+using an <a class="reference internal" href="../../ref/states/highstate.html#include-declaration"><span>Include declaration</span></a>. For example:</p>
+<p><code class="docutils literal"><span class="pre">python/python-libs.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">python-dateutil</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">python/django.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">include</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">python.python-libs</span>
+
+<span class="l l-Scalar l-Scalar-Plain">django</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">python-dateutil</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="extend-declaration">
+<h3>Extend declaration<a class="headerlink" href="#extend-declaration" title="永久链接至标题">¶</a></h3>
+<p>You can modify previous declarations by using an <a class="reference internal" href="../../ref/states/highstate.html#extend-declaration"><span>Extend declaration</span></a>. For
+example the following modifies the Apache tree to also restart Apache when the
+vhosts file is changed:</p>
+<p><code class="docutils literal"><span class="pre">apache/apache.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">apache</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">apache/mywebsite.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">include</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">apache.apache</span>
+
+<span class="l l-Scalar l-Scalar-Plain">extend</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">apache</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">service</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">running</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">watch</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/httpd/extra/httpd-vhosts.conf</span>
+
+<span class="l l-Scalar l-Scalar-Plain">/etc/httpd/extra/httpd-vhosts.conf</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://apache/httpd-vhosts.conf</span>
+</pre></div>
+</div>
+<div class="admonition-using-extend-with-require-or-watch admonition">
+<p class="first admonition-title">对比扩展和`required`or <cite>watch</cite></p>
+<p class="last">扩展申明申明是有别于``require``or <code class="docutils literal"><span class="pre">watch</span></code>,它是附加，而不是更改必要的组件。</p>
+</div>
+</div>
+<div class="section" id="name-declaration">
+<h3>Name declaration<a class="headerlink" href="#name-declaration" title="永久链接至标题">¶</a></h3>
+<p>You can override the <a class="reference internal" href="../../ref/states/highstate.html#id-declaration"><span>ID declaration</span></a> by using a <a class="reference internal" href="../../ref/states/highstate.html#name-declaration"><span>Name declaration</span></a>.
+For example, the previous example is a bit more maintainable if rewritten as
+follows:</p>
+<p><code class="docutils literal"><span class="pre">apache/mywebsite.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">include</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">apache.apache</span>
+
+<span class="l l-Scalar l-Scalar-Plain">extend</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">apache</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">service</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">running</span>
+<span class="hll">      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">watch</span><span class="p p-Indicator">:</span>
+</span>        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mywebsite</span>
+<span class="hll">
+</span><span class="l l-Scalar l-Scalar-Plain">mywebsite</span><span class="p p-Indicator">:</span>
+<span class="hll">  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+</span>    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/httpd/extra/httpd-vhosts.conf</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://apache/httpd-vhosts.conf</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="names-declaration">
+<h3>Names declaration<a class="headerlink" href="#names-declaration" title="永久链接至标题">¶</a></h3>
+<p>Even more powerful is using a <a class="reference internal" href="../../ref/states/highstate.html#names-declaration"><span>Names declaration</span></a> to override the
+<a class="reference internal" href="../../ref/states/highstate.html#id-declaration"><span>ID declaration</span></a> for multiple states at once. This often can remove the
+need for looping in a template. For example, the first example in this tutorial
+can be rewritten without the loop:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">stooges</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">user.present</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">names</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">moe</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">larry</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">curly</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="next-steps">
+<h2>下一章<a class="headerlink" href="#next-steps" title="永久链接至标题">¶</a></h2>
+<p>在 <a class="reference internal" href="states_pt4.html"><em>第四部分中</em></a> 我们将讨论如何使用**Salt**的 <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-file_roots"><code class="xref std std-conf_master docutils literal"><span class="pre">file_roots</span></code></a> 来建立一个工作流程状态提升从开发,测试,生产。</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="states_pt2.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="States tutorial, part 2 - More Complex States, Requisites" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="states_pt4.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="States tutorial, part 4" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../states/index.html">Configuration Management</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="starting_states.html">我们如何使用Salt States？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="states_pt1.html">States教程，第1部分 - 基础用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="states_pt2.html">States tutorial, part 2 - More Complex States, Requisites</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">States tutorial, part 3 - Templating, Includes, Extends</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#templating-sls-modules">模板SLS的模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-grains-in-sls-modules">使用grains模板</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-environment-variables-in-sls-modules">Using Environment Variables in SLS modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#calling-salt-modules-from-templates">在模板中调用模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#advanced-sls-module-syntax">更高级的SLS模块语法</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#include-declaration">Include declaration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#extend-declaration">Extend declaration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#name-declaration">Name declaration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#names-declaration">Names declaration</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#next-steps">下一章</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="states_pt4.html">States tutorial, part 4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/states/index.html">State System Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

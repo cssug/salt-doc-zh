@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Fedora</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="安装教程" href="index.html">
+        <link rel="next" title="FreeBSD" href="freebsd.html">
+        <link rel="prev" title="Debian GNU/Linux / Raspbian" href="debian.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="debian.html" title="Debian GNU/Linux / Raspbian">上一页</a>
+            
+        </li>
+        <li>
+            <a href="freebsd.html" title="FreeBSD">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="fedora">
+<h1>Fedora<a class="headerlink" href="#fedora" title="永久链接至标题">¶</a></h1>
+<p>在0.9.4版本后，Salt已经可以在主要的Fedora源和 <cite>EPEL</cite> 中找到。使用yum安装即可。
+相比红帽系列其他成员，Fedora有更新版本的Salt。这是一个伟大的地方，以帮助改善Salt！</p>
+<p><strong>WARNING</strong>: Fedora 19 comes with systemd 204.  Systemd has known bugs fixed in
+later revisions that prevent the salt-master from starting reliably or opening
+the network connections that it needs to.  It's not likely that a salt-master
+will start or run reliably on any distribution that uses systemd version 204 or
+earlier.  Running salt-minions should be OK.</p>
+<div class="section" id="installation">
+<h2>安装教程<a class="headerlink" href="#installation" title="永久链接至标题">¶</a></h2>
+<p>Salt可以通过 <code class="docutils literal"><span class="pre">yum</span></code> 和标准的Fedora仓库来安装。</p>
+<div class="section" id="stable-release">
+<h3>稳定版本<a class="headerlink" href="#stable-release" title="永久链接至标题">¶</a></h3>
+<p>Salt的master和minion包是分开的。机器只需要安装相应的包即可运行。通常情况下，会有一个master和多个minions。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>yum install salt-master
+yum install salt-minion
+</pre></div>
+</div>
+</div>
+<div class="section" id="installing-from-updates-testing">
+<h3>从updates-testing源安装<a class="headerlink" href="#installing-from-updates-testing" title="永久链接至标题">¶</a></h3>
+<p>When a new Salt release is packaged, it is first admitted into the
+<code class="docutils literal"><span class="pre">updates-testing</span></code> repository, before being moved to the stable repo.</p>
+<p>想要从 <code class="docutils literal"><span class="pre">updates-testing</span></code> 安装，使用yum带上 <code class="docutils literal"><span class="pre">enablerepo</span></code> 参数:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>yum --enablerepo<span class="o">=</span>updates-testing install salt-master
+yum --enablerepo<span class="o">=</span>updates-testing install salt-minion
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="installation-using-pip">
+<h2>Installation Using pip<a class="headerlink" href="#installation-using-pip" title="永久链接至标题">¶</a></h2>
+<p>Since Salt is on <a class="reference external" href="https://pypi.python.org/pypi/salt">PyPI</a>, it can be installed using pip, though most users
+prefer to install using a package manager.</p>
+<p>Installing from pip has a few additional requirements:</p>
+<ul class="simple">
+<li>Install the group 'Development Tools', <code class="docutils literal"><span class="pre">dnf</span> <span class="pre">groupinstall</span> <span class="pre">'Development</span> <span class="pre">Tools'</span></code></li>
+<li>Install the 'zeromq-devel' package if it fails on linking against that
+afterwards as well.</li>
+</ul>
+<p>A pip install does not make the init scripts or the /etc/salt directory, and you
+will need to provide your own systemd service unit.</p>
+<p>Installation from pip:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pip install salt
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">If installing from pip (or from source using <code class="docutils literal"><span class="pre">setup.py</span> <span class="pre">install</span></code>), be
+advised that the <code class="docutils literal"><span class="pre">yum-utils</span></code> package is needed for Salt to manage
+packages. Also, if the Python dependencies are not already installed, then
+you will need additional libraries/tools installed to build some of them.
+More information on this can be found <a class="reference internal" href="../development/hacking.html#installing-for-development"><span>here</span></a>.</p>
+</div>
+</div>
+<div class="section" id="post-installation-tasks">
+<h2>安装后的工作<a class="headerlink" href="#post-installation-tasks" title="永久链接至标题">¶</a></h2>
+<p><strong>Master</strong></p>
+<p>配置master开机自动启动:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>systemctl <span class="nb">enable</span> salt-master.service
+</pre></div>
+</div>
+<p>启动Master:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>systemctl start salt-master.service
+</pre></div>
+</div>
+<p><strong>Minion</strong></p>
+<p>配置Minion开机自动启动:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>systemctl <span class="nb">enable</span> salt-minion.service
+</pre></div>
+</div>
+<p>启动Minion:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>systemctl start salt-minion.service
+</pre></div>
+</div>
+<p>现在前往 :doc: <cite>配置Salt &lt;/ref/configuration/index&gt;</cite> 页.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="debian.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Debian GNU/Linux / Raspbian" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="freebsd.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="FreeBSD" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">安装教程</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#quick-install">快速安装</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#platform-specific-installation-instructions">对应平台的安装教程</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="arch.html">Arch Linux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="debian.html">Debian GNU/Linux / Raspbian</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Fedora</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#installation">安装教程</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#stable-release">稳定版本</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#installing-from-updates-testing">从updates-testing源安装</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#installation-using-pip">Installation Using pip</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#post-installation-tasks">安装后的工作</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="freebsd.html">FreeBSD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gentoo.html">Gentoo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="openbsd.html">OpenBSD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="osx.html">OS X</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rhel.html">RHEL / CentOS / Scientific Linux / Amazon Linux / Oracle Linux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solaris.html">Solaris</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ubuntu.html">Ubuntu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="windows.html">Windows</a></li>
+<li class="toctree-l3"><a class="reference internal" href="suse.html">SUSE</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#initial-configuration">Initial Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#additional-installation-guides">Additional Installation Guides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#dependencies">依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#optional-dependencies">可选依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#upgrading-salt">升级Salt</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

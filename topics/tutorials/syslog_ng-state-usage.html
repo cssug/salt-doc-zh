@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Syslog-ng usage</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="syslog-ng-usage">
+<h1>Syslog-ng usage<a class="headerlink" href="#syslog-ng-usage" title="永久链接至标题">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="永久链接至标题">¶</a></h2>
+<p>Syslog_ng state module is for generating syslog-ng
+configurations. You can do the following things:</p>
+<ul class="simple">
+<li>generate syslog-ng configuration from YAML,</li>
+<li>use non-YAML configuration,</li>
+<li>start, stop or reload syslog-ng.</li>
+</ul>
+<p>There is also an execution module, which can check the syntax of the
+configuration, get the version and other information about syslog-ng.</p>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="永久链接至标题">¶</a></h2>
+<p>Users can create syslog-ng configuration statements with the
+<a class="reference internal" href="../../ref/states/all/salt.states.syslog_ng.html#salt.states.syslog_ng.config" title="salt.states.syslog_ng.config"><code class="xref py py-func docutils literal"><span class="pre">syslog_ng.config</span></code></a> function. It requires
+a <cite>name</cite> and a <cite>config</cite> parameter. The <cite>name</cite> parameter determines the name of
+the generated statement and the <cite>config</cite> parameter holds a parsed YAML structure.</p>
+<p>A statement can be declared in the following forms (both are equivalent):</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">source.s_localhost</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">syslog_ng.config</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">tcp</span><span class="p p-Indicator">:</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ip</span><span class="p p-Indicator">:</span> <span class="s">&quot;127.0.0.1&quot;</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1233</span>
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">s_localhost</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">syslog_ng.config</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">tcp</span><span class="p p-Indicator">:</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ip</span><span class="p p-Indicator">:</span> <span class="s">&quot;127.0.0.1&quot;</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1233</span>
+</pre></div>
+</div>
+<p>The first one is called short form, because it needs less typing. Users can use lists
+and dictionaries to specify their configuration. The format is quite self describing and
+there are more examples [at the end](#examples) of this document.</p>
+</div>
+<div class="section" id="quotation">
+<h2>Quotation<a class="headerlink" href="#quotation" title="永久链接至标题">¶</a></h2>
+<dl class="docutils">
+<dt>The quotation can be tricky sometimes but here are some rules to follow:</dt>
+<dd><ul class="first last simple">
+<li>when a string meant to be <code class="docutils literal"><span class="pre">&quot;string&quot;</span></code> in the generated configuration, it should be like <code class="docutils literal"><span class="pre">'&quot;string&quot;'</span></code> in the YAML document</li>
+<li>similarly, users should write <code class="docutils literal"><span class="pre">&quot;'string'&quot;</span></code> to get <code class="docutils literal"><span class="pre">'string'</span></code> in the generated configuration</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="full-example">
+<h2>Full example<a class="headerlink" href="#full-example" title="永久链接至标题">¶</a></h2>
+<p>The following configuration is an example, how a complete syslog-ng configuration looks like:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># Set the location of the configuration file</span>
+<span class="l l-Scalar l-Scalar-Plain">set_location</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">module.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">syslog_ng.set_config_file</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">m_name</span><span class="p p-Indicator">:</span> <span class="s">&quot;/home/tibi/install/syslog-ng/etc/syslog-ng.conf&quot;</span>
+
+<span class="c1"># The syslog-ng and syslog-ng-ctl binaries are here. You needn&#39;t use</span>
+<span class="c1"># this method if these binaries can be found in a directory in your PATH.</span>
+<span class="l l-Scalar l-Scalar-Plain">set_bin_path</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">module.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">syslog_ng.set_binary_path</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">m_name</span><span class="p p-Indicator">:</span> <span class="s">&quot;/home/tibi/install/syslog-ng/sbin&quot;</span>
+
+<span class="c1"># Writes the first lines into the config file, also erases its previous</span>
+<span class="c1"># content</span>
+<span class="l l-Scalar l-Scalar-Plain">write_version</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">module.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">syslog_ng.write_version</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">m_name</span><span class="p p-Indicator">:</span> <span class="s">&quot;3.6&quot;</span>
+
+<span class="c1"># There is a shorter form to set the above variables</span>
+<span class="l l-Scalar l-Scalar-Plain">set_variables</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">module.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">syslog_ng.set_parameters</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">version</span><span class="p p-Indicator">:</span> <span class="s">&quot;3.6&quot;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">binary_path</span><span class="p p-Indicator">:</span> <span class="s">&quot;/home/tibi/install/syslog-ng/sbin&quot;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">config_file</span><span class="p p-Indicator">:</span> <span class="s">&quot;/home/tibi/install/syslog-ng/etc/syslog-ng.conf&quot;</span>
+
+
+<span class="c1"># Some global options</span>
+<span class="l l-Scalar l-Scalar-Plain">options.global_options</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">syslog_ng.config</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">time_reap</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">30</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mark_freq</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">keep_hostname</span><span class="p p-Indicator">:</span> <span class="s">&quot;yes&quot;</span>
+
+<span class="l l-Scalar l-Scalar-Plain">source.s_localhost</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">syslog_ng.config</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">tcp</span><span class="p p-Indicator">:</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ip</span><span class="p p-Indicator">:</span> <span class="s">&quot;127.0.0.1&quot;</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1233</span>
+
+<span class="l l-Scalar l-Scalar-Plain">destination.d_log_server</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">syslog_ng.config</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">tcp</span><span class="p p-Indicator">:</span>
+          <span class="p p-Indicator">-</span> <span class="s">&quot;127.0.0.1&quot;</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1234</span>
+
+<span class="l l-Scalar l-Scalar-Plain">log.l_log_to_central_server</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">syslog_ng.config</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">s_localhost</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">destination</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">d_log_server</span>
+
+<span class="l l-Scalar l-Scalar-Plain">some_comment</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">module.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">syslog_ng.write_config</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">|</span>
+        <span class="no"># Multi line</span>
+        <span class="no"># comment</span>
+
+<span class="c1"># Another mode to use comments or existing configuration snippets</span>
+<span class="l l-Scalar l-Scalar-Plain">config.other_comment_form</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">syslog_ng.config</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">|</span>
+        <span class="no"># Multi line</span>
+        <span class="no"># comment</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../../ref/states/all/salt.states.syslog_ng.html#salt.states.syslog_ng.reloaded" title="salt.states.syslog_ng.reloaded"><code class="xref py py-func docutils literal"><span class="pre">syslog_ng.reloaded</span></code></a> function can generate syslog-ng configuration from YAML. If the statement (source, destination, parser,
+etc.) has a name, this function uses the id as the name, otherwise (log
+statement) it's purpose is like a mandatory comment.</p>
+<p>After execution this example the syslog_ng state will generate this
+file:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>#Generated by Salt on 2014-08-18 00:11:11
+@version: 3.6
+
+options {
+    time_reap(
+        30
+    );
+    mark_freq(
+        10
+    );
+    keep_hostname(
+        yes
+    );
+};
+
+
+source s_localhost {
+    tcp(
+        ip(
+            127.0.0.1
+        ),
+        port(
+            1233
+        )
+    );
+};
+
+
+destination d_log_server {
+    tcp(
+        127.0.0.1,
+        port(
+            1234
+        )
+    );
+};
+
+
+log {
+    source(
+        s_localhost
+    );
+    destination(
+        d_log_server
+    );
+};
+
+
+# Multi line
+# comment
+
+
+# Multi line
+# comment
+</pre></div>
+</div>
+<p>Users can include arbitrary texts in the generated configuration with
+using the <code class="docutils literal"><span class="pre">config</span></code> statement (see the example above).</p>
+</div>
+<div class="section" id="syslog-ng-module-functions">
+<h2>Syslog_ng module functions<a class="headerlink" href="#syslog-ng-module-functions" title="永久链接至标题">¶</a></h2>
+<p>You can use <a class="reference internal" href="../../ref/modules/all/salt.modules.syslog_ng.html#salt.modules.syslog_ng.set_binary_path" title="salt.modules.syslog_ng.set_binary_path"><code class="xref py py-func docutils literal"><span class="pre">syslog_ng.set_binary_path</span></code></a>
+to set the directory which contains the
+syslog-ng and syslog-ng-ctl binaries. If this directory is in your PATH,
+you don't need to use this function. There is also a  <a class="reference internal" href="../../ref/modules/all/salt.modules.syslog_ng.html#salt.modules.syslog_ng.set_config_file" title="salt.modules.syslog_ng.set_config_file"><code class="xref py py-func docutils literal"><span class="pre">syslog_ng.set_config_file</span></code></a>
+function to set the location of the configuration file.</p>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="永久链接至标题">¶</a></h2>
+<div class="section" id="simple-source">
+<h3>Simple source<a class="headerlink" href="#simple-source" title="永久链接至标题">¶</a></h3>
+<div class="highlight-text"><div class="highlight"><pre><span></span>source s_tail {
+ file(
+   &quot;/var/log/apache/access.log&quot;,
+   follow_freq(1),
+   flags(no-parse, validate-utf8)
+ );
+};
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">s_tail</span><span class="p p-Indicator">:</span>
+  <span class="c1"># Salt will call the source function of syslog_ng module</span>
+  <span class="l l-Scalar l-Scalar-Plain">syslog_ng.config</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="s">&#39;&#39;&quot;/var/log/apache/access.log&quot;&#39;&#39;</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">follow_freq</span> <span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">flags</span><span class="p p-Indicator">:</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">no-parse</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">validate-utf8</span>
+</pre></div>
+</div>
+<p>OR</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">s_tail</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">syslog_ng.config</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+              <span class="p p-Indicator">-</span> <span class="s">&#39;&#39;&quot;/var/log/apache/access.log&quot;&#39;&#39;</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">follow_freq</span> <span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">flags</span><span class="p p-Indicator">:</span>
+                <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">no-parse</span>
+                <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">validate-utf8</span>
+</pre></div>
+</div>
+<p>OR</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">source.s_tail</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">syslog_ng.config</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+          <span class="p p-Indicator">-</span> <span class="s">&#39;&#39;&quot;/var/log/apache/access.log&quot;&#39;&#39;</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">follow_freq</span> <span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">flags</span><span class="p p-Indicator">:</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">no-parse</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">validate-utf8</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="complex-source">
+<h3>Complex source<a class="headerlink" href="#complex-source" title="永久链接至标题">¶</a></h3>
+<div class="highlight-text"><div class="highlight"><pre><span></span>source s_gsoc2014 {
+ tcp(
+   ip(&quot;0.0.0.0&quot;),
+   port(1234),
+   flags(no-parse)
+ );
+};
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">s_gsoc2014</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">syslog_ng.config</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">tcp</span><span class="p p-Indicator">:</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ip</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0.0.0</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1234</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">flags</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">no-parse</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="filter">
+<h3>Filter<a class="headerlink" href="#filter" title="永久链接至标题">¶</a></h3>
+<div class="highlight-text"><div class="highlight"><pre><span></span>filter f_json {
+ match(
+   &quot;@json:&quot;
+ );
+};
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">f_json</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">syslog_ng.config</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">filter</span><span class="p p-Indicator">:</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match</span><span class="p p-Indicator">:</span>
+            <span class="p p-Indicator">-</span> <span class="s">&#39;&#39;&quot;@json:&quot;&#39;&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="template">
+<h3>Template<a class="headerlink" href="#template" title="永久链接至标题">¶</a></h3>
+<div class="highlight-text"><div class="highlight"><pre><span></span>template t_demo_filetemplate {
+ template(
+   &quot;$ISODATE $HOST $MSG &quot;
+ );
+ template_escape(
+   no
+ );
+};
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">t_demo_filetemplate</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">syslog_ng.config</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">-config</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span>
+            <span class="p p-Indicator">-</span> <span class="s">&#39;&quot;$ISODATE</span><span class="nv"> </span><span class="s">$HOST</span><span class="nv"> </span><span class="s">$MSG\n&quot;&#39;</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">template_escape</span><span class="p p-Indicator">:</span>
+            <span class="p p-Indicator">-</span> <span class="s">&quot;no&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="rewrite">
+<h3>Rewrite<a class="headerlink" href="#rewrite" title="永久链接至标题">¶</a></h3>
+<div class="highlight-text"><div class="highlight"><pre><span></span>rewrite r_set_message_to_MESSAGE {
+ set(
+   &quot;${.json.message}&quot;,
+   value(&quot;$MESSAGE&quot;)
+ );
+};
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">r_set_message_to_MESSAGE</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">syslog_ng.config</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">rewrite</span><span class="p p-Indicator">:</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">set</span><span class="p p-Indicator">:</span>
+            <span class="p p-Indicator">-</span> <span class="s">&#39;&quot;${.json.message}&quot;&#39;</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">value</span> <span class="p p-Indicator">:</span> <span class="s">&#39;&quot;$MESSAGE&quot;&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="global-options">
+<h3>Global options<a class="headerlink" href="#global-options" title="永久链接至标题">¶</a></h3>
+<div class="highlight-text"><div class="highlight"><pre><span></span>options {
+   time_reap(30);
+   mark_freq(10);
+   keep_hostname(yes);
+};
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">global_options</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">syslog_ng.config</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">options</span><span class="p p-Indicator">:</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">time_reap</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">30</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mark_freq</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">keep_hostname</span><span class="p p-Indicator">:</span> <span class="s">&quot;yes&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="log">
+<h3>Log<a class="headerlink" href="#log" title="永久链接至标题">¶</a></h3>
+<div class="highlight-text"><div class="highlight"><pre><span></span>log {
+ source(s_gsoc2014);
+ junction {
+  channel {
+   filter(f_json);
+   parser(p_json);
+   rewrite(r_set_json_tag);
+   rewrite(r_set_message_to_MESSAGE);
+   destination {
+    file(
+      &quot;/tmp/json-input.log&quot;,
+      template(t_gsoc2014)
+    );
+   };
+   flags(final);
+  };
+  channel {
+   filter(f_not_json);
+   parser {
+    syslog-parser(
+
+    );
+   };
+   rewrite(r_set_syslog_tag);
+   flags(final);
+  };
+ };
+ destination {
+  file(
+    &quot;/tmp/all.log&quot;,
+    template(t_gsoc2014)
+  );
+ };
+};
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">l_gsoc2014</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">syslog_ng.config</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">config</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">log</span><span class="p p-Indicator">:</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">s_gsoc2014</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">junction</span><span class="p p-Indicator">:</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">channel</span><span class="p p-Indicator">:</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">filter</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">f_json</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">parser</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">p_json</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">rewrite</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">r_set_json_tag</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">rewrite</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">r_set_message_to_MESSAGE</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">destination</span><span class="p p-Indicator">:</span>
+                <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+                  <span class="p p-Indicator">-</span> <span class="s">&#39;&quot;/tmp/json-input.log&quot;&#39;</span>
+                  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">t_gsoc2014</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">flags</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">final</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">channel</span><span class="p p-Indicator">:</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">filter</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">f_not_json</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">parser</span><span class="p p-Indicator">:</span>
+                <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">syslog-parser</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">rewrite</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">r_set_syslog_tag</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">flags</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">final</span>
+          <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">destination</span><span class="p p-Indicator">:</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+              <span class="p p-Indicator">-</span> <span class="s">&quot;/tmp/all.log&quot;</span>
+              <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">t_gsoc2014</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

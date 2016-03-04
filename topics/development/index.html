@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt开发</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="next" title="Overview" href="architecture.html">
+        <link rel="prev" title="Windows-specific Behaviour" href="../windows/windows-specific-behavior.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../windows/windows-specific-behavior.html" title="Windows-specific Behaviour">上一页</a>
+            
+        </li>
+        <li>
+            <a href="architecture.html" title="Overview">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="developing-salt">
+<h1>Salt开发<a class="headerlink" href="#developing-salt" title="永久链接至标题">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html#salt-client">Salt Client</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#id1">Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html#salt-master">Salt Master</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#id2">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#moving-pieces">Moving Pieces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#publisher">Publisher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#eventpublisher">EventPublisher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#mworker">MWorker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#reqserver">ReqServer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#job-flow">Job Flow</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html#salt-minion">Salt Minion</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#id3">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#event-system">Event系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#id4">Job Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#master-job-flow">Master Job Flow</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html#a-note-on-clearfuncs-vs-aesfuncs">A Note on ClearFuncs vs. AESFuncs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#sending-a-github-pull-request">发送GitHub的pull请求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#which-salt-branch">Which Salt branch?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#keeping-salt-forks-in-sync">在同步中保持Salt Forks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#posting-patches-to-the-mailing-list">Posting patches to the mailing list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#backporting-pull-requests">Backporting Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#issue-and-pull-request-labeling-system">Issue and Pull Request Labeling System</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="deprecations.html">代码弃用</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dunder_dictionaries.html">Dunder Dictionaries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dunder_dictionaries.html#opts">__opts__</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dunder_dictionaries.html#salt">__salt__</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dunder_dictionaries.html#grains">__grains__</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dunder_dictionaries.html#pillar">__pillar__</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dunder_dictionaries.html#context">__context__</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="external_pillars.html">External Pillars</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="external_pillars.html#location">Location</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_pillars.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_pillars.html#the-module">The Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_pillars.html#imports-and-logging">Imports and Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_pillars.html#options">选项</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_pillars.html#initialization">Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_pillars.html#virtual">__virtual__</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_pillars.html#ext-pillar">ext_pillar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_pillars.html#example-configuration">Example configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_pillars.html#reminder">Reminder</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hacking.html">Installing Salt for development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hacking.html#running-a-self-contained-development-version">Running a self-contained development version</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hacking.html#installing-salt-from-the-python-package-index">Installing Salt from the Python Package Index</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hacking.html#editing-and-previewing-the-documentation">Editing and previewing the documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hacking.html#running-unit-and-integration-tests">Running unit and integration tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hacking.html#issue-and-pull-request-labeling-system">Issue and Pull Request Labeling System</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="labels.html">GitHub Labels and Milestones</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="labels.html#milestones">Milestones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="labels.html#labels">Labels</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="logging.html">内部日志</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modular_systems.html">模块化系统</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modular_systems.html#execution-modules">执行模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular_systems.html#interactive-debugging">Interactive Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular_systems.html#state-modules">State Modules状态模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular_systems.html#auth">auth认证模块</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular_systems.html#fileserver">文件服务器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular_systems.html#grains">grains是minion启动时加载的，在运行过程中不会发生变化，所以是静态数据。grains中包含诸如运行的内核版本，操作系统等信息。</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular_systems.html#output">output 输出</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular_systems.html#pillar">Pillar是Salt非常重要的一个组件，它用于给特定的minion定义任何你需要的数据，这些数据可以被Salt的其他组件使用。</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular_systems.html#renderers">Renderers渲染器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular_systems.html#returners">返回器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular_systems.html#runners">Runners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular_systems.html#tops">Tops</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular_systems.html#wheel">Wheel</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="package_providers.html">Package Providers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="package_providers.html#package-functions">Package Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="package_providers.html#package-repo-functions">Package Repo Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="package_providers.html#low-package-functions">Low-Package Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reporting_bugs.html">Reporting Bugs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="salt_projects.html">Community Projects That Use Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">Salt Topology</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="topology.html#servers">Servers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="topology.html#pub-sub">PUB/SUB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="topology.html#return">Return</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="translating.html">翻译文档</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="translating.html#building-a-localized-version-of-the-documentation">建立一个本地化版本的文档</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Developing Salt Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#fork">Fork</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#clone">Clone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#fetch">Fetch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#branch">Branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#edit">Edit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#commit">Commit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#push">Push</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#merge">Merge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#resources">Resources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tests/index.html">Running The Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html#running-unit-tests-without-integration-test-daemons">Running Unit Tests Without Integration Test Daemons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html#running-destructive-integration-tests">Running Destructive Integration Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html#running-cloud-provider-tests">Running Cloud Provider Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html#running-the-tests-in-a-docker-container">Running The Tests In A Docker Container</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tests/index.html#automated-test-runs">Automated Test Runs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html#using-salt-cloud-on-jenkins">Using Salt-Cloud on Jenkins</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tests/index.html#writing-tests">Writing Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html#naming-conventions">Naming Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html#integration-tests">Integration Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html#unit-tests">Unit Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="raet/index.html">raet</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="raet/index.html#protocol">Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raet/index.html#header">Header</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raet/index.html#packet">Packet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raet/index.html#header-fields">Header Fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raet/index.html#session-bootstrap">Session Bootstrap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raet/index.html#session">Session</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raet/index.html#service-types-or-modular-services">Service Types or Modular Services</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="git/index.html">SaltStack Git Policy</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="git/index.html#new-code-entry">New Code Entry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="git/index.html#release-branching">Release Branching</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="conventions/index.html">Salt Conventions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="conventions/documentation.html">Writing Salt Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions/formulas.html">Salt Formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions/packaging.html">SaltStack Packaging Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions/release.html">Salt Release Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions/style.html">Salt Coding Style</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/internals/index.html">Salt code and internals</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/internals/index.html#contents">Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../projects/index.html">Salt Based Projects</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../projects/index.html#salt-sandbox">Salt Sandbox</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/writing_tests.html">编写Salt测试</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/writing_tests.html#getting-set-up-for-tests">Getting Set Up For Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/writing_tests.html#destructive-vs-non-destructive">Destructive vs Non-destructive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/writing_tests.html#automated-test-runs">Automated Test Runs</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../windows/windows-specific-behavior.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Windows-specific Behaviour" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="architecture.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Overview" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Salt开发</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#salt-client">Salt Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#salt-master">Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#salt-minion">Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#a-note-on-clearfuncs-vs-aesfuncs">A Note on ClearFuncs vs. AESFuncs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deprecations.html">代码弃用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dunder_dictionaries.html">Dunder Dictionaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_pillars.html">External Pillars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hacking.html">Installing Salt for development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="labels.html">GitHub Labels and Milestones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logging.html">内部日志</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular_systems.html">模块化系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="package_providers.html">Package Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reporting_bugs.html">Reporting Bugs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salt_projects.html">Community Projects That Use Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="topology.html">Salt Topology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="translating.html">翻译文档</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html">Developing Salt Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html">Running The Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html#automated-test-runs">Automated Test Runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raet/index.html">raet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="git/index.html">SaltStack Git Policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions/index.html">Salt Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/internals/index.html">Salt code and internals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../projects/index.html">Salt Based Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/writing_tests.html">编写Salt测试</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

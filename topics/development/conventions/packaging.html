@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>SaltStack Packaging Guide</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+        <link rel="up" title="Salt Conventions" href="index.html">
+        <link rel="next" title="Salt Release Process" href="release.html">
+        <link rel="prev" title="Salt Formulas" href="formulas.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="formulas.html" title="Salt Formulas">上一页</a>
+            
+        </li>
+        <li>
+            <a href="release.html" title="Salt Release Process">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="saltstack-packaging-guide">
+<h1>SaltStack Packaging Guide<a class="headerlink" href="#saltstack-packaging-guide" title="永久链接至标题">¶</a></h1>
+<p>Since Salt provides a powerful toolkit for system management and automation,
+the package can be spit into a number of sub-tools. While packaging Salt as
+a single package containing all components is perfectly acceptable, the split
+packages should follow this convention.</p>
+<div class="section" id="patching-salt-for-distributions">
+<h2>Patching Salt For Distributions<a class="headerlink" href="#patching-salt-for-distributions" title="永久链接至标题">¶</a></h2>
+<p>The occasion may arise where Salt source and default configurations may need
+to be patched. It is preferable if Salt is only patched to include platform
+specific additions or to fix release time bugs. It is preferable that
+configuration settings and operations remain in the default state, as changes
+here lowers the user experience for users moving across distributions.</p>
+<p>In the event where a packager finds a need to change the default configuration
+it is advised to add the files to the master.d or minion.d directories.</p>
+</div>
+<div class="section" id="source-files">
+<h2>Source Files<a class="headerlink" href="#source-files" title="永久链接至标题">¶</a></h2>
+<p>Release packages should always be built from the source tarball distributed via
+pypi. Release packages should <em>NEVER</em> use a git checkout as the source for
+distribution.</p>
+</div>
+<div class="section" id="single-package">
+<h2>Single Package<a class="headerlink" href="#single-package" title="永久链接至标题">¶</a></h2>
+<p>Shipping Salt as a single package, where the minion, master, and all tools are
+together is perfectly acceptable and practiced by distributions such as
+FreeBSD.</p>
+</div>
+<div class="section" id="split-package">
+<h2>Split Package<a class="headerlink" href="#split-package" title="永久链接至标题">¶</a></h2>
+<p>Salt Should always be split in a standard way, with standard dependencies, this lowers
+cross distribution confusion about what components are going to be shipped with
+specific packages. These packages can be defined from the Salt Source as of
+Salt 2014.1.0:</p>
+<div class="section" id="salt-common">
+<h3>Salt Common<a class="headerlink" href="#salt-common" title="永久链接至标题">¶</a></h3>
+<p>The <cite>salt-common</cite> or <cite>salt</cite> package should contain the files provided by the
+salt python package, or all files distributed from the <code class="docutils literal"><span class="pre">salt/</span></code> directory in
+the source distribution packages. The documentation contained under the
+<code class="docutils literal"><span class="pre">doc/</span></code> directory can be a part of this package but splitting out a doc
+package is preferred.
+Since salt-call is the entry point to utilize the libs and is useful for all
+salt packages it is included in the salt-common package.</p>
+<div class="section" id="name">
+<h4>Name<a class="headerlink" href="#name" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>salt</cite> OR <cite>salt-common</cite></li>
+</ul>
+</div>
+<div class="section" id="files">
+<h4>Files<a class="headerlink" href="#files" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>salt/*</cite></li>
+<li><cite>man/salt.7</cite></li>
+<li><cite>scripts/salt-call</cite></li>
+<li><cite>tests/*</cite></li>
+<li><cite>man/salt-call.1</cite></li>
+</ul>
+</div>
+<div class="section" id="depends">
+<h4>Depends<a class="headerlink" href="#depends" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>Python 2.6-2.7</cite></li>
+<li><cite>PyYAML</cite></li>
+<li><cite>Jinja2</cite></li>
+</ul>
+</div>
+</div>
+<div class="section" id="salt-master">
+<h3>Salt Master<a class="headerlink" href="#salt-master" title="永久链接至标题">¶</a></h3>
+<p>The <cite>salt-master</cite> package contains the applicable scripts, related man
+pages and init information for the given platform.</p>
+<div class="section" id="id1">
+<h4>Name<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>salt-master</cite></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h4>Files<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>scripts/salt-master</cite></li>
+<li><cite>scripts/salt</cite></li>
+<li><cite>scripts/salt-run</cite></li>
+<li><cite>scripts/salt-key</cite></li>
+<li><cite>scripts/salt-cp</cite></li>
+<li><cite>pkg/&lt;master init data&gt;</cite></li>
+<li><cite>man/salt.1</cite></li>
+<li><cite>man/salt-master.1</cite></li>
+<li><cite>man/salt-run.1</cite></li>
+<li><cite>man/salt-key.1</cite></li>
+<li><cite>man/salt-cp.1</cite></li>
+<li><cite>conf/master</cite></li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h4>Depends<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>Salt Common</cite></li>
+<li><cite>ZeroMQ</cite> &gt;= 3.2</li>
+<li><cite>PyZMQ</cite> &gt;= 2.10</li>
+<li><cite>PyCrypto</cite></li>
+<li><cite>M2Crypto</cite></li>
+<li><cite>Python MessagePack</cite> (Messagepack C lib, or msgpack-pure)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="salt-syndic">
+<h3>Salt Syndic<a class="headerlink" href="#salt-syndic" title="永久链接至标题">¶</a></h3>
+<p>The Salt Syndic package can be rolled completely into the Salt Master package.
+Platforms which start services as part of the package deployment need to
+maintain a separate <cite>salt-syndic</cite> package (primarily Debian based platforms).</p>
+<p>The Syndic may optionally not depend on the anything more than the Salt Master since
+the master will bring in all needed dependencies, but fall back to the platform
+specific packaging guidelines.</p>
+<div class="section" id="id4">
+<h4>Name<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>salt-syndic</cite></li>
+</ul>
+</div>
+<div class="section" id="id5">
+<h4>Files<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>scripts/salt-syndic</cite></li>
+<li><cite>pkg/&lt;syndic init data&gt;</cite></li>
+<li><cite>man/salt-syndic.1</cite></li>
+</ul>
+</div>
+<div class="section" id="id6">
+<h4>Depends<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>Salt Common</cite></li>
+<li><cite>Salt Master</cite></li>
+<li><cite>ZeroMQ</cite> &gt;= 3.2</li>
+<li><cite>PyZMQ</cite> &gt;= 2.10</li>
+<li><cite>PyCrypto</cite></li>
+<li><cite>M2Crypto</cite></li>
+<li><cite>Python MessagePack</cite> (Messagepack C lib, or msgpack-pure)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="salt-minion">
+<h3>Salt Minion<a class="headerlink" href="#salt-minion" title="永久链接至标题">¶</a></h3>
+<p>The Minion is a standalone package and should not be split beyond the
+<cite>salt-minion</cite> and <cite>salt-common</cite> packages.</p>
+<div class="section" id="id7">
+<h4>Name<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>salt-minion</cite></li>
+</ul>
+</div>
+<div class="section" id="id8">
+<h4>Files<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>scripts/salt-minion</cite></li>
+<li><cite>pkg/&lt;minion init data&gt;</cite></li>
+<li><cite>man/salt-minion.1</cite></li>
+<li><cite>conf/minion</cite></li>
+</ul>
+</div>
+<div class="section" id="id9">
+<h4>Depends<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>Salt Common</cite></li>
+<li><cite>ZeroMQ</cite> &gt;= 3.2</li>
+<li><cite>PyZMQ</cite> &gt;= 2.10</li>
+<li><cite>PyCrypto</cite></li>
+<li><cite>M2Crypto</cite></li>
+<li><cite>Python MessagePack</cite> (Messagepack C lib, or msgpack-pure)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="salt-ssh">
+<h3>Salt SSH<a class="headerlink" href="#salt-ssh" title="永久链接至标题">¶</a></h3>
+<p>Since Salt SSH does not require the same dependencies as the minion and master, it
+should be split out.</p>
+<div class="section" id="id10">
+<h4>Name<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>salt-ssh</cite></li>
+</ul>
+</div>
+<div class="section" id="id11">
+<h4>Files<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>scripts/salt-ssh</cite></li>
+<li><cite>man/salt-ssh.1</cite></li>
+<li><cite>conf/cloud*</cite></li>
+</ul>
+</div>
+<div class="section" id="id12">
+<h4>Depends<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>Salt Common</cite></li>
+<li><cite>Python MessagePack</cite> (Messagepack C lib, or msgpack-pure)</li>
+</ul>
+</div>
+</div>
+<div class="section" id="salt-cloud">
+<h3>Salt云端<a class="headerlink" href="#salt-cloud" title="永久链接至标题">¶</a></h3>
+<p>As of Salt 2014.1.0 Salt Cloud is included in the same repo as Salt. This
+can be split out into a separate package or it can be included in the
+salt-master package.</p>
+<div class="section" id="id13">
+<h4>Name<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>salt-cloud</cite></li>
+</ul>
+</div>
+<div class="section" id="id14">
+<h4>Files<a class="headerlink" href="#id14" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>scripts/salt-cloud</cite></li>
+<li><cite>man/salt-cloud.1</cite></li>
+</ul>
+</div>
+<div class="section" id="id15">
+<h4>Depends<a class="headerlink" href="#id15" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>Salt Common</cite></li>
+<li><cite>apache libcloud</cite> &gt;= 0.14.0</li>
+</ul>
+</div>
+</div>
+<div class="section" id="salt-doc">
+<h3>Salt Doc<a class="headerlink" href="#salt-doc" title="永久链接至标题">¶</a></h3>
+<p>The documentation package is very distribution optional. A completely split
+package will split out the documentation, but some platform conventions do not
+prefer this.
+If the documentation is not split out, it should be included with the
+<cite>Salt Common</cite> package.</p>
+</div>
+<div class="section" id="id16">
+<h3>Name<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><cite>salt-doc</cite></li>
+</ul>
+<div class="section" id="id17">
+<h4>Files<a class="headerlink" href="#id17" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>doc/*</cite></li>
+</ul>
+</div>
+<div class="section" id="optional-depends">
+<h4>Optional Depends<a class="headerlink" href="#optional-depends" title="永久链接至标题">¶</a></h4>
+<ul class="simple">
+<li><cite>Salt Common</cite></li>
+<li><cite>Python Sphinx</cite></li>
+<li><cite>Make</cite></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="formulas.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt Formulas" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="release.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt Release Process" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../windows/index.html">Windows</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Salt开发</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#salt-client">Salt Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#salt-master">Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#salt-minion">Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#a-note-on-clearfuncs-vs-aesfuncs">A Note on ClearFuncs vs. AESFuncs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deprecations.html">代码弃用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dunder_dictionaries.html">Dunder Dictionaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../external_pillars.html">External Pillars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hacking.html">Installing Salt for development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../labels.html">GitHub Labels and Milestones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logging.html">内部日志</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modular_systems.html">模块化系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package_providers.html">Package Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reporting_bugs.html">Reporting Bugs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../salt_projects.html">Community Projects That Use Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../topology.html">Salt Topology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../translating.html">翻译文档</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html">Developing Salt Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tests/index.html">Running The Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tests/index.html#automated-test-runs">Automated Test Runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tests/index.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../raet/index.html">raet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../git/index.html">SaltStack Git Policy</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Salt Conventions</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="documentation.html">Writing Salt Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formulas.html">Salt Formulas</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">SaltStack Packaging Guide</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#patching-salt-for-distributions">Patching Salt For Distributions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#source-files">Source Files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#single-package">Single Package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#split-package">Split Package</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#salt-common">Salt Common</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#name">Name</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#files">Files</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#depends">Depends</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#salt-master">Salt Master</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#id1">Name</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id2">Files</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id3">Depends</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#salt-syndic">Salt Syndic</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#id4">Name</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id5">Files</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id6">Depends</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#salt-minion">Salt Minion</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#id7">Name</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id8">Files</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id9">Depends</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#salt-ssh">Salt SSH</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#id10">Name</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id11">Files</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id12">Depends</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#salt-cloud">Salt云端</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#id13">Name</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id14">Files</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id15">Depends</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#salt-doc">Salt Doc</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id16">Name</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#id17">Files</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#optional-depends">Optional Depends</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="release.html">Salt Release Process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="style.html">Salt Coding Style</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ref/internals/index.html">Salt code and internals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../projects/index.html">Salt Based Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/writing_tests.html">编写Salt测试</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

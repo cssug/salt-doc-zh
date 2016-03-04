@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Windows</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="安装教程" href="index.html">
+        <link rel="next" title="SUSE" href="suse.html">
+        <link rel="prev" title="Ubuntu" href="ubuntu.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="ubuntu.html" title="Ubuntu">上一页</a>
+            
+        </li>
+        <li>
+            <a href="suse.html" title="SUSE">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="windows">
+<span id="id1"></span><h1>Windows<a class="headerlink" href="#windows" title="永久链接至标题">¶</a></h1>
+<p>Salt已经充分支持在Windows上运行Salt Minion</p>
+<p>目前没有计划在Windows上开发Salt Master。所以目前你必须在一个支持的操作系统上运行Salt Master去控制Windows上的Salt Minions。</p>
+<p>许多标准的Salt模块已经移植到了Windows，并且多数Salt States一般也可以在Windows上运行。</p>
+<div class="section" id="windows-installer">
+<span id="id2"></span><h2>Windows安装包<a class="headerlink" href="#windows-installer" title="永久链接至标题">¶</a></h2>
+<p>Salt Minion Windows安装包可以在这里找到。输出的 <cite>md5sum &lt;salt minion exe&gt;</cite> 应该匹配一致的md5文件。</p>
+<p><strong>Latest stable build from the selected branch</strong>:
+<p>x86: <a href="https://repo.saltstack.com/windows/Salt-Minion-2015.8.7-x86-Setup.exe"><strong>Salt-Minion-2015.8.7-x86-Setup.exe</strong></a>
+ | <a href="https://repo.saltstack.com/windows/Salt-Minion-2015.8.7-x86-Setup.exe.md5"><strong>md5</strong></a></p>
+
+<p>AMD64: <a href="https://repo.saltstack.com/windows/Salt-Minion-2015.8.7-AMD64-Setup.exe"><strong>Salt-Minion-2015.8.7-AMD64-Setup.exe</strong></a>
+ | <a href="https://repo.saltstack.com/windows/Salt-Minion-2015.8.7-AMD64-Setup.exe.md5"><strong>md5</strong></a></p></p>
+<p><a class="reference external" href="https://repo.saltstack.com/windows/">Earlier builds from supported branches</a></p>
+<p><a class="reference external" href="https://repo.saltstack.com/windows/archive/">Archived builds from unsupported branches</a></p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The installation executable installs dependencies that the Salt minion
+requires.</p>
+</div>
+<p>64bit安装包已经在Windows 7 64bit和Windows Server 2008R2 64bit测试通过。32bit安装包已经在Windows 2003 Server 32bit测试通过。如果发现其他平台有问题的话请在我们的GitHub上提交bug。</p>
+<p>安装包需要2个信息; master主机名和minion名。安装程序将会用这些选项更新minion配置然后启动minion。</p>
+<p><cite>salt-minion</cite> 服务将会出现在Windows服务管理器中，可以在那里启动和停止，或者使用命令行程序 <cite>sc</cite> ，就像其他Windows服务一样。</p>
+<p>如果minion没能启动，尝试安装Microsoft Visual C++ 2008 x64 SP1 redistributable。开启所有的Windows updates使salt-minion更加顺利的运行。</p>
+</div>
+<div class="section" id="silent-installer-options">
+<span id="windows-installer-options"></span><h2>Silent Installer Options<a class="headerlink" href="#silent-installer-options" title="永久链接至标题">¶</a></h2>
+<p>The installer can be run silently by providing the <cite>/S</cite> option at the command
+line. The installer also accepts the following options for configuring the Salt
+Minion silently:</p>
+<ul class="simple">
+<li><cite>/master=</cite> A string value to set the IP address or host name of the master. Default value is 'salt'</li>
+<li><cite>/minion-name=</cite> A string value to set the minion name. Default is 'hostname'</li>
+<li><cite>/start-service=</cite> Either a 1 or 0. '1' will start the service, '0' will not. Default is to start the service after installation.</li>
+</ul>
+<p>Here's an example of using the silent installer:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>Salt-Minion-2015.5.6-Setup-amd64.exe /S /master=yoursaltmaster /minion-name=yourminionname /start-service=0
+</pre></div>
+</div>
+</div>
+<div class="section" id="running-the-salt-minion-on-windows-as-an-unprivileged-user">
+<h2>Running the Salt Minion on Windows as an Unprivileged User<a class="headerlink" href="#running-the-salt-minion-on-windows-as-an-unprivileged-user" title="永久链接至标题">¶</a></h2>
+<p>Notes:
+- These instructions were tested with Windows Server 2008 R2
+- They are generalizable to any version of Windows that supports a salt-minion</p>
+<div class="section" id="a-create-the-unprivileged-user-that-the-salt-minion-will-run-as">
+<h3>A. Create the Unprivileged User that the Salt Minion will Run As<a class="headerlink" href="#a-create-the-unprivileged-user-that-the-salt-minion-will-run-as" title="永久链接至标题">¶</a></h3>
+<ol class="arabic simple">
+<li>Click <code class="docutils literal"><span class="pre">Start</span></code> &gt; <code class="docutils literal"><span class="pre">Control</span> <span class="pre">Panel</span></code> &gt; <code class="docutils literal"><span class="pre">User</span> <span class="pre">Accounts</span></code>.</li>
+<li>Click <code class="docutils literal"><span class="pre">Add</span> <span class="pre">or</span> <span class="pre">remove</span> <span class="pre">user</span> <span class="pre">accounts</span></code>.</li>
+<li>Click <code class="docutils literal"><span class="pre">Create</span> <span class="pre">new</span> <span class="pre">account</span></code>.</li>
+<li>Enter <code class="docutils literal"><span class="pre">salt-user</span></code> (or a name of your preference) in the <code class="docutils literal"><span class="pre">New</span> <span class="pre">account</span> <span class="pre">name</span></code> field.</li>
+<li>Select the <code class="docutils literal"><span class="pre">Standard</span> <span class="pre">user</span></code> radio button.</li>
+<li>Click the <code class="docutils literal"><span class="pre">Create</span> <span class="pre">Account</span></code> button.</li>
+<li>Click on the newly created user account.</li>
+<li>Click the <code class="docutils literal"><span class="pre">Create</span> <span class="pre">a</span> <span class="pre">password</span></code> link.</li>
+<li>In the <code class="docutils literal"><span class="pre">New</span> <span class="pre">password</span></code> and <code class="docutils literal"><span class="pre">Confirm</span> <span class="pre">new</span> <span class="pre">password</span></code> fields, provide
+a password (e.g &quot;SuperSecretMinionPassword4Me!&quot;).</li>
+<li>In the <code class="docutils literal"><span class="pre">Type</span> <span class="pre">a</span> <span class="pre">password</span> <span class="pre">hint</span></code> field, provide appropriate text (e.g. &quot;My Salt Password&quot;).</li>
+<li>Click the <code class="docutils literal"><span class="pre">Create</span> <span class="pre">password</span></code> button.</li>
+<li>Close the <code class="docutils literal"><span class="pre">Change</span> <span class="pre">an</span> <span class="pre">Account</span></code> window.</li>
+</ol>
+</div>
+<div class="section" id="b-add-the-new-user-to-the-access-control-list-for-the-salt-folder">
+<h3>B. Add the New User to the Access Control List for the Salt Folder<a class="headerlink" href="#b-add-the-new-user-to-the-access-control-list-for-the-salt-folder" title="永久链接至标题">¶</a></h3>
+<ol class="arabic simple">
+<li>In a File Explorer window, browse to the path where Salt is installed (the default path is <code class="docutils literal"><span class="pre">C:\Salt</span></code>).</li>
+<li>Right-click on the <code class="docutils literal"><span class="pre">Salt</span></code> folder and select <code class="docutils literal"><span class="pre">Properties</span></code>.</li>
+<li>Click on the <code class="docutils literal"><span class="pre">Security</span></code> tab.</li>
+<li>Click the <code class="docutils literal"><span class="pre">Edit</span></code> button.</li>
+<li>Click the <code class="docutils literal"><span class="pre">Add</span></code> button.</li>
+<li>Type the name of your designated Salt user and click the <code class="docutils literal"><span class="pre">OK</span></code> button.</li>
+<li>Check the box to <code class="docutils literal"><span class="pre">Allow</span></code> the <code class="docutils literal"><span class="pre">Modify</span></code> permission.</li>
+<li>Click the <code class="docutils literal"><span class="pre">OK</span></code> button.</li>
+<li>Click the <code class="docutils literal"><span class="pre">OK</span></code> button to close the <code class="docutils literal"><span class="pre">Salt</span> <span class="pre">Properties</span></code> window.</li>
+</ol>
+</div>
+<div class="section" id="c-update-the-windows-service-user-for-the-salt-minion-service">
+<h3>C. Update the Windows Service User for the <code class="docutils literal"><span class="pre">salt-minion</span></code> Service<a class="headerlink" href="#c-update-the-windows-service-user-for-the-salt-minion-service" title="永久链接至标题">¶</a></h3>
+<ol class="arabic simple">
+<li>Click <code class="docutils literal"><span class="pre">Start</span></code> &gt; <code class="docutils literal"><span class="pre">Administrative</span> <span class="pre">Tools</span></code> &gt; <code class="docutils literal"><span class="pre">Services</span></code>.</li>
+<li>In the Services list, right-click on <code class="docutils literal"><span class="pre">salt-minion</span></code> and select <code class="docutils literal"><span class="pre">Properties</span></code>.</li>
+<li>Click the <code class="docutils literal"><span class="pre">Log</span> <span class="pre">On</span></code> tab.</li>
+<li>Click the <code class="docutils literal"><span class="pre">This</span> <span class="pre">account</span></code> radio button.</li>
+<li>Provide the account credentials created in section A.</li>
+<li>Click the <code class="docutils literal"><span class="pre">OK</span></code> button.</li>
+<li>Click the <code class="docutils literal"><span class="pre">OK</span></code> button to the prompt confirming that the user <code class="docutils literal"><span class="pre">has</span> <span class="pre">been</span>
+<span class="pre">granted</span> <span class="pre">the</span> <span class="pre">Log</span> <span class="pre">On</span> <span class="pre">As</span> <span class="pre">A</span> <span class="pre">Service</span> <span class="pre">right</span></code>.</li>
+<li>Click the <code class="docutils literal"><span class="pre">OK</span></code> button to the prompt confirming that <code class="docutils literal"><span class="pre">The</span> <span class="pre">new</span> <span class="pre">logon</span> <span class="pre">name</span>
+<span class="pre">will</span> <span class="pre">not</span> <span class="pre">take</span> <span class="pre">effect</span> <span class="pre">until</span> <span class="pre">you</span> <span class="pre">stop</span> <span class="pre">and</span> <span class="pre">restart</span> <span class="pre">the</span> <span class="pre">service</span></code>.</li>
+<li>Right-Click on <code class="docutils literal"><span class="pre">salt-minion</span></code> and select <code class="docutils literal"><span class="pre">Stop</span></code>.</li>
+<li>Right-Click on <code class="docutils literal"><span class="pre">salt-minion</span></code> and select <code class="docutils literal"><span class="pre">Start</span></code>.</li>
+</ol>
+</div>
+</div>
+<div class="section" id="setting-up-a-windows-build-environment">
+<h2>配置Windows构建环境<a class="headerlink" href="#setting-up-a-windows-build-environment" title="永久链接至标题">¶</a></h2>
+<p>This document will explain how to set up a development environment for salt on
+Windows. The development environment allows you to work with the source code to
+customize or fix bugs. It will also allow you to build your own installation.</p>
+<div class="section" id="the-easy-way">
+<h3>The Easy Way<a class="headerlink" href="#the-easy-way" title="永久链接至标题">¶</a></h3>
+<div class="section" id="prerequisite-software">
+<h4>Prerequisite Software<a class="headerlink" href="#prerequisite-software" title="永久链接至标题">¶</a></h4>
+<p>To do this the easy way you only need to install <a class="reference external" href="https://github.com/msysgit/msysgit/releases/download/Git-1.9.5-preview20150319/Git-1.9.5-preview20150319.exe/">Git for Windows</a>.</p>
+</div>
+<div class="section" id="create-the-build-environment">
+<h4>Create the Build Environment<a class="headerlink" href="#create-the-build-environment" title="永久链接至标题">¶</a></h4>
+<ol class="arabic">
+<li><p class="first">Clone the <a class="reference external" href="https://github.com/saltstack/salt-windows-dev/">Salt-Windows-Dev</a>
+repo from github.</p>
+<p>Open a command line and type:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>git clone https://github.com/saltstack/salt-windows-dev
+</pre></div>
+</div>
+</li>
+<li><p class="first">Build the Python Environment</p>
+<p>Go into the salt-windows-dev directory. Right-click the file named
+<strong>dev_env.ps1</strong> and select <strong>Run with PowerShell</strong></p>
+<p>If you get an error, you may need to change the execution policy.</p>
+<p>Open a powershell window and type the following:</p>
+<div class="highlight-powershell"><div class="highlight"><pre><span></span><span class="nb">Set-ExecutionPolicy</span> <span class="n">RemoteSigned</span>
+</pre></div>
+</div>
+<p>This will download and install Python with all the dependencies needed to
+develop and build salt.</p>
+</li>
+<li><p class="first">Build the Salt Environment</p>
+<p>Right-click on the file named <strong>dev_env_salt.ps1</strong> and select <strong>Run with
+Powershell</strong></p>
+<p>This will clone salt into <code class="docutils literal"><span class="pre">C:\Salt-Dev\salt</span></code> and set it to the 2015.5
+branch. You could optionally run the command from a powershell window with a
+<code class="docutils literal"><span class="pre">-Version</span></code> switch to pull a different version. For example:</p>
+<div class="highlight-powershell"><div class="highlight"><pre><span></span><span class="n">dev_env_salt</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-Version</span> <span class="s1">&#39;2014.7&#39;</span>
+</pre></div>
+</div>
+<p>To view a list of available branches and tags, open a command prompt in your
+<cite>C:Salt-Devsalt</cite> directory and type:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>git branch -a
+git tag -n
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="section" id="the-hard-way">
+<h3>The Hard Way<a class="headerlink" href="#the-hard-way" title="永久链接至标题">¶</a></h3>
+<div class="section" id="id3">
+<h4>Prerequisite Software<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h4>
+<p>Install the following software:</p>
+<ol class="arabic simple">
+<li><a class="reference external" href="https://github.com/msysgit/msysgit/releases/download/Git-1.9.5-preview20150319/Git-1.9.5-preview20150319.exe/">Git for Windows</a></li>
+<li><a class="reference external" href="http://downloads.sourceforge.net/project/nsis/NSIS%203%20Pre-release/3.0b1/nsis-3.0b1-setup.exe/">Nullsoft Installer</a></li>
+</ol>
+<p>Download the Prerequisite zip file for your CPU architecture from the
+SaltStack download site:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://repo.saltstack.com/windows/dependencies/Salt32.zip/">Salt32.zip</a></li>
+<li><a class="reference external" href="http://repo.saltstack.com/windows/dependencies/Salt64.zip/">Salt64.zip</a></li>
+</ul>
+<p>These files contain all software required to build and develop salt. Unzip the
+contents of the file to <code class="docutils literal"><span class="pre">C:\Salt-Dev\temp</span></code>.</p>
+</div>
+<div class="section" id="id5">
+<h4>Create the Build Environment<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h4>
+<ol class="arabic">
+<li><p class="first">Build the Python Environment</p>
+<ul>
+<li><p class="first">Install Python:</p>
+<p>Browse to the <code class="docutils literal"><span class="pre">C:\Salt-Dev\temp</span></code> directory and find the Python
+installation file for your CPU Architecture under the corresponding
+subfolder. Double-click the file to install python.</p>
+<p>Make sure the following are in your <strong>PATH</strong> environment variable:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>C<span class="p">:</span><span class="nl">\Python27</span>
+C<span class="p">:</span><span class="nl">\Python27\Scripts</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">安装Pip</p>
+<p>Open a command prompt and navigate to <code class="docutils literal"><span class="pre">C:\Salt-Dev\temp</span></code>
+Run the following command:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>python get-pip.py
+</pre></div>
+</div>
+</li>
+<li><p class="first">Easy Install compiled binaries.</p>
+<p>M2Crypto, PyCrypto, and PyWin32 need to be installed using Easy Install.
+Open a command prompt and navigate to <code class="docutils literal"><span class="pre">C:\Salt-Dev\temp\&lt;cpuarch&gt;</span></code>.
+Run the following commands:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>easy_install -Z <span class="p">&lt;</span>M2Crypto file name&gt;
+easy_install -Z <span class="p">&lt;</span>PyCrypto file name&gt;
+easy_install -Z <span class="p">&lt;</span>PyWin32 file name&gt;
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">You can type the first part of the file name and then press the tab key
+to auto-complete the name of the file.</p>
+</div>
+</li>
+<li><p class="first">Pip Install Additional Prerequisites</p>
+<p>All remaining prerequisites need to be pip installed. These prerequisites
+are as follow:</p>
+<ul class="simple">
+<li>MarkupSafe</li>
+<li>Jinja</li>
+<li>MsgPack</li>
+<li>PSUtil</li>
+<li>PyYAML</li>
+<li>PyZMQ</li>
+<li>WMI</li>
+<li>Requests</li>
+<li>Certifi</li>
+</ul>
+<p>Open a command prompt and navigate to <code class="docutils literal"><span class="pre">C:\Salt-Dev\temp</span></code>. Run the following
+commands:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>pip install <span class="p">&lt;</span>cpuarch<span class="p">&gt;</span>\<span class="p">&lt;</span>MarkupSafe file name&gt;
+pip install <span class="p">&lt;</span>Jinja file name&gt;
+pip install <span class="p">&lt;</span>cpuarch<span class="p">&gt;</span>\<span class="p">&lt;</span>MsgPack file name&gt;
+pip install <span class="p">&lt;</span>cpuarch<span class="p">&gt;</span>\<span class="p">&lt;</span>psutil file name&gt;
+pip install <span class="p">&lt;</span>cpuarch<span class="p">&gt;</span>\<span class="p">&lt;</span>PyYAML file name&gt;
+pip install <span class="p">&lt;</span>cpuarch<span class="p">&gt;</span>\<span class="p">&lt;</span>pyzmq file name&gt;
+pip install <span class="p">&lt;</span>WMI file name&gt;
+pip install <span class="p">&lt;</span>requests file name&gt;
+pip install <span class="p">&lt;</span>certifi file name&gt;
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+<li><p class="first">Build the Salt Environment</p>
+<ul>
+<li><p class="first">Clone Salt</p>
+<p>Open a command prompt and navigate to <code class="docutils literal"><span class="pre">C:\Salt-Dev</span></code>. Run the following command
+to clone salt:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>git clone https://github.com/saltstack/salt
+</pre></div>
+</div>
+</li>
+<li><p class="first">Checkout Branch</p>
+<p>Checkout the branch or tag of salt you want to work on or build. Open a
+command prompt and navigate to <code class="docutils literal"><span class="pre">C:\Salt-Dev\salt</span></code>. Get a list of
+available tags and branches by running the following commands:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>git fetch --all
+
+To view a list of available branches:
+git branch -a
+
+To view a list of availabel tags:
+git tag -n
+</pre></div>
+</div>
+<p>Checkout the branch or tag by typing the following command:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>git checkout <span class="p">&lt;</span>branch/tag name&gt;
+</pre></div>
+</div>
+</li>
+<li><p class="first">Clean the Environment</p>
+<p>When switching between branches residual files can be left behind that
+will interfere with the functionality of salt. Therefore, after you check
+out the branch you want to work on, type the following commands to clean
+the salt environment:</p>
+</li>
+</ul>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="section" id="developing-with-salt">
+<h2>Developing with Salt<a class="headerlink" href="#developing-with-salt" title="永久链接至标题">¶</a></h2>
+<p>There are two ways to develop with salt. You can run salt's setup.py each time
+you make a change to source code or you can use the setup tools develop mode.</p>
+<div class="section" id="configure-the-minion">
+<h3>Configure the Minion<a class="headerlink" href="#configure-the-minion" title="永久链接至标题">¶</a></h3>
+<p>Both methods require that the minion configuration be in the <code class="docutils literal"><span class="pre">C:\salt</span></code>
+directory. Copy the conf and var directories from <code class="docutils literal"><span class="pre">C:\Salt-Dev\salt\pkg\</span>
+<span class="pre">windows\buildenv</span></code> to <code class="docutils literal"><span class="pre">C:\salt</span></code>. Now go into the <code class="docutils literal"><span class="pre">C:\salt\conf</span></code> directory
+and edit the file name <code class="docutils literal"><span class="pre">minion</span></code> (no extension). You need to configure the
+master and id parameters in this file. Edit the following lines:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>master: <span class="p">&lt;</span>ip or name of your master&gt;
+id: <span class="p">&lt;</span>name of your minion&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="setup-py-method">
+<h3>Setup.py Method<a class="headerlink" href="#setup-py-method" title="永久链接至标题">¶</a></h3>
+<p>Go into the <code class="docutils literal"><span class="pre">C:\Salt-Dev\salt</span></code> directory from a cmd prompt and type:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>python setup.py install --force
+</pre></div>
+</div>
+<p>This will install python into your python installation at <code class="docutils literal"><span class="pre">C:\Python27</span></code>.
+Everytime you make an edit to your source code, you'll have to stop the minion,
+run the setup, and start the minion.</p>
+<p>To start the salt-minion go into <code class="docutils literal"><span class="pre">C:\Python27\Scripts</span></code> from a cmd prompt and
+type:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>salt-minion
+</pre></div>
+</div>
+<p>For debug mode type:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>salt-minion -l debug
+</pre></div>
+</div>
+<p>To stop the minion press Ctrl+C.</p>
+</div>
+<div class="section" id="setup-tools-develop-mode-preferred-method">
+<h3>Setup Tools Develop Mode (Preferred Method)<a class="headerlink" href="#setup-tools-develop-mode-preferred-method" title="永久链接至标题">¶</a></h3>
+<p>To use the Setup Tools Develop Mode go into <code class="docutils literal"><span class="pre">C:\Salt-Dev\salt</span></code> from a cmd
+prompt and type:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>pip install -e .
+</pre></div>
+</div>
+<p>This will install pointers to your source code that resides at
+<code class="docutils literal"><span class="pre">C:\Salt-Dev\salt</span></code>. When you edit your source code you only have to restart
+the minion.</p>
+</div>
+</div>
+<div class="section" id="build-the-windows-installer">
+<h2>Build the windows installer<a class="headerlink" href="#build-the-windows-installer" title="永久链接至标题">¶</a></h2>
+<p>This is the method of building the installer as of version 2014.7.4.</p>
+<div class="section" id="clean-the-environment">
+<h3>Clean the Environment<a class="headerlink" href="#clean-the-environment" title="永久链接至标题">¶</a></h3>
+<p>Make sure you don't have any leftover salt files from previous versions of salt
+in your Python directory.</p>
+<ol class="arabic simple">
+<li>Remove all files that start with salt in the <code class="docutils literal"><span class="pre">C:\Python27\Scripts</span></code>
+directory</li>
+<li>Remove all files and directorys that start with salt in the
+<code class="docutils literal"><span class="pre">C:\Python27\Lib\site-packages</span></code> directory</li>
+</ol>
+</div>
+<div class="section" id="install-salt">
+<h3>安装Salt<a class="headerlink" href="#install-salt" title="永久链接至标题">¶</a></h3>
+<p>Install salt using salt's setup.py. From the <code class="docutils literal"><span class="pre">C:\Salt-Dev\salt</span></code> directory
+type the following command:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>python setup.py install --force
+</pre></div>
+</div>
+</div>
+<div class="section" id="build-the-installer">
+<h3>Build the Installer<a class="headerlink" href="#build-the-installer" title="永久链接至标题">¶</a></h3>
+<p>From cmd prompt go into the <code class="docutils literal"><span class="pre">C:\Salt-Dev\salt\pkg\windows</span></code> directory. Type
+the following command for the branch or tag of salt you're building:</p>
+<div class="highlight-bat"><div class="highlight"><pre><span></span>BuildSalt.bat <span class="p">&lt;</span>branch or tag&gt;
+</pre></div>
+</div>
+<p>This will copy python with salt installed to the <code class="docutils literal"><span class="pre">buildenv\bin</span></code> directory,
+make it portable, and then create the windows installer . The .exe for the
+windows installer will be placed in the <code class="docutils literal"><span class="pre">installer</span></code> directory.</p>
+</div>
+</div>
+<div class="section" id="testing-the-salt-minion">
+<h2>测试Salt minion<a class="headerlink" href="#testing-the-salt-minion" title="永久链接至标题">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">创建目录C:\salt (如果先前不存在的话)</p>
+</li>
+<li><p class="first">从 <code class="docutils literal"><span class="pre">pkg/windows/buildenv/</span></code> 复制范例 <code class="docutils literal"><span class="pre">conf</span></code> 和 <code class="docutils literal"><span class="pre">var</span></code> 目录到C:\salt</p>
+</li>
+<li><p class="first">编辑C:\salt\conf\minion</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>master: ipaddress or hostname of your salt-master
+</pre></div>
+</div>
+</li>
+<li><p class="first">启动salt-minion</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nb">cd</span> C:<span class="se">\P</span>ython27<span class="se">\S</span>cripts
+python salt-minion
+</pre></div>
+</div>
+</li>
+<li><p class="first">在salt-master许可新的minion key</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo salt-key -A
+</pre></div>
+</div>
+<p>This accepts all unaccepted keys. If you're concerned about security just
+accept the key for this specific minion.</p>
+</li>
+<li><p class="first">测试你的minion是否响应</p>
+<p>在salt-master运行：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo salt <span class="s1">&#39;*&#39;</span> test.ping
+</pre></div>
+</div>
+</li>
+</ol>
+<p>You should get the following response: <code class="docutils literal"><span class="pre">{'your</span> <span class="pre">minion</span> <span class="pre">hostname':</span> <span class="pre">True}</span></code></p>
+</div>
+<div class="section" id="single-command-bootstrap-script">
+<h2>单命令启动脚本<a class="headerlink" href="#single-command-bootstrap-script" title="永久链接至标题">¶</a></h2>
+<p>在一个64 bit Windows主机下面的脚本会无人值守安装salt，包括所有的依赖项：</p>
+<div class="admonition-not-up-to-date admonition">
+<p class="first admonition-title">不是最新的。</p>
+<p class="last">这个脚本不是最新的。请使用上面提到的安装包</p>
+</div>
+<div class="highlight-powershell"><div class="highlight"><pre><span></span><span class="c"># (All in one line.)</span>
+
+<span class="s2">&quot;PowerShell (New-Object System.Net.WebClient).DownloadFile(&#39;http://csa-net.dk/salt/bootstrap64.bat&#39;,&#39;C:\bootstrap.bat&#39;);(New-Object -com Shell.Application).ShellExecute(&#39;C:\bootstrap.bat&#39;);&quot;</span>
+</pre></div>
+</div>
+<p>你可以从一个远程的Linux主机上使用winexe执行上面的命令：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>winexe -U <span class="s2">&quot;administrator&quot;</span> //fqdn <span class="s2">&quot;PowerShell (New-Object ......);&quot;</span>
+</pre></div>
+</div>
+<p>更多详情 <a class="reference external" href="http://csa-net.dk/salt">http://csa-net.dk/salt</a></p>
+</div>
+<div class="section" id="packages-management-under-windows-2003">
+<h2>Windows 2003以下的包管理<a class="headerlink" href="#packages-management-under-windows-2003" title="永久链接至标题">¶</a></h2>
+<p>On windows Server 2003, you need to install optional component &quot;wmi windows
+installer provider&quot; to have full list of installed packages. If you don't have
+this, salt-minion can't report some installed software.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="ubuntu.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Ubuntu" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="suse.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="SUSE" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">安装教程</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#quick-install">快速安装</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#platform-specific-installation-instructions">对应平台的安装教程</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="arch.html">Arch Linux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="debian.html">Debian GNU/Linux / Raspbian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fedora.html">Fedora</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freebsd.html">FreeBSD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gentoo.html">Gentoo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="openbsd.html">OpenBSD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="osx.html">OS X</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rhel.html">RHEL / CentOS / Scientific Linux / Amazon Linux / Oracle Linux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solaris.html">Solaris</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ubuntu.html">Ubuntu</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Windows</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#windows-installer">Windows安装包</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#silent-installer-options">Silent Installer Options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-the-salt-minion-on-windows-as-an-unprivileged-user">Running the Salt Minion on Windows as an Unprivileged User</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#a-create-the-unprivileged-user-that-the-salt-minion-will-run-as">A. Create the Unprivileged User that the Salt Minion will Run As</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#b-add-the-new-user-to-the-access-control-list-for-the-salt-folder">B. Add the New User to the Access Control List for the Salt Folder</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#c-update-the-windows-service-user-for-the-salt-minion-service">C. Update the Windows Service User for the <code class="docutils literal"><span class="pre">salt-minion</span></code> Service</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#setting-up-a-windows-build-environment">配置Windows构建环境</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#the-easy-way">The Easy Way</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#prerequisite-software">Prerequisite Software</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#create-the-build-environment">Create the Build Environment</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#the-hard-way">The Hard Way</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#id3">Prerequisite Software</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id5">Create the Build Environment</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#developing-with-salt">Developing with Salt</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#configure-the-minion">Configure the Minion</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#setup-py-method">Setup.py Method</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#setup-tools-develop-mode-preferred-method">Setup Tools Develop Mode (Preferred Method)</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#build-the-windows-installer">Build the windows installer</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#clean-the-environment">Clean the Environment</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#install-salt">安装Salt</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#build-the-installer">Build the Installer</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#testing-the-salt-minion">测试Salt minion</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#single-command-bootstrap-script">单命令启动脚本</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#packages-management-under-windows-2003">Windows 2003以下的包管理</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="suse.html">SUSE</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#initial-configuration">Initial Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#additional-installation-guides">Additional Installation Guides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#dependencies">依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#optional-dependencies">可选依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#upgrading-salt">升级Salt</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

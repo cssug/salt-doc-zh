@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Grains</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Using Salt" href="../using_salt.html">
+        <link rel="next" title="在Pillar中存储静态数据" href="../pillar/index.html">
+        <link rel="prev" title="Using Salt" href="../using_salt.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../using_salt.html" title="Using Salt">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../pillar/index.html" title="在Pillar中存储静态数据">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="grains">
+<span id="id1"></span><h1>Grains<a class="headerlink" href="#grains" title="永久链接至标题">¶</a></h1>
+<p>Salt comes with an interface to derive information about the underlying system.
+This is called the grains interface, because it presents salt with grains of
+information. Grains are collected for the operating system, domain name,
+IP address, kernel, OS type, memory, and many other system properties.</p>
+<p>The grains interface is made available to Salt modules and components so that
+the right salt minion commands are automatically available on the right
+systems.</p>
+<p>Grain data is relatively static, though if system information changes
+(for example, if network settings are changed), or if a new value is assigned
+to a custom grain, grain data is refreshed.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Grains resolve to lowercase letters. For example, <code class="docutils literal"><span class="pre">FOO</span></code>, and <code class="docutils literal"><span class="pre">foo</span></code>
+target the same grain.</p>
+</div>
+<div class="section" id="listing-grains">
+<h2>Listing Grains<a class="headerlink" href="#listing-grains" title="永久链接至标题">¶</a></h2>
+<p>Available grains can be listed by using the 'grains.ls' module:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> grains.ls
+</pre></div>
+</div>
+<p>Grains data can be listed by using the 'grains.items' module:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> grains.items
+</pre></div>
+</div>
+</div>
+<div class="section" id="grains-in-the-minion-config">
+<span id="static-custom-grains"></span><h2>Grains in the Minion Config<a class="headerlink" href="#grains-in-the-minion-config" title="永久链接至标题">¶</a></h2>
+<p>Grains can also be statically assigned within the minion configuration file.
+Just add the option <code class="docutils literal"><span class="pre">grains</span></code> and pass options to it:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">grains</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">roles</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">webserver</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">memcache</span>
+  <span class="l l-Scalar l-Scalar-Plain">deployment</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">datacenter4</span>
+  <span class="l l-Scalar l-Scalar-Plain">cabinet</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">13</span>
+  <span class="l l-Scalar l-Scalar-Plain">cab_u</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">14-15</span>
+</pre></div>
+</div>
+<p>Then status data specific to your servers can be retrieved via Salt, or used
+inside of the State system for matching. It also makes targeting, in the case
+of the example above, simply based on specific data about your deployment.</p>
+</div>
+<div class="section" id="grains-in-etc-salt-grains">
+<h2>Grains in /etc/salt/grains<a class="headerlink" href="#grains-in-etc-salt-grains" title="永久链接至标题">¶</a></h2>
+<p>If you do not want to place your custom static grains in the minion config
+file, you can also put them in <code class="docutils literal"><span class="pre">/etc/salt/grains</span></code> on the minion. They are configured in the
+same way as in the above example, only without a top-level <code class="docutils literal"><span class="pre">grains:</span></code> key:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">roles</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">webserver</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">memcache</span>
+<span class="l l-Scalar l-Scalar-Plain">deployment</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">datacenter4</span>
+<span class="l l-Scalar l-Scalar-Plain">cabinet</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">13</span>
+<span class="l l-Scalar l-Scalar-Plain">cab_u</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">14-15</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="matching-grains-in-the-top-file">
+<h2>Matching Grains in the Top File<a class="headerlink" href="#matching-grains-in-the-top-file" title="永久链接至标题">¶</a></h2>
+<p>With correctly configured grains on the Minion, the <a class="reference internal" href="../../glossary.html#term-top-file"><span class="xref std std-term">top file</span></a> used in
+Pillar or during Highstate can be made very efficient. For example, consider
+the following configuration:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="s">&#39;node_type:web&#39;</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">grain</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">webserver</span>
+
+<span class="s">&#39;node_type:postgres&#39;</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">grain</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">database</span>
+
+<span class="s">&#39;node_type:redis&#39;</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">grain</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">redis</span>
+
+<span class="s">&#39;node_type:lb&#39;</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">grain</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">lb</span>
+</pre></div>
+</div>
+<p>For this example to work, you would need to have defined the grain
+<code class="docutils literal"><span class="pre">node_type</span></code> for the minions you wish to match. This simple example is nice,
+but too much of the code is similar. To go one step further, Jinja templating
+can be used to simplify the <a class="reference internal" href="../../glossary.html#term-top-file"><span class="xref std std-term">top file</span></a>.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% set the_node_type = salt[&#39;grains.get&#39;](&#39;node_type&#39;, &#39;&#39;) %}
+
+{% if the_node_type %}
+  &#39;node_type:{{ the_node_type }}&#39;:
+    - match: grain
+    - {{ the_node_type }}
+{% endif %}
+</pre></div>
+</div>
+<p>Using Jinja templating, only one match entry needs to be defined.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The example above uses the <a class="reference internal" href="../../ref/modules/all/salt.modules.grains.html#salt.modules.grains.get" title="salt.modules.grains.get"><code class="xref py py-mod docutils literal"><span class="pre">grains.get</span></code></a>
+function to account for minions which do not have the <code class="docutils literal"><span class="pre">node_type</span></code> grain
+set.</p>
+</div>
+</div>
+<div class="section" id="writing-grains">
+<span id="id2"></span><h2>Writing Grains<a class="headerlink" href="#writing-grains" title="永久链接至标题">¶</a></h2>
+<p>The grains interface is derived by executing
+all of the &quot;public&quot; functions found in the modules located in the grains
+package or the custom grains directory. The functions in the modules of
+the grains must return a Python <a class="reference external" href="http://docs.python.org/2/library/stdtypes.html#typesmapping" title="(在 Python v2.7)"><span class="xref std std-ref">dict</span></a>, where the
+keys in the <a class="reference external" href="http://docs.python.org/2/library/stdtypes.html#typesmapping" title="(在 Python v2.7)"><span class="xref std std-ref">dict</span></a> are the names of the grains and
+the values are the values.</p>
+<p>Custom grains should be placed in a <code class="docutils literal"><span class="pre">_grains</span></code> directory located under the
+<a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-file_roots"><code class="xref std std-conf_master docutils literal"><span class="pre">file_roots</span></code></a> specified by the master config file.  The default path
+would be <code class="docutils literal"><span class="pre">/srv/salt/_grains</span></code>.  Custom grains will be
+distributed to the minions when <a class="reference internal" href="../../ref/modules/all/salt.modules.state.html#salt.modules.state.highstate" title="salt.modules.state.highstate"><code class="xref py py-mod docutils literal"><span class="pre">state.highstate</span></code></a> is run, or by executing the
+<a class="reference internal" href="../../ref/modules/all/salt.modules.saltutil.html#salt.modules.saltutil.sync_grains" title="salt.modules.saltutil.sync_grains"><code class="xref py py-mod docutils literal"><span class="pre">saltutil.sync_grains</span></code></a> or
+<a class="reference internal" href="../../ref/modules/all/salt.modules.saltutil.html#salt.modules.saltutil.sync_all" title="salt.modules.saltutil.sync_all"><code class="xref py py-mod docutils literal"><span class="pre">saltutil.sync_all</span></code></a> functions.</p>
+<p>Grains are easy to write, and only need to return a dictionary.  A common
+approach would be code something similar to the following:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="k">def</span> <span class="nf">yourfunction</span><span class="p">():</span>
+     <span class="c1"># initialize a grains dictionary</span>
+     <span class="n">grains</span> <span class="o">=</span> <span class="p">{}</span>
+     <span class="c1"># Some code for logic that sets grains like</span>
+     <span class="n">grains</span><span class="p">[</span><span class="s1">&#39;yourcustomgrain&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+     <span class="n">grains</span><span class="p">[</span><span class="s1">&#39;anothergrain&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;somevalue&#39;</span>
+     <span class="k">return</span> <span class="n">grains</span>
+</pre></div>
+</div>
+<p>Before adding a grain to Salt, consider what the grain is and remember that
+grains need to be static data. If the data is something that is likely to
+change, consider using <a class="reference internal" href="../pillar/index.html"><em>Pillar</em></a> instead.</p>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">Custom grains will not be available in the top file until after the first
+<a class="reference internal" href="../tutorials/states_pt1.html#running-highstate"><span>highstate</span></a>. To make custom grains available on a
+minion's first highstate, it is recommended to use <a class="reference internal" href="../reactor/index.html#minion-start-reactor"><span>this example</span></a> to ensure that the custom grains are synced when
+the minion starts.</p>
+</div>
+<div class="section" id="loading-custom-grains">
+<h3>Loading Custom Grains<a class="headerlink" href="#loading-custom-grains" title="永久链接至标题">¶</a></h3>
+<p>If you have multiple functions specifying grains that are called from a <code class="docutils literal"><span class="pre">main</span></code>
+function, be sure to prepend grain function names with an underscore. This prevents
+Salt from including the loaded grains from the grain functions in the final
+grain data structure. For example, consider this custom grain file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="k">def</span> <span class="nf">_my_custom_grain</span><span class="p">():</span>
+    <span class="n">my_grain</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="s1">&#39;hello&#39;</span><span class="p">:</span> <span class="s1">&#39;world&#39;</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">my_grain</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="c1"># initialize a grains dictionary</span>
+    <span class="n">grains</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">grains</span><span class="p">[</span><span class="s1">&#39;my_grains&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_my_custom_grain</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">grains</span>
+</pre></div>
+</div>
+<p>The output of this example renders like so:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-call --local grains.items</span>
+local:
+    ----------
+    &lt;Snipped <span class="k">for</span> brevity&gt;
+    my_grains:
+        ----------
+        foo:
+            bar
+        hello:
+            world
+</pre></div>
+</div>
+<p>However, if you don't prepend the <code class="docutils literal"><span class="pre">my_custom_grain</span></code> function with an underscore,
+the function will be rendered twice by Salt in the items output: once for the
+<code class="docutils literal"><span class="pre">my_custom_grain</span></code> call itself, and again when it is called in the <code class="docutils literal"><span class="pre">main</span></code>
+function:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-call --local grains.items</span>
+local:
+----------
+    &lt;Snipped <span class="k">for</span> brevity&gt;
+    foo:
+        bar
+    &lt;Snipped <span class="k">for</span> brevity&gt;
+    hello:
+        world
+    &lt;Snipped <span class="k">for</span> brevity&gt;
+    my_grains:
+        ----------
+        foo:
+            bar
+        hello:
+            world
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="precedence">
+<h2>Precedence<a class="headerlink" href="#precedence" title="永久链接至标题">¶</a></h2>
+<p>Core grains can be overridden by custom grains. As there are several ways of
+defining custom grains, there is an order of precedence which should be kept in
+mind when defining them. The order of evaluation is as follows:</p>
+<ol class="arabic simple">
+<li>Core grains.</li>
+<li>Custom grains in <code class="docutils literal"><span class="pre">/etc/salt/grains</span></code>.</li>
+<li>Custom grains in <code class="docutils literal"><span class="pre">/etc/salt/minion</span></code>.</li>
+<li>Custom grain modules in <code class="docutils literal"><span class="pre">_grains</span></code> directory, synced to minions.</li>
+</ol>
+<p>Each successive evaluation overrides the previous ones, so any grains defined
+by custom grains modules synced to minions that have the same name as a core
+grain will override that core grain. Similarly, grains from
+<code class="docutils literal"><span class="pre">/etc/salt/minion</span></code> override both core grains and custom grain modules, and
+grains in <code class="docutils literal"><span class="pre">_grains</span></code> will override <em>any</em> grains of the same name.</p>
+</div>
+<div class="section" id="examples-of-grains">
+<h2>Examples of Grains<a class="headerlink" href="#examples-of-grains" title="永久链接至标题">¶</a></h2>
+<p>The core module in the grains package is where the main grains are loaded by
+the Salt minion and provides the principal example of how to write grains:</p>
+<p><a class="reference external" href="https://github.com/saltstack/salt/blob/develop/salt/grains/core.py">https://github.com/saltstack/salt/blob/develop/salt/grains/core.py</a></p>
+</div>
+<div class="section" id="syncing-grains">
+<h2>Syncing Grains<a class="headerlink" href="#syncing-grains" title="永久链接至标题">¶</a></h2>
+<p>Syncing grains can be done a number of ways, they are automatically synced when
+<a class="reference internal" href="../../ref/modules/all/salt.modules.state.html#salt.modules.state.highstate" title="salt.modules.state.highstate"><code class="xref py py-mod docutils literal"><span class="pre">state.highstate</span></code></a> is called, or (as noted
+above) the grains can be manually synced and reloaded by calling the
+<a class="reference internal" href="../../ref/modules/all/salt.modules.saltutil.html#salt.modules.saltutil.sync_grains" title="salt.modules.saltutil.sync_grains"><code class="xref py py-mod docutils literal"><span class="pre">saltutil.sync_grains</span></code></a> or
+<a class="reference internal" href="../../ref/modules/all/salt.modules.saltutil.html#salt.modules.saltutil.sync_all" title="salt.modules.saltutil.sync_all"><code class="xref py py-mod docutils literal"><span class="pre">saltutil.sync_all</span></code></a> functions.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../using_salt.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Using Salt" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../pillar/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="在Pillar中存储静态数据" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../using_salt.html">Using Salt</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">Grains</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#listing-grains">Listing Grains</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#grains-in-the-minion-config">Grains in the Minion Config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#grains-in-etc-salt-grains">Grains in /etc/salt/grains</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#matching-grains-in-the-top-file">Matching Grains in the Top File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#writing-grains">Writing Grains</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#loading-custom-grains">Loading Custom Grains</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#precedence">Precedence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#examples-of-grains">Examples of Grains</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syncing-grains">Syncing Grains</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../pillar/index.html">在Pillar中存储静态数据</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../targeting/index.html">Targeting Minions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mine/index.html">Salt Mine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/runners/index.html">Runners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../engines/index.html">Salt Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../yaml/index.html">了解YAML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../troubleshooting/index.html">解决问题</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../faq.html">常见问题</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../best_practices.html">Salt Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt Cloud 0.8.6 Release Notes</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="salt-cloud-0-8-6-release-notes">
+<h1>Salt Cloud 0.8.6 Release Notes<a class="headerlink" href="#salt-cloud-0-8-6-release-notes" title="永久链接至标题">¶</a></h1>
+<p>Welcome to 0.8.6! This is an exciting release, especially for EC2 users. To see
+what new features are available, read on.</p>
+<div class="section" id="documentation">
+<h2>文档<a class="headerlink" href="#documentation" title="永久链接至标题">¶</a></h2>
+<p>The documentation for Salt Cloud can be found on Read the Docs:
+<a class="reference external" href="http://salt-cloud.readthedocs.org">http://salt-cloud.readthedocs.org</a></p>
+</div>
+<div class="section" id="download">
+<h2>下载<a class="headerlink" href="#download" title="永久链接至标题">¶</a></h2>
+<p>Salt Cloud can be downloaded and install via pypi:</p>
+<p><a class="reference external" href="https://pypi.python.org/packages/source/s/salt-cloud/salt-cloud-0.8.6.tar.gz">https://pypi.python.org/packages/source/s/salt-cloud/salt-cloud-0.8.6.tar.gz</a></p>
+<p>Some packages have been made available for salt-cloud and more on on their
+way. Packages for Arch and FreeBSD are being made available thanks to the
+work of Christer Edwards, and packages for RHEL and Fedora are being created
+by Clint Savage. The Ubuntu PPA is being managed by Sean Channel. Package
+availability will be announced on the salt mailing list.</p>
+</div>
+<div class="section" id="updated-libcloud">
+<h2>Updated libcloud<a class="headerlink" href="#updated-libcloud" title="永久链接至标题">¶</a></h2>
+<p>This version of Salt Cloud now depends upon libcloud version 0.12.1. Be sure to
+update your packages accordingly.</p>
+</div>
+<div class="section" id="salt-outputter">
+<h2>Salt Outputter<a class="headerlink" href="#salt-outputter" title="永久链接至标题">¶</a></h2>
+<p>Previously, output from Salt Cloud was a mix of log output and print
+statements, while the Salt outputter system has grown into a beautiful,
+configurable tool. This release of Salt Cloud now takes advantage of the Salt
+outputter system, making the output from the salt-cloud command much more
+beautiful, easy to read, and usable from other scripts.</p>
+</div>
+<div class="section" id="experimental-ec2-driver">
+<h2>Experimental EC2 Driver<a class="headerlink" href="#experimental-ec2-driver" title="永久链接至标题">¶</a></h2>
+<p>A new driver has been introduced for Amazon EC2, to potentially replace the
+existing AWS driver. This driver contains several optimizations which have been
+found to greatly improve instance creation and deployment. They also allow for
+extra functionality to be added, which is not currently available in the AWS
+driver. However, it should be noted that the EC2 driver is currently considered
+to be experiemental. While existing AWS usage should not currently differ, it
+should be expected to change between versions until it is declared stable.</p>
+<p>Many of the features of this release are specific to the EC2 driver. Please
+check the AWS documentation for configuration and usage of the EC2 driver.</p>
+</div>
+<div class="section" id="aws-ec2-rename-on-destroy">
+<h2>AWS/EC2 Rename on Destroy<a class="headerlink" href="#aws-ec2-rename-on-destroy" title="永久链接至标题">¶</a></h2>
+<p>When instances on AWS are destroyed, there will be a lag between the time that
+the action is sent, and the time that Amazon cleans up the instance. During this
+time, the instance still retails a Name tag, which will cause a collision if the
+creation of an instance with the same name is attempted before the cleanup
+occurs. In order to avoid such collisions, Salt Cloud can be configured to
+rename instances when they are destroyed. The new name will look something like:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>myinstance-DEL20f5b8ad4eb64ed88f2c428df80a1a0c
+</pre></div>
+</div>
+<p>In order to enable this, add AWS.rename_on_destroy line to the main
+configuration file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">AWS.rename_on_destroy</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="new-action-show-instance">
+<h2>New Action: show_instance<a class="headerlink" href="#new-action-show-instance" title="永久链接至标题">¶</a></h2>
+<p>This action is a thin wrapper around --full-query, which displays details on a
+single instance only. In an environment with several machines, this will save a
+user from having to sort through all instance data, just to examine a single
+instance.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ salt-cloud -a show_instance myinstance
+</pre></div>
+</div>
+</div>
+<div class="section" id="actions-vs-functions">
+<h2>Actions vs Functions<a class="headerlink" href="#actions-vs-functions" title="永久链接至标题">¶</a></h2>
+<p>Salt Cloud 0.8.3 introduced the concept of provider-specific actions. However,
+these actions were designed to operate on specific instances within a provider.
+In order to perform calls on a provider, but not on specific instances,
+functions have been added. Currently, only EC2 takes advantage of these.</p>
+</div>
+<div class="section" id="new-function-show-image">
+<h2>New Function: show_image<a class="headerlink" href="#new-function-show-image" title="永久链接至标题">¶</a></h2>
+<p>This is a function that describes an AMI on EC2. This will give insight as to
+the defaults that will be applied to an instance using a particular AMI.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ salt-cloud -f show_image ec2 <span class="nv">image</span><span class="o">=</span>ami-fd20ad94
+</pre></div>
+</div>
+</div>
+<div class="section" id="ec2-delvol-on-destroy">
+<h2>EC2: delvol_on_destroy<a class="headerlink" href="#ec2-delvol-on-destroy" title="永久链接至标题">¶</a></h2>
+<p>This argument overrides the default DeleteOnTermination setting in the AMI for
+the root EBS volume for an instance. Many AMIs contain 'false' as a default,
+resulting in orphaned volumes in the EC2 account, which may unknowingly be
+charged to the account. This setting can be added to the profile or map file
+for an instance.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">delvol_on_destroy</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>This can also be set as a global setting in the EC2 cloud configuration:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">EC2.delvol_on_destroy</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>The setting for this may be changed on an existing instance using one of the
+following commands:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a delvol_on_destroy myinstance
+salt-cloud -a keepvol_on_destroy myinstance
+</pre></div>
+</div>
+</div>
+<div class="section" id="ec2-termination-protection">
+<h2>EC2 Termination Protection<a class="headerlink" href="#ec2-termination-protection" title="永久链接至标题">¶</a></h2>
+<p>AWS allows the user to enable and disable termination protection on a specific
+instance. An instance with this protection enabled cannot be destroyed. The EC2
+driver adds a show_term_protect action to the regular AWS functionality.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a show_term_protect mymachine
+salt-cloud -a enable_term_protect mymachine
+salt-cloud -a disable_term_protect mymachine
+</pre></div>
+</div>
+</div>
+<div class="section" id="ec2-alternate-endpoint">
+<h2>EC2 Alternate Endpoint<a class="headerlink" href="#ec2-alternate-endpoint" title="永久链接至标题">¶</a></h2>
+<p>Normally, ec2 endpoints are build using the region and the service_url. The
+resulting endpoint would follow this pattern:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ec2.&lt;region&gt;.&lt;service_url&gt;</span>
+</pre></div>
+</div>
+<p>This results in an endpoint that looks like:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ec2.us-east-1.amazonaws.com</span>
+</pre></div>
+</div>
+<p>There are other projects that support an EC2 compatibility layer, which this
+scheme does not account for. This can be overridden by specifying the endpoint
+directly in the main cloud configuration file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">EC2.endpoint</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myendpoint.example.com:1138/services/Cloud</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ec2-volume-management">
+<h2>EC2 Volume Management<a class="headerlink" href="#ec2-volume-management" title="永久链接至标题">¶</a></h2>
+<p>The EC2 driver has several functions and actions for management of EBS volumes.</p>
+<div class="section" id="creating-volumes">
+<h3>Creating Volumes<a class="headerlink" href="#creating-volumes" title="永久链接至标题">¶</a></h3>
+<p>A volume may be created, independent of an instance. A zone must be specified.
+A size or a snapshot may be specified (in GiB). If neither is given, a default
+size of 10 GiB will be used. If a snapshot is given, the size of the snapshot
+will be used.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_volume ec2 <span class="nv">zone</span><span class="o">=</span>us-east-1b
+salt-cloud -f create_volume ec2 <span class="nv">zone</span><span class="o">=</span>us-east-1b <span class="nv">size</span><span class="o">=</span>10
+salt-cloud -f create_volume ec2 <span class="nv">zone</span><span class="o">=</span>us-east-1b <span class="nv">snapshot</span><span class="o">=</span>snap12345678
+</pre></div>
+</div>
+</div>
+<div class="section" id="attaching-volumes">
+<h3>Attaching Volumes<a class="headerlink" href="#attaching-volumes" title="永久链接至标题">¶</a></h3>
+<p>Unattached volumes may be attached to an instance. The following values are
+required: name or instance_id, volume_id, and device.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a attach_volume myinstance <span class="nv">volume_id</span><span class="o">=</span>vol-12345 <span class="nv">device</span><span class="o">=</span>/dev/sdb1
+</pre></div>
+</div>
+</div>
+<div class="section" id="show-a-volume">
+<h3>Show a Volume<a class="headerlink" href="#show-a-volume" title="永久链接至标题">¶</a></h3>
+<p>The details about an existing volume may be retrieved.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a show_volume myinstance <span class="nv">volume_id</span><span class="o">=</span>vol-12345
+salt-cloud -f show_volume ec2 <span class="nv">volume_id</span><span class="o">=</span>vol-12345
+</pre></div>
+</div>
+</div>
+<div class="section" id="detaching-volumes">
+<h3>Detaching Volumes<a class="headerlink" href="#detaching-volumes" title="永久链接至标题">¶</a></h3>
+<p>An existing volume may be detached from an instance.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a detach_volume myinstance <span class="nv">volume_id</span><span class="o">=</span>vol-12345
+</pre></div>
+</div>
+</div>
+<div class="section" id="deleting-volumes">
+<h3>Deleting Volumes<a class="headerlink" href="#deleting-volumes" title="永久链接至标题">¶</a></h3>
+<p>A volume that is not attached to an instance may be deleted.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_volume ec2 <span class="nv">volume_id</span><span class="o">=</span>vol-12345
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="managing-key-pairs-on-ec2">
+<h2>Managing Key Pairs on EC2<a class="headerlink" href="#managing-key-pairs-on-ec2" title="永久链接至标题">¶</a></h2>
+<p>The EC2 driver has the ability to manage key pairs.</p>
+<div class="section" id="creating-a-key-pair">
+<h3>Creating a Key Pair<a class="headerlink" href="#creating-a-key-pair" title="永久链接至标题">¶</a></h3>
+<p>A key pair is required in order to create an instance. When creating a key pair
+with this function, the return data will contain a copy of the private key.
+This private key is not stored by Amazon, and will not be obtainable past this
+point, and should be stored immediately.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_keypair ec2 <span class="nv">keyname</span><span class="o">=</span>mykeypair
+</pre></div>
+</div>
+</div>
+<div class="section" id="show-a-key-pair">
+<h3>Show a Key Pair<a class="headerlink" href="#show-a-key-pair" title="永久链接至标题">¶</a></h3>
+<p>This function will show the details related to a key pair, not including the
+private key itself (which is not stored by Amazon).</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_keypair ec2 <span class="nv">keyname</span><span class="o">=</span>mykeypair
+</pre></div>
+</div>
+</div>
+<div class="section" id="delete-a-key-pair">
+<h3>Delete a Key Pair<a class="headerlink" href="#delete-a-key-pair" title="永久链接至标题">¶</a></h3>
+<p>This function removes the key pair from Amazon.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_keypair ec2 <span class="nv">keyname</span><span class="o">=</span>mykeypair
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

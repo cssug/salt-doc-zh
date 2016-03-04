@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>SLS Template Variable Reference</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="State System Reference" href="index.html">
+        <link rel="next" title="State Modules" href="writing.html">
+        <link rel="prev" title="顶级配置文件" href="top.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="top.html" title="顶级配置文件">上一页</a>
+            
+        </li>
+        <li>
+            <a href="writing.html" title="State Modules">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="sls-template-variable-reference">
+<h1>SLS Template Variable Reference<a class="headerlink" href="#sls-template-variable-reference" title="永久链接至标题">¶</a></h1>
+<p>The template engines available to sls files and file templates come loaded
+with a number of context variables. These variables contain information and
+functions to assist in the generation of templates.  See each variable below
+for its availability -- not all variables are available in all templating
+contexts.</p>
+<div class="section" id="salt">
+<h2>Salt<a class="headerlink" href="#salt" title="永久链接至标题">¶</a></h2>
+<p>The <cite>salt</cite> variable is available to abstract the salt library functions. This
+variable is a python dictionary containing all of the functions available to
+the running salt minion.  It is available in all salt templates.</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">for</span> <span class="nv">file</span> <span class="k">in</span> <span class="nv">salt</span><span class="o">[</span><span class="s1">&#39;cmd.run&#39;</span><span class="o">](</span><span class="s1">&#39;ls -1 /opt/to_remove&#39;</span><span class="o">)</span><span class="nv">.splitlines</span><span class="o">()</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">/opt/to_remove/</span><span class="cp">{{</span> <span class="nv">file</span> <span class="cp">}}</span><span class="x">:</span>
+<span class="x">  file.absent</span>
+<span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="opts">
+<h2>Opts<a class="headerlink" href="#opts" title="永久链接至标题">¶</a></h2>
+<p>The <cite>opts</cite> variable abstracts the contents of the minion's configuration file
+directly to the template. The <cite>opts</cite> variable is a dictionary.  It is available
+in all templates.</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="cp">{{</span> <span class="nv">opts</span><span class="o">[</span><span class="s1">&#39;cachedir&#39;</span><span class="o">]</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">config.get</span></code> function also searches for values in the <cite>opts</cite> dictionary.</p>
+</div>
+<div class="section" id="pillar">
+<h2>Pillar是Salt非常重要的一个组件，它用于给特定的minion定义任何你需要的数据，这些数据可以被Salt的其他组件使用。<a class="headerlink" href="#pillar" title="永久链接至标题">¶</a></h2>
+<p>The <cite>pillar</cite> dictionary can be referenced directly, and is available in all
+templates:</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="cp">{{</span> <span class="nv">pillar</span><span class="o">[</span><span class="s1">&#39;key&#39;</span><span class="o">]</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+</div>
+<p>Using the <code class="docutils literal"><span class="pre">pillar.get</span></code> function via the <cite>salt</cite> variable is generally
+recommended since a default can be safely set in the event that the value
+is not available in pillar and dictionaries can be traversed directly:</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="cp">{{</span> <span class="nv">salt</span><span class="o">[</span><span class="s1">&#39;pillar.get&#39;</span><span class="o">](</span><span class="s1">&#39;key&#39;</span><span class="o">,</span> <span class="s1">&#39;failover_value&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+<span class="cp">{{</span> <span class="nv">salt</span><span class="o">[</span><span class="s1">&#39;pillar.get&#39;</span><span class="o">](</span><span class="s1">&#39;stuff:more:deeper&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="grains">
+<h2>grains是minion启动时加载的，在运行过程中不会发生变化，所以是静态数据。grains中包含诸如运行的内核版本，操作系统等信息。<a class="headerlink" href="#grains" title="永久链接至标题">¶</a></h2>
+<p>The <cite>grains</cite> dictionary makes the minion's grains directly available, and is
+available in all templates:</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="cp">{{</span> <span class="nv">grains</span><span class="o">[</span><span class="s1">&#39;os&#39;</span><span class="o">]</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">grains.get</span></code> function can be used to traverse deeper grains and set
+defaults:</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="cp">{{</span> <span class="nv">salt</span><span class="o">[</span><span class="s1">&#39;grains.get&#39;</span><span class="o">](</span><span class="s1">&#39;os&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="env">
+<h2>env<a class="headerlink" href="#env" title="永久链接至标题">¶</a></h2>
+<p>The <cite>env</cite> variable is available in only in sls files when gathering the sls
+from an environment.</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="cp">{{</span> <span class="nv">env</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sls">
+<h2>sls<a class="headerlink" href="#sls" title="永久链接至标题">¶</a></h2>
+<p>The <cite>sls</cite> variable contains the sls reference value, and is only available in
+the actual SLS file (not in any files referenced in that SLS). The sls
+reference value is the value used to include the sls in top files or via the
+include option.</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="cp">{{</span> <span class="nv">sls</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="top.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="顶级配置文件" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="writing.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="State Modules" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../topics/states/index.html">Configuration Management</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/starting_states.html">我们如何使用Salt States？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt1.html">States教程，第1部分 - 基础用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt2.html">States tutorial, part 2 - More Complex States, Requisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt3.html">States tutorial, part 3 - Templating, Includes, Extends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt4.html">States tutorial, part 4</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">State System Reference</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aggregate.html">Mod Aggregate State Runtime Modifications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="altering_states.html">Altering States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="backup_mode.html">File State Backups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compiler_ordering.html">Understanding State Compiler Ordering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extend.html">Extending External SLS Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="failhard.html">Failhard Global Option</a></li>
+<li class="toctree-l3"><a class="reference internal" href="global_state_arguments.html">Global State Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html">Highstate data structure definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="include.html">Include and Exclude</a></li>
+<li class="toctree-l3"><a class="reference internal" href="layers.html">State System Layers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="master_side.html">The Orchestrate Runner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ordering.html">Ordering States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="providers.html">State Providers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="requisites.html">Requisites and Other Global State Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="startup.html">Startup States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html">State Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="top.html">顶级配置文件</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">SLS Template Variable Reference</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#salt">Salt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#opts">Opts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pillar">Pillar是Salt非常重要的一个组件，它用于给特定的minion定义任何你需要的数据，这些数据可以被Salt的其他组件使用。</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#grains">grains是minion启动时加载的，在运行过程中不会发生变化，所以是静态数据。grains中包含诸如运行的内核版本，操作系统等信息。</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#env">env</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sls">sls</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="writing.html">State Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#state-management">State Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#understanding-the-salt-state-system-components">理解Salt状态系统组件</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

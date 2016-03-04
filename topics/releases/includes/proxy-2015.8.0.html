@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Proxy Minion Enhancements</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="proxy-minion-enhancements">
+<span id="proxy-2015-8-0"></span><h1>Proxy Minion Enhancements<a class="headerlink" href="#proxy-minion-enhancements" title="永久链接至标题">¶</a></h1>
+<p>Proxy Minions have undergone a significant overhaul in 2015.8.</p>
+<ul class="simple">
+<li>Proxies are now more of a first-class citizen in the Salt universe</li>
+<li>Proxies are no longer started by a &quot;parent minion&quot;, they are started on the
+command line with the new <code class="docutils literal"><span class="pre">salt-proxy</span></code> command</li>
+<li>The default configuration file for proxies is now <code class="docutils literal"><span class="pre">/etc/salt/proxy</span></code>.</li>
+<li>The default logfile for proxies is now <code class="docutils literal"><span class="pre">/var/log/salt/proxy</span></code>.</li>
+<li><code class="docutils literal"><span class="pre">salt-proxy</span></code> takes a <code class="docutils literal"><span class="pre">--proxyid</span></code> switch.  This becomes the id of the proxy
+minion, and thus the pillar key under which the configuration for the proxy is
+looked up.</li>
+<li>Proxies have been lightly tested with the new TCP transport.  They still do
+not work with the RAET transport.</li>
+<li>The pillar structure is therefore different than in previous releases.  In
+earlier releases you might have something that looked like this:</li>
+</ul>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/top.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">minioncontroller</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">dumbdevice1</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">dumbdevice2</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/dumbdevice1.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">dumbdevice1</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">proxy</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">proxytype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">networkswitch</span>
+    <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">172.23.23.5</span>
+    <span class="l l-Scalar l-Scalar-Plain">username</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="l l-Scalar l-Scalar-Plain">passwd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">letmein</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/dumbdevice2.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">dumbdevice2</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">proxy</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">proxytype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">networkswitch</span>
+    <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">172.23.23.6</span>
+    <span class="l l-Scalar l-Scalar-Plain">username</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="l l-Scalar l-Scalar-Plain">passwd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">letmein</span>
+</pre></div>
+</div>
+<p>This would cause the minion with id <code class="docutils literal"><span class="pre">minioncontroller</span></code> to fork off two
+processes and rename their minion id's to <code class="docutils literal"><span class="pre">dumbdevice1</span></code> and <code class="docutils literal"><span class="pre">dumbdevice2</span></code>.
+These processes would initiate a new connection to the master.</p>
+<p>For proxy minion controllers this made it quite difficult to tell which process
+was doing what.  Also, if the controlling minion died for any reason, it would
+take all the proxies with it.  The new pillar structure does away with the
+id's in the lower level pillar files and brings proxy configuration to the same
+level with all other minions.</p>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/top.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">dumbdevice1</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">dumbdevice1</span>
+  <span class="l l-Scalar l-Scalar-Plain">dumbdevice2</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">dumbdevice2</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/dumbdevice1.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>proxy:</dt>
+<dd>proxytype: networkswitch
+host: 172.23.23.5
+username: root
+passwd: letmein</dd>
+</dl>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/dumbdevice2.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>proxy:</dt>
+<dd>proxytype: networkswitch
+host: 172.23.23.6
+username: root
+passwd: letmein</dd>
+</dl>
+<p>Proxies can be better tracked via system process utilities:</p>
+<p>..code-block:: bash</p>
+<blockquote>
+<div><a class="reference external" href="mailto:root&#37;&#52;&#48;raring64">root<span>&#64;</span>raring64</a>:/var/log/salt# ps guax | grep p8
+root     15215  pts/3    S+   10:57   0:00 python salt-proxy -l debug --proxyid=p8000
+root     15275  pts/5    S+   10:57   0:00 python salt-proxy -l debug --proxyid=p8002</div></blockquote>
+<p>Proxies still gather a significant number of grains from the host.  This is
+useful for targeting, but does not obviate the need for custom grains to better
+support your controlled devices.  See the proxy documentation for writing
+grains modules for your proxy.</p>
+<p>Future enhancements of proxy minions could include execution modules and states
+for easier proxy process management.</p>
+<p>See <a class="reference internal" href="../../proxyminion/index.html#proxy-minion"><span>Proxy Minion Documentation</span></a>.</p>
+</div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

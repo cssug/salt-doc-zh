@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Python client API</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="APIs" href="../../topics/api.html">
+        <link rel="next" title="netapi modules" href="../../topics/netapi/index.html">
+        <link rel="prev" title="APIs" href="../../topics/api.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../topics/api.html" title="APIs">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../../topics/netapi/index.html" title="netapi modules">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="python-client-api">
+<span id="python-api"></span><span id="client-apis"></span><h1>Python client API<a class="headerlink" href="#python-client-api" title="永久链接至标题">¶</a></h1>
+<p>Salt provides several entry points for interfacing with Python applications.
+These entry points are often referred to as <code class="docutils literal"><span class="pre">*Client()</span></code> APIs. Each client
+accesses different parts of Salt, either from the master or from a minion. Each
+client is detailed below.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参见</p>
+<p>There are many ways to access Salt programmatically.</p>
+<p>Salt can be used from CLI scripts as well as via a REST interface.</p>
+<p>See Salt's <a class="reference internal" href="../output/all/index.html#all-salt-output"><span>outputter system</span></a> to retrieve structured
+data from Salt as JSON, or as shell-friendly text, or many other formats.</p>
+<p>See the <a class="reference internal" href="../runners/all/salt.runners.state.html#salt.runners.state.event" title="salt.runners.state.event"><code class="xref py py-func docutils literal"><span class="pre">state.event</span></code></a> runner to utilize
+Salt's event bus from shell scripts.</p>
+<p class="last">Salt's <a class="reference external" href="http://docs.saltstack.com/en/latest/topics/netapi/index.html">netapi module</a> provides access to Salt externally via a REST interface.
+Review the <a class="reference external" href="http://docs.saltstack.com/en/latest/topics/netapi/index.html">netapi module</a> documentation for more information.</p>
+</div>
+<div class="section" id="salt-s-opts-dictionary">
+<h2>Salt's <code class="docutils literal"><span class="pre">opts</span></code> dictionary<a class="headerlink" href="#salt-s-opts-dictionary" title="永久链接至标题">¶</a></h2>
+<p>Some clients require access to Salt's <code class="docutils literal"><span class="pre">opts</span></code> dictionary. (The dictionary
+representation of the <a class="reference internal" href="../configuration/master.html#configuration-salt-master"><span>master</span></a> or
+<a class="reference internal" href="../configuration/minion.html#configuration-salt-minion"><span>minion</span></a> config files.)</p>
+<p>A common pattern for fetching the <code class="docutils literal"><span class="pre">opts</span></code> dictionary is to defer to
+environment variables if they exist or otherwise fetch the config from the
+default location.</p>
+<dl class="function">
+<dt id="salt.config.client_config">
+<code class="descclassname">salt.config.</code><code class="descname">client_config</code><span class="sig-paren">(</span><em>path</em>, <em>env_var='SALT_CLIENT_CONFIG'</em>, <em>defaults=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.config.client_config" title="永久链接至目标">¶</a></dt>
+<dd><p>Load Master configuration data</p>
+<p>Usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">salt.config</span>
+<span class="n">master_opts</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">client_config</span><span class="p">(</span><span class="s1">&#39;/etc/salt/master&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Returns a dictionary of the Salt Master configuration file with necessary
+options needed to communicate with a locally-running Salt Master daemon.
+This function searches for client specific configurations and adds them to
+the data from the master configuration.</p>
+<p>This is useful for master-side operations like
+<a class="reference internal" href="#salt.client.LocalClient" title="salt.client.LocalClient"><code class="xref py py-class docutils literal"><span class="pre">LocalClient</span></code></a>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.config.minion_config">
+<code class="descclassname">salt.config.</code><code class="descname">minion_config</code><span class="sig-paren">(</span><em>path</em>, <em>env_var='SALT_MINION_CONFIG'</em>, <em>defaults=None</em>, <em>cache_minion_id=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.config.minion_config" title="永久链接至目标">¶</a></dt>
+<dd><p>Reads in the minion configuration file and sets up special options</p>
+<p>This is useful for Minion-side operations, such as the
+<a class="reference internal" href="#salt.client.Caller" title="salt.client.Caller"><code class="xref py py-class docutils literal"><span class="pre">Caller</span></code></a> class, and manually running the loader
+interface.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">salt.client</span>
+<span class="n">minion_opts</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">minion_config</span><span class="p">(</span><span class="s1">&#39;/etc/salt/minion&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="salt-s-loader-interface">
+<h2>Salt's Loader Interface<a class="headerlink" href="#salt-s-loader-interface" title="永久链接至标题">¶</a></h2>
+<p>Modules in the Salt ecosystem are loaded into memory using a custom loader
+system. This allows modules to have conditional requirements (OS, OS version,
+installed libraries, etc) and allows Salt to inject special variables
+(<code class="docutils literal"><span class="pre">__salt__</span></code>, <code class="docutils literal"><span class="pre">__opts__</span></code>, etc).</p>
+<p>Most modules can be manually loaded. This is often useful in third-party Python
+apps or when writing tests. However some modules require and expect a full,
+running Salt system underneath. Notably modules that facilitate
+master-to-minion communication such as the <a class="reference internal" href="../modules/all/salt.modules.mine.html#module-salt.modules.mine" title="salt.modules.mine"><code class="xref py py-mod docutils literal"><span class="pre">mine</span></code></a>,
+<a class="reference internal" href="../modules/all/salt.modules.publish.html#module-salt.modules.publish" title="salt.modules.publish"><code class="xref py py-mod docutils literal"><span class="pre">publish</span></code></a>, and <code class="xref py py-mod docutils literal"><span class="pre">peer</span></code> execution
+modules. The error <code class="docutils literal"><span class="pre">KeyError:</span> <span class="pre">'master_uri'</span></code> is a likely indicator for this
+situation. In those instances use the <a class="reference internal" href="#salt.client.Caller" title="salt.client.Caller"><code class="xref py py-class docutils literal"><span class="pre">Caller</span></code></a> class
+to execute those modules instead.</p>
+<p>Each module type has a corresponding loader function.</p>
+<dl class="function">
+<dt id="salt.loader.minion_mods">
+<code class="descclassname">salt.loader.</code><code class="descname">minion_mods</code><span class="sig-paren">(</span><em>opts</em>, <em>context=None</em>, <em>utils=None</em>, <em>whitelist=None</em>, <em>include_errors=False</em>, <em>initial_load=False</em>, <em>loaded_base_name=None</em>, <em>notify=False</em>, <em>static_modules=None</em>, <em>proxy=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.loader.minion_mods" title="永久链接至目标">¶</a></dt>
+<dd><p>Load execution modules</p>
+<p>Returns a dictionary of execution modules appropriate for the current
+system by evaluating the __virtual__() function in each module.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first last simple">
+<li><strong>opts</strong> (<a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#dict" title="(在 Python v3.5)"><em>dict</em></a>) -- The Salt options dictionary</li>
+<li><strong>context</strong> (<a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#dict" title="(在 Python v3.5)"><em>dict</em></a>) -- A Salt context that should be made present inside
+generated modules in __context__</li>
+<li><strong>utils</strong> (<a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#dict" title="(在 Python v3.5)"><em>dict</em></a>) -- Utility functions which should be made available to
+Salt modules in __utils__. See <cite>utils_dir</cite> in
+salt.config for additional information about
+configuration.</li>
+<li><strong>whitelist</strong> (<a class="reference internal" href="../modules/all/salt.modules.mdata.html#salt.modules.mdata.list" title="salt.modules.mdata.list"><em>list</em></a>) -- A list of modules which should be whitelisted.</li>
+<li><strong>include_errors</strong> (<a class="reference external" href="http://docs.python.org/3/library/functions.html#bool" title="(在 Python v3.5)"><em>bool</em></a>) -- Deprecated flag! Unused.</li>
+<li><strong>initial_load</strong> (<a class="reference external" href="http://docs.python.org/3/library/functions.html#bool" title="(在 Python v3.5)"><em>bool</em></a>) -- Deprecated flag! Unused.</li>
+<li><strong>loaded_base_name</strong> (<a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#str" title="(在 Python v3.5)"><em>str</em></a>) -- A string marker for the loaded base name.</li>
+<li><strong>notify</strong> (<a class="reference external" href="http://docs.python.org/3/library/functions.html#bool" title="(在 Python v3.5)"><em>bool</em></a>) -- Flag indicating that an event should be fired upon
+completion of module loading.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">salt.config</span>
+<span class="kn">import</span> <span class="nn">salt.loader</span>
+
+<span class="n">__opts__</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">minion_config</span><span class="p">(</span><span class="s1">&#39;/etc/salt/minion&#39;</span><span class="p">)</span>
+<span class="n">__grains__</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">grains</span><span class="p">(</span><span class="n">__opts__</span><span class="p">)</span>
+<span class="n">__opts__</span><span class="p">[</span><span class="s1">&#39;grains&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">__grains__</span>
+<span class="n">__salt__</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">minion_mods</span><span class="p">(</span><span class="n">__opts__</span><span class="p">)</span>
+<span class="n">__salt__</span><span class="p">[</span><span class="s1">&#39;test.ping&#39;</span><span class="p">]()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.loader.raw_mod">
+<code class="descclassname">salt.loader.</code><code class="descname">raw_mod</code><span class="sig-paren">(</span><em>opts</em>, <em>name</em>, <em>functions</em>, <em>mod='modules'</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.loader.raw_mod" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns a single module loaded raw and bypassing the __virtual__ function</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">salt.config</span>
+<span class="kn">import</span> <span class="nn">salt.loader</span>
+
+<span class="n">__opts__</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">minion_config</span><span class="p">(</span><span class="s1">&#39;/etc/salt/minion&#39;</span><span class="p">)</span>
+<span class="n">testmod</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">raw_mod</span><span class="p">(</span><span class="n">__opts__</span><span class="p">,</span> <span class="s1">&#39;test&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+<span class="n">testmod</span><span class="p">[</span><span class="s1">&#39;test.ping&#39;</span><span class="p">]()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.loader.states">
+<code class="descclassname">salt.loader.</code><code class="descname">states</code><span class="sig-paren">(</span><em>opts</em>, <em>functions</em>, <em>utils</em>, <em>serializers</em>, <em>whitelist=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.loader.states" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns the state modules</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first last simple">
+<li><strong>opts</strong> (<a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#dict" title="(在 Python v3.5)"><em>dict</em></a>) -- The Salt options dictionary</li>
+<li><strong>functions</strong> (<a class="reference external" href="http://docs.python.org/3/library/stdtypes.html#dict" title="(在 Python v3.5)"><em>dict</em></a>) -- A dictionary of minion modules, with module names as
+keys and funcs as values.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">salt.config</span>
+<span class="kn">import</span> <span class="nn">salt.loader</span>
+
+<span class="n">__opts__</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">minion_config</span><span class="p">(</span><span class="s1">&#39;/etc/salt/minion&#39;</span><span class="p">)</span>
+<span class="n">statemods</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">states</span><span class="p">(</span><span class="n">__opts__</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.loader.grains">
+<code class="descclassname">salt.loader.</code><code class="descname">grains</code><span class="sig-paren">(</span><em>opts</em>, <em>force_refresh=False</em>, <em>proxy=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.loader.grains" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the functions for the dynamic grains and the values for the static
+grains.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">salt.config</span>
+<span class="kn">import</span> <span class="nn">salt.loader</span>
+
+<span class="n">__opts__</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">minion_config</span><span class="p">(</span><span class="s1">&#39;/etc/salt/minion&#39;</span><span class="p">)</span>
+<span class="n">__grains__</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">grains</span><span class="p">(</span><span class="n">__opts__</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">__grains__</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.loader.grain_funcs">
+<code class="descclassname">salt.loader.</code><code class="descname">grain_funcs</code><span class="sig-paren">(</span><em>opts</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.loader.grain_funcs" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns the grain functions</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">salt.config</span>
+<span class="kn">import</span> <span class="nn">salt.loader</span>
+
+<span class="n">__opts__</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">minion_config</span><span class="p">(</span><span class="s1">&#39;/etc/salt/minion&#39;</span><span class="p">)</span>
+<span class="n">grainfuncs</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">grain_funcs</span><span class="p">(</span><span class="n">__opts__</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="salt-s-client-interfaces">
+<h2>Salt's Client Interfaces<a class="headerlink" href="#salt-s-client-interfaces" title="永久链接至标题">¶</a></h2>
+<div class="section" id="localclient">
+<h3>LocalClient<a class="headerlink" href="#localclient" title="永久链接至标题">¶</a></h3>
+<dl class="class">
+<dt id="salt.client.LocalClient">
+<em class="property">class </em><code class="descclassname">salt.client.</code><code class="descname">LocalClient</code><span class="sig-paren">(</span><em>c_path='/etc/salt/master'</em>, <em>mopts=None</em>, <em>skip_perm_errors=False</em>, <em>io_loop=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.client.LocalClient" title="永久链接至目标">¶</a></dt>
+<dd><p>The interface used by the <strong class="command">salt</strong> CLI tool on the Salt Master</p>
+<p><code class="docutils literal"><span class="pre">LocalClient</span></code> is used to send a command to Salt minions to execute
+<span class="xref std std-ref">execution modules</span> and return the results to the
+Salt Master.</p>
+<p>Importing and using <code class="docutils literal"><span class="pre">LocalClient</span></code> must be done on the same machine as the
+Salt Master and it must be done using the same user that the Salt Master is
+running as. (Unless <a class="reference internal" href="../configuration/master.html#std:conf_master-external_auth"><code class="xref std std-conf_master docutils literal"><span class="pre">external_auth</span></code></a> is configured and
+authentication credentials are included in the execution).</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">salt.client</span>
+
+<span class="n">local</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">LocalClient</span><span class="p">()</span>
+<span class="n">local</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;test.fib&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">10</span><span class="p">])</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="salt.client.LocalClient.cmd">
+<code class="descname">cmd</code><span class="sig-paren">(</span><em>tgt</em>, <em>fun</em>, <em>arg=()</em>, <em>timeout=None</em>, <em>expr_form='glob'</em>, <em>ret=''</em>, <em>jid=''</em>, <em>kwarg=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.client.LocalClient.cmd" title="永久链接至目标">¶</a></dt>
+<dd><p>Synchronously execute a command on targeted minions</p>
+<p>The cmd method will execute and wait for the timeout period for all
+minions to reply, then it will return all minion data at once.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">salt.client</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">local</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">LocalClient</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">local</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;cmd.run&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;whoami&#39;</span><span class="p">])</span>
+<span class="go">{&#39;jerry&#39;: &#39;root&#39;}</span>
+</pre></div>
+</div>
+<p>With extra keyword arguments for the command function to be run:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">local</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;test.arg&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;arg1&#39;</span><span class="p">,</span> <span class="s1">&#39;arg2&#39;</span><span class="p">],</span> <span class="n">kwarg</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="s1">&#39;bar&#39;</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>Compound commands can be used for multiple executions in a single
+publish. Function names and function arguments are provided in separate
+lists but the index values must correlate and an empty list must be
+used if no arguments are required.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">local</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="p">[</span>
+<span class="go">        &#39;grains.items&#39;,</span>
+<span class="go">        &#39;sys.doc&#39;,</span>
+<span class="go">        &#39;cmd.run&#39;,</span>
+<span class="go">    ],</span>
+<span class="go">    [</span>
+<span class="go">        [],</span>
+<span class="go">        [],</span>
+<span class="go">        [&#39;uptime&#39;],</span>
+<span class="go">    ])</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first simple">
+<li><strong>tgt</strong> (<em>string or list</em>) -- Which minions to target for the execution. Default is shell
+glob. Modified by the <code class="docutils literal"><span class="pre">expr_form</span></code> option.</li>
+<li><strong>fun</strong> (<em>string or list of strings</em>) -- <p>The module and function to call on the specified minions of
+the form <code class="docutils literal"><span class="pre">module.function</span></code>. For example <code class="docutils literal"><span class="pre">test.ping</span></code> or
+<code class="docutils literal"><span class="pre">grains.items</span></code>.</p>
+<dl class="docutils">
+<dt>Compound commands</dt>
+<dd>Multiple functions may be called in a single publish by
+passing a list of commands. This can dramatically lower
+overhead and speed up the application communicating with Salt.<p class="last">This requires that the <code class="docutils literal"><span class="pre">arg</span></code> param is a list of lists. The
+<code class="docutils literal"><span class="pre">fun</span></code> list and the <code class="docutils literal"><span class="pre">arg</span></code> list must correlate by index
+meaning a function that does not take arguments must still have
+a corresponding empty list at the expected index.</p>
+</dd>
+</dl>
+</li>
+<li><strong>arg</strong> (<em>list or list-of-lists</em>) -- A list of arguments to pass to the remote function. If the
+function takes no arguments <code class="docutils literal"><span class="pre">arg</span></code> may be omitted except when
+executing a compound command.</li>
+<li><strong>timeout</strong> -- Seconds to wait after the last minion returns but
+before all minions return.</li>
+<li><strong>expr_form</strong> -- <p>The type of <code class="docutils literal"><span class="pre">tgt</span></code>. Allowed values:</p>
+<ul>
+<li><code class="docutils literal"><span class="pre">glob</span></code> - Bash glob completion - Default</li>
+<li><code class="docutils literal"><span class="pre">pcre</span></code> - Perl style regular expression</li>
+<li><code class="docutils literal"><span class="pre">list</span></code> - Python list of hosts</li>
+<li><code class="docutils literal"><span class="pre">grain</span></code> - Match based on a grain comparison</li>
+<li><code class="docutils literal"><span class="pre">grain_pcre</span></code> - Grain comparison with a regex</li>
+<li><code class="docutils literal"><span class="pre">pillar</span></code> - Pillar data comparison</li>
+<li><code class="docutils literal"><span class="pre">pillar_pcre</span></code> - Pillar data comparison with a regex</li>
+<li><code class="docutils literal"><span class="pre">nodegroup</span></code> - Match on nodegroup</li>
+<li><code class="docutils literal"><span class="pre">range</span></code> - Use a Range server for matching</li>
+<li><code class="docutils literal"><span class="pre">compound</span></code> - Pass a compound match string</li>
+</ul>
+</li>
+<li><strong>ret</strong> -- The returner to use. The value passed can be single
+returner, or a comma delimited list of returners to call in order
+on the minions</li>
+<li><strong>kwarg</strong> -- A dictionary with keyword arguments for the function.</li>
+<li><strong>kwargs</strong> -- <p>Optional keyword arguments.
+Authentication credentials may be passed when using
+<a class="reference internal" href="../configuration/master.html#std:conf_master-external_auth"><code class="xref std std-conf_master docutils literal"><span class="pre">external_auth</span></code></a>.</p>
+<p>For example: <code class="docutils literal"><span class="pre">local.cmd('*',</span> <span class="pre">'test.ping',</span> <span class="pre">username='saltdev',</span>
+<span class="pre">password='saltdev',</span> <span class="pre">eauth='pam')</span></code>.
+Or: <code class="docutils literal"><span class="pre">local.cmd('*',</span> <span class="pre">'test.ping',</span>
+<span class="pre">token='5871821ea51754fdcea8153c1c745433')</span></code></p>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">返回:</th><td class="field-body"><p class="first last">A dictionary with the result of the execution, keyed by
+minion ID. A compound command will return a sub-dictionary keyed by
+function name.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.client.LocalClient.cmd_async">
+<code class="descname">cmd_async</code><span class="sig-paren">(</span><em>tgt</em>, <em>fun</em>, <em>arg=()</em>, <em>expr_form='glob'</em>, <em>ret=''</em>, <em>jid=''</em>, <em>kwarg=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.client.LocalClient.cmd_async" title="永久链接至目标">¶</a></dt>
+<dd><p>Asynchronously send a command to connected minions</p>
+<p>The function signature is the same as <code class="xref py py-meth docutils literal"><span class="pre">cmd()</span></code> with the
+following exceptions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">返回:</th><td class="field-body">A job ID or 0 on failure.</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">local</span><span class="o">.</span><span class="n">cmd_async</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;test.sleep&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">300</span><span class="p">])</span>
+<span class="go">&#39;20131219215921857715&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.client.LocalClient.cmd_batch">
+<code class="descname">cmd_batch</code><span class="sig-paren">(</span><em>tgt</em>, <em>fun</em>, <em>arg=()</em>, <em>expr_form='glob'</em>, <em>ret=''</em>, <em>kwarg=None</em>, <em>batch='10%'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.client.LocalClient.cmd_batch" title="永久链接至目标">¶</a></dt>
+<dd><p>Iteratively execute a command on subsets of minions at a time</p>
+<p>The function signature is the same as <code class="xref py py-meth docutils literal"><span class="pre">cmd()</span></code> with the
+following exceptions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><strong>batch</strong> -- The batch identifier of systems to execute on</td>
+</tr>
+<tr class="field-even field"><th class="field-name">返回:</th><td class="field-body">A generator of minion returns</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">returns</span> <span class="o">=</span> <span class="n">local</span><span class="o">.</span><span class="n">cmd_batch</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;state.highstate&#39;</span><span class="p">,</span> <span class="n">bat</span><span class="o">=</span><span class="s1">&#39;10%&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">ret</span> <span class="ow">in</span> <span class="n">returns</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+<span class="go">{&#39;jerry&#39;: {...}}</span>
+<span class="go">{&#39;dave&#39;: {...}}</span>
+<span class="go">{&#39;stewart&#39;: {...}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.client.LocalClient.cmd_iter">
+<code class="descname">cmd_iter</code><span class="sig-paren">(</span><em>tgt</em>, <em>fun</em>, <em>arg=()</em>, <em>timeout=None</em>, <em>expr_form='glob'</em>, <em>ret=''</em>, <em>kwarg=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.client.LocalClient.cmd_iter" title="永久链接至目标">¶</a></dt>
+<dd><p>Yields the individual minion returns as they come in</p>
+<p>The function signature is the same as <code class="xref py py-meth docutils literal"><span class="pre">cmd()</span></code> with the
+following exceptions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">返回:</th><td class="field-body">A generator yielding the individual minion returns</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ret</span> <span class="o">=</span> <span class="n">local</span><span class="o">.</span><span class="n">cmd_iter</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;test.ping&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ret</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="go">{&#39;jerry&#39;: {&#39;ret&#39;: True}}</span>
+<span class="go">{&#39;dave&#39;: {&#39;ret&#39;: True}}</span>
+<span class="go">{&#39;stewart&#39;: {&#39;ret&#39;: True}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.client.LocalClient.cmd_iter_no_block">
+<code class="descname">cmd_iter_no_block</code><span class="sig-paren">(</span><em>tgt</em>, <em>fun</em>, <em>arg=()</em>, <em>timeout=None</em>, <em>expr_form='glob'</em>, <em>ret=''</em>, <em>kwarg=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.client.LocalClient.cmd_iter_no_block" title="永久链接至目标">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Yields the individual minion returns as they come in, or None</dt>
+<dd>when no returns are available.</dd>
+</dl>
+<p>The function signature is the same as <code class="xref py py-meth docutils literal"><span class="pre">cmd()</span></code> with the
+following exceptions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">返回:</th><td class="field-body">A generator yielding the individual minion returns, or None
+when no returns are available. This allows for actions to be
+injected in between minion returns.</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ret</span> <span class="o">=</span> <span class="n">local</span><span class="o">.</span><span class="n">cmd_iter_no_block</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;test.ping&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ret</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+<span class="go">None</span>
+<span class="go">{&#39;jerry&#39;: {&#39;ret&#39;: True}}</span>
+<span class="go">{&#39;dave&#39;: {&#39;ret&#39;: True}}</span>
+<span class="go">None</span>
+<span class="go">{&#39;stewart&#39;: {&#39;ret&#39;: True}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.client.LocalClient.cmd_subset">
+<code class="descname">cmd_subset</code><span class="sig-paren">(</span><em>tgt</em>, <em>fun</em>, <em>arg=()</em>, <em>expr_form='glob'</em>, <em>ret=''</em>, <em>kwarg=None</em>, <em>sub=3</em>, <em>cli=False</em>, <em>progress=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.client.LocalClient.cmd_subset" title="永久链接至目标">¶</a></dt>
+<dd><p>Execute a command on a random subset of the targeted systems</p>
+<p>The function signature is the same as <code class="xref py py-meth docutils literal"><span class="pre">cmd()</span></code> with the
+following exceptions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><strong>sub</strong> -- The number of systems to execute on</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">SLC</span><span class="o">.</span><span class="n">cmd_subset</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;test.ping&#39;</span><span class="p">,</span> <span class="n">sub</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">{&#39;jerry&#39;: True}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.client.LocalClient.get_cli_returns">
+<code class="descname">get_cli_returns</code><span class="sig-paren">(</span><em>jid</em>, <em>minions</em>, <em>timeout=None</em>, <em>tgt='*'</em>, <em>tgt_type='glob'</em>, <em>verbose=False</em>, <em>show_jid=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.client.LocalClient.get_cli_returns" title="永久链接至目标">¶</a></dt>
+<dd><p>Starts a watcher looking at the return data for a specified JID</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">返回:</th><td class="field-body">all of the information for the JID</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.client.LocalClient.get_event_iter_returns">
+<code class="descname">get_event_iter_returns</code><span class="sig-paren">(</span><em>jid</em>, <em>minions</em>, <em>timeout=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.client.LocalClient.get_event_iter_returns" title="永久链接至目标">¶</a></dt>
+<dd><p>Gather the return data from the event system, break hard when timeout
+is reached.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.client.LocalClient.run_job">
+<code class="descname">run_job</code><span class="sig-paren">(</span><em>tgt</em>, <em>fun</em>, <em>arg=()</em>, <em>expr_form='glob'</em>, <em>ret=''</em>, <em>timeout=None</em>, <em>jid=''</em>, <em>kwarg=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.client.LocalClient.run_job" title="永久链接至目标">¶</a></dt>
+<dd><p>Asynchronously send a command to connected minions</p>
+<p>Prep the job directory and publish a command to any targeted minions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">返回:</th><td class="field-body">A dictionary of (validated) <code class="docutils literal"><span class="pre">pub_data</span></code> or an empty
+dictionary on failure. The <code class="docutils literal"><span class="pre">pub_data</span></code> contains the job ID and a
+list of all minions that are expected to return data.</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">local</span><span class="o">.</span><span class="n">run_job</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="s1">&#39;test.sleep&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">300</span><span class="p">])</span>
+<span class="go">{&#39;jid&#39;: &#39;20131219215650131543&#39;, &#39;minions&#39;: [&#39;jerry&#39;]}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="salt-caller">
+<h3>Salt Caller<a class="headerlink" href="#salt-caller" title="永久链接至标题">¶</a></h3>
+<dl class="class">
+<dt id="salt.client.Caller">
+<em class="property">class </em><code class="descclassname">salt.client.</code><code class="descname">Caller</code><span class="sig-paren">(</span><em>c_path='/etc/salt/minion'</em>, <em>mopts=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.client.Caller" title="永久链接至目标">¶</a></dt>
+<dd><p><code class="docutils literal"><span class="pre">Caller</span></code> is the same interface used by the <strong class="command">salt-call</strong>
+command-line tool on the Salt Minion.</p>
+<div class="versionchanged">
+<p><span class="versionmodified">在 2015.8.0 版更改: </span>Added the <code class="docutils literal"><span class="pre">cmd</span></code> method for consistency with the other Salt clients.
+The existing <code class="docutils literal"><span class="pre">function</span></code> and <code class="docutils literal"><span class="pre">sminion.functions</span></code> interfaces still
+exist but have been removed from the docs.</p>
+</div>
+<p>Importing and using <code class="docutils literal"><span class="pre">Caller</span></code> must be done on the same machine as a
+Salt Minion and it must be done using the same user that the Salt Minion is
+running as.</p>
+<p>Usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">salt.client</span>
+<span class="n">caller</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Caller</span><span class="p">()</span>
+<span class="n">caller</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="s1">&#39;test.ping&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note, a running master or minion daemon is not required to use this class.
+Running <code class="docutils literal"><span class="pre">salt-call</span> <span class="pre">--local</span></code> simply sets <a class="reference internal" href="../configuration/minion.html#std:conf_minion-file_client"><code class="xref std std-conf_minion docutils literal"><span class="pre">file_client</span></code></a> to
+<code class="docutils literal"><span class="pre">'local'</span></code>. The same can be achieved at the Python level by including that
+setting in a minion config file.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能: </span>Pass the minion config as the <code class="docutils literal"><span class="pre">mopts</span></code> dictionary.</p>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">salt.client</span>
+<span class="kn">import</span> <span class="nn">salt.config</span>
+<span class="n">__opts__</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">minion_config</span><span class="p">(</span><span class="s1">&#39;/etc/salt/minion&#39;</span><span class="p">)</span>
+<span class="n">__opts__</span><span class="p">[</span><span class="s1">&#39;file_client&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;local&#39;</span>
+<span class="n">caller</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Caller</span><span class="p">(</span><span class="n">mopts</span><span class="o">=</span><span class="n">__opts__</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="salt.client.Caller.cmd">
+<code class="descname">cmd</code><span class="sig-paren">(</span><em>fun</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.client.Caller.cmd" title="永久链接至目标">¶</a></dt>
+<dd><p>Call an execution module with the given arguments and keyword arguments</p>
+<div class="versionchanged">
+<p><span class="versionmodified">在 2015.8.0 版更改: </span>Added the <code class="docutils literal"><span class="pre">cmd</span></code> method for consistency with the other Salt clients.
+The existing <code class="docutils literal"><span class="pre">function</span></code> and <code class="docutils literal"><span class="pre">sminion.functions</span></code> interfaces still
+exist but have been removed from the docs.</p>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">caller</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="s1">&#39;test.arg&#39;</span><span class="p">,</span> <span class="s1">&#39;Foo&#39;</span><span class="p">,</span> <span class="s1">&#39;Bar&#39;</span><span class="p">,</span> <span class="n">baz</span><span class="o">=</span><span class="s1">&#39;Baz&#39;</span><span class="p">)</span>
+
+<span class="n">caller</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="s1">&#39;event.send&#39;</span><span class="p">,</span> <span class="s1">&#39;myco/myevent/something&#39;</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;foo&#39;</span><span class="p">:</span> <span class="s1">&#39;Foo&#39;</span><span class="p">},</span> <span class="n">with_env</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GIT_COMMIT&#39;</span><span class="p">],</span> <span class="n">with_grains</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="runnerclient">
+<h3>RunnerClient<a class="headerlink" href="#runnerclient" title="永久链接至标题">¶</a></h3>
+<dl class="class">
+<dt id="salt.runner.RunnerClient">
+<em class="property">class </em><code class="descclassname">salt.runner.</code><code class="descname">RunnerClient</code><span class="sig-paren">(</span><em>opts</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runner.RunnerClient" title="永久链接至目标">¶</a></dt>
+<dd><p>The interface used by the <strong class="command">salt-run</strong> CLI tool on the Salt Master</p>
+<p>It executes <a class="reference internal" href="../runners/all/index.html#all-salt-runners"><span>runner modules</span></a> which run on the Salt
+Master.</p>
+<p>Importing and using <code class="docutils literal"><span class="pre">RunnerClient</span></code> must be done on the same machine as
+the Salt Master and it must be done using the same user that the Salt
+Master is running as.</p>
+<p>Salt's <a class="reference internal" href="../configuration/master.html#std:conf_master-external_auth"><code class="xref std std-conf_master docutils literal"><span class="pre">external_auth</span></code></a> can be used to authenticate calls. The
+eauth user must be authorized to execute runner modules: (<code class="docutils literal"><span class="pre">&#64;runner</span></code>).
+Only the <code class="xref py py-meth docutils literal"><span class="pre">master_call()</span></code> below supports eauth.</p>
+<dl class="method">
+<dt id="salt.runner.RunnerClient.async">
+<code class="descname">async</code><span class="sig-paren">(</span><em>fun</em>, <em>low</em>, <em>user='UNKNOWN'</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runner.RunnerClient.async" title="永久链接至目标">¶</a></dt>
+<dd><p>Execute the function in a multiprocess and return the event tag to use
+to watch for the return</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.runner.RunnerClient.cmd">
+<code class="descname">cmd</code><span class="sig-paren">(</span><em>fun</em>, <em>arg=None</em>, <em>pub_data=None</em>, <em>kwarg=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runner.RunnerClient.cmd" title="永久链接至目标">¶</a></dt>
+<dd><p>Execute a function</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">opts</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">master_config</span><span class="p">(</span><span class="s1">&#39;/etc/salt/master&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">runner</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">RunnerClient</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">runner</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="s1">&#39;jobs.list_jobs&#39;</span><span class="p">,</span> <span class="p">[])</span>
+<span class="go">{</span>
+<span class="go">    &#39;20131219215650131543&#39;: {</span>
+<span class="go">        &#39;Arguments&#39;: [300],</span>
+<span class="go">        &#39;Function&#39;: &#39;test.sleep&#39;,</span>
+<span class="go">        &#39;StartTime&#39;: &#39;2013, Dec 19 21:56:50.131543&#39;,</span>
+<span class="go">        &#39;Target&#39;: &#39;*&#39;,</span>
+<span class="go">        &#39;Target-type&#39;: &#39;glob&#39;,</span>
+<span class="go">        &#39;User&#39;: &#39;saltdev&#39;</span>
+<span class="go">    },</span>
+<span class="go">    &#39;20131219215921857715&#39;: {</span>
+<span class="go">        &#39;Arguments&#39;: [300],</span>
+<span class="go">        &#39;Function&#39;: &#39;test.sleep&#39;,</span>
+<span class="go">        &#39;StartTime&#39;: &#39;2013, Dec 19 21:59:21.857715&#39;,</span>
+<span class="go">        &#39;Target&#39;: &#39;*&#39;,</span>
+<span class="go">        &#39;Target-type&#39;: &#39;glob&#39;,</span>
+<span class="go">        &#39;User&#39;: &#39;saltdev&#39;</span>
+<span class="go">    },</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.runner.RunnerClient.cmd_async">
+<code class="descname">cmd_async</code><span class="sig-paren">(</span><em>low</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runner.RunnerClient.cmd_async" title="永久链接至目标">¶</a></dt>
+<dd><p>Execute a runner function asynchronously; eauth is respected</p>
+<p>This function requires that <a class="reference internal" href="../configuration/master.html#std:conf_master-external_auth"><code class="xref std std-conf_master docutils literal"><span class="pre">external_auth</span></code></a> is configured
+and the user is authorized to execute runner functions: (<code class="docutils literal"><span class="pre">&#64;runner</span></code>).</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">runner</span><span class="o">.</span><span class="n">eauth_async</span><span class="p">({</span>
+    <span class="s1">&#39;fun&#39;</span><span class="p">:</span> <span class="s1">&#39;jobs.list_jobs&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="s1">&#39;saltdev&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="s1">&#39;saltdev&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;eauth&#39;</span><span class="p">:</span> <span class="s1">&#39;pam&#39;</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.runner.RunnerClient.cmd_sync">
+<code class="descname">cmd_sync</code><span class="sig-paren">(</span><em>low</em>, <em>timeout=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runner.RunnerClient.cmd_sync" title="永久链接至目标">¶</a></dt>
+<dd><p>Execute a runner function synchronously; eauth is respected</p>
+<p>This function requires that <a class="reference internal" href="../configuration/master.html#std:conf_master-external_auth"><code class="xref std std-conf_master docutils literal"><span class="pre">external_auth</span></code></a> is configured
+and the user is authorized to execute runner functions: (<code class="docutils literal"><span class="pre">&#64;runner</span></code>).</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">runner</span><span class="o">.</span><span class="n">eauth_sync</span><span class="p">({</span>
+    <span class="s1">&#39;fun&#39;</span><span class="p">:</span> <span class="s1">&#39;jobs.list_jobs&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="s1">&#39;saltdev&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="s1">&#39;saltdev&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;eauth&#39;</span><span class="p">:</span> <span class="s1">&#39;pam&#39;</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wheelclient">
+<h3>WheelClient<a class="headerlink" href="#wheelclient" title="永久链接至标题">¶</a></h3>
+<dl class="class">
+<dt id="salt.wheel.WheelClient">
+<em class="property">class </em><code class="descclassname">salt.wheel.</code><code class="descname">WheelClient</code><span class="sig-paren">(</span><em>opts=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.wheel.WheelClient" title="永久链接至目标">¶</a></dt>
+<dd><p>An interface to Salt's wheel modules</p>
+<p><a class="reference internal" href="../wheel/all/index.html#all-salt-wheel"><span>Wheel modules</span></a> interact with various parts of the
+Salt Master.</p>
+<p>Importing and using <code class="docutils literal"><span class="pre">WheelClient</span></code> must be done on the same machine as the
+Salt Master and it must be done using the same user that the Salt Master is
+running as. Unless <a class="reference internal" href="../configuration/master.html#std:conf_master-external_auth"><code class="xref std std-conf_master docutils literal"><span class="pre">external_auth</span></code></a> is configured and the user
+is authorized to execute wheel functions: (<code class="docutils literal"><span class="pre">&#64;wheel</span></code>).</p>
+<p>Usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">salt.config</span>
+<span class="kn">import</span> <span class="nn">salt.wheel</span>
+<span class="n">opts</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">master_config</span><span class="p">(</span><span class="s1">&#39;/etc/salt/master&#39;</span><span class="p">)</span>
+<span class="n">wheel</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">wheel</span><span class="o">.</span><span class="n">WheelClient</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="salt.wheel.WheelClient.async">
+<code class="descname">async</code><span class="sig-paren">(</span><em>fun</em>, <em>low</em>, <em>user='UNKNOWN'</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.wheel.WheelClient.async" title="永久链接至目标">¶</a></dt>
+<dd><p>Execute the function in a multiprocess and return the event tag to use
+to watch for the return</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.wheel.WheelClient.cmd">
+<code class="descname">cmd</code><span class="sig-paren">(</span><em>fun</em>, <em>arg=None</em>, <em>pub_data=None</em>, <em>kwarg=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.wheel.WheelClient.cmd" title="永久链接至目标">¶</a></dt>
+<dd><p>Execute a function</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wheel</span><span class="o">.</span><span class="n">cmd</span><span class="p">(</span><span class="s1">&#39;key.finger&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;jerry&#39;</span><span class="p">])</span>
+<span class="go">{&#39;minions&#39;: {&#39;jerry&#39;: &#39;5d:f6:79:43:5e:d4:42:3f:57:b8:45:a8:7e:a4:6e:ca&#39;}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.wheel.WheelClient.cmd_async">
+<code class="descname">cmd_async</code><span class="sig-paren">(</span><em>low</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.wheel.WheelClient.cmd_async" title="永久链接至目标">¶</a></dt>
+<dd><p>Execute a function asynchronously; eauth is respected</p>
+<p>This function requires that <a class="reference internal" href="../configuration/master.html#std:conf_master-external_auth"><code class="xref std std-conf_master docutils literal"><span class="pre">external_auth</span></code></a> is configured
+and the user is authorized</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wheel</span><span class="o">.</span><span class="n">cmd_async</span><span class="p">({</span>
+<span class="go">    &#39;fun&#39;: &#39;key.finger&#39;,</span>
+<span class="go">    &#39;match&#39;: &#39;jerry&#39;,</span>
+<span class="go">    &#39;eauth&#39;: &#39;auto&#39;,</span>
+<span class="go">    &#39;username&#39;: &#39;saltdev&#39;,</span>
+<span class="go">    &#39;password&#39;: &#39;saltdev&#39;,</span>
+<span class="go">})</span>
+<span class="go">{&#39;jid&#39;: &#39;20131219224744416681&#39;, &#39;tag&#39;: &#39;salt/wheel/20131219224744416681&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.wheel.WheelClient.cmd_sync">
+<code class="descname">cmd_sync</code><span class="sig-paren">(</span><em>low</em>, <em>timeout=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.wheel.WheelClient.cmd_sync" title="永久链接至目标">¶</a></dt>
+<dd><p>Execute a wheel function synchronously; eauth is respected</p>
+<p>This function requires that <a class="reference internal" href="../configuration/master.html#std:conf_master-external_auth"><code class="xref std std-conf_master docutils literal"><span class="pre">external_auth</span></code></a> is configured
+and the user is authorized to execute runner functions: (<code class="docutils literal"><span class="pre">&#64;wheel</span></code>).</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">wheel</span><span class="o">.</span><span class="n">cmd_sync</span><span class="p">({</span>
+<span class="go">&#39;fun&#39;: &#39;key.finger&#39;,</span>
+<span class="go">&#39;match&#39;: &#39;jerry&#39;,</span>
+<span class="go">&#39;eauth&#39;: &#39;auto&#39;,</span>
+<span class="go">&#39;username&#39;: &#39;saltdev&#39;,</span>
+<span class="go">&#39;password&#39;: &#39;saltdev&#39;,</span>
+<span class="go">})</span>
+<span class="go">{&#39;minions&#39;: {&#39;jerry&#39;: &#39;5d:f6:79:43:5e:d4:42:3f:57:b8:45:a8:7e:a4:6e:ca&#39;}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="cloudclient">
+<h3>CloudClient<a class="headerlink" href="#cloudclient" title="永久链接至标题">¶</a></h3>
+<dl class="class">
+<dt id="salt.cloud.CloudClient">
+<em class="property">class </em><code class="descclassname">salt.cloud.</code><code class="descname">CloudClient</code><span class="sig-paren">(</span><em>path=None</em>, <em>opts=None</em>, <em>config_dir=None</em>, <em>pillars=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.CloudClient" title="永久链接至目标">¶</a></dt>
+<dd><p>The client class to wrap cloud interactions</p>
+<dl class="method">
+<dt id="salt.cloud.CloudClient.action">
+<code class="descname">action</code><span class="sig-paren">(</span><em>fun=None</em>, <em>cloudmap=None</em>, <em>names=None</em>, <em>provider=None</em>, <em>instance=None</em>, <em>kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.CloudClient.action" title="永久链接至目标">¶</a></dt>
+<dd><p>Execute a single action via the cloud plugin backend</p>
+<p>Examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">action</span><span class="p">(</span><span class="n">fun</span><span class="o">=</span><span class="s1">&#39;show_instance&#39;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;myinstance&#39;</span><span class="p">])</span>
+<span class="n">client</span><span class="o">.</span><span class="n">action</span><span class="p">(</span><span class="n">fun</span><span class="o">=</span><span class="s1">&#39;show_image&#39;</span><span class="p">,</span> <span class="n">provider</span><span class="o">=</span><span class="s1">&#39;my-ec2-config&#39;</span><span class="p">,</span>
+    <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;image&#39;</span><span class="p">:</span> <span class="s1">&#39;ami-10314d79&#39;</span><span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.cloud.CloudClient.create">
+<code class="descname">create</code><span class="sig-paren">(</span><em>provider</em>, <em>names</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.CloudClient.create" title="永久链接至目标">¶</a></dt>
+<dd><p>Create the named VMs, without using a profile</p>
+<p>范例:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;myinstance&#39;</span><span class="p">],</span> <span class="n">provider</span><span class="o">=</span><span class="s1">&#39;my-ec2-config&#39;</span><span class="p">,</span>
+    <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;image&#39;</span><span class="p">:</span> <span class="s1">&#39;ami-1624987f&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="s1">&#39;t1.micro&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;ssh_username&#39;</span><span class="p">:</span> <span class="s1">&#39;ec2-user&#39;</span><span class="p">,</span> <span class="s1">&#39;securitygroup&#39;</span><span class="p">:</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;delvol_on_destroy&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.cloud.CloudClient.destroy">
+<code class="descname">destroy</code><span class="sig-paren">(</span><em>names</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.CloudClient.destroy" title="永久链接至目标">¶</a></dt>
+<dd><p>Destroy the named VMs</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.cloud.CloudClient.extra_action">
+<code class="descname">extra_action</code><span class="sig-paren">(</span><em>names</em>, <em>provider</em>, <em>action</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.CloudClient.extra_action" title="永久链接至目标">¶</a></dt>
+<dd><p>Perform actions with block storage devices</p>
+<p>范例:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">extra_action</span><span class="p">(</span><span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;myblock&#39;</span><span class="p">],</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;volume_create&#39;</span><span class="p">,</span>
+    <span class="n">provider</span><span class="o">=</span><span class="s1">&#39;my-nova&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;voltype&#39;</span><span class="p">:</span> <span class="s1">&#39;SSD&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">}</span>
+<span class="p">)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">extra_action</span><span class="p">(</span><span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;salt-net&#39;</span><span class="p">],</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;network_create&#39;</span><span class="p">,</span>
+    <span class="n">provider</span><span class="o">=</span><span class="s1">&#39;my-nova&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;cidr&#39;</span><span class="p">:</span> <span class="s1">&#39;192.168.100.0/24&#39;</span><span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.cloud.CloudClient.full_query">
+<code class="descname">full_query</code><span class="sig-paren">(</span><em>query_type='list_nodes_full'</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.CloudClient.full_query" title="永久链接至目标">¶</a></dt>
+<dd><p>Query all instance information</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.cloud.CloudClient.list_images">
+<code class="descname">list_images</code><span class="sig-paren">(</span><em>provider=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.CloudClient.list_images" title="永久链接至目标">¶</a></dt>
+<dd><p>List all available images in configured cloud systems</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.cloud.CloudClient.list_locations">
+<code class="descname">list_locations</code><span class="sig-paren">(</span><em>provider=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.CloudClient.list_locations" title="永久链接至目标">¶</a></dt>
+<dd><p>List all available locations in configured cloud systems</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.cloud.CloudClient.list_sizes">
+<code class="descname">list_sizes</code><span class="sig-paren">(</span><em>provider=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.CloudClient.list_sizes" title="永久链接至目标">¶</a></dt>
+<dd><p>List all available sizes in configured cloud systems</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.cloud.CloudClient.low">
+<code class="descname">low</code><span class="sig-paren">(</span><em>fun</em>, <em>low</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.CloudClient.low" title="永久链接至目标">¶</a></dt>
+<dd><p>Pass the cloud function and low data structure to run</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.cloud.CloudClient.map_run">
+<code class="descname">map_run</code><span class="sig-paren">(</span><em>path</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.CloudClient.map_run" title="永久链接至目标">¶</a></dt>
+<dd><p>Pass in a location for a map to execute</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.cloud.CloudClient.min_query">
+<code class="descname">min_query</code><span class="sig-paren">(</span><em>query_type='list_nodes_min'</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.CloudClient.min_query" title="永久链接至目标">¶</a></dt>
+<dd><p>Query select instance information</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.cloud.CloudClient.profile">
+<code class="descname">profile</code><span class="sig-paren">(</span><em>profile</em>, <em>names</em>, <em>vm_overrides=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.CloudClient.profile" title="永久链接至目标">¶</a></dt>
+<dd><p>Pass in a profile to create, names is a list of vm names to allocate</p>
+<blockquote>
+<div>vm_overrides is a special dict that will be per node options
+overrides</div></blockquote>
+<p>范例:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">cloud</span><span class="o">.</span><span class="n">CloudClient</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s1">&#39;/etc/salt/cloud&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">profile</span><span class="p">(</span><span class="s1">&#39;do_512_git&#39;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;minion01&#39;</span><span class="p">,])</span>
+<span class="go">{&#39;minion01&#39;: {u&#39;backups_active&#39;: &#39;False&#39;,</span>
+<span class="go">        u&#39;created_at&#39;: &#39;2014-09-04T18:10:15Z&#39;,</span>
+<span class="go">        u&#39;droplet&#39;: {u&#39;event_id&#39;: 31000502,</span>
+<span class="go">                     u&#39;id&#39;: 2530006,</span>
+<span class="go">                     u&#39;image_id&#39;: 5140006,</span>
+<span class="go">                     u&#39;name&#39;: u&#39;minion01&#39;,</span>
+<span class="go">                     u&#39;size_id&#39;: 66},</span>
+<span class="go">        u&#39;id&#39;: &#39;2530006&#39;,</span>
+<span class="go">        u&#39;image_id&#39;: &#39;5140006&#39;,</span>
+<span class="go">        u&#39;ip_address&#39;: &#39;107.XXX.XXX.XXX&#39;,</span>
+<span class="go">        u&#39;locked&#39;: &#39;True&#39;,</span>
+<span class="go">        u&#39;name&#39;: &#39;minion01&#39;,</span>
+<span class="go">        u&#39;private_ip_address&#39;: None,</span>
+<span class="go">        u&#39;region_id&#39;: &#39;4&#39;,</span>
+<span class="go">        u&#39;size_id&#39;: &#39;66&#39;,</span>
+<span class="go">        u&#39;status&#39;: &#39;new&#39;}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.cloud.CloudClient.query">
+<code class="descname">query</code><span class="sig-paren">(</span><em>query_type='list_nodes'</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.CloudClient.query" title="永久链接至目标">¶</a></dt>
+<dd><p>Query basic instance information</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.cloud.CloudClient.select_query">
+<code class="descname">select_query</code><span class="sig-paren">(</span><em>query_type='list_nodes_select'</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.CloudClient.select_query" title="永久链接至目标">¶</a></dt>
+<dd><p>Query select instance information</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="sshclient">
+<h3>SSHClient<a class="headerlink" href="#sshclient" title="永久链接至标题">¶</a></h3>
+<dl class="class">
+<dt id="salt.client.ssh.client.SSHClient">
+<em class="property">class </em><code class="descclassname">salt.client.ssh.client.</code><code class="descname">SSHClient</code><span class="sig-paren">(</span><em>c_path='/etc/salt/master'</em>, <em>mopts=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.client.ssh.client.SSHClient" title="永久链接至目标">¶</a></dt>
+<dd><p>Create a client object for executing routines via the salt-ssh backend</p>
+<div class="versionadded">
+<p><span class="versionmodified">2015.5.0 新版功能.</span></p>
+</div>
+<dl class="method">
+<dt id="salt.client.ssh.client.SSHClient.cmd">
+<code class="descname">cmd</code><span class="sig-paren">(</span><em>tgt</em>, <em>fun</em>, <em>arg=()</em>, <em>timeout=None</em>, <em>expr_form='glob'</em>, <em>kwarg=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.client.ssh.client.SSHClient.cmd" title="永久链接至目标">¶</a></dt>
+<dd><p>Execute a single command via the salt-ssh subsystem and return all
+routines at once</p>
+<div class="versionadded">
+<p><span class="versionmodified">2015.5.0 新版功能.</span></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="salt.client.ssh.client.SSHClient.cmd_iter">
+<code class="descname">cmd_iter</code><span class="sig-paren">(</span><em>tgt</em>, <em>fun</em>, <em>arg=()</em>, <em>timeout=None</em>, <em>expr_form='glob'</em>, <em>ret=''</em>, <em>kwarg=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.client.ssh.client.SSHClient.cmd_iter" title="永久链接至目标">¶</a></dt>
+<dd><p>Execute a single command via the salt-ssh subsystem and return a
+generator</p>
+<div class="versionadded">
+<p><span class="versionmodified">2015.5.0 新版功能.</span></p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../../topics/api.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="APIs" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../../topics/netapi/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="netapi modules" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../topics/api.html">APIs</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">Python client API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#salt-s-opts-dictionary">Salt's <code class="docutils literal"><span class="pre">opts</span></code> dictionary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#salt-s-loader-interface">Salt's Loader Interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#salt-s-client-interfaces">Salt's Client Interfaces</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#localclient">LocalClient</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#salt-caller">Salt Caller</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#runnerclient">RunnerClient</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#wheelclient">WheelClient</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cloudclient">CloudClient</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sshclient">SSHClient</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/netapi/index.html"><code class="docutils literal"><span class="pre">netapi</span></code> modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

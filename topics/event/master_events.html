@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt Master Events</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Event System" href="events.html">
+        <link rel="next" title="Beacons" href="../beacons/index.html">
+        <link rel="prev" title="Event System" href="events.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="events.html" title="Event System">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../beacons/index.html" title="Beacons">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="salt-master-events">
+<span id="event-master-events"></span><h1>Salt Master Events<a class="headerlink" href="#salt-master-events" title="永久链接至标题">¶</a></h1>
+<p>These events are fired on the Salt Master event bus. This list is <strong>not</strong>
+comprehensive.</p>
+<div class="section" id="authentication-events">
+<h2>Authentication events<a class="headerlink" href="#authentication-events" title="永久链接至标题">¶</a></h2>
+<dl class="event">
+<dt>
+<code class="descname">salt/auth</code></dt>
+<dd><p>Fired when a minion performs an authentication check with the master.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">变量:</th><td class="field-body"><ul class="first last simple">
+<li><strong>id</strong> -- The minion ID.</li>
+<li><strong>act</strong> -- The current status of the minion key: <code class="docutils literal"><span class="pre">accept</span></code>, <code class="docutils literal"><span class="pre">pend</span></code>,
+<code class="docutils literal"><span class="pre">reject</span></code>.</li>
+<li><strong>pub</strong> -- The minion public key.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Minions fire auth events on fairly regular basis for a number
+of reasons.  Writing reactors to respond to events through
+the auth cycle can lead to infinite reactor event loops
+(minion tries to auth, reactor responds by doing something
+that generates another auth event, minion sends auth event,
+etc.).  Consider reacting to <code class="docutils literal"><span class="pre">salt/key</span></code> or <code class="docutils literal"><span class="pre">salt/minion/&lt;MID&gt;/start</span></code>
+or firing a custom event tag instead.</p>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="start-events">
+<h2>Start events<a class="headerlink" href="#start-events" title="永久链接至标题">¶</a></h2>
+<dl class="event">
+<dt>
+<code class="descname">salt/minion/&lt;MID&gt;/start</code></dt>
+<dd><p>Fired every time a minion connects to the Salt master.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">变量:</th><td class="field-body"><strong>id</strong> -- The minion ID.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="key-events">
+<h2>Key events<a class="headerlink" href="#key-events" title="永久链接至标题">¶</a></h2>
+<dl class="event">
+<dt>
+<code class="descname">salt/key</code></dt>
+<dd><p>Fired when accepting and rejecting minions keys on the Salt master.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">变量:</th><td class="field-body"><ul class="first last simple">
+<li><strong>id</strong> -- The minion ID.</li>
+<li><strong>act</strong> -- The new status of the minion key: <code class="docutils literal"><span class="pre">accept</span></code>, <code class="docutils literal"><span class="pre">pend</span></code>,
+<code class="docutils literal"><span class="pre">reject</span></code>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">If a master is in <code class="xref std std-conf_master docutils literal"><span class="pre">auto_accept</span> <span class="pre">mode</span></code>, <code class="docutils literal"><span class="pre">salt/key</span></code> events
+will not be fired when the keys are accepted.  In addition, pre-seeding
+keys (like happens through <a class="reference internal" href="../cloud/index.html#salt-cloud"><span>Salt-Cloud</span></a>) will not cause
+firing of these events.</p>
+</div>
+</div>
+<div class="section" id="job-events">
+<h2>Job events<a class="headerlink" href="#job-events" title="永久链接至标题">¶</a></h2>
+<dl class="event">
+<dt>
+<code class="descname">salt/job/&lt;JID&gt;/new</code></dt>
+<dd><p>Fired as a new job is sent out to minions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">变量:</th><td class="field-body"><ul class="first last simple">
+<li><strong>jid</strong> -- The job ID.</li>
+<li><strong>tgt</strong> -- The target of the job: <code class="docutils literal"><span class="pre">*</span></code>, a minion ID,
+<code class="docutils literal"><span class="pre">G&#64;os_family:RedHat</span></code>, etc.</li>
+<li><strong>tgt_type</strong> -- The type of targeting used: <code class="docutils literal"><span class="pre">glob</span></code>, <code class="docutils literal"><span class="pre">grain</span></code>,
+<code class="docutils literal"><span class="pre">compound</span></code>, etc.</li>
+<li><strong>fun</strong> -- The function to run on minions: <code class="docutils literal"><span class="pre">test.ping</span></code>,
+<code class="docutils literal"><span class="pre">network.interfaces</span></code>, etc.</li>
+<li><strong>arg</strong> -- A list of arguments to pass to the function that will be
+called.</li>
+<li><strong>minions</strong> -- A list of minion IDs that Salt expects will return data for
+this job.</li>
+<li><strong>user</strong> -- The name of the user that ran the command as defined in Salt's
+Publisher ACL or external auth.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="event">
+<dt>
+<code class="descname">salt/job/&lt;JID&gt;/ret/&lt;MID&gt;</code></dt>
+<dd><p>Fired each time a minion returns data for a job.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">变量:</th><td class="field-body"><ul class="first last simple">
+<li><strong>id</strong> -- The minion ID.</li>
+<li><strong>jid</strong> -- The job ID.</li>
+<li><strong>retcode</strong> -- The return code for the job.</li>
+<li><strong>fun</strong> -- The function the minion ran. E.g., <code class="docutils literal"><span class="pre">test.ping</span></code>.</li>
+<li><strong>return</strong> -- The data returned from the execution module.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="event">
+<dt>
+<code class="descname">salt/job/&lt;JID&gt;/prog/&lt;MID&gt;/&lt;RUN NUM&gt;</code></dt>
+<dd><p>Fired each time a each function in a state run completes execution. Must be
+enabled using the <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-state_events"><code class="xref std std-conf_master docutils literal"><span class="pre">state_events</span></code></a> option.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">变量:</th><td class="field-body"><ul class="first last simple">
+<li><strong>data</strong> -- The data returned from the state module function.</li>
+<li><strong>id</strong> -- The minion ID.</li>
+<li><strong>jid</strong> -- The job ID.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="presence-events">
+<span id="event-master-presence"></span><h2>Presence events<a class="headerlink" href="#presence-events" title="永久链接至标题">¶</a></h2>
+<dl class="event">
+<dt>
+<code class="descname">salt/presence/present</code></dt>
+<dd><p>Events fired on a regular interval about currently connected, newly
+connected, or recently disconnected minions. Requires the
+<a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-presence_events"><code class="xref std std-conf_master docutils literal"><span class="pre">presence_events</span></code></a> setting to be enabled.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">变量:</th><td class="field-body"><strong>present</strong> -- A list of minions that are currently connected to the Salt
+master.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="event">
+<dt>
+<code class="descname">salt/presence/change</code></dt>
+<dd><p>Fired when the Presence system detects new minions connect or disconnect.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">变量:</th><td class="field-body"><ul class="first last simple">
+<li><strong>new</strong> -- A list of minions that have connected since the last presence
+event.</li>
+<li><strong>lost</strong> -- A list of minions that have disconnected since the last
+presence event.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="cloud-events">
+<h2>Cloud Events<a class="headerlink" href="#cloud-events" title="永久链接至标题">¶</a></h2>
+<p>Unlike other Master events, <code class="docutils literal"><span class="pre">salt-cloud</span></code> events are not fired on behalf of a
+Salt Minion. Instead, <code class="docutils literal"><span class="pre">salt-cloud</span></code> events are fired on behalf of a VM. This
+is because the minion-to-be may not yet exist to fire events to or also may have
+been destroyed.</p>
+<p>This behavior is reflected by the <code class="docutils literal"><span class="pre">name</span></code> variable in the event data for
+<code class="docutils literal"><span class="pre">salt-cloud</span></code> events as compared to the <code class="docutils literal"><span class="pre">id</span></code> variable for Salt
+Minion-triggered events.</p>
+<dl class="event">
+<dt>
+<code class="descname">salt/cloud/&lt;VM NAME&gt;/creating</code></dt>
+<dd><p>Fired when salt-cloud starts the VM creation process.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">变量:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> -- the name of the VM being created.</li>
+<li><strong>event</strong> -- description of the event.</li>
+<li><strong>provider</strong> -- the cloud provider of the VM being created.</li>
+<li><strong>profile</strong> -- the cloud profile for the VM being created.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="event">
+<dt>
+<code class="descname">salt/cloud/&lt;VM NAME&gt;/deploying</code></dt>
+<dd><p>Fired when the VM is available and salt-cloud begins deploying Salt to the
+new VM.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">变量:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> -- the name of the VM being created.</li>
+<li><strong>event</strong> -- description of the event.</li>
+<li><strong>kwargs</strong> -- options available as the deploy script is invoked:
+<code class="docutils literal"><span class="pre">conf_file</span></code>, <code class="docutils literal"><span class="pre">deploy_command</span></code>, <code class="docutils literal"><span class="pre">display_ssh_output</span></code>, <code class="docutils literal"><span class="pre">host</span></code>,
+<code class="docutils literal"><span class="pre">keep_tmp</span></code>, <code class="docutils literal"><span class="pre">key_filename</span></code>, <code class="docutils literal"><span class="pre">make_minion</span></code>, <code class="docutils literal"><span class="pre">minion_conf</span></code>,
+<code class="docutils literal"><span class="pre">name</span></code>, <code class="docutils literal"><span class="pre">parallel</span></code>, <code class="docutils literal"><span class="pre">preseed_minion_keys</span></code>, <code class="docutils literal"><span class="pre">script</span></code>,
+<code class="docutils literal"><span class="pre">script_args</span></code>, <code class="docutils literal"><span class="pre">script_env</span></code>, <code class="docutils literal"><span class="pre">sock_dir</span></code>, <code class="docutils literal"><span class="pre">start_action</span></code>,
+<code class="docutils literal"><span class="pre">sudo</span></code>, <code class="docutils literal"><span class="pre">tmp_dir</span></code>, <code class="docutils literal"><span class="pre">tty</span></code>, <code class="docutils literal"><span class="pre">username</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="event">
+<dt>
+<code class="descname">salt/cloud/&lt;VM NAME&gt;/requesting</code></dt>
+<dd><p>Fired when salt-cloud sends the request to create a new VM.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">变量:</th><td class="field-body"><ul class="first last simple">
+<li><strong>event</strong> -- description of the event.</li>
+<li><strong>location</strong> -- the location of the VM being requested.</li>
+<li><strong>kwargs</strong> -- options available as the VM is being requested:
+<code class="docutils literal"><span class="pre">Action</span></code>, <code class="docutils literal"><span class="pre">ImageId</span></code>, <code class="docutils literal"><span class="pre">InstanceType</span></code>, <code class="docutils literal"><span class="pre">KeyName</span></code>, <code class="docutils literal"><span class="pre">MaxCount</span></code>,
+<code class="docutils literal"><span class="pre">MinCount</span></code>, <code class="docutils literal"><span class="pre">SecurityGroup.1</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="event">
+<dt>
+<code class="descname">salt/cloud/&lt;VM NAME&gt;/querying</code></dt>
+<dd><p>Fired when salt-cloud queries data for a new instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">变量:</th><td class="field-body"><ul class="first last simple">
+<li><strong>event</strong> -- description of the event.</li>
+<li><strong>instance_id</strong> -- the ID of the new VM.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="event">
+<dt>
+<code class="descname">salt/cloud/&lt;VM NAME&gt;/tagging</code></dt>
+<dd><p>Fired when salt-cloud tags a new instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">变量:</th><td class="field-body"><ul class="first last simple">
+<li><strong>event</strong> -- description of the event.</li>
+<li><strong>tags</strong> -- tags being set on the new instance.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="event">
+<dt>
+<code class="descname">salt/cloud/&lt;VM NAME&gt;/waiting_for_ssh</code></dt>
+<dd><p>Fired while the salt-cloud deploy process is waiting for ssh to become
+available on the new instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">变量:</th><td class="field-body"><ul class="first last simple">
+<li><strong>event</strong> -- description of the event.</li>
+<li><strong>ip_address</strong> -- IP address of the new instance.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="event">
+<dt>
+<code class="descname">salt/cloud/&lt;VM NAME&gt;/deploy_script</code></dt>
+<dd><p>Fired once the deploy script is finished.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">变量:</th><td class="field-body"><strong>event</strong> -- description of the event.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="event">
+<dt>
+<code class="descname">salt/cloud/&lt;VM NAME&gt;/created</code></dt>
+<dd><p>Fired once the new instance has been fully created.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">变量:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> -- the name of the VM being created.</li>
+<li><strong>event</strong> -- description of the event.</li>
+<li><strong>instance_id</strong> -- the ID of the new instance.</li>
+<li><strong>provider</strong> -- the cloud provider of the VM being created.</li>
+<li><strong>profile</strong> -- the cloud profile for the VM being created.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="event">
+<dt>
+<code class="descname">salt/cloud/&lt;VM NAME&gt;/destroying</code></dt>
+<dd><p>Fired when salt-cloud requests the destruction of an instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">变量:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> -- the name of the VM being created.</li>
+<li><strong>event</strong> -- description of the event.</li>
+<li><strong>instance_id</strong> -- the ID of the new instance.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="event">
+<dt>
+<code class="descname">salt/cloud/&lt;VM NAME&gt;/destroyed</code></dt>
+<dd><p>Fired when an instance has been destroyed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">变量:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> -- the name of the VM being created.</li>
+<li><strong>event</strong> -- description of the event.</li>
+<li><strong>instance_id</strong> -- the ID of the new instance.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+                            </div>
+                            <a href="events.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Event System" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../beacons/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Beacons" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Events &amp; Reactor</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="events.html">Event System</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="events.html#event-types">Event types</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="">Salt Master Events</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#authentication-events">Authentication events</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#start-events">Start events</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#key-events">Key events</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#job-events">Job events</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#presence-events">Presence events</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#cloud-events">Cloud Events</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="events.html#listening-for-events">Listening for Events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="events.html#firing-events">Firing Events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="events.html#firing-events-from-python">Firing Events from Python</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../beacons/index.html">Beacons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reactor/index.html">Reactor系统</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

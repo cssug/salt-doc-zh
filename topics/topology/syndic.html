@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt Syndic</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Architecture" href="index.html">
+        <link rel="next" title="Using Salt at scale" href="../tutorials/intro_scale.html">
+        <link rel="prev" title="High Availability Features in Salt" href="../highavailability/index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../highavailability/index.html" title="High Availability Features in Salt">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../tutorials/intro_scale.html" title="Using Salt at scale">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="salt-syndic">
+<span id="syndic"></span><h1>Salt Syndic<a class="headerlink" href="#salt-syndic" title="永久链接至标题">¶</a></h1>
+<p>The most basic or typical Salt topology consists of a single Master node
+controlling a group of Minion nodes.  An intermediate node type, called Syndic,
+when used offers greater structural flexibility and scalability in the
+construction of Salt topologies than topologies constructed only out of Master
+and Minion node types.</p>
+<p>A Syndic node can be thought of as a special passthrough Minion node.  A Syndic
+node consists of a <code class="docutils literal"><span class="pre">salt-syndic</span></code> daemon and a <code class="docutils literal"><span class="pre">salt-master</span></code> daemon running
+on the same system.  The <code class="docutils literal"><span class="pre">salt-master</span></code> daemon running on the Syndic node
+controls a group of lower level Minion nodes and the <code class="docutils literal"><span class="pre">salt-syndic</span></code> daemon
+connects higher level Master node, sometimes called a Master of Masters.</p>
+<p>The <code class="docutils literal"><span class="pre">salt-syndic</span></code> daemon relays publications and events between the Master
+node and the local <code class="docutils literal"><span class="pre">salt-master</span></code> daemon.  This gives the Master node control
+over the Minion nodes attached to the <code class="docutils literal"><span class="pre">salt-master</span></code> daemon running on the
+Syndic node.</p>
+<div class="section" id="configuring-the-syndic">
+<h2>配置Syndic<a class="headerlink" href="#configuring-the-syndic" title="永久链接至标题">¶</a></h2>
+<p>To setup a Salt Syndic you need to tell the Syndic node and its Master node
+about each other.  If your Master node is located at <code class="docutils literal"><span class="pre">10.10.0.1</span></code>, then your
+configurations would be:</p>
+<p>On the Syndic node:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># /etc/salt/master</span>
+<span class="l l-Scalar l-Scalar-Plain">syndic_master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10.10.0.1</span>  <span class="c1"># may be either an IP address or a hostname</span>
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># /etc/salt/minion</span>
+
+<span class="c1"># id is shared by the salt-syndic daemon and a possible salt-minion daemon</span>
+<span class="c1"># on the Syndic node</span>
+<span class="l l-Scalar l-Scalar-Plain">id</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my_syndic</span>
+</pre></div>
+</div>
+<p>On the Master node:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># /etc/salt/master</span>
+<span class="l l-Scalar l-Scalar-Plain">order_masters</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-syndic_master"><code class="xref std std-conf_master docutils literal"><span class="pre">syndic_master</span></code></a> option tells the Syndic node where to find the
+Master node in the same way that the <a class="reference internal" href="../../ref/configuration/minion.html#std:conf_minion-master"><code class="xref std std-conf_minion docutils literal"><span class="pre">master</span></code></a> option tells a
+Minion node where to find a Master node.</p>
+<p>The <a class="reference internal" href="../../ref/configuration/minion.html#std:conf_minion-id"><code class="xref std std-conf_minion docutils literal"><span class="pre">id</span></code></a> option is used by the <code class="docutils literal"><span class="pre">salt-syndic</span></code> daemon to identify
+with the Master node and if unset will default to the hostname or IP address of
+the Syndic just as with a Minion.</p>
+<p>The <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-order_masters"><code class="xref std std-conf_master docutils literal"><span class="pre">order_masters</span></code></a> option configures the Master node to send
+extra information with its publications that is needed by Syndic nodes
+connected directly to it.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Each Syndic must provide its own <code class="docutils literal"><span class="pre">file_roots</span></code> directory. Files will not
+be automatically transferred from the Master node.</p>
+</div>
+</div>
+<div class="section" id="configuring-the-syndic-with-multimaster">
+<h2>Configuring the Syndic with Multimaster<a class="headerlink" href="#configuring-the-syndic-with-multimaster" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2015.5.0 新版功能.</span></p>
+</div>
+<p>Syndic with Multimaster lets you connect a syndic to multiple masters to provide
+an additional layer of redundancy in a syndic configuration.</p>
+<p>Higher level masters should first be configured in a multimaster configuration.
+See <a class="reference internal" href="../tutorials/multimaster.html"><em>Multimaster Tutorial</em></a>.</p>
+<p>On the syndic, the <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-syndic_master"><code class="xref std std-conf_master docutils literal"><span class="pre">syndic_master</span></code></a> option is populated with
+a list of the higher level masters.</p>
+<p>Since each syndic is connected to each master, jobs sent from any master are
+forwarded to minions that are connected to each syndic. If the <code class="docutils literal"><span class="pre">master_id</span></code> value
+is set in the master config on the higher level masters, job results are returned
+to the master that originated the request in a best effort fashion. Events/jobs
+without a <code class="docutils literal"><span class="pre">master_id</span></code> are returned to any available master.</p>
+</div>
+<div class="section" id="running-the-syndic">
+<h2>运行Syndic<a class="headerlink" href="#running-the-syndic" title="永久链接至标题">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">salt-syndic</span></code> daemon is a separate process that needs to be started in
+addition to the <code class="docutils literal"><span class="pre">salt-master</span></code> daemon running on the Syndic node.  Starting
+the <code class="docutils literal"><span class="pre">salt-syndic</span></code> daemon is the same as starting the other Salt daemons.</p>
+<p>The Master node in many ways sees the Syndic as an ordinary Minion node.  In
+particular, the Master will need to accept the Syndic's Minion key as it would
+for any other Minion.</p>
+<p>On the Syndic node:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-syndic</span>
+or
+<span class="c1"># service salt-syndic start</span>
+</pre></div>
+</div>
+<p>On the Master node:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-key -a my_syndic</span>
+</pre></div>
+</div>
+<p>The Master node will now be able to control the Minion nodes connected to the
+Syndic.  Only the Syndic key will be listed in the Master node's key registry
+but this also means that key activity between the Syndic's Minions and the
+Syndic does not encumber the Master node.  In this way, the Syndic's key on the
+Master node can be thought of as a placeholder for the keys of all the Minion
+and Syndic nodes beneath it, giving the Master node a clear, high level
+structural view on the Salt cluster.</p>
+<p>On the Master node:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-key -L</span>
+Accepted Keys:
+my_syndic
+Denied Keys:
+Unaccepted Keys:
+Rejected Keys:
+
+<span class="c1"># salt &#39;*&#39; test.ping</span>
+minion_1:
+    True
+minion_2:
+    True
+minion_4:
+    True
+minion_3:
+    True
+</pre></div>
+</div>
+</div>
+<div class="section" id="topology">
+<h2>Topology<a class="headerlink" href="#topology" title="永久链接至标题">¶</a></h2>
+<p>A Master node (a node which is itself not a Syndic to another higher level
+Master node) must run a <code class="docutils literal"><span class="pre">salt-master</span></code> daemon and optionally a <code class="docutils literal"><span class="pre">salt-minion</span></code>
+daemon.</p>
+<p>A Syndic node must run <code class="docutils literal"><span class="pre">salt-syndic</span></code> and <code class="docutils literal"><span class="pre">salt-master</span></code> daemons and
+optionally a <code class="docutils literal"><span class="pre">salt-minion</span></code> daemon.</p>
+<p>A Minion node must run a <code class="docutils literal"><span class="pre">salt-minion</span></code> daemon.</p>
+<p>When a <code class="docutils literal"><span class="pre">salt-master</span></code> daemon issues a command, it will be received by the
+Syndic and Minion nodes directly connected to it.  A Minion node will process
+the command in the way it ordinarily would.  On a Syndic node, the
+<code class="docutils literal"><span class="pre">salt-syndic</span></code> daemon will relay the command to the <code class="docutils literal"><span class="pre">salt-master</span></code> daemon
+running on the Syndic node, which then propagates the command to to the Minions
+and Syndics connected to it.</p>
+<p>When events and job return data are generated by <code class="docutils literal"><span class="pre">salt-minion</span></code> daemons, they
+are aggregated by the <code class="docutils literal"><span class="pre">salt-master</span></code> daemon they are connected to, which
+<code class="docutils literal"><span class="pre">salt-master</span></code> daemon then relays the data back through its <code class="docutils literal"><span class="pre">salt-syndic</span></code>
+daemon until the data reaches the Master or Syndic node that issued the command.</p>
+</div>
+<div class="section" id="syndic-wait">
+<h2>Syndic wait<a class="headerlink" href="#syndic-wait" title="永久链接至标题">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">To reduce the amount of time the CLI waits for Minions to respond, install
+a Minion on the Syndic or tune the value of the <code class="docutils literal"><span class="pre">syndic_wait</span></code>
+configuration.</p>
+</div>
+<p>While it is possible to run a Syndic without a Minion installed on the same
+system, it is recommended, for a faster CLI response time, to do so.  Without a
+Minion installed on the Syndic node, the timeout value of <code class="docutils literal"><span class="pre">syndic_wait</span></code>
+increases significantly - about three-fold. With a Minion installed on the
+Syndic, the CLI timeout resides at the value defined in <code class="docutils literal"><span class="pre">syndic_wait</span></code>.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">If you have a very large infrastructure or many layers of Syndics, you may
+find that the CLI doesn't wait long enough for the Syndics to return their
+events.  If you think this is the case, you can set the
+<code class="xref std std-conf_master docutils literal"><span class="pre">syndic_wait</span></code> value in the Master configs on the Master or
+Syndic nodes from which commands are executed.  The default value is <code class="docutils literal"><span class="pre">5</span></code>,
+and should work for the majority of deployments.</p>
+</div>
+<p>In order for a Master or Syndic node to return information from Minions that
+are below their Syndics, the CLI requires a short wait time in order to allow
+the Syndics to gather responses from their Minions. This value is defined in
+the <code class="xref std std-conf_master docutils literal"><span class="pre">syndic_wait</span></code> config option and has a default of five seconds.</p>
+</div>
+<div class="section" id="syndic-config-options">
+<h2>Syndic config options<a class="headerlink" href="#syndic-config-options" title="永久链接至标题">¶</a></h2>
+<p>These are the options that can be used to configure a Syndic node.  Note that
+other than <code class="docutils literal"><span class="pre">id</span></code>, Syndic config options are placed in the Master config on the
+Syndic node.</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="../../ref/configuration/minion.html#std:conf_minion-id"><code class="xref std std-conf_minion docutils literal"><span class="pre">id</span></code></a>: Syndic id (shared by the <code class="docutils literal"><span class="pre">salt-syndic</span></code> daemon with a
+potential <code class="docutils literal"><span class="pre">salt-minion</span></code> daemon on the same system)</li>
+<li><a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-syndic_master"><code class="xref std std-conf_master docutils literal"><span class="pre">syndic_master</span></code></a>: Master node IP address or hostname</li>
+<li><a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-syndic_master_port"><code class="xref std std-conf_master docutils literal"><span class="pre">syndic_master_port</span></code></a>: Master node ret_port</li>
+<li><p class="first"><a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-syndic_log_file"><code class="xref std std-conf_master docutils literal"><span class="pre">syndic_log_file</span></code></a>: syndic日志文件的路径(绝对路径或相对路径均可)</p>
+</li>
+<li><p class="first"><code class="xref std std-conf_master docutils literal"><span class="pre">syndic_pidfile</span></code>: syndic pid文件的路径(绝对路径或相对路径均可)</p>
+</li>
+<li><code class="xref std std-conf_master docutils literal"><span class="pre">syndic_wait</span></code>: time in seconds to wait on returns from this syndic</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../highavailability/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="High Availability Features in Salt" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../tutorials/intro_scale.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Using Salt at scale" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Architecture</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../highavailability/index.html">High Availability Features in Salt</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Salt Syndic</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configuring-the-syndic">配置Syndic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuring-the-syndic-with-multimaster">Configuring the Syndic with Multimaster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-the-syndic">运行Syndic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#topology">Topology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syndic-wait">Syndic wait</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syndic-config-options">Syndic config options</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/intro_scale.html">Using Salt at scale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/multimaster.html">Multi Master Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/multimaster_pki.html">Multi-Master-PKI Tutorial With Failover</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

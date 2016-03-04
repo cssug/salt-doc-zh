@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.cloud.clouds.joyent</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.cloud.clouds.joyent">
+<span id="salt-cloud-clouds-joyent"></span><h1>salt.cloud.clouds.joyent<a class="headerlink" href="#module-salt.cloud.clouds.joyent" title="永久链接至标题">¶</a></h1>
+<div class="section" id="joyent-cloud-module">
+<h2>Joyent Cloud Module<a class="headerlink" href="#joyent-cloud-module" title="永久链接至标题">¶</a></h2>
+<p>The Joyent Cloud module is used to interact with the Joyent cloud system.</p>
+<p>Set up the cloud configuration at <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers</span></code> or
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/joyent.conf</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-joyent-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">joyent</span>
+  <span class="c1"># The Joyent login user</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">fred</span>
+  <span class="c1"># The Joyent user&#39;s password</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">saltybacon</span>
+  <span class="c1"># The location of the ssh private key that can log into the new VM</span>
+  <span class="l l-Scalar l-Scalar-Plain">private_key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/root/mykey.pem</span>
+  <span class="c1"># The name of the private key</span>
+  <span class="l l-Scalar l-Scalar-Plain">private_key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mykey</span>
+</pre></div>
+</div>
+<p>When creating your profiles for the joyent cloud, add the location attribute to
+the profile, this will automatically get picked up when performing tasks
+associated with that vm. An example profile might look like:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">joyent_512</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-joyent-config</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Extra Small 512 MB</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">centos-6</span>
+  <span class="l l-Scalar l-Scalar-Plain">location</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+</pre></div>
+</div>
+<p>This driver can also be used with the Joyent SmartDataCenter project. More
+details can be found at:</p>
+<p>Using SDC requires that an api_host_suffix is set. The default value for this is
+<cite>.api.joyentcloud.com</cite>. All characters, including the leading <cite>.</cite>, should be
+included:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">api_host_suffix</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">.api.myhostname.com</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">depends:</th><td class="field-body">PyCrypto</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.avail_images">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">avail_images</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.avail_images" title="永久链接至目标">¶</a></dt>
+<dd><p>Get list of available images</p>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud --list-images
+</pre></div>
+</div>
+<p>Can use a custom URL for images. Default is:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">image_url</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">images.joyent.com/image</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.avail_locations">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">avail_locations</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.avail_locations" title="永久链接至目标">¶</a></dt>
+<dd><p>List all available locations</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.avail_sizes">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">avail_sizes</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.avail_sizes" title="永久链接至目标">¶</a></dt>
+<dd><p>get list of available packages</p>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud --list-sizes
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.create">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">create</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.create" title="永久链接至目标">¶</a></dt>
+<dd><p>从一个字典数据中创建单一的VM</p>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -p profile_name vm_name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.create_node">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">create_node</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.create_node" title="永久链接至目标">¶</a></dt>
+<dd><p>convenience function to make the rest api call for node creation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.delete_key">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">delete_key</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.delete_key" title="永久链接至目标">¶</a></dt>
+<dd><p>List the keys available</p>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_key joyent <span class="nv">keyname</span><span class="o">=</span>mykey
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.destroy">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">destroy</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.destroy" title="永久链接至目标">¶</a></dt>
+<dd><p>destroy a machine by name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> -- name given to the machine</li>
+<li><strong>call</strong> -- call value in this case is 'action'</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">返回:</th><td class="field-body"><p class="first last">array of booleans , true if successfully stopped and true if
+successfully removed</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -d vm_name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.get_configured_provider">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">get_configured_provider</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.get_configured_provider" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the first configured instance.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.get_image">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">get_image</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.get_image" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the image object to use</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.get_location">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">get_location</code><span class="sig-paren">(</span><em>vm_=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.get_location" title="永久链接至目标">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Return the joyent data center to use, in this order:</dt>
+<dd><ul class="first last simple">
+<li>CLI parameter</li>
+<li>VM parameter</li>
+<li>Cloud profile setting</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.get_location_path">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">get_location_path</code><span class="sig-paren">(</span><em>location='us-east-1'</em>, <em>api_host_suffix='.api.joyentcloud.com'</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.get_location_path" title="永久链接至目标">¶</a></dt>
+<dd><p>create url from location variable
+:param location: joyent data center location
+:return: url</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.get_node">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">get_node</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.get_node" title="永久链接至目标">¶</a></dt>
+<dd><p>gets the node from the full node list by name
+:param name: name of the vm
+:return: node object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.get_size">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">get_size</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.get_size" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the VM's size object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.has_method">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">has_method</code><span class="sig-paren">(</span><em>obj</em>, <em>method_name</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.has_method" title="永久链接至目标">¶</a></dt>
+<dd><p>Find if the provided object has a specific method</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.import_key">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">import_key</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.import_key" title="永久链接至目标">¶</a></dt>
+<dd><p>List the keys available</p>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f import_key joyent <span class="nv">keyname</span><span class="o">=</span>mykey <span class="nv">keyfile</span><span class="o">=</span>/tmp/mykey.pub
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.joyent_node_state">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">joyent_node_state</code><span class="sig-paren">(</span><em>id_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.joyent_node_state" title="永久链接至目标">¶</a></dt>
+<dd><p>Convert joyent returned state to state common to other data center return
+values for consistency</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><strong>id</strong> -- joyent state value</td>
+</tr>
+<tr class="field-even field"><th class="field-name">返回:</th><td class="field-body">state value</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.key_list">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">key_list</code><span class="sig-paren">(</span><em>items=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.key_list" title="永久链接至目标">¶</a></dt>
+<dd><p>convert list to dictionary using the key as the identifier
+:param items: array to iterate over
+:return: dictionary</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.list_keys">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">list_keys</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.list_keys" title="永久链接至目标">¶</a></dt>
+<dd><p>List the keys available</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.list_nodes">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">list_nodes</code><span class="sig-paren">(</span><em>full=False</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.list_nodes" title="永久链接至目标">¶</a></dt>
+<dd><p>list of nodes, keeping only a brief listing</p>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -Q
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.list_nodes_full">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">list_nodes_full</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.list_nodes_full" title="永久链接至目标">¶</a></dt>
+<dd><p>list of nodes, maintaining all content provided from joyent listings</p>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -F
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.list_nodes_select">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">list_nodes_select</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.list_nodes_select" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of the VMs that are on the provider, with select fields</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.query">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">query</code><span class="sig-paren">(</span><em>action=None</em>, <em>command=None</em>, <em>args=None</em>, <em>method='GET'</em>, <em>location=None</em>, <em>data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.query" title="永久链接至目标">¶</a></dt>
+<dd><p>Make a web call to Joyent</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.query_instance">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">query_instance</code><span class="sig-paren">(</span><em>vm_=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.query_instance" title="永久链接至目标">¶</a></dt>
+<dd><p>Query an instance upon creation from the Joyent API</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.reboot">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">reboot</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.reboot" title="永久链接至目标">¶</a></dt>
+<dd><p>reboot a machine by name
+:param name: name given to the machine
+:param call: call value in this case is 'action'
+:return: true if successful</p>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a reboot vm_name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.reformat_node">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">reformat_node</code><span class="sig-paren">(</span><em>item=None</em>, <em>full=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.reformat_node" title="永久链接至目标">¶</a></dt>
+<dd><p>Reformat the returned data from joyent, determine public/private IPs and
+strip out fields if necessary to provide either full or brief content.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first simple">
+<li><strong>item</strong> -- node dictionary</li>
+<li><strong>full</strong> -- full or brief output</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">返回:</th><td class="field-body"><p class="first last">dict</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.show_instance">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">show_instance</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.show_instance" title="永久链接至目标">¶</a></dt>
+<dd><p>get details about a machine
+:param name: name given to the machine
+:param call: call value in this case is 'action'
+:return: machine information</p>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a show_instance vm_name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.show_key">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">show_key</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.show_key" title="永久链接至目标">¶</a></dt>
+<dd><p>List the keys available</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.ssh_interface">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">ssh_interface</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.ssh_interface" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the ssh_interface type to connect to. Either 'public_ips' (default)
+or 'private_ips'.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.start">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">start</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.start" title="永久链接至目标">¶</a></dt>
+<dd><p>start a machine by name
+:param name: name given to the machine
+:param call: call value in this case is 'action'
+:return: true if successful</p>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a start vm_name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.stop">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">stop</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.stop" title="永久链接至目标">¶</a></dt>
+<dd><p>stop a machine by name
+:param name: name given to the machine
+:param call: call value in this case is 'action'
+:return: true if successful</p>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a stop vm_name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.joyent.take_action">
+<code class="descclassname">salt.cloud.clouds.joyent.</code><code class="descname">take_action</code><span class="sig-paren">(</span><em>name=None</em>, <em>call=None</em>, <em>command=None</em>, <em>data=None</em>, <em>method='GET'</em>, <em>location='us-east-1'</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.joyent.take_action" title="永久链接至目标">¶</a></dt>
+<dd><p>take action call used by start,stop, reboot
+:param name: name given to the machine
+:param call: call value in this case is 'action'
+:command: api path
+:data: any data to be passed to the api, must be in json format
+:method: GET,POST,or DELETE
+:location: data center to execute the command on
+:return: true if successful</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

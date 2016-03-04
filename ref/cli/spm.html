@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>spm</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Command Line Reference" href="index.html">
+        <link rel="next" title="Salt Module Reference" href="../index.html">
+        <link rel="prev" title="salt-api" href="salt-api.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="salt-api.html" title="salt-api">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../index.html" title="Salt Module Reference">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="spm">
+<span id="spm-cli"></span><h1><code class="docutils literal"><span class="pre">spm</span></code><a class="headerlink" href="#spm" title="永久链接至标题">¶</a></h1>
+<p><a class="reference internal" href="../../topics/spm/index.html#spm"><span>Salt Package Manager</span></a></p>
+<div class="section" id="synopsis">
+<h2>Synopsis<a class="headerlink" href="#synopsis" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>spm &lt;command&gt; <span class="o">[</span>&lt;argument&gt;<span class="o">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="永久链接至标题">¶</a></h2>
+<p>spm is the frontend command for managing Salt packages. Packages normally only
+include formulas, meaning a group of SLS files that install into the
+<code class="docutils literal"><span class="pre">file_roots</span></code> on the Salt Master, but Salt modules can also be installed.</p>
+</div>
+<div class="section" id="options">
+<h2>Options<a class="headerlink" href="#options" title="永久链接至标题">¶</a></h2>
+<dl class="option">
+<dt id="cmdoption-spm-y">
+<span id="cmdoption-spm--assume-yes"></span><code class="descname">-y</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--assume-yes</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-spm-y" title="永久链接至目标">¶</a></dt>
+<dd><p>Assume <code class="docutils literal"><span class="pre">yes</span></code> instead of prompting the other whether or not to proceed
+with a particular command. Default is False.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-spm-f">
+<span id="cmdoption-spm--force"></span><code class="descname">-f</code><code class="descclassname"></code><code class="descclassname">, </code><code class="descname">--force</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-spm-f" title="永久链接至目标">¶</a></dt>
+<dd><p>When presented with a course of action that spm would normally refuse to
+perform, that action will be performed anyway. This is often destructive,
+and should be used with caution.</p>
+</dd></dl>
+
+<div class="section" id="logging-options">
+<h3>Logging Options<a class="headerlink" href="#logging-options" title="永久链接至标题">¶</a></h3>
+<p>Logging options which override any settings defined on the configuration files.</p>
+<dl class="option">
+<dt id="cmdoption-spm-l">
+<span id="cmdoption-spm--log-level"></span><code class="descname">-l</code><code class="descclassname"> LOG_LEVEL</code><code class="descclassname">, </code><code class="descname">--log-level</code><code class="descclassname">=LOG_LEVEL</code><a class="headerlink" href="#cmdoption-spm-l" title="永久链接至目标">¶</a></dt>
+<dd><p>Console logging log level. One of <code class="docutils literal"><span class="pre">all</span></code>, <code class="docutils literal"><span class="pre">garbage</span></code>, <code class="docutils literal"><span class="pre">trace</span></code>,
+<code class="docutils literal"><span class="pre">debug</span></code>, <code class="docutils literal"><span class="pre">info</span></code>, <code class="docutils literal"><span class="pre">warning</span></code>, <code class="docutils literal"><span class="pre">error</span></code>, <code class="docutils literal"><span class="pre">quiet</span></code>. Default:
+<code class="docutils literal"><span class="pre">warning</span></code>.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-spm--log-file">
+<code class="descname">--log-file</code><code class="descclassname">=LOG_FILE</code><a class="headerlink" href="#cmdoption-spm--log-file" title="永久链接至目标">¶</a></dt>
+<dd><p>Log file path. Default: /var/log/salt/spm.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-spm--log-file-level">
+<code class="descname">--log-file-level</code><code class="descclassname">=LOG_LEVEL_LOGFILE</code><a class="headerlink" href="#cmdoption-spm--log-file-level" title="永久链接至目标">¶</a></dt>
+<dd><p>Logfile logging log level. One of <code class="docutils literal"><span class="pre">all</span></code>, <code class="docutils literal"><span class="pre">garbage</span></code>, <code class="docutils literal"><span class="pre">trace</span></code>,
+<code class="docutils literal"><span class="pre">debug</span></code>, <code class="docutils literal"><span class="pre">info</span></code>, <code class="docutils literal"><span class="pre">warning</span></code>, <code class="docutils literal"><span class="pre">error</span></code>, <code class="docutils literal"><span class="pre">quiet</span></code>. Default:
+<code class="docutils literal"><span class="pre">warning</span></code>.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="commands">
+<h2>Commands<a class="headerlink" href="#commands" title="永久链接至标题">¶</a></h2>
+<dl class="option">
+<dt id="cmdoption-spm-arg-update_repo">
+<code class="descname">update_repo</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-spm-arg-update_repo" title="永久链接至目标">¶</a></dt>
+<dd><p>Connect to remote repositories locally configured on the system and download
+their metadata.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-spm-arg-install">
+<code class="descname">install</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-spm-arg-install" title="永久链接至目标">¶</a></dt>
+<dd><p>Install a package from a configured SPM repository. Requires a package name.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-spm-arg-remove">
+<code class="descname">remove</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-spm-arg-remove" title="永久链接至目标">¶</a></dt>
+<dd><p>Remove an installed package from the system. Requires a package name.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-spm-arg-info">
+<code class="descname">info</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-spm-arg-info" title="永久链接至目标">¶</a></dt>
+<dd><p>List information about an installed package. Requires a package name.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-spm-arg-files">
+<code class="descname">files</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-spm-arg-files" title="永久链接至目标">¶</a></dt>
+<dd><p>List files belonging to an installed package. Requires a package name.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-spm-arg-local">
+<code class="descname">local</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-spm-arg-local" title="永久链接至目标">¶</a></dt>
+<dd><p>Perform one of the above options (except for remove) on a package file,
+instead of on a package in a repository, or an installed package. Requires
+a valid path to a local file on the system.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-spm-arg-build">
+<code class="descname">build</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-spm-arg-build" title="永久链接至目标">¶</a></dt>
+<dd><p>Build a package from a directory containing a FORMULA file. Requires a valid
+path to a local directory on the system.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-spm-arg-create_repo">
+<code class="descname">create_repo</code><code class="descclassname"></code><a class="headerlink" href="#cmdoption-spm-arg-create_repo" title="永久链接至目标">¶</a></dt>
+<dd><p>Scan a directory for valid SPM package files and build an SPM-METADATA file
+in that directory which describes them.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="永久链接至标题">¶</a></h2>
+<p><em class="manpage">salt(1)</em>
+<em class="manpage">salt-master(1)</em>
+<em class="manpage">salt-minion(1)</em></p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="salt-api.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt-api" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt Module Reference" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Command Line Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#salt-call">salt-call</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#salt">salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#salt-cloud">salt-cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#salt-cp">salt-cp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#salt-key">salt-key</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#salt-master">salt-master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#salt-minion">salt-minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#salt-proxy">salt-proxy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#salt-run">salt-run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#salt-ssh">salt-ssh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#salt-syndic">salt-syndic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#salt-api">salt-api</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#spm">spm</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href=""><code class="docutils literal"><span class="pre">spm</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#synopsis">Synopsis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#options">Options</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#logging-options">Logging Options</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#commands">Commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#see-also">See also</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

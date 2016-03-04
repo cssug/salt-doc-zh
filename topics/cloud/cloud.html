@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Writing Cloud Driver Modules</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt云端" href="index.html">
+        <link rel="next" title="OS Support for Cloud VMs" href="deploy.html">
+        <link rel="prev" title="Troubleshooting Salt Cloud" href="troubleshooting.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="troubleshooting.html" title="Troubleshooting Salt Cloud">上一页</a>
+            
+        </li>
+        <li>
+            <a href="deploy.html" title="OS Support for Cloud VMs">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="writing-cloud-driver-modules">
+<h1>Writing Cloud Driver Modules<a class="headerlink" href="#writing-cloud-driver-modules" title="永久链接至标题">¶</a></h1>
+<p>Salt Cloud runs on a module system similar to the main Salt project. The
+modules inside saltcloud exist in the <code class="docutils literal"><span class="pre">salt/cloud/clouds</span></code> directory of the
+salt source.</p>
+<p>There are two basic types of cloud modules. If a cloud host is supported by
+libcloud, then using it is the fastest route to getting a module written. The
+Apache Libcloud project is located at:</p>
+<p><a class="reference external" href="http://libcloud.apache.org/">http://libcloud.apache.org/</a></p>
+<p>Not every cloud host is supported by libcloud. Additionally, not every
+feature in a supported cloud host is necessarily supported by libcloud. In
+either of these cases, a module can be created which does not rely on libcloud.</p>
+<div class="section" id="all-driver-modules">
+<h2>All Driver Modules<a class="headerlink" href="#all-driver-modules" title="永久链接至标题">¶</a></h2>
+<p>The following functions are required by all driver modules, whether or not they are
+based on libcloud.</p>
+<div class="section" id="the-virtual-function">
+<h3>The __virtual__() Function<a class="headerlink" href="#the-virtual-function" title="永久链接至标题">¶</a></h3>
+<p>This function determines whether or not to make this cloud module available
+upon execution. Most often, it uses <code class="docutils literal"><span class="pre">get_configured_provider()</span></code> to determine
+if the necessary configuration has been set up. It may also check for necessary
+imports, to decide whether to load the module. In most cases, it will return a
+<code class="docutils literal"><span class="pre">True</span></code> or <code class="docutils literal"><span class="pre">False</span></code> value. If the name of the driver used does not match the
+filename, then that name should be returned instead of <code class="docutils literal"><span class="pre">True</span></code>. An example of
+this may be seen in the Azure module:</p>
+<p><a class="reference external" href="https://github.com/saltstack/salt/tree/develop/salt/cloud/clouds/msazure.py">https://github.com/saltstack/salt/tree/develop/salt/cloud/clouds/msazure.py</a></p>
+</div>
+<div class="section" id="the-get-configured-provider-function">
+<h3>The get_configured_provider() Function<a class="headerlink" href="#the-get-configured-provider-function" title="永久链接至标题">¶</a></h3>
+<p>This function uses <code class="docutils literal"><span class="pre">config.is_provider_configured()</span></code> to determine wither
+all required information for this driver has been configured. The last value
+in the list of required settings should be followed by a comma.</p>
+</div>
+</div>
+<div class="section" id="libcloud-based-modules">
+<h2>Libcloud Based Modules<a class="headerlink" href="#libcloud-based-modules" title="永久链接至标题">¶</a></h2>
+<p>Writing a cloud module based on libcloud has two major advantages. First of all,
+much of the work has already been done by the libcloud project. Second, most of
+the functions necessary to Salt have already been added to the Salt Cloud
+project.</p>
+<div class="section" id="the-create-function">
+<h3>The create() Function<a class="headerlink" href="#the-create-function" title="永久链接至标题">¶</a></h3>
+<p>The most important function that does need to be manually written is the
+<code class="docutils literal"><span class="pre">create()</span></code> function. This is what is used to request a virtual machine to be
+created by the cloud host, wait for it to become available, and then
+(optionally) log in and install Salt on it.</p>
+<p>A good example to follow for writing a cloud driver module based on libcloud
+is the module provided for Linode:</p>
+<p><a class="reference external" href="https://github.com/saltstack/salt/tree/develop/salt/cloud/clouds/linode.py">https://github.com/saltstack/salt/tree/develop/salt/cloud/clouds/linode.py</a></p>
+<p>The basic flow of a <code class="docutils literal"><span class="pre">create()</span></code> function is as follows:</p>
+<ul class="simple">
+<li>Send a request to the cloud host to create a virtual machine.</li>
+<li>Wait for the virtual machine to become available.</li>
+<li>Generate kwargs to be used to deploy Salt.</li>
+<li>Log into the virtual machine and deploy Salt.</li>
+<li>Return a data structure that describes the newly-created virtual machine.</li>
+</ul>
+<p>At various points throughout this function, events may be fired on the Salt
+event bus. Four of these events, which are described below, are required. Other
+events may be added by the user, where appropriate.</p>
+<p>When the <code class="docutils literal"><span class="pre">create()</span></code> function is called, it is passed a data structure called
+<code class="docutils literal"><span class="pre">vm_</span></code>. This dict contains a composite of information describing the virtual
+machine to be created. A dict called <code class="docutils literal"><span class="pre">__opts__</span></code> is also provided by Salt,
+which contains the options used to run Salt Cloud, as well as a set of
+configuration and environment variables.</p>
+<p>The first thing the <code class="docutils literal"><span class="pre">create()</span></code> function must do is fire an event stating that
+it has started the create process. This event is tagged
+<code class="docutils literal"><span class="pre">salt/cloud/&lt;vm</span> <span class="pre">name&gt;/creating</span></code>. The payload contains the names of the VM,
+profile, and provider.</p>
+<p>A set of kwargs is then usually created, to describe the parameters required
+by the cloud host to request the virtual machine.</p>
+<p>An event is then fired to state that a virtual machine is about to be requested.
+It is tagged as <code class="docutils literal"><span class="pre">salt/cloud/&lt;vm</span> <span class="pre">name&gt;/requesting</span></code>. The payload contains most
+or all of the parameters that will be sent to the cloud host. Any private
+information (such as passwords) should not be sent in the event.</p>
+<p>After a request is made, a set of deploy kwargs will be generated. These will
+be used to install Salt on the target machine. Windows options are supported
+at this point, and should be generated, even if the cloud host does not
+currently support Windows. This will save time in the future if the host
+does eventually decide to support Windows.</p>
+<p>An event is then fired to state that the deploy process is about to begin. This
+event is tagged <code class="docutils literal"><span class="pre">salt/cloud/&lt;vm</span> <span class="pre">name&gt;/deploying</span></code>. The payload for the event
+will contain a set of deploy kwargs, useful for debugging purposed. Any private
+data, including passwords and keys (including public keys) should be stripped
+from the deploy kwargs before the event is fired.</p>
+<p>If any Windows options have been passed in, the
+<code class="docutils literal"><span class="pre">salt.utils.cloud.deploy_windows()</span></code> function will be called. Otherwise, it
+will be assumed that the target is a Linux or Unix machine, and the
+<code class="docutils literal"><span class="pre">salt.utils.cloud.deploy_script()</span></code> will be called.</p>
+<p>Both of these functions will wait for the target machine to become available,
+then the necessary port to log in, then a successful login that can be used to
+install Salt. Minion configuration and keys will then be uploaded to a temporary
+directory on the target by the appropriate function. On a Windows target, the
+Windows Minion Installer will be run in silent mode. On a Linux/Unix target, a
+deploy script (<code class="docutils literal"><span class="pre">bootstrap-salt.sh</span></code>, by default) will be run, which will
+auto-detect the operating system, and install Salt using its native package
+manager. These do not need to be handled by the developer in the cloud module.</p>
+<p>The <code class="docutils literal"><span class="pre">salt.utils.cloud.validate_windows_cred()</span></code> function has been extended to
+take the number of retries and retry_delay parameters in case a specific cloud
+host has a delay between providing the Windows credentials and the
+credentials being available for use.  In their <code class="docutils literal"><span class="pre">create()</span></code> function, or as a
+a sub-function called during the creation process, developers should use the
+<code class="docutils literal"><span class="pre">win_deploy_auth_retries</span></code> and <code class="docutils literal"><span class="pre">win_deploy_auth_retry_delay</span></code> parameters from
+the provider configuration to allow the end-user the ability to customize the
+number of tries and delay between tries for their particular host.</p>
+<p>After the appropriate deploy function completes, a final event is fired
+which describes the virtual machine that has just been created. This event is
+tagged <code class="docutils literal"><span class="pre">salt/cloud/&lt;vm</span> <span class="pre">name&gt;/created</span></code>. The payload contains the names of the
+VM, profile, and provider.</p>
+<p>Finally, a dict (queried from the provider) which describes the new virtual
+machine is returned to the user. Because this data is not fired on the event
+bus it can, and should, return any passwords that were returned by the cloud
+host. In some cases (for example, Rackspace), this is the only time that
+the password can be queried by the user; post-creation queries may not contain
+password information (depending upon the host).</p>
+</div>
+<div class="section" id="the-libcloudfuncs-functions">
+<h3>The libcloudfuncs Functions<a class="headerlink" href="#the-libcloudfuncs-functions" title="永久链接至标题">¶</a></h3>
+<p>A number of other functions are required for all cloud hosts. However, with
+libcloud-based modules, these are all provided for free by the libcloudfuncs
+library. The following two lines set up the imports:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">salt.cloud.libcloudfuncs</span> <span class="kn">import</span> <span class="o">*</span>   <span class="c1"># pylint: disable=W0614,W0401</span>
+<span class="kn">from</span> <span class="nn">salt.utils</span> <span class="kn">import</span> <span class="n">namespaced_function</span>
+</pre></div>
+</div>
+<p>And then a series of declarations will make the necessary functions available
+within the cloud module.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">get_size</span> <span class="o">=</span> <span class="n">namespaced_function</span><span class="p">(</span><span class="n">get_size</span><span class="p">,</span> <span class="nb">globals</span><span class="p">())</span>
+<span class="n">get_image</span> <span class="o">=</span> <span class="n">namespaced_function</span><span class="p">(</span><span class="n">get_image</span><span class="p">,</span> <span class="nb">globals</span><span class="p">())</span>
+<span class="n">avail_locations</span> <span class="o">=</span> <span class="n">namespaced_function</span><span class="p">(</span><span class="n">avail_locations</span><span class="p">,</span> <span class="nb">globals</span><span class="p">())</span>
+<span class="n">avail_images</span> <span class="o">=</span> <span class="n">namespaced_function</span><span class="p">(</span><span class="n">avail_images</span><span class="p">,</span> <span class="nb">globals</span><span class="p">())</span>
+<span class="n">avail_sizes</span> <span class="o">=</span> <span class="n">namespaced_function</span><span class="p">(</span><span class="n">avail_sizes</span><span class="p">,</span> <span class="nb">globals</span><span class="p">())</span>
+<span class="n">script</span> <span class="o">=</span> <span class="n">namespaced_function</span><span class="p">(</span><span class="n">script</span><span class="p">,</span> <span class="nb">globals</span><span class="p">())</span>
+<span class="n">destroy</span> <span class="o">=</span> <span class="n">namespaced_function</span><span class="p">(</span><span class="n">destroy</span><span class="p">,</span> <span class="nb">globals</span><span class="p">())</span>
+<span class="n">list_nodes</span> <span class="o">=</span> <span class="n">namespaced_function</span><span class="p">(</span><span class="n">list_nodes</span><span class="p">,</span> <span class="nb">globals</span><span class="p">())</span>
+<span class="n">list_nodes_full</span> <span class="o">=</span> <span class="n">namespaced_function</span><span class="p">(</span><span class="n">list_nodes_full</span><span class="p">,</span> <span class="nb">globals</span><span class="p">())</span>
+<span class="n">list_nodes_select</span> <span class="o">=</span> <span class="n">namespaced_function</span><span class="p">(</span><span class="n">list_nodes_select</span><span class="p">,</span> <span class="nb">globals</span><span class="p">())</span>
+<span class="n">show_instance</span> <span class="o">=</span> <span class="n">namespaced_function</span><span class="p">(</span><span class="n">show_instance</span><span class="p">,</span> <span class="nb">globals</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>If necessary, these functions may be replaced by removing the appropriate
+declaration line, and then adding the function as normal.</p>
+<p>These functions are required for all cloud modules, and are described in detail
+in the next section.</p>
+</div>
+</div>
+<div class="section" id="non-libcloud-based-modules">
+<h2>Non-Libcloud Based Modules<a class="headerlink" href="#non-libcloud-based-modules" title="永久链接至标题">¶</a></h2>
+<p>In some cases, using libcloud is not an option. This may be because libcloud has
+not yet included the necessary driver itself, or it may be that the driver that
+is included with libcloud does not contain all of the necessary features
+required by the developer. When this is the case, some or all of the functions
+in <code class="docutils literal"><span class="pre">libcloudfuncs</span></code> may be replaced. If they are all replaced, the libcloud
+imports should be absent from the Salt Cloud module.</p>
+<p>A good example of a non-libcloud driver is the DigitalOcean driver:</p>
+<p><a class="reference external" href="https://github.com/saltstack/salt/tree/develop/salt/cloud/clouds/digital_ocean.py">https://github.com/saltstack/salt/tree/develop/salt/cloud/clouds/digital_ocean.py</a></p>
+<div class="section" id="id1">
+<h3>The <code class="docutils literal"><span class="pre">create()</span></code> Function<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">create()</span></code> function must be created as described in the libcloud-based
+module documentation.</p>
+</div>
+<div class="section" id="the-get-size-function">
+<h3>The get_size() Function<a class="headerlink" href="#the-get-size-function" title="永久链接至标题">¶</a></h3>
+<p>This function is only necessary for libcloud-based modules, and does not need
+to exist otherwise.</p>
+</div>
+<div class="section" id="the-get-image-function">
+<h3>The get_image() Function<a class="headerlink" href="#the-get-image-function" title="永久链接至标题">¶</a></h3>
+<p>This function is only necessary for libcloud-based modules, and does not need
+to exist otherwise.</p>
+</div>
+<div class="section" id="the-avail-locations-function">
+<h3>The avail_locations() Function<a class="headerlink" href="#the-avail-locations-function" title="永久链接至标题">¶</a></h3>
+<p>This function returns a list of locations available, if the cloud host uses
+multiple data centers. It is not necessary if the cloud host uses only one
+data center. It is normally called using the <code class="docutils literal"><span class="pre">--list-locations</span></code> option.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud --list-locations my-cloud-provider
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-avail-images-function">
+<h3>The avail_images() Function<a class="headerlink" href="#the-avail-images-function" title="永久链接至标题">¶</a></h3>
+<p>This function returns a list of images available for this cloud provider. There
+are not currently any known cloud providers that do not provide this
+functionality, though they may refer to images by a different name (for example,
+&quot;templates&quot;). It is normally called using the <code class="docutils literal"><span class="pre">--list-images</span></code> option.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud --list-images my-cloud-provider
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-avail-sizes-function">
+<h3>The avail_sizes() Function<a class="headerlink" href="#the-avail-sizes-function" title="永久链接至标题">¶</a></h3>
+<p>This function returns a list of sizes available for this cloud provider.
+Generally, this refers to a combination of RAM, CPU, and/or disk space. This
+functionality may not be present on some cloud providers. For example, the
+Parallels module breaks down RAM, CPU, and disk space into separate options,
+whereas in other providers, these options are baked into the image. It is
+normally called using the <code class="docutils literal"><span class="pre">--list-sizes</span></code> option.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud --list-sizes my-cloud-provider
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-script-function">
+<h3>The script() Function<a class="headerlink" href="#the-script-function" title="永久链接至标题">¶</a></h3>
+<p>This function builds the deploy script to be used on the remote machine.  It is
+likely to be moved into the <code class="docutils literal"><span class="pre">salt.utils.cloud</span></code> library in the near future, as
+it is very generic and can usually be copied wholesale from another module. An
+excellent example is in the Azure driver.</p>
+</div>
+<div class="section" id="the-destroy-function">
+<h3>The destroy() Function<a class="headerlink" href="#the-destroy-function" title="永久链接至标题">¶</a></h3>
+<p>This function irreversibly destroys a virtual machine on the cloud provider.
+Before doing so, it should fire an event on the Salt event bus. The tag for this
+event is <code class="docutils literal"><span class="pre">salt/cloud/&lt;vm</span> <span class="pre">name&gt;/destroying</span></code>. Once the virtual machine has been
+destroyed, another event is fired. The tag for that event is
+<code class="docutils literal"><span class="pre">salt/cloud/&lt;vm</span> <span class="pre">name&gt;/destroyed</span></code>.</p>
+<p>This function is normally called with the <code class="docutils literal"><span class="pre">-d</span></code> options:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -d myinstance
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-list-nodes-function">
+<h3>The list_nodes() Function<a class="headerlink" href="#the-list-nodes-function" title="永久链接至标题">¶</a></h3>
+<p>This function returns a list of nodes available on this cloud provider, using
+the following fields:</p>
+<ul class="simple">
+<li>id (str)</li>
+<li>image (str)</li>
+<li>size (str)</li>
+<li>state (str)</li>
+<li>private_ips (list)</li>
+<li>public_ips (list)</li>
+</ul>
+<p>No other fields should be returned in this function, and all of these fields
+should be returned, even if empty. The private_ips and public_ips fields should
+always be of a list type, even if empty, and the other fields should always be
+of a str type. This function is normally called with the <code class="docutils literal"><span class="pre">-Q</span></code> option:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -Q
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-list-nodes-full-function">
+<h3>The list_nodes_full() Function<a class="headerlink" href="#the-list-nodes-full-function" title="永久链接至标题">¶</a></h3>
+<p>All information available about all nodes should be returned in this function.
+The fields in the list_nodes() function should also be returned, even if they
+would not normally be provided by the cloud provider. This is because some
+functions both within Salt and 3rd party will break if an expected field is not
+present. This function is normally called with the <code class="docutils literal"><span class="pre">-F</span></code> option:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -F
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-list-nodes-select-function">
+<h3>The list_nodes_select() Function<a class="headerlink" href="#the-list-nodes-select-function" title="永久链接至标题">¶</a></h3>
+<p>This function returns only the fields specified in the <code class="docutils literal"><span class="pre">query.selection</span></code>
+option in <code class="docutils literal"><span class="pre">/etc/salt/cloud</span></code>. Because this function is so generic, all of the
+heavy lifting has been moved into the <code class="docutils literal"><span class="pre">salt.utils.cloud</span></code> library.</p>
+<p>A function to call <code class="docutils literal"><span class="pre">list_nodes_select()</span></code> still needs to be present. In
+general, the following code can be used as-is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">list_nodes_select</span><span class="p">(</span><span class="n">call</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return a list of the VMs that are on the provider, with select fields</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">cloud</span><span class="o">.</span><span class="n">list_nodes_select</span><span class="p">(</span>
+        <span class="n">list_nodes_full</span><span class="p">(</span><span class="s1">&#39;function&#39;</span><span class="p">),</span> <span class="n">__opts__</span><span class="p">[</span><span class="s1">&#39;query.selection&#39;</span><span class="p">],</span> <span class="n">call</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>However, depending on the cloud provider, additional variables may be required.
+For instance, some modules use a <code class="docutils literal"><span class="pre">conn</span></code> object, or may need to pass other
+options into <code class="docutils literal"><span class="pre">list_nodes_full()</span></code>. In this case, be sure to update the function
+appropriately:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">list_nodes_select</span><span class="p">(</span><span class="n">conn</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">call</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Return a list of the VMs that are on the provider, with select fields</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">conn</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">get_conn</span><span class="p">()</span>   <span class="c1"># pylint: disable=E0602</span>
+
+    <span class="k">return</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">cloud</span><span class="o">.</span><span class="n">list_nodes_select</span><span class="p">(</span>
+        <span class="n">list_nodes_full</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="s1">&#39;function&#39;</span><span class="p">),</span>
+        <span class="n">__opts__</span><span class="p">[</span><span class="s1">&#39;query.selection&#39;</span><span class="p">],</span>
+        <span class="n">call</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>This function is normally called with the <code class="docutils literal"><span class="pre">-S</span></code> option:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -S
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-show-instance-function">
+<h3>The show_instance() Function<a class="headerlink" href="#the-show-instance-function" title="永久链接至标题">¶</a></h3>
+<p>This function is used to display all of the information about a single node
+that is available from the cloud provider. The simplest way to provide this is
+usually to call <code class="docutils literal"><span class="pre">list_nodes_full()</span></code>, and return just the data for the
+requested node. It is normally called as an action:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a show_instance myinstance
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="actions-and-functions">
+<h2>Actions and Functions<a class="headerlink" href="#actions-and-functions" title="永久链接至标题">¶</a></h2>
+<p>Extra functionality may be added to a cloud provider in the form of an
+<code class="docutils literal"><span class="pre">--action</span></code> or a <code class="docutils literal"><span class="pre">--function</span></code>. Actions are performed against a cloud
+instance/virtual machine, and functions are performed against a cloud provider.</p>
+<div class="section" id="actions">
+<h3>Actions<a class="headerlink" href="#actions" title="永久链接至标题">¶</a></h3>
+<p>Actions are calls that are performed against a specific instance or virtual
+machine. The <code class="docutils literal"><span class="pre">show_instance</span></code> action should be available in all cloud modules.
+Actions are normally called with the <code class="docutils literal"><span class="pre">-a</span></code> option:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a show_instance myinstance
+</pre></div>
+</div>
+<p>Actions must accept a <code class="docutils literal"><span class="pre">name</span></code> as a first argument, may optionally support any
+number of kwargs as appropriate, and must accept an argument of <code class="docutils literal"><span class="pre">call</span></code>, with
+a default of <code class="docutils literal"><span class="pre">None</span></code>.</p>
+<p>Before performing any other work, an action should normally verify that it has
+been called correctly. It may then perform the desired feature, and return
+useful information to the user. A basic action looks like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">show_instance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">call</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Show the details from EC2 concerning an AMI</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="k">if</span> <span class="n">call</span> <span class="o">!=</span> <span class="s1">&#39;action&#39;</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">SaltCloudSystemExit</span><span class="p">(</span>
+        <span class="s1">&#39;The show_instance action must be called with -a or --action.&#39;</span>
+    <span class="p">)</span>
+
+<span class="k">return</span> <span class="n">_get_node</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Please note that generic kwargs, if used, are passed through to actions as
+<code class="docutils literal"><span class="pre">kwargs</span></code> and not <code class="docutils literal"><span class="pre">**kwargs</span></code>. An example of this is seen in the Functions
+section.</p>
+</div>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="永久链接至标题">¶</a></h3>
+<p>Functions are called that are performed against a specific cloud provider. An
+optional function that is often useful is <code class="docutils literal"><span class="pre">show_image</span></code>, which describes an
+image in detail. Functions are normally called with the <code class="docutils literal"><span class="pre">-f</span></code> option:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_image my-cloud-provider <span class="nv">image</span><span class="o">=</span><span class="s1">&#39;Ubuntu 13.10 64-bit&#39;</span>
+</pre></div>
+</div>
+<p>A function may accept any number of kwargs as appropriate, and must accept an
+argument of <code class="docutils literal"><span class="pre">call</span></code> with a default of <code class="docutils literal"><span class="pre">None</span></code>.</p>
+<p>Before performing any other work, a function should normally verify that it has
+been called correctly. It may then perform the desired feature, and return
+useful information to the user. A basic function looks like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">show_image</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">call</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Show the details from EC2 concerning an AMI</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">call</span> <span class="o">!=</span> <span class="s1">&#39;function&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">SaltCloudSystemExit</span><span class="p">(</span>
+            <span class="s1">&#39;The show_image action must be called with -f or --function.&#39;</span>
+        <span class="p">)</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ImageId.1&#39;</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;image&#39;</span><span class="p">],</span>
+              <span class="s1">&#39;Action&#39;</span><span class="p">:</span> <span class="s1">&#39;DescribeImages&#39;</span><span class="p">}</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">query</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+</pre></div>
+</div>
+<p>Take note that generic kwargs are passed through to functions as <code class="docutils literal"><span class="pre">kwargs</span></code> and
+not <code class="docutils literal"><span class="pre">**kwargs</span></code>.</p>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="troubleshooting.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Troubleshooting Salt Cloud" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="deploy.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="OS Support for Cloud VMs" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt云端</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">入门指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud">Using Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#core-configuration">Cloud核心配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#windows-configuration">Windows Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#cloud-provider-specifics">Cloud Provider Specifics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#miscellaneous-options">Miscellaneous Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#troubleshooting-steps">Troubleshooting Steps</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#extending-salt-cloud">Extending Salt Cloud</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="">Adding Cloud Providers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#all-driver-modules">All Driver Modules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#the-virtual-function">The __virtual__() Function</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#the-get-configured-provider-function">The get_configured_provider() Function</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#libcloud-based-modules">Libcloud Based Modules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#the-create-function">The create() Function</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#the-libcloudfuncs-functions">The libcloudfuncs Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#non-libcloud-based-modules">Non-Libcloud Based Modules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#id1">The <code class="docutils literal"><span class="pre">create()</span></code> Function</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#the-get-size-function">The get_size() Function</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#the-get-image-function">The get_image() Function</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#the-avail-locations-function">The avail_locations() Function</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#the-avail-images-function">The avail_images() Function</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#the-avail-sizes-function">The avail_sizes() Function</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#the-script-function">The script() Function</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#the-destroy-function">The destroy() Function</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#the-list-nodes-function">The list_nodes() Function</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#the-list-nodes-full-function">The list_nodes_full() Function</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#the-list-nodes-select-function">The list_nodes_select() Function</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#the-show-instance-function">The show_instance() Function</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#actions-and-functions">Actions and Functions</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#actions">Actions</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="deploy.html">Adding OS Support</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud-from-salt">Using Salt Cloud from Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#feature-comparison">Feature Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorials">Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

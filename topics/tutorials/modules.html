@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>远程执行教程</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Remote Execution" href="../execution/index.html">
+        <link rel="next" title="Running Commands on Salt Minions" href="../execution/remote_execution.html">
+        <link rel="prev" title="Remote Execution" href="../execution/index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../execution/index.html" title="Remote Execution">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../execution/remote_execution.html" title="Running Commands on Salt Minions">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="remote-execution-tutorial">
+<h1>远程执行教程<a class="headerlink" href="#remote-execution-tutorial" title="永久链接至标题">¶</a></h1>
+<p><strong>开始之前</strong> 需要确保你已经通过 <code class="xref doc docutils literal"><span class="pre">安装</span></code> 及 <code class="xref doc docutils literal"><span class="pre">配置</span></code> 章节完成了Salt安装.</p>
+<div class="admonition-stuck admonition">
+<p class="first admonition-title">小贴士</p>
+<p class="last">有很多方法可以 <code class="xref doc docutils literal"><span class="pre">从Salt社区获取帮助</span></code> 包括我们的 <a href="#id1"><span class="problematic" id="id2">`邮件列表&lt;https://groups.google.com/forum/#!forum/salt-users&gt;`_</span></a> 及我们的 <a class="reference external" href="http://webchat.freenode.net/?channels=salt">IRC频道</a> #salt.</p>
+</div>
+<div class="section" id="order-your-minions-around">
+<h2>Order your minions around<a class="headerlink" href="#order-your-minions-around" title="永久链接至标题">¶</a></h2>
+<p>现在你有了一个 <a class="reference internal" href="../../glossary.html#term-master"><span class="xref std std-term">master</span></a> 与一个或多个 <a class="reference internal" href="../../glossary.html#term-minion"><span class="xref std std-term">minion</span></a> 连接, 你可以通过 <a href="#id1"><span class="problematic" id="id2">:commond:`salt`</span></a> 命令在minion上执行命令. Salt命令由三个主要部分构成:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;&lt;target&gt;&#39;</span> &lt;<span class="k">function</span>&gt; <span class="o">[</span>arguments<span class="o">]</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">参见</p>
+<p class="last"><a class="reference internal" href="../../ref/cli/salt.html"><em>salt man页</em></a></p>
+</div>
+<div class="section" id="target">
+<h3>target<a class="headerlink" href="#target" title="永久链接至标题">¶</a></h3>
+<p>target部分允许你指定哪些minion应该运行执行. 默认的规则是使用glob匹配minion id. 例如:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> test.ping
+salt <span class="s1">&#39;*.example.org&#39;</span> test.ping
+</pre></div>
+</div>
+<p>Targets可以使用Grains系统来通过minion的系统信息进行过滤:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt -G <span class="s1">&#39;os:Ubuntu&#39;</span> test.ping
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">参见</p>
+<p class="last"><a class="reference internal" href="../targeting/grains.html"><em>Grains系统</em></a></p>
+</div>
+<p>Targets也可以使用正则表达式:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt -E <span class="s1">&#39;virtmach[0-9]&#39;</span> test.ping
+</pre></div>
+</div>
+<p>Targets也可以指定列表:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt -L <span class="s1">&#39;foo,bar,baz,quo&#39;</span> test.ping
+</pre></div>
+</div>
+<p>或者在一个命令中混合使用多target类型:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt -C <span class="s1">&#39;G@os:Ubuntu and webser* or E@database.*&#39;</span> test.ping
+</pre></div>
+</div>
+</div>
+<div class="section" id="function">
+<h3>function<a class="headerlink" href="#function" title="永久链接至标题">¶</a></h3>
+<p>funcation是module提供的功能. Salt内置了大量有效的functions. 列出minions上的所有有效functions?</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> sys.doc
+</pre></div>
+</div>
+<p>这里有一些例子:</p>
+<p>显示当前所有有效的minions:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> test.ping
+</pre></div>
+</div>
+<p>运行一个任意的shell命令:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> cmd.run <span class="s1">&#39;uname -a&#39;</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">参见</p>
+<p class="last"><a class="reference internal" href="../../ref/modules/all/index.html"><em>所有模块列表</em></a></p>
+</div>
+</div>
+<div class="section" id="arguments">
+<h3>参数<a class="headerlink" href="#arguments" title="永久链接至标题">¶</a></h3>
+<p>function通过空格来界定参数:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> cmd.exec_code python <span class="s1">&#39;import sys; print sys.version&#39;</span>
+</pre></div>
+</div>
+<p>可选的, 也支持keyword参数:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> pip.install salt <span class="nv">timeout</span><span class="o">=</span><span class="m">5</span> <span class="nv">upgrade</span><span class="o">=</span>True
+</pre></div>
+</div>
+<p>他们常常在 <code class="docutils literal"><span class="pre">kwargs=argument</span></code> form中.</p>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../execution/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Remote Execution" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../execution/remote_execution.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Running Commands on Salt Minions" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../execution/index.html">Remote Execution</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">远程执行教程</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#order-your-minions-around">Order your minions around</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#target">target</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#function">function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#arguments">参数</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../execution/remote_execution.html">Running Commands on Salt Minions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/modules/index.html">Writing Execution Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

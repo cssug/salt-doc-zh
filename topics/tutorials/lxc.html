@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>LXC Management with Salt</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="lxc-management-with-salt">
+<span id="tutorial-lxc"></span><h1>LXC Management with Salt<a class="headerlink" href="#lxc-management-with-salt" title="永久链接至标题">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">This walkthrough assumes basic knowledge of Salt. To get up to speed, check
+out the <a class="reference internal" href="walkthrough.html"><em>Salt Walkthrough</em></a>.</p>
+</div>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="永久链接至标题">¶</a></h2>
+<p>Manipulation of LXC containers in Salt requires the minion to have an LXC
+version of at least 1.0 (an alpha or beta release of LXC 1.0 is acceptable).
+The following distributions are known to have new enough versions of LXC
+packaged:</p>
+<ul class="simple">
+<li>RHEL/CentOS 6 and later (via <a class="reference external" href="https://fedoraproject.org/wiki/EPEL">EPEL</a>)</li>
+<li>Fedora (All non-EOL releases)</li>
+<li>Debian 8.0 (Jessie)</li>
+<li>Ubuntu 14.04 LTS and later (LXC templates are packaged separately as
+<strong>lxc-templates</strong>, it is recommended to also install this package)</li>
+<li>openSUSE 13.2 and later</li>
+</ul>
+</div>
+<div class="section" id="profiles">
+<span id="tutorial-lxc-profiles"></span><h2>Profiles<a class="headerlink" href="#profiles" title="永久链接至标题">¶</a></h2>
+<p>Profiles allow for a sort of shorthand for commonly-used
+configurations to be defined in the minion config file, <a class="reference internal" href="../targeting/grains.html#targeting-grains"><span>grains</span></a>, <a class="reference internal" href="../pillar/index.html#pillar"><span>pillar</span></a>, or the master config file. The
+profile is retrieved by Salt using the <a class="reference internal" href="../../ref/modules/all/salt.modules.config.html#salt.modules.config.get" title="salt.modules.config.get"><code class="xref py py-mod docutils literal"><span class="pre">config.get</span></code></a> function, which looks in those locations, in that
+order. This allows for profiles to be defined centrally in the master config
+file, with several options for overriding them (if necessary) on groups of
+minions or individual minions.</p>
+<p>There are two types of profiles:</p>
+<blockquote>
+<div><ul class="simple">
+<li>One for defining the parameters used in container creation/clone.</li>
+<li>One for defining the container's network interface(s) settings.</li>
+</ul>
+</div></blockquote>
+<div class="section" id="container-profiles">
+<span id="tutorial-lxc-profiles-container"></span><h3>Container Profiles<a class="headerlink" href="#container-profiles" title="永久链接至标题">¶</a></h3>
+<p>LXC container profiles are defined defined underneath the
+<code class="docutils literal"><span class="pre">lxc.container_profile</span></code> config option:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">lxc.container_profile</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">centos</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">centos</span>
+    <span class="l l-Scalar l-Scalar-Plain">backing</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">lvm</span>
+    <span class="l l-Scalar l-Scalar-Plain">vgname</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">vg1</span>
+    <span class="l l-Scalar l-Scalar-Plain">lvname</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">lxclv</span>
+    <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10G</span>
+  <span class="l l-Scalar l-Scalar-Plain">centos_big</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">centos</span>
+    <span class="l l-Scalar l-Scalar-Plain">backing</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">lvm</span>
+    <span class="l l-Scalar l-Scalar-Plain">vgname</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">vg1</span>
+    <span class="l l-Scalar l-Scalar-Plain">lvname</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">lxclv</span>
+    <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">20G</span>
+</pre></div>
+</div>
+<p>Profiles are retrieved using the <a class="reference internal" href="../../ref/modules/all/salt.modules.config.html#salt.modules.config.get" title="salt.modules.config.get"><code class="xref py py-mod docutils literal"><span class="pre">config.get</span></code></a>
+function, with the <strong>recurse</strong> merge strategy. This means that a profile can be
+defined at a lower level (for example, the master config file) and then parts
+of it can be overridden at a higher level (for example, in pillar data).
+Consider the following container profile data:</p>
+<p><strong>In the Master config file:</strong></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">lxc.container_profile</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">centos</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">centos</span>
+    <span class="l l-Scalar l-Scalar-Plain">backing</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">lvm</span>
+    <span class="l l-Scalar l-Scalar-Plain">vgname</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">vg1</span>
+    <span class="l l-Scalar l-Scalar-Plain">lvname</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">lxclv</span>
+    <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10G</span>
+</pre></div>
+</div>
+<p><strong>In the Pillar data</strong></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">lxc.container_profile</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">centos</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">20G</span>
+</pre></div>
+</div>
+<p>Any minion with the above Pillar data would have the <strong>size</strong> parameter in the
+<strong>centos</strong> profile overridden to 20G, while those minions without the above
+Pillar data would have the 10G <strong>size</strong> value. This is another way of achieving
+the same result as the <strong>centos_big</strong> profile above, without having to define
+another whole profile that differs in just one value.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">In the 2014.7.x release cycle and earlier, container profiles are defined
+under <code class="docutils literal"><span class="pre">lxc.profile</span></code>. This parameter will still work in version 2015.5.0,
+but is deprecated and will be removed in a future release. Please note
+however that the profile merging feature described above will only work
+with profiles defined under <code class="docutils literal"><span class="pre">lxc.container_profile</span></code>, and only in versions
+2015.5.0 and later.</p>
+</div>
+<p>Additionally, in version 2015.5.0 container profiles have been expanded to
+support passing template-specific CLI options to <a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#salt.modules.lxc.create" title="salt.modules.lxc.create"><code class="xref py py-mod docutils literal"><span class="pre">lxc.create</span></code></a>. Below is a table describing the parameters which
+can be configured in container profiles:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="32%" />
+<col width="32%" />
+<col width="36%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameter</th>
+<th class="head">2015.5.0 and Newer</th>
+<th class="head">2014.7.x and Earlier</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><em>template</em><sup>1</sup></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td><em>options</em><sup>1</sup></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td><em>image</em><sup>1</sup></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td><em>backing</em></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td><em>snapshot</em><sup>2</sup></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td><em>lvname</em><sup>1</sup></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td><em>fstype</em><sup>1</sup></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td><em>size</em></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+<ol class="arabic simple">
+<li>Parameter is only supported for container creation, and will be ignored if
+the profile is used when cloning a container.</li>
+<li>Parameter is only supported for container cloning, and will be ignored if
+the profile is used when not cloning a container.</li>
+</ol>
+</div>
+<div class="section" id="network-profiles">
+<span id="tutorial-lxc-profiles-network"></span><h3>Network Profiles<a class="headerlink" href="#network-profiles" title="永久链接至标题">¶</a></h3>
+<p>LXC network profiles are defined defined underneath the <code class="docutils literal"><span class="pre">lxc.network_profile</span></code>
+config option.
+By default, the module uses a DHCP based configuration and try to guess a bridge to
+get connectivity.</p>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">on pre <strong>2015.5.2</strong>, you need to specify explicitly the network bridge</p>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">lxc.network_profile</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">centos</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">eth0</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">link</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">br0</span>
+      <span class="l l-Scalar l-Scalar-Plain">type</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">veth</span>
+      <span class="l l-Scalar l-Scalar-Plain">flags</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">up</span>
+  <span class="l l-Scalar l-Scalar-Plain">ubuntu</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">eth0</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">link</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">lxcbr0</span>
+      <span class="l l-Scalar l-Scalar-Plain">type</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">veth</span>
+      <span class="l l-Scalar l-Scalar-Plain">flags</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">up</span>
+</pre></div>
+</div>
+<p>As with container profiles, network profiles are retrieved using the
+<a class="reference internal" href="../../ref/modules/all/salt.modules.config.html#salt.modules.config.get" title="salt.modules.config.get"><code class="xref py py-mod docutils literal"><span class="pre">config.get</span></code></a> function, with the <strong>recurse</strong>
+merge strategy. Consider the following network profile data:</p>
+<p><strong>In the Master config file:</strong></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">lxc.network_profile</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">centos</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">eth0</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">link</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">br0</span>
+      <span class="l l-Scalar l-Scalar-Plain">type</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">veth</span>
+      <span class="l l-Scalar l-Scalar-Plain">flags</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">up</span>
+</pre></div>
+</div>
+<p><strong>In the Pillar data</strong></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">lxc.network_profile</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">centos</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">eth0</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">link</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">lxcbr0</span>
+</pre></div>
+</div>
+<p>Any minion with the above Pillar data would use the <strong>lxcbr0</strong> interface as the
+bridge interface for any container configured using the <strong>centos</strong> network
+profile, while those minions without the above Pillar data would use the
+<strong>br0</strong> interface for the same.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">In the 2014.7.x release cycle and earlier, network profiles are defined
+under <code class="docutils literal"><span class="pre">lxc.nic</span></code>. This parameter will still work in version 2015.5.0, but
+is deprecated and will be removed in a future release. Please note however
+that the profile merging feature described above will only work with
+profiles defined under <code class="docutils literal"><span class="pre">lxc.network_profile</span></code>, and only in versions
+2015.5.0 and later.</p>
+</div>
+<p>The following are parameters which can be configured in network profiles. These
+will directly correspond to a parameter in an LXC configuration file (see <code class="docutils literal"><span class="pre">man</span>
+<span class="pre">5</span> <span class="pre">lxc.container.conf</span></code>).</p>
+<ul class="simple">
+<li><strong>type</strong> - Corresponds to <strong>lxc.network.type</strong></li>
+<li><strong>link</strong> - Corresponds to <strong>lxc.network.link</strong></li>
+<li><strong>flags</strong> - Corresponds to <strong>lxc.network.flags</strong></li>
+</ul>
+<p>Interface-specific options (MAC address, IPv4/IPv6, etc.) must be passed on a
+container-by-container basis, for instance using the <code class="docutils literal"><span class="pre">nic_opts</span></code> argument to
+<a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#salt.modules.lxc.create" title="salt.modules.lxc.create"><code class="xref py py-mod docutils literal"><span class="pre">lxc.create</span></code></a>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion lxc.create container1 <span class="nv">profile</span><span class="o">=</span>centos <span class="nv">network_profile</span><span class="o">=</span>centos <span class="nv">nic_opts</span><span class="o">=</span><span class="s1">&#39;{eth0: {ipv4: 10.0.0.20/24, gateway: 10.0.0.1}}&#39;</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">The <code class="docutils literal"><span class="pre">ipv4</span></code>, <code class="docutils literal"><span class="pre">ipv6</span></code>, <code class="docutils literal"><span class="pre">gateway</span></code>, and <code class="docutils literal"><span class="pre">link</span></code> (bridge) settings in
+network profiles / nic_opts will only work if the container doesn't redefine
+the network configuration (for example in
+<code class="docutils literal"><span class="pre">/etc/sysconfig/network-scripts/ifcfg-&lt;interface_name&gt;</span></code> on RHEL/CentOS,
+or <code class="docutils literal"><span class="pre">/etc/network/interfaces</span></code> on Debian/Ubuntu/etc.). Use these with
+caution. The container images installed using the <code class="docutils literal"><span class="pre">download</span></code> template,
+for instance, typically are configured for eth0 to use DHCP, which will
+conflict with static IP addresses set at the container level.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>For LXC &lt; 1.0.7 and DHCP support, set <code class="docutils literal"><span class="pre">ipv4.gateway:</span> <span class="pre">'auto'</span></code> is your
+network profile, ie.:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span></span>lxc.network_profile.nic:
+  debian:
+    eth0:
+      link: lxcbr0
+      ipv4.gateway: &#39;auto&#39;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="old-lxc-support-1-0-7">
+<h3>Old lxc support (&lt;1.0.7)<a class="headerlink" href="#old-lxc-support-1-0-7" title="永久链接至标题">¶</a></h3>
+<p>With saltstack <strong>2015.5.2</strong> and above, normally the setting is autoselected, but
+before, you'll need to teach your network profile to set
+<strong>lxc.network.ipv4.gateway</strong> to <strong>auto</strong> when using a classic ipv4 configuration.</p>
+<p>Thus you'll need</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">lxc.network_profile.foo</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">etho</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">link</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">lxcbr0</span>
+    <span class="l l-Scalar l-Scalar-Plain">ipv4.gateway</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">auto</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tricky-network-setups-examples">
+<h3>Tricky network setups Examples<a class="headerlink" href="#tricky-network-setups-examples" title="永久链接至标题">¶</a></h3>
+<p>This example covers how to make a container with both an internal ip and a
+public routable ip, wired on two veth pairs.</p>
+<p>The another interface which receives directly a public routable ip can't be on
+the first interface that we reserve for private inter LXC networking.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">lxc.network_profile.foo</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">eth0</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{</span><span class="nv">gateway</span><span class="p p-Indicator">:</span> <span class="nv">null</span><span class="p p-Indicator">,</span> <span class="nv">bridge</span><span class="p p-Indicator">:</span> <span class="nv">lxcbr0</span><span class="p p-Indicator">}</span>
+  <span class="l l-Scalar l-Scalar-Plain">eth1</span><span class="p p-Indicator">:</span>
+    <span class="c1"># replace that by your main interface</span>
+    <span class="s">&#39;link&#39;</span><span class="p p-Indicator">:</span> <span class="s">&#39;br0&#39;</span>
+    <span class="s">&#39;mac&#39;</span><span class="p p-Indicator">:</span> <span class="s">&#39;00:16:5b:01:24:e1&#39;</span>
+    <span class="s">&#39;gateway&#39;</span><span class="p p-Indicator">:</span> <span class="s">&#39;2.20.9.14&#39;</span>
+    <span class="s">&#39;ipv4&#39;</span><span class="p p-Indicator">:</span> <span class="s">&#39;2.20.9.1&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="creating-a-container-on-the-cli">
+<h2>Creating a Container on the CLI<a class="headerlink" href="#creating-a-container-on-the-cli" title="永久链接至标题">¶</a></h2>
+<div class="section" id="from-a-template">
+<h3>From a Template<a class="headerlink" href="#from-a-template" title="永久链接至标题">¶</a></h3>
+<p>LXC is commonly distributed with several template scripts in
+/usr/share/lxc/templates. Some distros may package these separately in an
+<strong>lxc-templates</strong> package, so make sure to check if this is the case.</p>
+<p>There are LXC template scripts for several different operating systems, but
+some of them are designed to use tools specific to a given distribution. For
+instance, the <code class="docutils literal"><span class="pre">ubuntu</span></code> template uses deb_bootstrap, the <code class="docutils literal"><span class="pre">centos</span></code> template
+uses yum, etc., making these templates impractical when a container from a
+different OS is desired.</p>
+<p>The <a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#salt.modules.lxc.create" title="salt.modules.lxc.create"><code class="xref py py-mod docutils literal"><span class="pre">lxc.create</span></code></a> function is used to create
+containers using a template script. To create a CentOS container named
+<code class="docutils literal"><span class="pre">container1</span></code> on a CentOS minion named <code class="docutils literal"><span class="pre">mycentosminion</span></code>, using the
+<code class="docutils literal"><span class="pre">centos</span></code> LXC template, one can simply run the following command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt mycentosminion lxc.create container1 <span class="nv">template</span><span class="o">=</span>centos
+</pre></div>
+</div>
+<p>For these instances, there is a <code class="docutils literal"><span class="pre">download</span></code> template which retrieves minimal
+container images for several different operating systems. To use this template,
+it is necessary to provide an <code class="docutils literal"><span class="pre">options</span></code> parameter when creating the
+container, with three values:</p>
+<ol class="arabic simple">
+<li><strong>dist</strong> - the Linux distribution (i.e. <code class="docutils literal"><span class="pre">ubuntu</span></code> or <code class="docutils literal"><span class="pre">centos</span></code>)</li>
+<li><strong>release</strong> - the release name/version (i.e. <code class="docutils literal"><span class="pre">trusty</span></code> or <code class="docutils literal"><span class="pre">6</span></code>)</li>
+<li><strong>arch</strong> - CPU architecture (i.e. <code class="docutils literal"><span class="pre">amd64</span></code> or <code class="docutils literal"><span class="pre">i386</span></code>)</li>
+</ol>
+<p>The <a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#salt.modules.lxc.images" title="salt.modules.lxc.images"><code class="xref py py-mod docutils literal"><span class="pre">lxc.images</span></code></a> function (new in version
+2015.5.0) can be used to list the available images. Alternatively, the releases
+can be viewed on <a class="reference external" href="http://images.linuxcontainers.org/images/">http://images.linuxcontainers.org/images/</a>. The images are
+organized in such a way that the <strong>dist</strong>, <strong>release</strong>, and <strong>arch</strong> can be
+determined using the following URL format:
+<code class="docutils literal"><span class="pre">http://images.linuxcontainers.org/images/dist/release/arch</span></code>. For example,
+<code class="docutils literal"><span class="pre">http://images.linuxcontainers.org/images/centos/6/amd64</span></code> would correspond to
+a <strong>dist</strong> of <code class="docutils literal"><span class="pre">centos</span></code>, a <strong>release</strong> of <code class="docutils literal"><span class="pre">6</span></code>, and an <strong>arch</strong> of <code class="docutils literal"><span class="pre">amd64</span></code>.</p>
+<p>Therefore, to use the <code class="docutils literal"><span class="pre">download</span></code> template to create a new 64-bit CentOS 6
+container, the following command can be used:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion lxc.create container1 <span class="nv">template</span><span class="o">=</span>download <span class="nv">options</span><span class="o">=</span><span class="s1">&#39;{dist: centos, release: 6, arch: amd64}&#39;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>These command-line options can be placed into a <a class="reference internal" href="#tutorial-lxc-profiles-container"><span>container profile</span></a>, like so:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">lxc.container_profile.cent6</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">download</span>
+  <span class="l l-Scalar l-Scalar-Plain">options</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">dist</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">centos</span>
+    <span class="l l-Scalar l-Scalar-Plain">release</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">6</span>
+    <span class="l l-Scalar l-Scalar-Plain">arch</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">amd64</span>
+</pre></div>
+</div>
+<p class="last">The <code class="docutils literal"><span class="pre">options</span></code> parameter is not supported in profiles for the 2014.7.x
+release cycle and earlier, so it would still need to be provided on the
+command-line.</p>
+</div>
+</div>
+<div class="section" id="cloning-an-existing-container">
+<h3>Cloning an Existing Container<a class="headerlink" href="#cloning-an-existing-container" title="永久链接至标题">¶</a></h3>
+<p>To clone a container, use the <a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#salt.modules.lxc.clone" title="salt.modules.lxc.clone"><code class="xref py py-mod docutils literal"><span class="pre">lxc.clone</span></code></a>
+function:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion lxc.clone container2 <span class="nv">orig</span><span class="o">=</span>container1
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-a-container-image">
+<h3>Using a Container Image<a class="headerlink" href="#using-a-container-image" title="永久链接至标题">¶</a></h3>
+<p>While cloning is a good way to create new containers from a common base
+container, the source container that is being cloned needs to already exist on
+the minion. This makes deploying a common container across minions difficult.
+For this reason, Salt's <a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#salt.modules.lxc.create" title="salt.modules.lxc.create"><code class="xref py py-mod docutils literal"><span class="pre">lxc.create</span></code></a> is capable
+of installing a container from a tar archive of another container's rootfs. To
+create an image of a container named <code class="docutils literal"><span class="pre">cent6</span></code>, run the following command as
+root:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>tar czf cent6.tar.gz -C /var/lib/lxc/cent6 rootfs
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Before doing this, it is recommended that the container is stopped.</p>
+</div>
+<p>The resulting tarball can then be placed alongside the files in the salt
+fileserver and referenced using a <code class="docutils literal"><span class="pre">salt://</span></code> URL. To create a container using
+an image, use the <code class="docutils literal"><span class="pre">image</span></code> parameter with <a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#salt.modules.lxc.create" title="salt.modules.lxc.create"><code class="xref py py-mod docutils literal"><span class="pre">lxc.create</span></code></a>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion lxc.create new-cent6 <span class="nv">image</span><span class="o">=</span>salt://path/to/cent6.tar.gz
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>Making images of containers with LVM backing</p>
+<p>For containers with LVM backing, the rootfs is not mounted, so it is
+necessary to mount it first before creating the tar archive. When a
+container is created using LVM backing, an empty <code class="docutils literal"><span class="pre">rootfs</span></code> dir is handily
+created within <code class="docutils literal"><span class="pre">/var/lib/lxc/container_name</span></code>, so this can be used as the
+mountpoint. The location of the logical volume for the container will be
+<code class="docutils literal"><span class="pre">/dev/vgname/lvname</span></code>, where <code class="docutils literal"><span class="pre">vgname</span></code> is the name of the volume group,
+and <code class="docutils literal"><span class="pre">lvname</span></code> is the name of the logical volume. Therefore, assuming a
+volume group of <code class="docutils literal"><span class="pre">vg1</span></code>, a logical volume of <code class="docutils literal"><span class="pre">lxc-cent6</span></code>, and a container
+name of <code class="docutils literal"><span class="pre">cent6</span></code>, the following commands can be used to create a tar
+archive of the rootfs:</p>
+<div class="last highlight-bash"><div class="highlight"><pre><span></span>mount /dev/vg1/lxc-cent6 /var/lib/lxc/cent6/rootfs
+tar czf cent6.tar.gz -C /var/lib/lxc/cent6 rootfs
+umount /var/lib/lxc/cent6/rootfs
+</pre></div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p>One caveat of using this method of container creation is that
+<code class="docutils literal"><span class="pre">/etc/hosts</span></code> is left unmodified.  This could cause confusion for some
+distros if salt-minion is later installed on the container, as the
+functions that determine the hostname take <code class="docutils literal"><span class="pre">/etc/hosts</span></code> into account.</p>
+<p class="last">Additionally, when creating an rootfs image, be sure to remove
+<code class="docutils literal"><span class="pre">/etc/salt/minion_id</span></code> and make sure that <code class="docutils literal"><span class="pre">id</span></code> is not defined in
+<code class="docutils literal"><span class="pre">/etc/salt/minion</span></code>, as this will cause similar issues.</p>
+</div>
+</div>
+</div>
+<div class="section" id="initializing-a-new-container-as-a-salt-minion">
+<h2>Initializing a New Container as a Salt Minion<a class="headerlink" href="#initializing-a-new-container-as-a-salt-minion" title="永久链接至标题">¶</a></h2>
+<p>The above examples illustrate a few ways to create containers on the CLI, but
+often it is desirable to also have the new container run as a Minion. To do
+this, the <a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#salt.modules.lxc.init" title="salt.modules.lxc.init"><code class="xref py py-mod docutils literal"><span class="pre">lxc.init</span></code></a> function can be used. This
+function will do the following:</p>
+<ol class="arabic simple">
+<li>Create a new container</li>
+<li>Optionally set password and/or DNS</li>
+<li>Bootstrap the minion (using either <a class="reference external" href="https://github.com/saltstack/salt-bootstrap">salt-bootstrap</a> or a custom command)</li>
+</ol>
+<p>By default, the new container will be pointed at the same Salt Master as the
+host machine on which the container was created. It will then request to
+authenticate with the Master like any other bootstrapped Minion, at which point
+it can be accepted.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion lxc.init test1 <span class="nv">profile</span><span class="o">=</span>centos
+salt-key -a test1
+</pre></div>
+</div>
+<p>For even greater convenience, the <a class="reference internal" href="../../ref/runners/all/salt.runners.lxc.html#module-salt.runners.lxc" title="salt.runners.lxc"><code class="xref py py-mod docutils literal"><span class="pre">LXC</span> <span class="pre">runner</span></code></a> contains
+a runner function of the same name (<a class="reference internal" href="../../ref/runners/all/salt.runners.lxc.html#salt.runners.lxc.init" title="salt.runners.lxc.init"><code class="xref py py-mod docutils literal"><span class="pre">lxc.init</span></code></a>),
+which creates a keypair, seeds the new minion with it, and pre-accepts the key,
+allowing for the new Minion to be created and authorized in a single step:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run lxc.init test1 <span class="nv">host</span><span class="o">=</span>myminion <span class="nv">profile</span><span class="o">=</span>centos
+</pre></div>
+</div>
+</div>
+<div class="section" id="running-commands-within-a-container">
+<h2>Running Commands Within a Container<a class="headerlink" href="#running-commands-within-a-container" title="永久链接至标题">¶</a></h2>
+<p>For containers which are not running their own Minion, commands can be run
+within the container in a manner similar to using (<code class="xref py py-mod docutils literal"><span class="pre">cmd.run</span>
+<span class="pre">&lt;salt.modules.cmdmod.run</span></code>). The means of doing this have been changed
+significantly in version 2015.5.0 (though the deprecated behavior will still be
+supported for a few releases). Both the old and new usage are documented
+below.</p>
+<div class="section" id="and-newer">
+<h3>2015.5.0 and Newer<a class="headerlink" href="#and-newer" title="永久链接至标题">¶</a></h3>
+<p>New functions have been added to mimic the behavior of the functions in the
+<a class="reference internal" href="../../ref/modules/all/salt.modules.cmdmod.html#module-salt.modules.cmdmod" title="salt.modules.cmdmod"><code class="xref py py-mod docutils literal"><span class="pre">cmd</span></code></a> module. Below is a table with the <a class="reference internal" href="../../ref/modules/all/salt.modules.cmdmod.html#module-salt.modules.cmdmod" title="salt.modules.cmdmod"><code class="xref py py-mod docutils literal"><span class="pre">cmd</span></code></a> functions and their <a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#module-salt.modules.lxc" title="salt.modules.lxc"><code class="xref py py-mod docutils literal"><span class="pre">lxc</span></code></a> module
+equivalents:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="27%" />
+<col width="38%" />
+<col width="35%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Description</th>
+<th class="head"><a class="reference internal" href="../../ref/modules/all/salt.modules.cmdmod.html#module-salt.modules.cmdmod" title="salt.modules.cmdmod"><code class="xref py py-mod docutils literal"><span class="pre">cmd</span></code></a> module</th>
+<th class="head"><a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#module-salt.modules.lxc" title="salt.modules.lxc"><code class="xref py py-mod docutils literal"><span class="pre">lxc</span></code></a> module</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Run a command and get all output</td>
+<td><a class="reference internal" href="../../ref/modules/all/salt.modules.cmdmod.html#salt.modules.cmdmod.run" title="salt.modules.cmdmod.run"><code class="xref py py-mod docutils literal"><span class="pre">cmd.run</span></code></a></td>
+<td><a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#salt.modules.lxc.run" title="salt.modules.lxc.run"><code class="xref py py-mod docutils literal"><span class="pre">lxc.run</span></code></a></td>
+</tr>
+<tr class="row-odd"><td>Run a command and get just stdout</td>
+<td><a class="reference internal" href="../../ref/modules/all/salt.modules.cmdmod.html#salt.modules.cmdmod.run_stdout" title="salt.modules.cmdmod.run_stdout"><code class="xref py py-mod docutils literal"><span class="pre">cmd.run_stdout</span></code></a></td>
+<td><a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#salt.modules.lxc.run_stdout" title="salt.modules.lxc.run_stdout"><code class="xref py py-mod docutils literal"><span class="pre">lxc.run_stdout</span></code></a></td>
+</tr>
+<tr class="row-even"><td>Run a command and get just stderr</td>
+<td><a class="reference internal" href="../../ref/modules/all/salt.modules.cmdmod.html#salt.modules.cmdmod.run_stderr" title="salt.modules.cmdmod.run_stderr"><code class="xref py py-mod docutils literal"><span class="pre">cmd.run_stderr</span></code></a></td>
+<td><a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#salt.modules.lxc.run_stderr" title="salt.modules.lxc.run_stderr"><code class="xref py py-mod docutils literal"><span class="pre">lxc.run_stderr</span></code></a></td>
+</tr>
+<tr class="row-odd"><td>Run a command and get just the retcode</td>
+<td><a class="reference internal" href="../../ref/modules/all/salt.modules.cmdmod.html#salt.modules.cmdmod.retcode" title="salt.modules.cmdmod.retcode"><code class="xref py py-mod docutils literal"><span class="pre">cmd.retcode</span></code></a></td>
+<td><a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#salt.modules.lxc.retcode" title="salt.modules.lxc.retcode"><code class="xref py py-mod docutils literal"><span class="pre">lxc.retcode</span></code></a></td>
+</tr>
+<tr class="row-even"><td>Run a command and get all information</td>
+<td><a class="reference internal" href="../../ref/modules/all/salt.modules.cmdmod.html#salt.modules.cmdmod.run_all" title="salt.modules.cmdmod.run_all"><code class="xref py py-mod docutils literal"><span class="pre">cmd.run_all</span></code></a></td>
+<td><a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#salt.modules.lxc.run_all" title="salt.modules.lxc.run_all"><code class="xref py py-mod docutils literal"><span class="pre">lxc.run_all</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="x-and-earlier">
+<h3>2014.7.x and Earlier<a class="headerlink" href="#x-and-earlier" title="永久链接至标题">¶</a></h3>
+<p>Earlier Salt releases use a single function (<a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#salt.modules.lxc.run_cmd" title="salt.modules.lxc.run_cmd"><code class="xref py py-mod docutils literal"><span class="pre">lxc.run_cmd</span></code></a>) to run commands within containers. Whether stdout,
+stderr, etc. are returned depends on how the function is invoked.</p>
+<p>To run a command and return the stdout:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion lxc.run_cmd web1 <span class="s1">&#39;tail /var/log/messages&#39;</span>
+</pre></div>
+</div>
+<p>To run a command and return the stderr:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion lxc.run_cmd web1 <span class="s1">&#39;tail /var/log/messages&#39;</span> <span class="nv">stdout</span><span class="o">=</span>False <span class="nv">stderr</span><span class="o">=</span>True
+</pre></div>
+</div>
+<p>To run a command and return the retcode:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion lxc.run_cmd web1 <span class="s1">&#39;tail /var/log/messages&#39;</span> <span class="nv">stdout</span><span class="o">=</span>False <span class="nv">stderr</span><span class="o">=</span>False
+</pre></div>
+</div>
+<p>To run a command and return all information:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion lxc.run_cmd web1 <span class="s1">&#39;tail /var/log/messages&#39;</span> <span class="nv">stdout</span><span class="o">=</span>True <span class="nv">stderr</span><span class="o">=</span>True
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="container-management-using-salt-cloud">
+<h2>Container Management Using salt-cloud<a class="headerlink" href="#container-management-using-salt-cloud" title="永久链接至标题">¶</a></h2>
+<p>Salt cloud uses under the hood the salt runner and module to manage containers,
+Please look at <a class="reference internal" href="../cloud/lxc.html#config-lxc"><span>this chapter</span></a></p>
+</div>
+<div class="section" id="container-management-using-states">
+<h2>Container Management Using States<a class="headerlink" href="#container-management-using-states" title="永久链接至标题">¶</a></h2>
+<p>Several states are being renamed or otherwise modified in version 2015.5.0. The
+information in this tutorial refers to the new states. For
+2014.7.x and earlier, please refer to the <a class="reference internal" href="../../ref/states/all/salt.states.lxc.html#module-salt.states.lxc" title="salt.states.lxc"><code class="xref py py-mod docutils literal"><span class="pre">documentation</span> <span class="pre">for</span> <span class="pre">the</span> <span class="pre">LXC</span>
+<span class="pre">states</span></code></a>.</p>
+<div class="section" id="ensuring-a-container-is-present">
+<h3>Ensuring a Container Is Present<a class="headerlink" href="#ensuring-a-container-is-present" title="永久链接至标题">¶</a></h3>
+<p>To ensure the existence of a named container, use the <a class="reference internal" href="../../ref/states/all/salt.states.lxc.html#salt.states.lxc.present" title="salt.states.lxc.present"><code class="xref py py-mod docutils literal"><span class="pre">lxc.present</span></code></a> state. Here are some examples:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># Using a template</span>
+<span class="l l-Scalar l-Scalar-Plain">web1</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">lxc.present</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">download</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">options</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">dist</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">centos</span>
+        <span class="l l-Scalar l-Scalar-Plain">release</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">6</span>
+        <span class="l l-Scalar l-Scalar-Plain">arch</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">amd64</span>
+
+<span class="c1"># Cloning</span>
+<span class="l l-Scalar l-Scalar-Plain">web2</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">lxc.present</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">clone_from</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">web-base</span>
+
+<span class="c1"># Using a rootfs image</span>
+<span class="l l-Scalar l-Scalar-Plain">web3</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">lxc.present</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://path/to/cent6.tar.gz</span>
+
+<span class="c1"># Using profiles</span>
+<span class="l l-Scalar l-Scalar-Plain">web4</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">lxc.present</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">profile</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">centos_web</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">network_profile</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">centos</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">The <a class="reference internal" href="../../ref/states/all/salt.states.lxc.html#salt.states.lxc.present" title="salt.states.lxc.present"><code class="xref py py-mod docutils literal"><span class="pre">lxc.present</span></code></a> state will not modify an
+existing container (in other words, it will not re-create the container).
+If an <a class="reference internal" href="../../ref/states/all/salt.states.lxc.html#salt.states.lxc.present" title="salt.states.lxc.present"><code class="xref py py-mod docutils literal"><span class="pre">lxc.present</span></code></a> state is run on an
+existing container, there will be no change and the state will return a
+<code class="docutils literal"><span class="pre">True</span></code> result.</p>
+</div>
+<p>The <a class="reference internal" href="../../ref/states/all/salt.states.lxc.html#salt.states.lxc.present" title="salt.states.lxc.present"><code class="xref py py-mod docutils literal"><span class="pre">lxc.present</span></code></a> state also includes an
+optional <code class="docutils literal"><span class="pre">running</span></code> parameter which can be used to ensure that a container is
+running/stopped. Note that there are standalone <a class="reference internal" href="../../ref/states/all/salt.states.lxc.html#salt.states.lxc.running" title="salt.states.lxc.running"><code class="xref py py-mod docutils literal"><span class="pre">lxc.running</span></code></a> and <a class="reference internal" href="../../ref/states/all/salt.states.lxc.html#salt.states.lxc.stopped" title="salt.states.lxc.stopped"><code class="xref py py-mod docutils literal"><span class="pre">lxc.stopped</span></code></a>
+states which can be used for this purpose.</p>
+</div>
+<div class="section" id="ensuring-a-container-does-not-exist">
+<h3>Ensuring a Container Does Not Exist<a class="headerlink" href="#ensuring-a-container-does-not-exist" title="永久链接至标题">¶</a></h3>
+<p>To ensure that a named container is not present, use the <a class="reference internal" href="../../ref/states/all/salt.states.lxc.html#salt.states.lxc.absent" title="salt.states.lxc.absent"><code class="xref py py-mod docutils literal"><span class="pre">lxc.absent</span></code></a> state. For example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">web1</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">lxc.absent</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ensuring-a-container-is-running-stopped-frozen">
+<h3>Ensuring a Container is Running/Stopped/Frozen<a class="headerlink" href="#ensuring-a-container-is-running-stopped-frozen" title="永久链接至标题">¶</a></h3>
+<p>Containers can be in one of three states:</p>
+<ul class="simple">
+<li><strong>running</strong> - Container is running and active</li>
+<li><strong>frozen</strong> - Container is running, but all process are blocked and the
+container is essentially non-active until the container is &quot;unfrozen&quot;</li>
+<li><strong>stopped</strong> - Container is not running</li>
+</ul>
+<p>Salt has three states (<a class="reference internal" href="../../ref/states/all/salt.states.lxc.html#salt.states.lxc.running" title="salt.states.lxc.running"><code class="xref py py-mod docutils literal"><span class="pre">lxc.running</span></code></a>,
+<a class="reference internal" href="../../ref/states/all/salt.states.lxc.html#salt.states.lxc.frozen" title="salt.states.lxc.frozen"><code class="xref py py-mod docutils literal"><span class="pre">lxc.frozen</span></code></a>, and <a class="reference internal" href="../../ref/states/all/salt.states.lxc.html#salt.states.lxc.stopped" title="salt.states.lxc.stopped"><code class="xref py py-mod docutils literal"><span class="pre">lxc.stopped</span></code></a>) which can be used to ensure a container is in one
+of these states:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">web1</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">lxc.running</span>
+
+<span class="c1"># Restart the container if it was already running</span>
+<span class="l l-Scalar l-Scalar-Plain">web2</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">lxc.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">restart</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+
+<span class="l l-Scalar l-Scalar-Plain">web3</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">lxc.stopped</span>
+
+<span class="c1"># Explicitly kill all tasks in container instead of gracefully stopping</span>
+<span class="l l-Scalar l-Scalar-Plain">web4</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">lxc.stopped</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">kill</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+
+<span class="l l-Scalar l-Scalar-Plain">web5</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">lxc.frozen</span>
+
+<span class="c1"># If container is stopped, do not start it (in which case the state will fail)</span>
+<span class="l l-Scalar l-Scalar-Plain">web6</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">lxc.frozen</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">start</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

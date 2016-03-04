@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>State System Reference</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Configuration Management" href="../../topics/states/index.html">
+        <link rel="next" title="Mod Aggregate State Runtime Modifications" href="aggregate.html">
+        <link rel="prev" title="States tutorial, part 4" href="../../topics/tutorials/states_pt4.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../topics/tutorials/states_pt4.html" title="States tutorial, part 4">上一页</a>
+            
+        </li>
+        <li>
+            <a href="aggregate.html" title="Mod Aggregate State Runtime Modifications">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="state-system-reference">
+<h1>State System Reference<a class="headerlink" href="#state-system-reference" title="永久链接至标题">¶</a></h1>
+<p>Salt offers an interface to manage the configuration or &quot;state&quot; of the
+Salt minions. This interface is a fully capable mechanism used to enforce the
+state of systems from a central manager.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="aggregate.html">Mod Aggregate State Runtime Modifications</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aggregate.html#how-it-works">How it Works</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aggregate.html#how-to-use-it">How to Use it</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aggregate.html#in-config-files">In config files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aggregate.html#in-states">In states</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aggregate.html#adding-mod-aggregate-to-a-state-module">Adding mod_aggregate to a State Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="altering_states.html">Altering States</a></li>
+<li class="toctree-l1"><a class="reference internal" href="backup_mode.html">File State Backups</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="backup_mode.html#backed-up-files">Backed-up Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backup_mode.html#interacting-with-backups">Interacting with Backups</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="backup_mode.html#listing">Listing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="backup_mode.html#restoring">Restoring</a></li>
+<li class="toctree-l3"><a class="reference internal" href="backup_mode.html#deleting">Deleting</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="compiler_ordering.html">Understanding State Compiler Ordering</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="compiler_ordering.html#compiler-basics">Compiler Basics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="compiler_ordering.html#high-data-and-low-data">High Data and Low Data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="compiler_ordering.html#ordering-layers">Ordering Layers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="compiler_ordering.html#definition-order">Definition Order</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="compiler_ordering.html#the-include-statement">The Include Statement</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="compiler_ordering.html#the-order-flag">The <cite>order</cite> Flag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compiler_ordering.html#lexicographical-fall-back">Lexicographical Fall-back</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compiler_ordering.html#requisite-ordering">Requisite Ordering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compiler_ordering.html#runtime-requisite-evaluation">Runtime Requisite Evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compiler_ordering.html#simple-runtime-evaluation-example">Simple Runtime Evaluation Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compiler_ordering.html#best-practice">Best Practice</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="extend.html">Extending External SLS Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="extend.html#the-extend-declaration">The Extend Declaration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extend.html#extend-is-a-top-level-declaration">Extend is a Top Level Declaration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extend.html#the-requisite-in-statement">The Requisite &quot;in&quot; Statement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="extend.html#rules-to-extend-by">Rules to Extend By</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="failhard.html">Failhard Global Option</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="failhard.html#state-level-failhard">State Level Failhard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="failhard.html#global-failhard">Global Failhard</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="global_state_arguments.html">Global State Arguments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="highstate.html">Highstate data structure definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="highstate.html#the-salt-state-tree">The Salt State Tree</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html#top-file">Top file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html#include-declaration">Include declaration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html#module-reference">Module reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html#id-declaration">ID declaration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html#extend-declaration">Extend declaration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html#state-declaration">State declaration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html#requisite-declaration">Requisite declaration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html#requisite-reference">Requisite reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html#function-declaration">Function declaration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html#function-arg-declaration">Function arg declaration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html#name-declaration">Name declaration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html#names-declaration">Names declaration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="highstate.html#large-example">Large example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="include.html">Include and Exclude</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="include.html#include">Include</a></li>
+<li class="toctree-l2"><a class="reference internal" href="include.html#relative-include">Relative Include</a></li>
+<li class="toctree-l2"><a class="reference internal" href="include.html#exclude">Exclude</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="layers.html">State System Layers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="layers.html#function-call">Function Call</a></li>
+<li class="toctree-l2"><a class="reference internal" href="layers.html#low-chunk">Low Chunk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="layers.html#low-state">Low State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="layers.html#high-data">High Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="layers.html#sls">SLS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="layers.html#highstate">HighState</a></li>
+<li class="toctree-l2"><a class="reference internal" href="layers.html#orchestrate">Orchestrate</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="master_side.html">The Orchestrate Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ordering.html">Ordering States</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ordering.html#state-auto-ordering">State Auto Ordering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ordering.html#requisite-statements">Requisite Statements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ordering.html#multiple-requisites">Multiple Requisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ordering.html#requisite-documentation">Requisite Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ordering.html#the-order-option">The Order Option</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="providers.html">State Providers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="providers.html#setting-a-provider-in-the-minion-config-file">Setting a Provider in the Minion Config File</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="providers.html#provider-pkg">Provider: <code class="docutils literal"><span class="pre">pkg</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="providers.html#provider-service">Provider: <code class="docutils literal"><span class="pre">service</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="providers.html#provider-user">Provider: <code class="docutils literal"><span class="pre">user</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="providers.html#provider-group">Provider: <code class="docutils literal"><span class="pre">group</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="providers.html#arbitrary-module-redirects">Arbitrary Module Redirects</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="requisites.html">Requisites and Other Global State Arguments</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="requisites.html#fire-event-notifications">Fire Event Notifications</a></li>
+<li class="toctree-l2"><a class="reference internal" href="requisites.html#id1">Requisites</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="requisites.html#requisite-matching">Requisite matching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="requisites.html#omitting-state-module-in-requisites">Omitting state module in requisites</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="requisites.html#state-target-matching">State target matching</a></li>
+<li class="toctree-l4"><a class="reference internal" href="requisites.html#identifier-matching">Identifier matching</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="requisites.html#direct-requisite-and-requisite-in-types">Direct Requisite and Requisite_in types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="requisites.html#require">require</a></li>
+<li class="toctree-l4"><a class="reference internal" href="requisites.html#require-an-entire-sls-file">Require an entire sls file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="requisites.html#watch">watch</a></li>
+<li class="toctree-l4"><a class="reference internal" href="requisites.html#prereq">prereq</a></li>
+<li class="toctree-l4"><a class="reference internal" href="requisites.html#onfail">onfail</a></li>
+<li class="toctree-l4"><a class="reference internal" href="requisites.html#onchanges">onchanges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="requisites.html#use">use</a></li>
+<li class="toctree-l4"><a class="reference internal" href="requisites.html#the-in-versions-of-requisites">The _in versions of requisites</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="requisites.html#altering-states">Altering States</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="requisites.html#reload">Reload</a></li>
+<li class="toctree-l3"><a class="reference internal" href="requisites.html#unless">Unless</a></li>
+<li class="toctree-l3"><a class="reference internal" href="requisites.html#onlyif">Onlyif</a></li>
+<li class="toctree-l3"><a class="reference internal" href="requisites.html#listen-listen-in">Listen/Listen_in</a></li>
+<li class="toctree-l3"><a class="reference internal" href="requisites.html#check-cmd">check_cmd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="requisites.html#overriding-checks">Overriding Checks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="startup.html">Startup States</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="startup.html#examples">Examples:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">State Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#default-test">Default Test</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="top.html">顶级配置文件</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="top.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="top.html#a-basic-example">A Basic Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="top.html#environments">环境变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="top.html#getting-started-with-top-files">Getting Started with Top Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="top.html#multiple-environments">Multiple Environments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="top.html#choosing-an-environment-to-target">Choosing an Environment to Target</a></li>
+<li class="toctree-l2"><a class="reference internal" href="top.html#shorthand">Shorthand</a></li>
+<li class="toctree-l2"><a class="reference internal" href="top.html#advanced-minion-targeting">Advanced Minion Targeting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="top.html#how-top-files-are-compiled">How Top Files Are Compiled</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vars.html">SLS Template Variable Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="vars.html#salt">Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vars.html#opts">Opts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vars.html#pillar">Pillar是Salt非常重要的一个组件，它用于给特定的minion定义任何你需要的数据，这些数据可以被Salt的其他组件使用。</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vars.html#grains">grains是minion启动时加载的，在运行过程中不会发生变化，所以是静态数据。grains中包含诸如运行的内核版本，操作系统等信息。</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vars.html#env">env</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vars.html#sls">sls</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="writing.html">State Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="writing.html#states-are-easy-to-write">States are Easy to Write!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing.html#using-custom-state-modules">Using Custom State Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing.html#cross-calling-execution-modules-from-states">Cross Calling Execution Modules from States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing.html#cross-calling-state-modules">Cross Calling State Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing.html#return-data">Return Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing.html#test-state">Test State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing.html#watcher-function">Watcher Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing.html#mod-init-interface">Mod_init Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing.html#log-output">Log Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="writing.html#full-state-module-example">Full State Module Example</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="writing.html#example-state-module">Example state module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="state-management">
+<h2>State Management<a class="headerlink" href="#state-management" title="永久链接至标题">¶</a></h2>
+<p>State management, also frequently called Software Configuration Management
+(SCM), is a program that puts and keeps a system into a predetermined state. It
+installs software packages, starts or restarts services or puts configuration
+files in place and watches them for changes.</p>
+<p>Having a state management system in place allows one to easily and reliably
+configure and manage a few servers or a few thousand servers. It allows
+configurations to be kept under version control.</p>
+<p>Salt States是Salt模块的扩展,我们之前讨论过:doc:'remote execution &lt;/topics/tutorials/modules&gt;'教程。而不是调用一次性完成一个系统的状态，它可以很容易地定义，然后执行。</p>
+</div>
+<div class="section" id="understanding-the-salt-state-system-components">
+<h2>理解Salt状态系统组件<a class="headerlink" href="#understanding-the-salt-state-system-components" title="永久链接至标题">¶</a></h2>
+<p>Salt状态系统包含了很多组件。作为一个用户,理解SLS和渲染器系统也是必要的。但作为一名开发人员,了解Salt和如何写状态程序也是需要的。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">States are compiled and executed only on minions that have been targeted.
+To execute functions directly on masters, see <a class="reference internal" href="../runners/index.html"><em>runners</em></a>.</p>
+</div>
+<div class="section" id="salt-sls-system">
+<h3>Salt 状态系统<a class="headerlink" href="#salt-sls-system" title="永久链接至标题">¶</a></h3>
+<p>主系统使用的状态系统叫SLS系统. SLS代表Saltstack State.</p>
+<p>Salt状态是一些文件，其中包含有关如何配置Salt 子节点的信息。
+这些状态被存在一个目录树下,可以用许多不同的格式来写。</p>
+<p>文件的内容和方法的规定尽可能简单，同时允许最大的灵活性。文件中提出和包含了子节点需要如何配置的信息。</p>
+<div class="section" id="sls-file-layout">
+<h4>SLS文件设置<a class="headerlink" href="#sls-file-layout" title="永久链接至标题">¶</a></h4>
+<p>SLS files are laid out in the Salt file server.</p>
+<p>A simple layout can look like this:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">top.sls</span>
+<span class="l l-Scalar l-Scalar-Plain">ssh.sls</span>
+<span class="l l-Scalar l-Scalar-Plain">sshd_config</span>
+<span class="l l-Scalar l-Scalar-Plain">users/init.sls</span>
+<span class="l l-Scalar l-Scalar-Plain">users/admin.sls</span>
+<span class="l l-Scalar l-Scalar-Plain">salt/master.sls</span>
+<span class="l l-Scalar l-Scalar-Plain">web/init.sls</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">top.sls</span></code> file is a key component. The <code class="docutils literal"><span class="pre">top.sls</span></code> files
+is used to determine which SLS files should be applied to which minions.</p>
+<p>The rest of the files with the <code class="docutils literal"><span class="pre">.sls</span></code> extension in the above example are
+state files.</p>
+<p>Files without a <code class="docutils literal"><span class="pre">.sls</span></code> extensions are seen by the Salt master as
+files that can be downloaded to a Salt minion.</p>
+<p>States are translated into dot notation. For example, the <code class="docutils literal"><span class="pre">ssh.sls</span></code> file is
+seen as the ssh state and the <code class="docutils literal"><span class="pre">users/admin.sls</span></code> file is seen as the
+users.admin state.</p>
+<p>Files named <code class="docutils literal"><span class="pre">init.sls</span></code> are translated to be the state name of the parent
+directory, so the <code class="docutils literal"><span class="pre">web/init.sls</span></code> file translates to the <code class="docutils literal"><span class="pre">web</span></code> state.</p>
+<p>In Salt, everything is a file; there is no &quot;magic translation&quot; of files and file
+types. This means that a state file can be distributed to minions just like a
+plain text or binary file.</p>
+</div>
+<div class="section" id="sls-files">
+<h4>SLS文件<a class="headerlink" href="#sls-files" title="永久链接至标题">¶</a></h4>
+<p>The Salt state files are simple sets of data. Since SLS files are just data
+they can be represented in a number of different ways.</p>
+<p>The default format is YAML generated from a Jinja template. This allows for the
+states files to have all the language constructs of Python and the simplicity of YAML.</p>
+<p>State files can then be complicated Jinja templates that translate down to YAML, or just
+plain and simple YAML files.</p>
+<p>The State files are simply common data structures such as dictionaries and lists, constructed
+using a templating language such as YAML.</p>
+<p>这儿有一个salt 状态的模板:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">vim</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+
+<span class="l l-Scalar l-Scalar-Plain">salt</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.latest</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">names</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt-master</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt-minion</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">watch</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/salt/minion</span>
+
+<span class="l l-Scalar l-Scalar-Plain">/etc/salt/minion</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://salt/minion</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">644</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt</span>
+</pre></div>
+</div>
+<p>这小结将确认vim安装,salt的安装和更新,salt-master salt-minion守护进程正在运行和salt minion的配置文件适当的位置。它还将确保一切都部署在正确的顺序和当侦听到文件更新时,salt服务将被重启。</p>
+</div>
+<div class="section" id="the-top-file">
+<h4>顶级配置文件<a class="headerlink" href="#the-top-file" title="永久链接至标题">¶</a></h4>
+<p>The top file controls the mapping between minions and the states which should be
+applied to them.</p>
+<p>The top file specifies which minions should have which SLS files applied and which
+environments they should draw those SLS files from.</p>
+<p>The top file works by specifying environments on the top-level.</p>
+<p>Each environment contains globs to match minions. Finally, each glob contains a list of
+lists of Salt states to apply to matching minions:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">users</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">users.admin</span>
+  <span class="s">&#39;saltmaster.*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">pcre</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt.master</span>
+</pre></div>
+</div>
+<p>This above example uses the base environment which is built into the default
+Salt setup.</p>
+<p>The base environment has two globs. First, the '*' glob contains a list of
+SLS files to apply to all minions.</p>
+<p>The second glob contains a regular expression that will match all minions with
+an ID matching saltmaster.* and specifies that for those minions, the salt.master
+state should be applied.</p>
+</div>
+</div>
+<div class="section" id="reloading-modules">
+<span id="id1"></span><h3>重载模块<a class="headerlink" href="#reloading-modules" title="永久链接至标题">¶</a></h3>
+<p>Some Salt states require that specific packages be installed in order for the
+module to load. As an example the <a class="reference internal" href="all/salt.states.pip_state.html#module-salt.states.pip_state" title="salt.states.pip_state"><code class="xref py py-mod docutils literal"><span class="pre">pip</span></code></a> state
+module requires the <a class="reference external" href="https://pypi.python.org/pypi/pip">pip</a> package for proper name and version parsing.</p>
+<p>In most of the common cases, Salt is clever enough to transparently reload the
+modules. For example, if you install a package, Salt reloads modules because
+some other module or state might require just that package which was installed.</p>
+<p>On some edge-cases salt might need to be told to reload the modules. Consider
+the following state file which we'll call <code class="docutils literal"><span class="pre">pep8.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">python-pip</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">|</span>
+        <span class="no">easy_install --script-dir=/usr/bin -U pip</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cwd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/</span>
+
+<span class="l l-Scalar l-Scalar-Plain">pep8</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pip.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cmd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">python-pip</span>
+</pre></div>
+</div>
+<p>上面的实例安装需要安装'pip'和“setuptools”的'easy_install'工具来安装‘pep8’:
+'pip &lt;salt.states.pip_state&gt;',
+正如前面说的那样,要求'pip'安装到整个系统中.让我们执行这个状态。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-call state.sls pep8
+</pre></div>
+</div>
+<p>执行输出应该类似于:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>----------
+    State: - pip
+    Name:      pep8
+    Function:  installed
+        Result:    False
+        Comment:   State pip.installed found in sls pep8 is unavailable
+
+        Changes:
+
+Summary
+------------
+Succeeded: 1
+Failed:    1
+------------
+Total:     2
+</pre></div>
+</div>
+<p>如果你再次执行这个状态，输出应该是:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>----------
+    State: - pip
+    Name:      pep8
+    Function:  installed
+        Result:    True
+        Comment:   Package was successfully installed
+        Changes:   pep8==1.4.6: Installed
+
+Summary
+------------
+Succeeded: 2
+Failed:    0
+------------
+Total:     2
+</pre></div>
+</div>
+<p>Since we installed <a class="reference external" href="https://pypi.python.org/pypi/pip">pip</a> using <a class="reference internal" href="all/salt.states.cmd.html#module-salt.states.cmd" title="salt.states.cmd"><code class="xref py py-mod docutils literal"><span class="pre">cmd</span></code></a>, Salt has no way
+to know that a system-wide package was installed.</p>
+<p>On the second execution, since the required <a class="reference external" href="https://pypi.python.org/pypi/pip">pip</a> package was installed, the
+state executed correctly.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Salt does not reload modules on every state run because doing so would greatly
+slow down state execution.</p>
+</div>
+<p>所以我们如何解决缓慢的状态？&quot;重载模块&quot;！</p>
+<p><code class="docutils literal"><span class="pre">reload_modules</span></code> is a boolean option recognized by salt on <strong>all</strong> available
+states which forces salt to reload its modules once a given state finishes.</p>
+<p>The modified state file would now be:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">python-pip</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">|</span>
+        <span class="no">easy_install --script-dir=/usr/bin -U pip</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cwd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">reload_modules</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="l l-Scalar l-Scalar-Plain">pep8</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pip.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cmd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">python-pip</span>
+</pre></div>
+</div>
+<p>让我们来运行一次:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-call state.sls pep8
+</pre></div>
+</div>
+<p>The output is:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>----------
+    State: - pip
+    Name:      pep8
+    Function:  installed
+        Result:    True
+        Comment:   Package was successfully installed
+        Changes:   pep8==1.4.6: Installed
+
+Summary
+------------
+Succeeded: 2
+Failed:    0
+------------
+Total:     2
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../../topics/tutorials/states_pt4.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="States tutorial, part 4" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="aggregate.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Mod Aggregate State Runtime Modifications" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../topics/states/index.html">Configuration Management</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/starting_states.html">我们如何使用Salt States？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt1.html">States教程，第1部分 - 基础用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt2.html">States tutorial, part 2 - More Complex States, Requisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt3.html">States tutorial, part 3 - Templating, Includes, Extends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt4.html">States tutorial, part 4</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">State System Reference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aggregate.html">Mod Aggregate State Runtime Modifications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="altering_states.html">Altering States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="backup_mode.html">File State Backups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compiler_ordering.html">Understanding State Compiler Ordering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extend.html">Extending External SLS Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="failhard.html">Failhard Global Option</a></li>
+<li class="toctree-l3"><a class="reference internal" href="global_state_arguments.html">Global State Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html">Highstate data structure definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="include.html">Include and Exclude</a></li>
+<li class="toctree-l3"><a class="reference internal" href="layers.html">State System Layers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="master_side.html">The Orchestrate Runner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ordering.html">Ordering States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="providers.html">State Providers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="requisites.html">Requisites and Other Global State Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="startup.html">Startup States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html">State Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="top.html">顶级配置文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vars.html">SLS Template Variable Reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="writing.html">State Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#state-management">State Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#understanding-the-salt-state-system-components">理解Salt状态系统组件</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#salt-sls-system">Salt 状态系统</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#sls-file-layout">SLS文件设置</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#sls-files">SLS文件</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#the-top-file">顶级配置文件</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#reloading-modules">重载模块</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

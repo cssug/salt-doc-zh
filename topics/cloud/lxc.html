@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Getting Started With LXC</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt云端" href="index.html">
+        <link rel="next" title="Getting Started With Linode" href="linode.html">
+        <link rel="prev" title="Getting Started With Joyent" href="joyent.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="joyent.html" title="Getting Started With Joyent">上一页</a>
+            
+        </li>
+        <li>
+            <a href="linode.html" title="Getting Started With Linode">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="getting-started-with-lxc">
+<span id="config-lxc"></span><h1>Getting Started With LXC<a class="headerlink" href="#getting-started-with-lxc" title="永久链接至标题">¶</a></h1>
+<p>The LXC module is designed to install Salt in an LXC container on a controlled
+and possibly remote minion.</p>
+<p>In other words, Salt will connect to a minion, then from that minion:</p>
+<ul>
+<li><p class="first">Provision and configure a container for networking access</p>
+</li>
+<li><p class="first">Use those modules to deploy salt and re-attach to master.</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="../../ref/runners/all/salt.runners.lxc.html#module-salt.runners.lxc" title="salt.runners.lxc"><code class="xref py py-mod docutils literal"><span class="pre">lxc</span> <span class="pre">runner</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#module-salt.modules.lxc" title="salt.modules.lxc"><code class="xref py py-mod docutils literal"><span class="pre">lxc</span> <span class="pre">module</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.config.html#module-salt.modules.config" title="salt.modules.config"><code class="xref py py-mod docutils literal"><span class="pre">seed</span></code></a></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<div class="section" id="limitations">
+<h2>Limitations<a class="headerlink" href="#limitations" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>You can only act on one minion and one provider at a time.</li>
+<li>Listing images must be targeted to a particular LXC provider (nothing will be
+outputted with <code class="docutils literal"><span class="pre">all</span></code>)</li>
+</ul>
+</div>
+<div class="section" id="operation">
+<h2>操作<a class="headerlink" href="#operation" title="永久链接至标题">¶</a></h2>
+<p>Salt's LXC support does use <a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#salt.modules.lxc.init" title="salt.modules.lxc.init"><code class="xref py py-mod docutils literal"><span class="pre">lxc.init</span></code></a>
+via the <a class="reference internal" href="../../ref/modules/all/salt.modules.lxc.html#salt.modules.lxc.cloud_init_interface" title="salt.modules.lxc.cloud_init_interface"><code class="xref py py-mod docutils literal"><span class="pre">lxc.cloud_init_interface</span></code></a>
+and seeds the minion via <a class="reference internal" href="../../ref/modules/all/salt.modules.seed.html#salt.modules.seed.mkconfig" title="salt.modules.seed.mkconfig"><code class="xref py py-mod docutils literal"><span class="pre">seed.mkconfig</span></code></a>.</p>
+<p>You can provide to those lxc VMs a profile and a network profile like if
+you were directly using the minion module.</p>
+<p>Order of operation:</p>
+<ul class="simple">
+<li>Create the LXC container on the desired minion (clone or template)</li>
+<li>Change LXC config options (if any need to be changed)</li>
+<li>Start container</li>
+<li>Change base passwords if any</li>
+<li>Change base DNS configuration if necessary</li>
+<li>Wait for LXC container to be up and ready for ssh</li>
+<li>Test SSH connection and bailout in error</li>
+<li>Upload deploy script and seeds, then re-attach the minion.</li>
+</ul>
+</div>
+<div class="section" id="provider-configuration">
+<h2>Provider configuration<a class="headerlink" href="#provider-configuration" title="永久链接至标题">¶</a></h2>
+<p>Here is a simple provider configuration:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># Note: This example goes in /etc/salt/cloud.providers or any file in the</span>
+<span class="c1"># /etc/salt/cloud.providers.d/ directory.</span>
+<span class="l l-Scalar l-Scalar-Plain">devhost10-lxc</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">target</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">devhost10</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">lxc</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<div class="versionchanged">
+<p><span class="versionmodified">在 2015.8.0 版更改.</span></p>
+</div>
+<p class="last">The <code class="docutils literal"><span class="pre">provider</span></code> parameter in cloud provider definitions was renamed to <code class="docutils literal"><span class="pre">driver</span></code>. This
+change was made to avoid confusion with the <code class="docutils literal"><span class="pre">provider</span></code> parameter that is used in cloud profile
+definitions. Cloud provider definitions now use <code class="docutils literal"><span class="pre">driver</span></code> to refer to the Salt cloud module that
+provides the underlying functionality to connect to a cloud host, while cloud profiles continue
+to use <code class="docutils literal"><span class="pre">provider</span></code> to refer to provider configurations that you define.</p>
+</div>
+</div>
+<div class="section" id="profile-configuration">
+<h2>Profile configuration<a class="headerlink" href="#profile-configuration" title="永久链接至标题">¶</a></h2>
+<p>Please read <a class="reference internal" href="../tutorials/lxc.html#tutorial-lxc"><span>LXC Management with Salt</span></a> before anything else.
+And specially <a class="reference internal" href="../tutorials/lxc.html#tutorial-lxc-profiles"><span>Profiles</span></a>.</p>
+<p>Here are the options to configure your containers:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>target</dt>
+<dd>Host minion id to install the lxc Container into</dd>
+<dt>lxc_profile</dt>
+<dd>Name of the profile or inline options for the LXC vm creation/cloning,
+please see <a class="reference internal" href="../tutorials/lxc.html#tutorial-lxc-profiles-container"><span>Container Profiles</span></a>.</dd>
+<dt>network_profile</dt>
+<dd>Name of the profile or inline options for the LXC vm network settings,
+please see <a class="reference internal" href="../tutorials/lxc.html#tutorial-lxc-profiles-network"><span>Network Profiles</span></a>.</dd>
+<dt>nic_opts</dt>
+<dd><p class="first">Totally optional.
+Per interface new-style configuration options mappings which will
+override any profile default option:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span></span>eth0: {&#39;mac&#39;: &#39;00:16:3e:01:29:40&#39;,
+              &#39;gateway&#39;: None, (default)
+              &#39;link&#39;: &#39;br0&#39;, (default)
+              &#39;gateway&#39;: None, (default)
+              &#39;netmask&#39;: &#39;&#39;, (default)
+              &#39;ip&#39;: &#39;22.1.4.25&#39;}}
+</pre></div>
+</div>
+</dd>
+<dt>password</dt>
+<dd>password for root and sysadmin users</dd>
+<dt>dnsservers</dt>
+<dd>List of DNS servers to use. This is optional.</dd>
+<dt>minion</dt>
+<dd>minion configuration (see <a class="reference internal" href="config.html"><em>Minion Configuration in Salt Cloud</em></a>)</dd>
+<dt>bootstrap_delay</dt>
+<dd>specify the time to wait (in seconds) between container creation
+and salt bootstrap execution. It is useful to ensure that all essential services
+have started before the bootstrap script is executed. By default there's no
+wait time between container creation and bootstrap unless you are on systemd
+where we wait that the system is no more in starting state.</dd>
+<dt>bootstrap_shell</dt>
+<dd>shell for bootstraping script (default: /bin/sh)</dd>
+<dt>script</dt>
+<dd>defaults to salt-boostrap</dd>
+<dt>script_args</dt>
+<dd><p class="first">arguments which are given to the bootstrap script.
+the {0} placeholder will be replaced by the path which contains the
+minion config and key files, eg:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span></span><span class="n">script_args</span><span class="o">=</span><span class="s2">&quot;-c {0}&quot;</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</div></blockquote>
+<p>Using profiles:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># Note: This example would go in /etc/salt/cloud.profiles or any file in the</span>
+<span class="c1"># /etc/salt/cloud.profiles.d/ directory.</span>
+<span class="l l-Scalar l-Scalar-Plain">devhost10-lxc</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">devhost10-lxc</span>
+  <span class="l l-Scalar l-Scalar-Plain">lxc_profile</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">foo</span>
+  <span class="l l-Scalar l-Scalar-Plain">network_profile</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">bar</span>
+  <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10.5.0.1</span>
+    <span class="l l-Scalar l-Scalar-Plain">master_port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">4506</span>
+</pre></div>
+</div>
+<p>Using inline profiles (eg to override the network bridge):</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">devhost11-lxc</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">devhost10-lxc</span>
+  <span class="l l-Scalar l-Scalar-Plain">lxc_profile</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">clone_from</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">foo</span>
+  <span class="l l-Scalar l-Scalar-Plain">network_profile</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">etho</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">link</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">lxcbr0</span>
+  <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10.5.0.1</span>
+    <span class="l l-Scalar l-Scalar-Plain">master_port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">4506</span>
+</pre></div>
+</div>
+<p>Using a lxc template instead of a clone:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">devhost11-lxc</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">devhost10-lxc</span>
+  <span class="l l-Scalar l-Scalar-Plain">lxc_profile</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ubuntu</span>
+    <span class="c1"># options:</span>
+    <span class="c1">#   release: trusty</span>
+  <span class="l l-Scalar l-Scalar-Plain">network_profile</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">etho</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">link</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">lxcbr0</span>
+  <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10.5.0.1</span>
+    <span class="l l-Scalar l-Scalar-Plain">master_port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">4506</span>
+</pre></div>
+</div>
+<p>Static ip:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># Note: This example would go in /etc/salt/cloud.profiles or any file in the</span>
+<span class="c1"># /etc/salt/cloud.profiles.d/ directory.</span>
+<span class="l l-Scalar l-Scalar-Plain">devhost10-lxc</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">devhost10-lxc</span>
+  <span class="l l-Scalar l-Scalar-Plain">nic_opts</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">eth0</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">ipv4</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10.0.3.9</span>
+  <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10.5.0.1</span>
+    <span class="l l-Scalar l-Scalar-Plain">master_port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">4506</span>
+</pre></div>
+</div>
+<p>DHCP:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># Note: This example would go in /etc/salt/cloud.profiles or any file in the</span>
+<span class="c1"># /etc/salt/cloud.profiles.d/ directory.</span>
+<span class="l l-Scalar l-Scalar-Plain">devhost10-lxc</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">devhost10-lxc</span>
+  <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10.5.0.1</span>
+    <span class="l l-Scalar l-Scalar-Plain">master_port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">4506</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="driver-support">
+<h2>Driver Support<a class="headerlink" href="#driver-support" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>Container creation</li>
+<li>Image listing (LXC templates)</li>
+<li>Running container information (IP addresses, etc.)</li>
+</ul>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="joyent.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started With Joyent" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="linode.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started With Linode" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt云端</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">入门指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud">Using Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#core-configuration">Cloud核心配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#windows-configuration">Windows Configuration</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#cloud-provider-specifics">Cloud Provider Specifics</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aliyun.html">    Getting Started With Aliyun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html">    Getting Started With Azure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="digitalocean.html">    Getting Started With DigitalOcean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html">    Getting Started With EC2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gogrid.html">    Getting Started With GoGrid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html">    Getting Started With Google Compute Engine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hpcloud.html">    Getting Started With HP Cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="joyent.html">    Getting Started With Joyent</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">    Getting Started With LXC</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#limitations">Limitations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#operation">操作</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#provider-configuration">Provider configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#profile-configuration">Profile configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#driver-support">Driver Support</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="linode.html">    Getting Started With Linode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="opennebula.html">    Getting Started With OpenNebula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="openstack.html">    Getting Started With OpenStack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parallels.html">    Getting Started With Parallels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="profitbricks.html">    Getting Started With Profitbricks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="proxmox.html">    Getting Started With Proxmox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rackspace.html">    Getting Started With Rackspace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="saltify.html">    Getting Started With Saltify</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scaleway.html">    Getting Started With Scaleway</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html">    Getting Started With SoftLayer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vexxhost.html">    Getting Started With Vexxhost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="virtualbox.html">    Getting Started With Virtualbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vmware.html">    Getting Started With VMware</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vsphere.html">    Getting Started With vSphere</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#miscellaneous-options">Miscellaneous Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#troubleshooting-steps">Troubleshooting Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#extending-salt-cloud">Extending Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud-from-salt">Using Salt Cloud from Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#feature-comparison">Feature Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorials">Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

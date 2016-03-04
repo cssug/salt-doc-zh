@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.cloud.clouds.vmware</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.cloud.clouds.vmware">
+<span id="salt-cloud-clouds-vmware"></span><h1>salt.cloud.clouds.vmware<a class="headerlink" href="#module-salt.cloud.clouds.vmware" title="永久链接至标题">¶</a></h1>
+<div class="section" id="vmware-cloud-module">
+<h2>VMware Cloud Module<a class="headerlink" href="#vmware-cloud-module" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2015.5.4 新版功能.</span></p>
+</div>
+<p>The VMware cloud module allows you to manage VMware ESX, ESXi, and vCenter.</p>
+<p>See <a class="reference internal" href="../../../topics/cloud/vmware.html"><em>Getting started with VMware</em></a> to get started.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">codeauthor:</th><td class="field-body">Nitin Madhok &lt;<a class="reference external" href="mailto:nmadhok&#37;&#52;&#48;clemson&#46;edu">nmadhok<span>&#64;</span>clemson<span>&#46;</span>edu</a>&gt;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>pyVmomi Python Module</li>
+</ul>
+<div class="section" id="pyvmomi">
+<h3>pyVmomi<a class="headerlink" href="#pyvmomi" title="永久链接至标题">¶</a></h3>
+<p>PyVmomi can be installed via pip:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pip install pyVmomi
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Version 6.0 of pyVmomi has some problems with SSL error handling on certain
+versions of Python. If using version 6.0 of pyVmomi, Python 2.6,
+Python 2.7.9, or newer must be present. This is due to an upstream dependency
+in pyVmomi 6.0 that is not supported in Python versions 2.7 to 2.7.8. If the
+version of Python is not in the supported range, you will need to install an
+earlier version of pyVmomi. See <a class="reference external" href="https://github.com/saltstack/salt/issues/29537">Issue #29537</a> for more information.</p>
+</div>
+<p>Based on the note above, to install an earlier version of pyVmomi than the
+version currently listed in PyPi, run the following:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pip install <span class="nv">pyVmomi</span><span class="o">==</span>5.5.0.2014.1.1
+</pre></div>
+</div>
+<p>The 5.5.0.2014.1.1 is a known stable version that this original VMware cloud
+driver was developed against.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>Ensure python pyVmomi module is installed by running following one-liner
+check. The output should be 0.</p>
+<div class="last highlight-bash"><div class="highlight"><pre><span></span>python -c <span class="s2">&quot;import pyVmomi&quot;</span> <span class="p">;</span> <span class="nb">echo</span> <span class="nv">$?</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="永久链接至标题">¶</a></h2>
+<p>To use this module, set up the vCenter or ESX/ESXi URL, username and password in the
+cloud configuration at
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.providers</span></code> or <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/vmware.conf</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-vmware-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">vmware</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="s">&#39;DOMAIN\user&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="s">&#39;verybadpass&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">url</span><span class="p p-Indicator">:</span> <span class="s">&#39;10.20.30.40&#39;</span>
+
+<span class="l l-Scalar l-Scalar-Plain">vcenter01</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">vmware</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="s">&#39;DOMAIN\user&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="s">&#39;verybadpass&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">url</span><span class="p p-Indicator">:</span> <span class="s">&#39;vcenter01.domain.com&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">protocol</span><span class="p p-Indicator">:</span> <span class="s">&#39;https&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">443</span>
+
+<span class="l l-Scalar l-Scalar-Plain">vcenter02</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">vmware</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="s">&#39;DOMAIN\user&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="s">&#39;verybadpass&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">url</span><span class="p p-Indicator">:</span> <span class="s">&#39;vcenter02.domain.com&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">protocol</span><span class="p p-Indicator">:</span> <span class="s">&#39;http&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">80</span>
+
+<span class="l l-Scalar l-Scalar-Plain">esx01</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">vmware</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="s">&#39;admin&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="s">&#39;verybadpass&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">url</span><span class="p p-Indicator">:</span> <span class="s">&#39;esx01.domain.com&#39;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Optionally, <code class="docutils literal"><span class="pre">protocol</span></code> and <code class="docutils literal"><span class="pre">port</span></code> can be specified if the vCenter
+server is not using the defaults. Default is <code class="docutils literal"><span class="pre">protocol:</span> <span class="pre">https</span></code> and
+<code class="docutils literal"><span class="pre">port:</span> <span class="pre">443</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<div class="versionchanged">
+<p><span class="versionmodified">在 2015.8.0 版更改.</span></p>
+</div>
+<p class="last">The <code class="docutils literal"><span class="pre">provider</span></code> parameter in cloud provider configuration was renamed to <code class="docutils literal"><span class="pre">driver</span></code>.
+This change was made to avoid confusion with the <code class="docutils literal"><span class="pre">provider</span></code> parameter that is
+used in cloud profile configuration. Cloud provider configuration now uses <code class="docutils literal"><span class="pre">driver</span></code>
+to refer to the salt-cloud driver that provides the underlying functionality to
+connect to a cloud provider, while cloud profile configuration continues to use
+<code class="docutils literal"><span class="pre">provider</span></code> to refer to the cloud provider configuration that you define.</p>
+</div>
+<p>To test the connection for <code class="docutils literal"><span class="pre">my-vmware-config</span></code> specified in the cloud
+configuration, run <a class="reference internal" href="#salt.cloud.clouds.vmware.test_vcenter_connection" title="salt.cloud.clouds.vmware.test_vcenter_connection"><code class="xref py py-func docutils literal"><span class="pre">test_vcenter_connection()</span></code></a></p>
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.add_host">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">add_host</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.add_host" title="永久链接至目标">¶</a></dt>
+<dd><p>Add a host system to the specified cluster or datacenter in this VMware environment</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>To use this function, you need to specify <code class="docutils literal"><span class="pre">esxi_host_user</span></code> and
+<code class="docutils literal"><span class="pre">esxi_host_password</span></code> under your provider configuration set up at
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.providers</span></code> or <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/vmware.conf</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">vcenter01</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">vmware</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="s">&#39;DOMAIN\user&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="s">&#39;verybadpass&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">url</span><span class="p p-Indicator">:</span> <span class="s">&#39;vcenter01.domain.com&#39;</span>
+
+  <span class="c1"># Required when adding a host system</span>
+  <span class="l l-Scalar l-Scalar-Plain">esxi_host_user</span><span class="p p-Indicator">:</span> <span class="s">&#39;root&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">esxi_host_password</span><span class="p p-Indicator">:</span> <span class="s">&#39;myhostpassword&#39;</span>
+  <span class="c1"># Optional fields that can be specified when adding a host system</span>
+  <span class="l l-Scalar l-Scalar-Plain">esxi_host_ssl_thumbprint</span><span class="p p-Indicator">:</span> <span class="s">&#39;12:A3:45:B6:CD:7E:F8:90:A1:BC:23:45:D6:78:9E:FA:01:2B:34:CD&#39;</span>
+</pre></div>
+</div>
+<p>The SSL thumbprint of the host system can be optionally specified by setting
+<code class="docutils literal"><span class="pre">esxi_host_ssl_thumbprint</span></code> under your provider configuration. To get the SSL
+thumbprint of the host system, execute the following command from a remote
+server:</p>
+<div class="last highlight-bash"><div class="highlight"><pre><span></span><span class="nb">echo</span> -n <span class="p">|</span> openssl s_client -connect &lt;YOUR-HOSTSYSTEM-DNS/IP&gt;:443 2&gt;/dev/null <span class="p">|</span> openssl x509 -noout -fingerprint -sha1
+</pre></div>
+</div>
+</div>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f add_host my-vmware-config <span class="nv">host</span><span class="o">=</span><span class="s2">&quot;myHostSystemName&quot;</span> <span class="nv">cluster</span><span class="o">=</span><span class="s2">&quot;myClusterName&quot;</span>
+salt-cloud -f add_host my-vmware-config <span class="nv">host</span><span class="o">=</span><span class="s2">&quot;myHostSystemName&quot;</span> <span class="nv">datacenter</span><span class="o">=</span><span class="s2">&quot;myDatacenterName&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.avail_images">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">avail_images</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.avail_images" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of all the templates present in this VMware environment with basic
+details</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud --list-images my-vmware-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.avail_locations">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">avail_locations</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.avail_locations" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of all the available locations/datacenters in this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud --list-locations my-vmware-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.avail_sizes">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">avail_sizes</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.avail_sizes" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of all the available sizes in this VMware environment.</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud --list-sizes my-vmware-config
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Since sizes are built into templates, this function will return
+an empty dictionary.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.connect_host">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">connect_host</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.connect_host" title="永久链接至目标">¶</a></dt>
+<dd><p>Connect the specified host system in this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f connect_host my-vmware-config <span class="nv">host</span><span class="o">=</span><span class="s2">&quot;myHostSystemName&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.create">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">create</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.create" title="永久链接至目标">¶</a></dt>
+<dd><p>To create a single VM in the VMware environment.</p>
+<p>Sample profile and arguments that can be specified in it can be found
+<a class="reference internal" href="../../../topics/cloud/vmware.html#vmware-cloud-profile"><span>here.</span></a></p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -p vmware-centos6.5 vmname
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.create_cluster">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">create_cluster</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.create_cluster" title="永久链接至目标">¶</a></dt>
+<dd><p>Create a new cluster under the specified datacenter in this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_cluster my-vmware-config <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;myNewCluster&quot;</span> <span class="nv">datacenter</span><span class="o">=</span><span class="s2">&quot;datacenterName&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.create_datacenter">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">create_datacenter</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.create_datacenter" title="永久链接至目标">¶</a></dt>
+<dd><p>Create a new data center in this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_datacenter my-vmware-config <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;MyNewDatacenter&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.create_datastore_cluster">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">create_datastore_cluster</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.create_datastore_cluster" title="永久链接至目标">¶</a></dt>
+<dd><p>Create a new datastore cluster for the specified datacenter in this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_datastore_cluster my-vmware-config <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;datastoreClusterName&quot;</span> <span class="nv">datacenter</span><span class="o">=</span><span class="s2">&quot;datacenterName&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.create_folder">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">create_folder</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.create_folder" title="永久链接至目标">¶</a></dt>
+<dd><p>Create the specified folder path in this VMware environment</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>To create a Host and Cluster Folder under a Datacenter, specify
+<code class="docutils literal"><span class="pre">path=&quot;/yourDatacenterName/host/yourFolderName&quot;</span></code></p>
+<p>To create a Network Folder under a Datacenter, specify
+<code class="docutils literal"><span class="pre">path=&quot;/yourDatacenterName/network/yourFolderName&quot;</span></code></p>
+<p>To create a Storage Folder under a Datacenter, specify
+<code class="docutils literal"><span class="pre">path=&quot;/yourDatacenterName/datastore/yourFolderName&quot;</span></code></p>
+<p class="last">To create a VM and Template Folder under a Datacenter, specify
+<code class="docutils literal"><span class="pre">path=&quot;/yourDatacenterName/vm/yourFolderName&quot;</span></code></p>
+</div>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_folder my-vmware-config <span class="nv">path</span><span class="o">=</span><span class="s2">&quot;/Local/a/b/c&quot;</span>
+salt-cloud -f create_folder my-vmware-config <span class="nv">path</span><span class="o">=</span><span class="s2">&quot;/MyDatacenter/vm/MyVMFolder&quot;</span>
+salt-cloud -f create_folder my-vmware-config <span class="nv">path</span><span class="o">=</span><span class="s2">&quot;/MyDatacenter/host/MyHostFolder&quot;</span>
+salt-cloud -f create_folder my-vmware-config <span class="nv">path</span><span class="o">=</span><span class="s2">&quot;/MyDatacenter/network/MyNetworkFolder&quot;</span>
+salt-cloud -f create_folder my-vmware-config <span class="nv">path</span><span class="o">=</span><span class="s2">&quot;/MyDatacenter/storage/MyStorageFolder&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.create_snapshot">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">create_snapshot</code><span class="sig-paren">(</span><em>name</em>, <em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.create_snapshot" title="永久链接至目标">¶</a></dt>
+<dd><p>Create a snapshot of the specified virtual machine in this VMware
+environment</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">If the VM is powered on, the internal state of the VM (memory
+dump) is included in the snapshot by default which will also set
+the power state of the snapshot to &quot;powered on&quot;. You can set
+<code class="docutils literal"><span class="pre">memdump=False</span></code> to override this. This field is ignored if
+the virtual machine is powered off or if the VM does not support
+snapshots with memory dumps. Default is <code class="docutils literal"><span class="pre">memdump=True</span></code></p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">If the VM is powered on when the snapshot is taken, VMware Tools
+can be used to quiesce the file system in the virtual machine by
+setting <code class="docutils literal"><span class="pre">quiesce=True</span></code>. This field is ignored if the virtual
+machine is powered off; if VMware Tools are not available or if
+<code class="docutils literal"><span class="pre">memdump=True</span></code>. Default is <code class="docutils literal"><span class="pre">quiesce=False</span></code></p>
+</div>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a create_snapshot vmname <span class="nv">snapshot_name</span><span class="o">=</span><span class="s2">&quot;mySnapshot&quot;</span>
+salt-cloud -a create_snapshot vmname <span class="nv">snapshot_name</span><span class="o">=</span><span class="s2">&quot;mySnapshot&quot;</span> <span class="o">[</span><span class="nv">description</span><span class="o">=</span><span class="s2">&quot;My snapshot&quot;</span><span class="o">]</span> <span class="o">[</span><span class="nv">memdump</span><span class="o">=</span>False<span class="o">]</span> <span class="o">[</span><span class="nv">quiesce</span><span class="o">=</span>True<span class="o">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.destroy">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">destroy</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.destroy" title="永久链接至目标">¶</a></dt>
+<dd><p>To destroy a VM from the VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -d vmname
+salt-cloud --destroy vmname
+salt-cloud -a destroy vmname
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.disconnect_host">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">disconnect_host</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.disconnect_host" title="永久链接至目标">¶</a></dt>
+<dd><p>Disconnect the specified host system in this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f disconnect_host my-vmware-config <span class="nv">host</span><span class="o">=</span><span class="s2">&quot;myHostSystemName&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.enter_maintenance_mode">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">enter_maintenance_mode</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.enter_maintenance_mode" title="永久链接至目标">¶</a></dt>
+<dd><p>To put the specified host system in maintenance mode in this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f enter_maintenance_mode my-vmware-config <span class="nv">host</span><span class="o">=</span><span class="s2">&quot;myHostSystemName&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.exit_maintenance_mode">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">exit_maintenance_mode</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.exit_maintenance_mode" title="永久链接至目标">¶</a></dt>
+<dd><p>To take the specified host system out of maintenance mode in this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f exit_maintenance_mode my-vmware-config <span class="nv">host</span><span class="o">=</span><span class="s2">&quot;myHostSystemName&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.get_dependencies">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">get_dependencies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.get_dependencies" title="永久链接至目标">¶</a></dt>
+<dd><p>Warn if dependencies aren't met.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.get_vcenter_version">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">get_vcenter_version</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.get_vcenter_version" title="永久链接至目标">¶</a></dt>
+<dd><p>Show the vCenter Server version with build number.</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f get_vcenter_version my-vmware-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_clusters">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_clusters</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_clusters" title="永久链接至目标">¶</a></dt>
+<dd><p>List all the clusters for this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_clusters my-vmware-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_clusters_by_datacenter">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_clusters_by_datacenter</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_clusters_by_datacenter" title="永久链接至目标">¶</a></dt>
+<dd><p>List clusters for each datacenter; or clusters for a specified datacenter in
+this VMware environment</p>
+<p>To list clusters for each datacenter:</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_clusters_by_datacenter my-vmware-config
+</pre></div>
+</div>
+<p>To list clusters for a specified datacenter:</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_clusters_by_datacenter my-vmware-config <span class="nv">datacenter</span><span class="o">=</span><span class="s2">&quot;datacenterName&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_datacenters">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_datacenters</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_datacenters" title="永久链接至目标">¶</a></dt>
+<dd><p>List all the data centers for this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_datacenters my-vmware-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_datastore_clusters">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_datastore_clusters</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_datastore_clusters" title="永久链接至目标">¶</a></dt>
+<dd><p>List all the datastore clusters for this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_datastore_clusters my-vmware-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_datastores">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_datastores</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_datastores" title="永久链接至目标">¶</a></dt>
+<dd><p>List all the datastores for this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_datastores my-vmware-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_dvs">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_dvs</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_dvs" title="永久链接至目标">¶</a></dt>
+<dd><p>List all the distributed virtual switches for this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_dvs my-vmware-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_folders">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_folders</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_folders" title="永久链接至目标">¶</a></dt>
+<dd><p>List all the folders for this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_folders my-vmware-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_hbas">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_hbas</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_hbas" title="永久链接至目标">¶</a></dt>
+<dd><p>List all HBAs for each host system; or all HBAs for a specified host
+system; or HBAs of specified type for each host system; or HBAs of
+specified type for a specified host system in this VMware environment</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">You can specify type as either <code class="docutils literal"><span class="pre">parallel</span></code>, <code class="docutils literal"><span class="pre">iscsi</span></code>, <code class="docutils literal"><span class="pre">block</span></code>
+or <code class="docutils literal"><span class="pre">fibre</span></code>.</p>
+</div>
+<p>To list all HBAs for each host system:</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_hbas my-vmware-config
+</pre></div>
+</div>
+<p>To list all HBAs for a specified host system:</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_hbas my-vmware-config <span class="nv">host</span><span class="o">=</span><span class="s2">&quot;hostSystemName&quot;</span>
+</pre></div>
+</div>
+<p>To list HBAs of specified type for each host system:</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_hbas my-vmware-config <span class="nv">type</span><span class="o">=</span><span class="s2">&quot;HBAType&quot;</span>
+</pre></div>
+</div>
+<p>To list HBAs of specified type for a specified host system:</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_hbas my-vmware-config <span class="nv">host</span><span class="o">=</span><span class="s2">&quot;hostSystemName&quot;</span> <span class="nv">type</span><span class="o">=</span><span class="s2">&quot;HBAtype&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_hosts">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_hosts</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_hosts" title="永久链接至目标">¶</a></dt>
+<dd><p>List all the hosts for this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_hosts my-vmware-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_hosts_by_cluster">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_hosts_by_cluster</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_hosts_by_cluster" title="永久链接至目标">¶</a></dt>
+<dd><p>List hosts for each cluster; or hosts for a specified cluster in
+this VMware environment</p>
+<p>To list hosts for each cluster:</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_hosts_by_cluster my-vmware-config
+</pre></div>
+</div>
+<p>To list hosts for a specified cluster:</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_hosts_by_cluster my-vmware-config <span class="nv">cluster</span><span class="o">=</span><span class="s2">&quot;clusterName&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_hosts_by_datacenter">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_hosts_by_datacenter</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_hosts_by_datacenter" title="永久链接至目标">¶</a></dt>
+<dd><p>List hosts for each datacenter; or hosts for a specified datacenter in
+this VMware environment</p>
+<p>To list hosts for each datacenter:</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_hosts_by_datacenter my-vmware-config
+</pre></div>
+</div>
+<p>To list hosts for a specified datacenter:</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_hosts_by_datacenter my-vmware-config <span class="nv">datacenter</span><span class="o">=</span><span class="s2">&quot;datacenterName&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_networks">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_networks</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_networks" title="永久链接至目标">¶</a></dt>
+<dd><p>List all the standard networks for this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_networks my-vmware-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_nodes">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_nodes</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_nodes" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of all VMs and templates that are on the specified provider, with basic fields</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_nodes my-vmware-config
+</pre></div>
+</div>
+<p>To return a list of all VMs and templates present on ALL configured providers, with basic
+fields:</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -Q
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_nodes_full">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_nodes_full</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_nodes_full" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of all VMs and templates that are on the specified provider, with full details</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_nodes_full my-vmware-config
+</pre></div>
+</div>
+<p>To return a list of all VMs and templates present on ALL configured providers, with full
+details:</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -F
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_nodes_min">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_nodes_min</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_nodes_min" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of all VMs and templates that are on the specified provider, with no details</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_nodes_min my-vmware-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_nodes_select">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_nodes_select</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_nodes_select" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of all VMs and templates that are on the specified provider, with fields
+specified under <code class="docutils literal"><span class="pre">query.selection</span></code> in <code class="docutils literal"><span class="pre">/etc/salt/cloud</span></code></p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_nodes_select my-vmware-config
+</pre></div>
+</div>
+<p>To return a list of all VMs and templates present on ALL configured providers, with
+fields specified under <code class="docutils literal"><span class="pre">query.selection</span></code> in <code class="docutils literal"><span class="pre">/etc/salt/cloud</span></code>:</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -S
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_portgroups">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_portgroups</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_portgroups" title="永久链接至目标">¶</a></dt>
+<dd><p>List all the distributed virtual portgroups for this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_portgroups my-vmware-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_resourcepools">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_resourcepools</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_resourcepools" title="永久链接至目标">¶</a></dt>
+<dd><p>List all the resource pools for this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_resourcepools my-vmware-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_snapshots">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_snapshots</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_snapshots" title="永久链接至目标">¶</a></dt>
+<dd><p>List snapshots either for all VMs and templates or for a specific VM/template
+in this VMware environment</p>
+<p>To list snapshots for all VMs and templates:</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_snapshots my-vmware-config
+</pre></div>
+</div>
+<p>To list snapshots for a specific VM/template:</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_snapshots my-vmware-config <span class="nv">name</span><span class="o">=</span><span class="s2">&quot;vmname&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_templates">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_templates</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_templates" title="永久链接至目标">¶</a></dt>
+<dd><p>List all the templates present in this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_templates my-vmware-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.list_vapps">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">list_vapps</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.list_vapps" title="永久链接至目标">¶</a></dt>
+<dd><p>List all the vApps for this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_vapps my-vmware-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.reboot_host">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">reboot_host</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.reboot_host" title="永久链接至目标">¶</a></dt>
+<dd><p>Reboot the specified host system in this VMware environment</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">If the host system is not in maintenance mode, it will not be rebooted. If you
+want to reboot the host system regardless of whether it is in maintenance mode,
+set <code class="docutils literal"><span class="pre">force=True</span></code>. Default is <code class="docutils literal"><span class="pre">force=False</span></code>.</p>
+</div>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f reboot_host my-vmware-config <span class="nv">host</span><span class="o">=</span><span class="s2">&quot;myHostSystemName&quot;</span> <span class="o">[</span><span class="nv">force</span><span class="o">=</span>True<span class="o">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.remove_all_snapshots">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">remove_all_snapshots</code><span class="sig-paren">(</span><em>name</em>, <em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.remove_all_snapshots" title="永久链接至目标">¶</a></dt>
+<dd><p>Remove all the snapshots present for the specified virtual machine.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">All the snapshots higher up in the hierarchy of the current snapshot tree
+are consolidated and their virtual disks are merged. To override this
+behavior and only remove all snapshots, set <code class="docutils literal"><span class="pre">merge_snapshots=False</span></code>.
+Default is <code class="docutils literal"><span class="pre">merge_snapshots=True</span></code></p>
+</div>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a remove_all_snapshots vmname <span class="o">[</span><span class="nv">merge_snapshots</span><span class="o">=</span>False<span class="o">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.remove_host">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">remove_host</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.remove_host" title="永久链接至目标">¶</a></dt>
+<dd><p>Remove the specified host system from this VMware environment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f remove_host my-vmware-config <span class="nv">host</span><span class="o">=</span><span class="s2">&quot;myHostSystemName&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.rescan_hba">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">rescan_hba</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.rescan_hba" title="永久链接至目标">¶</a></dt>
+<dd><p>To rescan a specified HBA or all the HBAs on the Host System</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f rescan_hba my-vmware-config <span class="nv">host</span><span class="o">=</span><span class="s2">&quot;hostSystemName&quot;</span>
+salt-cloud -f rescan_hba my-vmware-config <span class="nv">hba</span><span class="o">=</span><span class="s2">&quot;hbaDeviceName&quot;</span> <span class="nv">host</span><span class="o">=</span><span class="s2">&quot;hostSystemName&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.reset">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">reset</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.reset" title="永久链接至目标">¶</a></dt>
+<dd><p>To reset a VM using its name</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a reset vmname
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.revert_to_snapshot">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">revert_to_snapshot</code><span class="sig-paren">(</span><em>name</em>, <em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.revert_to_snapshot" title="永久链接至目标">¶</a></dt>
+<dd><p>Revert virtual machine to it's current snapshot. If no snapshot
+exists, the state of the virtual machine remains unchanged</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>The virtual machine will be powered on if the power state of
+the snapshot when it was created was set to &quot;Powered On&quot;. Set
+<code class="docutils literal"><span class="pre">power_off=True</span></code> so that the virtual machine stays powered
+off regardless of the power state of the snapshot when it was
+created. Default is <code class="docutils literal"><span class="pre">power_off=False</span></code>.</p>
+<p class="last">If the power state of the snapshot when it was created was
+&quot;Powered On&quot; and if <code class="docutils literal"><span class="pre">power_off=True</span></code>, the VM will be put in
+suspended state after it has been reverted to the snapshot.</p>
+</div>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a revert_to_snapshot vmame <span class="o">[</span><span class="nv">power_off</span><span class="o">=</span>True<span class="o">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.show_instance">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">show_instance</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.show_instance" title="永久链接至目标">¶</a></dt>
+<dd><p>List all available details of the specified VM</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a show_instance vmname
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.start">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">start</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.start" title="永久链接至目标">¶</a></dt>
+<dd><p>To start/power on a VM using its name</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a start vmname
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.stop">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">stop</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.stop" title="永久链接至目标">¶</a></dt>
+<dd><p>To stop/power off a VM using its name</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a stop vmname
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.suspend">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">suspend</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.suspend" title="永久链接至目标">¶</a></dt>
+<dd><p>To suspend a VM using its name</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a <span class="nb">suspend</span> vmname
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.terminate">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">terminate</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.terminate" title="永久链接至目标">¶</a></dt>
+<dd><p>To do an immediate power off of a VM using its name. A <code class="docutils literal"><span class="pre">SIGKILL</span></code>
+is issued to the vmx process of the VM</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a terminate vmname
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.test_vcenter_connection">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">test_vcenter_connection</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.test_vcenter_connection" title="永久链接至目标">¶</a></dt>
+<dd><p>Test if the connection can be made to the vCenter server using
+the specified credentials inside <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers</span></code>
+or <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/vmware.conf</span></code></p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f test_vcenter_connection my-vmware-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.upgrade_tools">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">upgrade_tools</code><span class="sig-paren">(</span><em>name</em>, <em>reboot=False</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.upgrade_tools" title="永久链接至目标">¶</a></dt>
+<dd><p>To upgrade VMware Tools on a specified virtual machine.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">If the virtual machine is running Windows OS, use <code class="docutils literal"><span class="pre">reboot=True</span></code>
+to reboot the virtual machine after VMware tools upgrade. Default
+is <code class="docutils literal"><span class="pre">reboot=False</span></code></p>
+</div>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a upgrade_tools vmname
+salt-cloud -a upgrade_tools vmname <span class="nv">reboot</span><span class="o">=</span>True
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.vmware.upgrade_tools_all">
+<code class="descclassname">salt.cloud.clouds.vmware.</code><code class="descname">upgrade_tools_all</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.vmware.upgrade_tools_all" title="永久链接至目标">¶</a></dt>
+<dd><p>To upgrade VMware Tools on all virtual machines present in
+the specified provider</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">If the virtual machine is running Windows OS, this function
+will attempt to suppress the automatic reboot caused by a
+VMware Tools upgrade.</p>
+</div>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f upgrade_tools_all my-vmware-config
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Pillar 演练</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="在Pillar中存储静态数据" href="../pillar/index.html">
+        <link rel="next" title="Targeting Minions" href="../targeting/index.html">
+        <link rel="prev" title="在Pillar中存储静态数据" href="../pillar/index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../pillar/index.html" title="在Pillar中存储静态数据">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../targeting/index.html" title="Targeting Minions">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="pillar-walkthrough">
+<h1>Pillar 演练<a class="headerlink" href="#pillar-walkthrough" title="永久链接至标题">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">This walkthrough assumes that the reader has already completed the initial
+Salt <a class="reference internal" href="walkthrough.html"><em>walkthrough</em></a>.</p>
+</div>
+<p>Pillars are tree-like structures of data defined on the Salt Master and passed
+through to minions. They allow confidential, targeted data to be securely sent
+only to the relevant minion.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Grains and Pillar are sometimes confused, just remember that Grains
+are data about a minion which is stored or generated from the minion.
+This is why information like the OS and CPU type are found in Grains.
+Pillar is information about a minion or many minions stored or generated
+on the Salt Master.</p>
+</div>
+<p>Pillar数据对以下情况很有用:</p>
+<dl class="docutils">
+<dt>高度敏感的数据：</dt>
+<dd>Information transferred via pillar is guaranteed to only be presented to
+the minions that are targeted, making Pillar suitable
+for managing security information, such as cryptographic keys and
+passwords.</dd>
+<dt>Minion 配置：</dt>
+<dd><p class="first last">Minion模块如执行模块，states，和returners通常可以通过存储在pillar中的数据配置。</p>
+</dd>
+<dt>变量：</dt>
+<dd><p class="first last">需要分配给指定minions或minions组的变量可以在pillar中定义，然后访问内部sls公式和模板文件。</p>
+</dd>
+<dt>任意的数据:</dt>
+<dd>Pillar can contain any basic data structure in dictionary format,
+so a key/value store can be defined making it easy to iterate over a group
+of values in sls formulas.</dd>
+</dl>
+<p>Pillar is therefore one of the most important systems when using Salt. This
+walkthrough is designed to get a simple Pillar up and running in a few minutes
+and then to dive into the capabilities of Pillar and where the data is
+available.</p>
+<div class="section" id="setting-up-pillar">
+<h2>设置Pillar<a class="headerlink" href="#setting-up-pillar" title="永久链接至标题">¶</a></h2>
+<p>The pillar is already running in Salt by default. To see the minion's
+pillar data:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> pillar.items
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">在0.16.2版本之前，这个函数被命名为 <code class="docutils literal"><span class="pre">pillar.data</span></code>。这个函数的命名依然保持着向后兼容。</p>
+</div>
+<p>By default the contents of the master configuration file are loaded into
+pillar for all minions. This enables the master configuration file to
+be used for global configuration of minions.</p>
+<p>Similar to the state tree, the pillar is comprised of sls files and has a top file.
+The default location for the pillar is in /srv/pillar.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The pillar location can be configured via the <cite>pillar_roots</cite> option inside
+the master configuration file. It must not be in a subdirectory of the state
+tree or file_roots. If the pillar is under file_roots, any pillar targeting
+can be bypassed by minions.</p>
+</div>
+<p>要开始设置pillar，需要准备/srv/pillar目录：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>mkdir /srv/pillar
+</pre></div>
+</div>
+<p>Now create a simple top file, following the same format as the top file used for
+states:</p>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/top.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">data</span>
+</pre></div>
+</div>
+<p>This top file associates the data.sls file to all minions. Now the
+<code class="docutils literal"><span class="pre">/srv/pillar/data.sls</span></code> file needs to be populated:</p>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/data.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">info</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">some data</span>
+</pre></div>
+</div>
+<p>To ensure that the minions have the new pillar data, issue a command
+to them asking that they fetch their pillars from the master:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> saltutil.refresh_pillar
+</pre></div>
+</div>
+<p>Now that the minions have the new pillar, it can be retrieved:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> pillar.items
+</pre></div>
+</div>
+<p>The key <code class="docutils literal"><span class="pre">info</span></code> should now appear in the returned pillar data.</p>
+<div class="section" id="more-complex-data">
+<h3>更多复杂的数据<a class="headerlink" href="#more-complex-data" title="永久链接至标题">¶</a></h3>
+<p>和states不同，pillar文件不需要定义 <strong>formulas</strong>。这个范例设置带有一个UID的用户数据：</p>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/users/init.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">users</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">thatch</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1000</span>
+  <span class="l l-Scalar l-Scalar-Plain">shouse</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1001</span>
+  <span class="l l-Scalar l-Scalar-Plain">utahdave</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1002</span>
+  <span class="l l-Scalar l-Scalar-Plain">redbeard</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1003</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The same directory lookups that exist in states exist in pillar, so the
+file <code class="docutils literal"><span class="pre">users/init.sls</span></code> can be referenced with <code class="docutils literal"><span class="pre">users</span></code> in the <a class="reference internal" href="../../glossary.html#term-top-file"><span class="xref std std-term">top
+file</span></a>.</p>
+</div>
+<p>The top file will need to be updated to include this sls file:</p>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/top.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">data</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">users</span>
+</pre></div>
+</div>
+<p>Now the data will be available to the minions. To use the pillar data in a
+state, you can use Jinja:</p>
+<p><code class="docutils literal"><span class="pre">/srv/salt/users/init.sls</span></code></p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">for</span> <span class="nv">user</span><span class="o">,</span> <span class="nv">uid</span> <span class="k">in</span> <span class="nv">pillar.get</span><span class="o">(</span><span class="s1">&#39;users&#39;</span><span class="o">,</span> <span class="o">{})</span><span class="nv">.items</span><span class="o">()</span> <span class="cp">%}</span><span class="x"></span>
+<span class="cp">{{</span><span class="nv">user</span><span class="cp">}}</span><span class="x">:</span>
+<span class="x">  user.present:</span>
+<span class="x">    - uid: </span><span class="cp">{{</span><span class="nv">uid</span><span class="cp">}}</span><span class="x"></span>
+<span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+</div>
+<p>This approach allows for users to be safely defined in a pillar and then the
+user data is applied in an sls file.</p>
+</div>
+</div>
+<div class="section" id="parameterizing-states-with-pillar">
+<h2>用Pillar参数化States<a class="headerlink" href="#parameterizing-states-with-pillar" title="永久链接至标题">¶</a></h2>
+<p>state文件可以使用Pillar数据为每个minion定制动作。适用于各个minion的所有pillar(和grain)数据在被使用前通过templating代入到state文件中。通常的用法包括恰当地为minion设置路径和跳过不应用的states。</p>
+<p>一个简单的例子是在pillar中为不同的Linux发行版设定包名字的映射:</p>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/pkg/init.sls</span></code>:</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="x">pkgs:</span>
+<span class="x">  </span><span class="cp">{%</span> <span class="k">if</span> <span class="nv">grains</span><span class="o">[</span><span class="s1">&#39;os_family&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;RedHat&#39;</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">  apache: httpd</span>
+<span class="x">  vim: vim-enhanced</span>
+<span class="x">  </span><span class="cp">{%</span> <span class="k">elif</span> <span class="nv">grains</span><span class="o">[</span><span class="s1">&#39;os_family&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;Debian&#39;</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">  apache: apache2</span>
+<span class="x">  vim: vim</span>
+<span class="x">  </span><span class="cp">{%</span> <span class="k">elif</span> <span class="nv">grains</span><span class="o">[</span><span class="s1">&#39;os&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;Arch&#39;</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">  apache: apache</span>
+<span class="x">  vim: vim</span>
+<span class="x">  </span><span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+</div>
+<p>新的 <code class="docutils literal"><span class="pre">pkg</span></code> sls需要被添加到top文件中:</p>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/top.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">data</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">users</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span>
+</pre></div>
+</div>
+<p>现在minion们将会自动映射在pillar中基于各自操作系统的值，这样sls文件就能安全地被参数化了：</p>
+<p><code class="docutils literal"><span class="pre">/srv/salt/apache/init.sls</span></code>:</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="x">apache:</span>
+<span class="x">  pkg.installed:</span>
+<span class="x">    - name: </span><span class="cp">{{</span> <span class="nv">pillar</span><span class="o">[</span><span class="s1">&#39;pkgs&#39;</span><span class="o">][</span><span class="s1">&#39;apache&#39;</span><span class="o">]</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+</div>
+<p>亦或者，如果没有pillar可用，一个默认的设置同样可以启用：</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">这个例子中使用的``pillar.get``函数是在0.14.0版被添加到Salt中</p>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/salt/apache/init.sls</span></code>:</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="x">apache:</span>
+<span class="x">  pkg.installed:</span>
+<span class="x">    - name: </span><span class="cp">{{</span> <span class="nv">salt</span><span class="o">[</span><span class="s1">&#39;pillar.get&#39;</span><span class="o">](</span><span class="s1">&#39;pkgs:apache&#39;</span><span class="o">,</span> <span class="s1">&#39;httpd&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+</div>
+<p>在上面的例子中，如果pillar值 <code class="docutils literal"><span class="pre">pillar['pkgs']['apache']</span></code> 在minion的pillar未设置，那么默认值``httpd`` 将被使用。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">在“引擎盖下”，pillar不过是一个Python字典，因此Python字典的方法如`get` 和 <cite>items</cite> 同样可以使用。</p>
+</div>
+</div>
+<div class="section" id="pillar-makes-simple-states-grow-easily">
+<h2>Pillar使简单States扩展更容易<a class="headerlink" href="#pillar-makes-simple-states-grow-easily" title="永久链接至标题">¶</a></h2>
+<p>pillar的设计原则的之一是让简单的sls公式不需要重构或复杂化states就能轻松地扩展成更加灵活的公式。</p>
+<p>一个简单的公式：</p>
+<p><code class="docutils literal"><span class="pre">/srv/salt/edit/vim.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">vim</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+
+<span class="l l-Scalar l-Scalar-Plain">/etc/vimrc</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://edit/vimrc</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">644</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">vim</span>
+</pre></div>
+</div>
+<p>可以轻松的被转化成一个强大的，参数化的公式：</p>
+<p><code class="docutils literal"><span class="pre">/srv/salt/edit/vim.sls</span></code>:</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="x">vim:</span>
+<span class="x">  pkg.installed:</span>
+<span class="x">    - name: </span><span class="cp">{{</span> <span class="nv">pillar</span><span class="o">[</span><span class="s1">&#39;pkgs&#39;</span><span class="o">][</span><span class="s1">&#39;vim&#39;</span><span class="o">]</span> <span class="cp">}}</span><span class="x"></span>
+
+<span class="x">/etc/vimrc:</span>
+<span class="x">  file.managed:</span>
+<span class="x">    - source: </span><span class="cp">{{</span> <span class="nv">pillar</span><span class="o">[</span><span class="s1">&#39;vimrc&#39;</span><span class="o">]</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">    - mode: 644</span>
+<span class="x">    - user: root</span>
+<span class="x">    - group: root</span>
+<span class="x">    - require:</span>
+<span class="x">      - pkg: vim</span>
+</pre></div>
+</div>
+<p>vimrc的源地址现在可以在pillar中修改:</p>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/edit/vim.sls</span></code>:</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">if</span> <span class="nv">grains</span><span class="o">[</span><span class="s1">&#39;id&#39;</span><span class="o">]</span><span class="nv">.startswith</span><span class="o">(</span><span class="s1">&#39;dev&#39;</span><span class="o">)</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">vimrc: salt://edit/dev_vimrc</span>
+<span class="cp">{%</span> <span class="k">elif</span> <span class="nv">grains</span><span class="o">[</span><span class="s1">&#39;id&#39;</span><span class="o">]</span><span class="nv">.startswith</span><span class="o">(</span><span class="s1">&#39;qa&#39;</span><span class="o">)</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">vimrc: salt://edit/qa_vimrc</span>
+<span class="cp">{%</span> <span class="k">else</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">vimrc: salt://edit/vimrc</span>
+<span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+</div>
+<p>确保正确的vimrc被发送到正确的minions上。</p>
+</div>
+<div class="section" id="setting-pillar-data-on-the-command-line">
+<h2>通过命令行设置Pillar数据<a class="headerlink" href="#setting-pillar-data-on-the-command-line" title="永久链接至标题">¶</a></h2>
+<p>Pillar数据可以像这样通过命令行设置：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> state.highstate <span class="nv">pillar</span><span class="o">=</span><span class="s1">&#39;{&quot;foo&quot;: &quot;bar&quot;}&#39;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">state.sls</span></code>  命令同样可以用命令行的方式来设置pillar值：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> state.sls my_sls_file <span class="nv">pillar</span><span class="o">=</span><span class="s1">&#39;{&quot;hello&quot;: &quot;world&quot;}&#39;</span>
+</pre></div>
+</div>
+<p>Nested pillar values can also be set via the command line:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> state.sls my_sls_file <span class="nv">pillar</span><span class="o">=</span><span class="s1">&#39;{&quot;foo&quot;: {&quot;bar&quot;: &quot;baz&quot;}}&#39;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">如果命令行中传递的一个关键字已经存在于minion中，传入的关键字会重写那个关键字的全部值，而不是合并只是通过命令行设置的指定值。</p>
+</div>
+<p>The example below will swap the value for vim with telnet in the previously
+specified list, notice the nested pillar dict:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> state.sls edit.vim <span class="nv">pillar</span><span class="o">=</span><span class="s1">&#39;{&quot;pkgs&quot;: {&quot;vim&quot;: &quot;telnet&quot;}}&#39;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">This will attempt to install telnet on your minions, feel free to
+uninstall the package or replace telnet value with anything else.</p>
+</div>
+</div>
+<div class="section" id="more-on-pillar">
+<h2>更多关于Pillar<a class="headerlink" href="#more-on-pillar" title="永久链接至标题">¶</a></h2>
+<p>Pillar数据由Salt master生成，安全地分发给minions。Salt在设置pillar时可以检索来自外部资源的数据而并不是局限于pillar sls文件。当一个基础设施的相关信息存放在一个单独的位置时会很有帮助。</p>
+<p>pillar和外部pillar接口的参考信息可以在Salt文档中找到:</p>
+<p><a class="reference internal" href="../pillar/index.html"><em>Pillar</em></a></p>
+</div>
+<div class="section" id="minion-config-in-pillar">
+<h2>Minion Config in Pillar<a class="headerlink" href="#minion-config-in-pillar" title="永久链接至标题">¶</a></h2>
+<p>Minion configuration options can be set on pillars. Any option that you want
+to modify, should be in the first level of the pillars, in the same way you set
+the options in the config file. For example, to configure the MySQL root
+password to be used by MySQL Salt execution module:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">mysql.pass</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">hardtoguesspassword</span>
+</pre></div>
+</div>
+<p>This is very convenient when you need some dynamic configuration change that
+you want to be applied on the fly. For example, there is a chicken and the egg
+problem if you do this:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">mysql-admin-passwd</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">mysql_user.present</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">somepasswd</span>
+
+<span class="l l-Scalar l-Scalar-Plain">mydb</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">mysql_db.present</span>
+</pre></div>
+</div>
+<p>The second state will fail, because you changed the root password and the
+minion didn't notice it. Setting mysql.pass in the pillar, will help to sort
+out the issue. But always change the root admin password in the first place.</p>
+<p>This is very helpful for any module that needs credentials to apply state
+changes: mysql, keystone, etc.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../pillar/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="在Pillar中存储静态数据" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../targeting/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Targeting Minions" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../using_salt.html">Using Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../grains/index.html">Grains</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../pillar/index.html">在Pillar中存储静态数据</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../pillar/index.html#declaring-the-master-pillar">声明Master Pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pillar/index.html#pillar-namespace-flattened">Pillar 命名空间是平整的</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pillar/index.html#pillar-namespace-merges">Pillar Namespace Merges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pillar/index.html#including-other-pillars">包含其他Pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pillar/index.html#viewing-minion-pillar">查看 Minion Pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pillar/index.html#pillar-get-function">Pillar &quot;get&quot; 函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pillar/index.html#refreshing-pillar-data">刷新Pillar数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pillar/index.html#set-pillar-data-at-the-command-line">Set Pillar Data at the Command Line</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pillar/index.html#master-config-in-pillar">Master Config In Pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../pillar/index.html#minion-config-in-pillar">Minion Config in Pillar</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../pillar/index.html#master-provided-pillar-error">Master Provided Pillar Error</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="">Pillar 演练</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#setting-up-pillar">设置Pillar</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#more-complex-data">更多复杂的数据</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#parameterizing-states-with-pillar">用Pillar参数化States</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#pillar-makes-simple-states-grow-easily">Pillar使简单States扩展更容易</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#setting-pillar-data-on-the-command-line">通过命令行设置Pillar数据</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#more-on-pillar">更多关于Pillar</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#minion-config-in-pillar">Minion Config in Pillar</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../targeting/index.html">Targeting Minions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mine/index.html">Salt Mine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/runners/index.html">Runners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../engines/index.html">Salt Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../yaml/index.html">了解YAML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../troubleshooting/index.html">解决问题</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../faq.html">常见问题</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../best_practices.html">Salt Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

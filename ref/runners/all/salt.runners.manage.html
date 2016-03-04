@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.runners.manage</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+        <link rel="up" title="Full list of runner modules" href="index.html">
+        <link rel="next" title="salt.runners.mine" href="salt.runners.mine.html">
+        <link rel="prev" title="salt.runners.lxc" href="salt.runners.lxc.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="salt.runners.lxc.html" title="salt.runners.lxc">上一页</a>
+            
+        </li>
+        <li>
+            <a href="salt.runners.mine.html" title="salt.runners.mine">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.runners.manage">
+<span id="salt-runners-manage"></span><h1>salt.runners.manage<a class="headerlink" href="#module-salt.runners.manage" title="永久链接至标题">¶</a></h1>
+<p>General management functions for salt, tools like seeing what hosts are up
+and what hosts are down</p>
+<dl class="function">
+<dt id="salt.runners.manage.alived">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">alived</code><span class="sig-paren">(</span><em>subset=None</em>, <em>show_ipv4=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.alived" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Print a list of all minions that are up according to Salt's presence
+detection (no commands will be sent to minions)</p>
+<dl class="docutils">
+<dt>subset <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>Pass in a CIDR range to filter minions by IP address.</dd>
+<dt>show_ipv4 <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd>Also show the IP address each minion is connecting from.</dd>
+</dl>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.alived
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.allowed">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">allowed</code><span class="sig-paren">(</span><em>subset=None</em>, <em>show_ipv4=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.allowed" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Print a list of all minions that are up according to Salt's presence
+detection (no commands will be sent to minions)</p>
+<dl class="docutils">
+<dt>subset <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>Pass in a CIDR range to filter minions by IP address.</dd>
+<dt>show_ipv4 <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd>Also show the IP address each minion is connecting from.</dd>
+</dl>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.allowed
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.bootstrap">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">bootstrap</code><span class="sig-paren">(</span><em>version='develop'</em>, <em>script=None</em>, <em>hosts=''</em>, <em>root_user=False</em>, <em>script_args=''</em>, <em>roster='flat'</em>, <em>ssh_user=None</em>, <em>ssh_password=None</em>, <em>ssh_priv_key=None</em>, <em>tmp_dir='/tmp/.bootstrap'</em>, <em>http_backend='tornado'</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.bootstrap" title="永久链接至目标">¶</a></dt>
+<dd><p>Bootstrap minions with salt-bootstrap</p>
+<dl class="docutils">
+<dt>version <span class="classifier-delimiter">:</span> <span class="classifier">develop</span></dt>
+<dd>Git tag of version to install</dd>
+<dt>script <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference external" href="https://bootstrap.saltstack.com">https://bootstrap.saltstack.com</a></span></dt>
+<dd>URL containing the script to execute</dd>
+<dt>hosts</dt>
+<dd>Comma-separated hosts [example: hosts='host1.local,host2.local']. These
+hosts need to exist in the specified roster.</dd>
+<dt>root_user <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd><p class="first">Prepend <code class="docutils literal"><span class="pre">root&#64;</span></code> to each host. Default changed in Salt Carbon from <code class="docutils literal"><span class="pre">True</span></code>
+to <code class="docutils literal"><span class="pre">False</span></code>.</p>
+<div class="versionchanged">
+<p><span class="versionmodified">在 Carbon 版更改.</span></p>
+</div>
+<div class="last deprecated">
+<p><span class="versionmodified">Oxygen 版后已移除.</span></p>
+</div>
+</dd>
+<dt>script_args</dt>
+<dd><p class="first">Any additional arguments that you want to pass to the script.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">Carbon 新版功能.</span></p>
+</div>
+</dd>
+<dt>roster <span class="classifier-delimiter">:</span> <span class="classifier">flat</span></dt>
+<dd><p class="first">The roster to use for Salt SSH. More information about roster files can
+be found in <a class="reference internal" href="../../../topics/ssh/roster.html#ssh-roster"><span>Salt's Roster Documentation</span></a>.</p>
+<p>A full list of roster types, see the <a class="reference internal" href="../../roster/all/index.html#all-salt-roster"><span>builtin roster modules</span></a>
+documentation.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">Carbon 新版功能.</span></p>
+</div>
+</dd>
+<dt>ssh_user</dt>
+<dd><p class="first">If <code class="docutils literal"><span class="pre">user</span></code> isn't found in the <code class="docutils literal"><span class="pre">roster</span></code>, a default SSH user can be set here.
+Keep in mind that <code class="docutils literal"><span class="pre">ssh_user</span></code> will not override the roster <code class="docutils literal"><span class="pre">user</span></code> value if
+it is already defined.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">Carbon 新版功能.</span></p>
+</div>
+</dd>
+<dt>ssh_password</dt>
+<dd><p class="first">If <code class="docutils literal"><span class="pre">passwd</span></code> isn't found in the <code class="docutils literal"><span class="pre">roster</span></code>, a default SSH password can be set
+here. Keep in mind that <code class="docutils literal"><span class="pre">ssh_password</span></code> will not override the roster <code class="docutils literal"><span class="pre">passwd</span></code>
+value if it is already defined.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">Carbon 新版功能.</span></p>
+</div>
+</dd>
+<dt>ssh_privkey</dt>
+<dd><p class="first">If <code class="docutils literal"><span class="pre">priv</span></code> isn't found in the <code class="docutils literal"><span class="pre">roster</span></code>, a default SSH private key can be set
+here. Keep in mind that <code class="docutils literal"><span class="pre">ssh_password</span></code> will not override the roster <code class="docutils literal"><span class="pre">passwd</span></code>
+value if it is already defined.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">Carbon 新版功能.</span></p>
+</div>
+</dd>
+<dt>tmp_dir <span class="classifier-delimiter">:</span> <span class="classifier">/tmp/.bootstrap</span></dt>
+<dd><p class="first">The temporary directory to download the bootstrap script in. This
+directory will have <code class="docutils literal"><span class="pre">-&lt;uuid4&gt;</span></code> appended to it. For example:
+<code class="docutils literal"><span class="pre">/tmp/.bootstrap-a19a728e-d40a-4801-aba9-d00655c143a7/</span></code></p>
+<div class="last versionadded">
+<p><span class="versionmodified">Carbon 新版功能.</span></p>
+</div>
+</dd>
+<dt>http_backend <span class="classifier-delimiter">:</span> <span class="classifier">tornado</span></dt>
+<dd><p class="first">The backend library to use to download the script. If you need to use
+a <code class="docutils literal"><span class="pre">file:///</span></code> URL, then you should set this to <code class="docutils literal"><span class="pre">urllib2</span></code>.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">Carbon 新版功能.</span></p>
+</div>
+</dd>
+</dl>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.bootstrap <span class="nv">hosts</span><span class="o">=</span><span class="s1">&#39;host1,host2&#39;</span>
+salt-run manage.bootstrap <span class="nv">hosts</span><span class="o">=</span><span class="s1">&#39;host1,host2&#39;</span> <span class="nv">version</span><span class="o">=</span><span class="s1">&#39;v0.17&#39;</span>
+salt-run manage.bootstrap <span class="nv">hosts</span><span class="o">=</span><span class="s1">&#39;host1,host2&#39;</span> <span class="nv">version</span><span class="o">=</span><span class="s1">&#39;v0.17&#39;</span>             <span class="nv">script</span><span class="o">=</span><span class="s1">&#39;https://bootstrap.saltstack.com/develop&#39;</span>
+salt-run manage.bootstrap <span class="nv">hosts</span><span class="o">=</span><span class="s1">&#39;ec2-user@host1,ec2-user@host2&#39;</span>             <span class="nv">root_user</span><span class="o">=</span>False
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.bootstrap_psexec">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">bootstrap_psexec</code><span class="sig-paren">(</span><em>hosts=''</em>, <em>master=None</em>, <em>version=None</em>, <em>arch='win32'</em>, <em>installer_url=None</em>, <em>username=None</em>, <em>password=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.bootstrap_psexec" title="永久链接至目标">¶</a></dt>
+<dd><p>Bootstrap Windows minions via PsExec.</p>
+<dl class="docutils">
+<dt>hosts</dt>
+<dd>Comma separated list of hosts to deploy the Windows Salt minion.</dd>
+<dt>master</dt>
+<dd>Address of the Salt master passed as an argument to the installer.</dd>
+<dt>version</dt>
+<dd>Point release of installer to download. Defaults to the most recent.</dd>
+<dt>arch</dt>
+<dd>Architecture of installer to download. Defaults to win32.</dd>
+<dt>installer_url</dt>
+<dd>URL of minion installer executable. Defaults to the latest version from
+<a class="reference external" href="https://repo.saltstack.com/windows/">https://repo.saltstack.com/windows/</a></dd>
+<dt>username</dt>
+<dd>Optional user name for login on remote computer.</dd>
+<dt>password</dt>
+<dd>Password for optional username. If omitted, PsExec will prompt for one
+to be entered for each host.</dd>
+</dl>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.bootstrap_psexec <span class="nv">hosts</span><span class="o">=</span><span class="s1">&#39;host1,host2&#39;</span>
+salt-run manage.bootstrap_psexec <span class="nv">hosts</span><span class="o">=</span><span class="s1">&#39;host1,host2&#39;</span> <span class="nv">version</span><span class="o">=</span><span class="s1">&#39;0.17&#39;</span> <span class="nv">username</span><span class="o">=</span><span class="s1">&#39;DOMAIN\Administrator&#39;</span>
+salt-run manage.bootstrap_psexec <span class="nv">hosts</span><span class="o">=</span><span class="s1">&#39;host1,host2&#39;</span> <span class="nv">installer_url</span><span class="o">=</span><span class="s1">&#39;http://exampledomain/salt-installer.exe&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.down">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">down</code><span class="sig-paren">(</span><em>removekeys=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.down" title="永久链接至目标">¶</a></dt>
+<dd><p>Print a list of all the down or unresponsive salt minions
+Optionally remove keys of down minions</p>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.down
+salt-run manage.down <span class="nv">removekeys</span><span class="o">=</span>True
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.get_stats">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">get_stats</code><span class="sig-paren">(</span><em>estate=None</em>, <em>stack='road'</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.get_stats" title="永久链接至目标">¶</a></dt>
+<dd><p>Print the stack stats</p>
+<dl class="docutils">
+<dt>estate <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>The name of the target estate. Master stats would be requested by default</dd>
+<dt>stack <span class="classifier-delimiter">:</span> <span class="classifier">'road'</span></dt>
+<dd>Show stats on either road or lane stack
+Allowed values are 'road' or 'lane'.</dd>
+</dl>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.get_stats <span class="o">[</span><span class="nv">estate</span><span class="o">=</span>alpha_minion<span class="o">]</span> <span class="o">[</span><span class="nv">stack</span><span class="o">=</span>lane<span class="o">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.joined">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">joined</code><span class="sig-paren">(</span><em>subset=None</em>, <em>show_ipv4=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.joined" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Print a list of all minions that are up according to Salt's presence
+detection (no commands will be sent to minions)</p>
+<dl class="docutils">
+<dt>subset <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>Pass in a CIDR range to filter minions by IP address.</dd>
+<dt>show_ipv4 <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd>Also show the IP address each minion is connecting from.</dd>
+</dl>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.joined
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.key_regen">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">key_regen</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.key_regen" title="永久链接至目标">¶</a></dt>
+<dd><p>This routine is used to regenerate all keys in an environment. This is
+invasive! ALL KEYS IN THE SALT ENVIRONMENT WILL BE REGENERATED!!</p>
+<p>The key_regen routine sends a command out to minions to revoke the master
+key and remove all minion keys, it then removes all keys from the master
+and prompts the user to restart the master. The minions will all reconnect
+and keys will be placed in pending.</p>
+<p>After the master is restarted and minion keys are in the pending directory
+execute a salt-key -A command to accept the regenerated minion keys.</p>
+<p>The master <em>must</em> be restarted within 60 seconds of running this command or
+the minions will think there is something wrong with the keys and abort.</p>
+<p>Only Execute this runner after upgrading minions and master to 0.15.1 or
+higher!</p>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.key_regen
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.lane_stats">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">lane_stats</code><span class="sig-paren">(</span><em>estate=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.lane_stats" title="永久链接至目标">¶</a></dt>
+<dd><p>Print the estate manor lane stack stats</p>
+<dl class="docutils">
+<dt>estate <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>The name of the target estate. Master stats would be requested by default</dd>
+</dl>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.lane_stats <span class="o">[</span><span class="nv">estate</span><span class="o">=</span>alpha_minion<span class="o">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.list_not_state">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">list_not_state</code><span class="sig-paren">(</span><em>subset=None</em>, <em>show_ipv4=False</em>, <em>state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.list_not_state" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Print a list of all minions that are NOT up according to Salt's presence
+detection (no commands will be sent to minions)</p>
+<dl class="docutils">
+<dt>subset <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>Pass in a CIDR range to filter minions by IP address.</dd>
+<dt>show_ipv4 <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd>Also show the IP address each minion is connecting from.</dd>
+<dt>state <span class="classifier-delimiter">:</span> <span class="classifier">'available'</span></dt>
+<dd>Show minions being in specific state that is one of 'available', 'joined',
+'allowed', 'alived' or 'reaped'.</dd>
+</dl>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.list_not_state
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.list_state">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">list_state</code><span class="sig-paren">(</span><em>subset=None</em>, <em>show_ipv4=False</em>, <em>state=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.list_state" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Print a list of all minions that are up according to Salt's presence
+detection (no commands will be sent to minions)</p>
+<dl class="docutils">
+<dt>subset <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>Pass in a CIDR range to filter minions by IP address.</dd>
+<dt>show_ipv4 <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd>Also show the IP address each minion is connecting from.</dd>
+<dt>state <span class="classifier-delimiter">:</span> <span class="classifier">'available'</span></dt>
+<dd>Show minions being in specific state that is one of 'available', 'joined',
+'allowed', 'alived' or 'reaped'.</dd>
+</dl>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.list_state
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.not_alived">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">not_alived</code><span class="sig-paren">(</span><em>subset=None</em>, <em>show_ipv4=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.not_alived" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Print a list of all minions that are NOT up according to Salt's presence
+detection (no commands will be sent)</p>
+<dl class="docutils">
+<dt>subset <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>Pass in a CIDR range to filter minions by IP address.</dd>
+<dt>show_ipv4 <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd>Also show the IP address each minion is connecting from.</dd>
+</dl>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.not_alived
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.not_allowed">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">not_allowed</code><span class="sig-paren">(</span><em>subset=None</em>, <em>show_ipv4=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.not_allowed" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Print a list of all minions that are NOT up according to Salt's presence
+detection (no commands will be sent)</p>
+<dl class="docutils">
+<dt>subset <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>Pass in a CIDR range to filter minions by IP address.</dd>
+<dt>show_ipv4 <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd>Also show the IP address each minion is connecting from.</dd>
+</dl>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.not_allowed
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.not_joined">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">not_joined</code><span class="sig-paren">(</span><em>subset=None</em>, <em>show_ipv4=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.not_joined" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Print a list of all minions that are NOT up according to Salt's presence
+detection (no commands will be sent)</p>
+<dl class="docutils">
+<dt>subset <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>Pass in a CIDR range to filter minions by IP address.</dd>
+<dt>show_ipv4 <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd>Also show the IP address each minion is connecting from.</dd>
+</dl>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.not_joined
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.not_present">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">not_present</code><span class="sig-paren">(</span><em>subset=None</em>, <em>show_ipv4=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.not_present" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.5.0 新版功能.</span></p>
+</div>
+<p>Print a list of all minions that are NOT up according to Salt's presence
+detection (no commands will be sent)</p>
+<dl class="docutils">
+<dt>subset <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>Pass in a CIDR range to filter minions by IP address.</dd>
+<dt>show_ipv4 <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd>Also show the IP address each minion is connecting from.</dd>
+</dl>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.not_present
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.not_reaped">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">not_reaped</code><span class="sig-paren">(</span><em>subset=None</em>, <em>show_ipv4=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.not_reaped" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Print a list of all minions that are NOT up according to Salt's presence
+detection (no commands will be sent)</p>
+<dl class="docutils">
+<dt>subset <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>Pass in a CIDR range to filter minions by IP address.</dd>
+<dt>show_ipv4 <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd>Also show the IP address each minion is connecting from.</dd>
+</dl>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.not_reaped
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.present">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">present</code><span class="sig-paren">(</span><em>subset=None</em>, <em>show_ipv4=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.present" title="永久链接至目标">¶</a></dt>
+<dd><p>Print a list of all minions that are up according to Salt's presence
+detection (no commands will be sent to minions)</p>
+<dl class="docutils">
+<dt>subset <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>Pass in a CIDR range to filter minions by IP address.</dd>
+<dt>show_ipv4 <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd>Also show the IP address each minion is connecting from.</dd>
+</dl>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.present
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.reaped">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">reaped</code><span class="sig-paren">(</span><em>subset=None</em>, <em>show_ipv4=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.reaped" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Print a list of all minions that are up according to Salt's presence
+detection (no commands will be sent to minions)</p>
+<dl class="docutils">
+<dt>subset <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>Pass in a CIDR range to filter minions by IP address.</dd>
+<dt>show_ipv4 <span class="classifier-delimiter">:</span> <span class="classifier">False</span></dt>
+<dd>Also show the IP address each minion is connecting from.</dd>
+</dl>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.reaped
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.road_stats">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">road_stats</code><span class="sig-paren">(</span><em>estate=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.road_stats" title="永久链接至目标">¶</a></dt>
+<dd><p>Print the estate road stack stats</p>
+<dl class="docutils">
+<dt>estate <span class="classifier-delimiter">:</span> <span class="classifier">None</span></dt>
+<dd>The name of the target estate. Master stats would be requested by default</dd>
+</dl>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.road_stats <span class="o">[</span><span class="nv">estate</span><span class="o">=</span>alpha_minion<span class="o">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.safe_accept">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">safe_accept</code><span class="sig-paren">(</span><em>target</em>, <em>expr_form='glob'</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.safe_accept" title="永久链接至目标">¶</a></dt>
+<dd><p>Accept a minion's public key after checking the fingerprint over salt-ssh</p>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.safe_accept my_minion
+salt-run manage.safe_accept minion1,minion2 <span class="nv">expr_form</span><span class="o">=</span>list
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.status">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">status</code><span class="sig-paren">(</span><em>output=True</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.status" title="永久链接至目标">¶</a></dt>
+<dd><p>Print the status of all known salt minions</p>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.status
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.up">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">up</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.up" title="永久链接至目标">¶</a></dt>
+<dd><p>Print a list of all of the minions that are up</p>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.up
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.manage.versions">
+<code class="descclassname">salt.runners.manage.</code><code class="descname">versions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.manage.versions" title="永久链接至目标">¶</a></dt>
+<dd><p>Check the version of active minions</p>
+<p>CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run manage.versions
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+                            </div>
+                            <a href="salt.runners.lxc.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.runners.lxc" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="salt.runners.mine.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.runners.mine" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Salt Module Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../auth/all/index.html">内建身份认证模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../beacons/all/index.html">Full list of builtin beacon modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../engines/all/index.html">Full list of builtin engine modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../file_server/all/index.html">文件服务内置模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../grains/all/index.html">Full list of builtin grains modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/all/index.html">Full list of builtin execution modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../netapi/all/index.html">Full list of netapi modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../output/all/index.html">完整的内置输出模块的列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../pillar/all/index.html">Full list of builtin pillar modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../proxy/all/index.html">Full list of builtin proxy modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../queues/all/index.html">Full list of builtin queues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../renderers/all/index.html">Full list of builtin renderer modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../returners/all/index.html">所有内置的返回接收器模块列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../roster/all/index.html">Full list of builtin roster modules</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Full list of runner modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.asam.html">salt.runners.asam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.cache.html">salt.runners.cache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.cloud.html">salt.runners.cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.ddns.html">salt.runners.ddns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.doc.html">salt.runners.doc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.drac.html">salt.runners.drac</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.error.html">salt.runners.error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.f5.html">salt.runners.f5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.fileserver.html">salt.runners.fileserver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.git_pillar.html">salt.runners.git_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.http.html">salt.runners.http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.jobs.html">salt.runners.jobs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.launchd.html">salt.runners.launchd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.lxc.html">salt.runners.lxc</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">salt.runners.manage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.mine.html">salt.runners.mine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.nacl.html">salt.runners.nacl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.network.html">salt.runners.network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.pagerduty.html">salt.runners.pagerduty</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.pillar.html">salt.runners.pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.pkg.html">salt.runners.pkg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.queue.html">salt.runners.queue</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.reactor.html">salt.runners.reactor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.sdb.html">salt.runners.sdb</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.ssh.html">salt.runners.ssh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.search.html">salt.runners.search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.spacewalk.html">salt.runners.spacewalk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.ssh.html">salt.runners.ssh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.state.html">salt.runners.state</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.survey.html">salt.runners.survey</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.test.html">salt.runners.test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.thin.html">salt.runners.thin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.virt.html">salt.runners.virt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.winrepo.html">salt.runners.winrepo</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../sdb/all/index.html">Full list of builtin sdb modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../serializers/all/index.html">Full list of builtin serializers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../states/all/index.html">所有内置的state模块列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tops/all/index.html">master内置顶级模块的全部列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../wheel/all/index.html">Full list of builtin wheel modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

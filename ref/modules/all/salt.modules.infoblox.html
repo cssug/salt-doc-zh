@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.modules.infoblox</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.modules.infoblox">
+<span id="salt-modules-infoblox"></span><h1>salt.modules.infoblox<a class="headerlink" href="#module-salt.modules.infoblox" title="永久链接至标题">¶</a></h1>
+<p>Module for managing Infoblox</p>
+<p>Will look for pillar data infoblox:server, infoblox:user, infoblox:password if not passed to functions</p>
+<div class="versionadded">
+<p><span class="versionmodified">2016.3.0 新版功能.</span></p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">depends:</th><td class="field-body"><ul class="first last simple">
+<li>requests</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="salt.modules.infoblox.add_record">
+<code class="descclassname">salt.modules.infoblox.</code><code class="descname">add_record</code><span class="sig-paren">(</span><em>name</em>, <em>value</em>, <em>record_type</em>, <em>dns_view</em>, <em>infoblox_server=None</em>, <em>infoblox_user=None</em>, <em>infoblox_password=None</em>, <em>infoblox_api_version='v1.4.2'</em>, <em>sslVerify=True</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.modules.infoblox.add_record" title="永久链接至目标">¶</a></dt>
+<dd><p>add a record to an infoblox dns view</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>the record name</dd>
+<dt>value</dt>
+<dd><dl class="first last docutils">
+<dt>the value for the entry</dt>
+<dd>can make use of infoblox functions for next available IP, like 'func:nextavailableip:10.1.0.0/24'</dd>
+</dl>
+</dd>
+<dt>record_type</dt>
+<dd>the record type (cname, a, host, etc)</dd>
+<dt>dns_view</dt>
+<dd>the DNS view to add the record to</dd>
+<dt>infoblox_server</dt>
+<dd>the infoblox server hostname (can also use the infoblox:server pillar)</dd>
+<dt>infoblox_user</dt>
+<dd>the infoblox user to connect with (can also use the infoblox:user pillar)</dd>
+<dt>infoblox_password</dt>
+<dd>the infoblox user's password (can also use the infolblox:password pillar)</dd>
+<dt>infoblox_api_version</dt>
+<dd>the infoblox api verison to use</dd>
+<dt>sslVerify</dt>
+<dd>should ssl verification be done on the connection to the Infoblox REST API</dd>
+</dl>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;myminion&#39;</span> infoblox.add_record alias.network.name canonical.network.name MyView
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.modules.infoblox.delete_record">
+<code class="descclassname">salt.modules.infoblox.</code><code class="descname">delete_record</code><span class="sig-paren">(</span><em>name</em>, <em>dns_view</em>, <em>record_type</em>, <em>infoblox_server=None</em>, <em>infoblox_user=None</em>, <em>infoblox_password=None</em>, <em>infoblox_api_version='v1.4.2'</em>, <em>sslVerify=True</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.modules.infoblox.delete_record" title="永久链接至目标">¶</a></dt>
+<dd><p>delete a record</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>name of the record</dd>
+<dt>dns_view</dt>
+<dd>the DNS view to remove the record from</dd>
+<dt>record_type</dt>
+<dd>the record type (a, cname, host, etc)</dd>
+<dt>infoblox_server</dt>
+<dd>the infoblox server hostname (can also use the infoblox:server pillar)</dd>
+<dt>infoblox_user</dt>
+<dd>the infoblox user to connect with (can also use the infoblox:user pillar)</dd>
+<dt>infoblox_password</dt>
+<dd>the infoblox user's password (can also use the infolblox:password pillar)</dd>
+<dt>infoblox_api_version</dt>
+<dd>the infoblox api verison to use</dd>
+<dt>sslVerify</dt>
+<dd>should ssl verification be done on the connection to the Infoblox REST API</dd>
+</dl>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt my-minion infoblox.delete_record some.dns.record MyInfobloxView A <span class="nv">sslVerify</span><span class="o">=</span>False
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.modules.infoblox.get_network">
+<code class="descclassname">salt.modules.infoblox.</code><code class="descname">get_network</code><span class="sig-paren">(</span><em>network_name</em>, <em>network_view=None</em>, <em>infoblox_server=None</em>, <em>infoblox_user=None</em>, <em>infoblox_password=None</em>, <em>infoblox_api_version='v1.4.2'</em>, <em>sslVerify=True</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.modules.infoblox.get_network" title="永久链接至目标">¶</a></dt>
+<dd><p>get a network from infoblox</p>
+<dl class="docutils">
+<dt>network_name</dt>
+<dd>The name of the network in IPAM</dd>
+<dt>network_view</dt>
+<dd>The name of the network view the network belongs to</dd>
+<dt>infoblox_server</dt>
+<dd>the infoblox server hostname (can also use the infoblox:server pillar)</dd>
+<dt>infoblox_user</dt>
+<dd>the infoblox user to connect with (can also use the infoblox:user pillar)</dd>
+<dt>infoblox_password</dt>
+<dd>the infoblox user's password (can also use the infolblox:password pillar)</dd>
+<dt>infoblox_api_version</dt>
+<dd>the infoblox api verison to use</dd>
+<dt>sslVerify</dt>
+<dd>should ssl verification be done on the connection to the Infoblox REST API</dd>
+</dl>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion infoblox.get_network <span class="s1">&#39;10.0.0.0/8&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.modules.infoblox.get_record">
+<code class="descclassname">salt.modules.infoblox.</code><code class="descname">get_record</code><span class="sig-paren">(</span><em>record_name</em>, <em>record_type='host'</em>, <em>infoblox_server=None</em>, <em>infoblox_user=None</em>, <em>infoblox_password=None</em>, <em>dns_view=None</em>, <em>infoblox_api_version='v1.4.2'</em>, <em>sslVerify=True</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.modules.infoblox.get_record" title="永久链接至目标">¶</a></dt>
+<dd><p>get a record from infoblox</p>
+<dl class="docutils">
+<dt>record_name</dt>
+<dd>name of the record to search for</dd>
+<dt>record_type</dt>
+<dd>type of reacord to search for (host, cname, a, etc...defaults to host)</dd>
+<dt>infoblox_server</dt>
+<dd>the infoblox server hostname (can also use the infoblox:server pillar)</dd>
+<dt>infoblox_user</dt>
+<dd>the infoblox user to connect with (can also use the infoblox:user pillar)</dd>
+<dt>infoblox_password</dt>
+<dd>the infoblox user's password (can also use the infolblox:password pillar)</dd>
+<dt>dns_view</dt>
+<dd>the infoblox DNS view to search, if not specified all views are searched</dd>
+<dt>infoblox_api_version</dt>
+<dd>the infoblox api verison to use</dd>
+<dt>sslVerify</dt>
+<dd>should ssl verification be done on the connection to the Infoblox REST API</dd>
+</dl>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion infoblox.get_record some.host.com A <span class="nv">sslVerify</span><span class="o">=</span>False
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.modules.infoblox.update_record">
+<code class="descclassname">salt.modules.infoblox.</code><code class="descname">update_record</code><span class="sig-paren">(</span><em>name</em>, <em>value</em>, <em>dns_view</em>, <em>record_type</em>, <em>infoblox_server=None</em>, <em>infoblox_user=None</em>, <em>infoblox_password=None</em>, <em>infoblox_api_version='v1.4.2'</em>, <em>sslVerify=True</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.modules.infoblox.update_record" title="永久链接至目标">¶</a></dt>
+<dd><p>update an entry to an infoblox dns view</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd>the dns name</dd>
+<dt>value</dt>
+<dd>the value for the record</dd>
+<dt>record_type</dt>
+<dd>the record type (a, cname, etc)</dd>
+<dt>dns_view</dt>
+<dd>the DNS view to add the record to</dd>
+<dt>infoblox_server</dt>
+<dd>the infoblox server hostname (can also use the infoblox:server pillar)</dd>
+<dt>infoblox_user</dt>
+<dd>the infoblox user to connect with (can also use the infoblox:user pillar)</dd>
+<dt>infoblox_password</dt>
+<dd>the infoblox user's password (can also use the infolblox:password pillar)</dd>
+<dt>infoblox_api_version</dt>
+<dd>the infoblox api verison to use</dd>
+<dt>sslVerify</dt>
+<dd>should ssl verification be done on the connection to the Infoblox REST API</dd>
+</dl>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> infoblox.update_record alias.network.name canonical.network.name MyInfobloxView cname <span class="nv">sslVerify</span><span class="o">=</span>False
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

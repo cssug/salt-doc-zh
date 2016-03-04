@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Using Salt at scale</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Architecture" href="../topology/index.html">
+        <link rel="next" title="Multi Master Tutorial" href="multimaster.html">
+        <link rel="prev" title="Salt Syndic" href="../topology/syndic.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../topology/syndic.html" title="Salt Syndic">上一页</a>
+            
+        </li>
+        <li>
+            <a href="multimaster.html" title="Multi Master Tutorial">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="using-salt-at-scale">
+<h1>Using Salt at scale<a class="headerlink" href="#using-salt-at-scale" title="永久链接至标题">¶</a></h1>
+<p>The focus of this tutorial will be building a Salt infrastructure for handling
+large numbers of minions. This will include tuning, topology, and best practices.</p>
+<p>For how to install the Salt Master please
+go here: <a class="reference external" href="http://docs.saltstack.com/topics/installation/index.html">Installing saltstack</a></p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>This tutorial is intended for large installations, although these same settings
+won't hurt, it may not be worth the complexity to smaller installations.</p>
+<p>When used with minions, the term 'many' refers to at least a thousand
+and 'a few' always means 500.</p>
+<p class="last">For simplicity reasons, this tutorial will default to the standard ports
+used by Salt.</p>
+</div>
+<div class="section" id="the-master">
+<h2>The Master<a class="headerlink" href="#the-master" title="永久链接至标题">¶</a></h2>
+<p>The most common problems on the Salt Master are:</p>
+<ol class="arabic simple">
+<li>too many minions authing at once</li>
+<li>too many minions re-authing at once</li>
+<li>too many minions re-connecting at once</li>
+<li>too many minions returning at once</li>
+<li>too few resources (CPU/HDD)</li>
+</ol>
+<p>The first three are all &quot;thundering herd&quot; problems. To mitigate these issues
+we must configure the minions to back-off appropriately when the Master is
+under heavy load.</p>
+<p>The fourth is caused by masters with little hardware resources in combination
+with a possible bug in ZeroMQ. At least that's what it looks like till today
+(<a class="reference external" href="https://github.com/saltstack/salt/issues/11865">Issue 118651</a>,
+<a class="reference external" href="https://github.com/saltstack/salt/issues/5948">Issue 5948</a>,
+<a class="reference external" href="https://groups.google.com/forum/#!searchin/salt-users/lots$20of$20minions/salt-users/WxothArv2Do/t12MigMQDFAJ">Mail thread</a>)</p>
+<p>To fully understand each problem, it is important to understand, how Salt works.</p>
+<p>Very briefly, the Salt Master offers two services to the minions.</p>
+<ul class="simple">
+<li>a job publisher on port 4505</li>
+<li>an open port 4506 to receive the minions returns</li>
+</ul>
+<p>All minions are always connected to the publisher on port 4505 and only connect
+to the open return port 4506 if necessary. On an idle Master, there will only
+be connections on port 4505.</p>
+<div class="section" id="too-many-minions-authing">
+<h3>Too many minions authing<a class="headerlink" href="#too-many-minions-authing" title="永久链接至标题">¶</a></h3>
+<p>When the Minion service is first started up, it will connect to its Master's publisher
+on port 4505. If too many minions are started at once, this can cause a &quot;thundering herd&quot;.
+This can be avoided by not starting too many minions at once.</p>
+<p>The connection itself usually isn't the culprit, the more likely cause of master-side
+issues is the authentication that the Minion must do with the Master. If the Master
+is too heavily loaded to handle the auth request it will time it out. The Minion
+will then wait <cite>acceptance_wait_time</cite> to retry. If <cite>acceptance_wait_time_max</cite> is
+set then the Minion will increase its wait time by the <cite>acceptance_wait_time</cite> each
+subsequent retry until reaching <cite>acceptance_wait_time_max</cite>.</p>
+</div>
+<div class="section" id="too-many-minions-re-authing">
+<h3>Too many minions re-authing<a class="headerlink" href="#too-many-minions-re-authing" title="永久链接至标题">¶</a></h3>
+<p>This is most likely to happen in the testing phase of a Salt deployment, when
+all Minion keys have already been accepted, but the framework is being tested
+and parameters are frequently changed in the Salt Master's configuration
+file(s).</p>
+<p>The Salt Master generates a new AES key to encrypt its publications at certain
+events such as a Master restart or the removal of a Minion key.  If you are
+encountering this problem of too many minions re-authing against the Master,
+you will need to recalibrate your setup to reduce the rate of events like a
+Master restart or Minion key removal (<code class="docutils literal"><span class="pre">salt-key</span> <span class="pre">-d</span></code>).</p>
+<p>When the Master generates a new AES key, the minions aren't notified of this
+but will discover it on the next pub job they receive. When the Minion
+receives such a job it will then re-auth with the Master. Since Salt does
+minion-side filtering this means that all the minions will re-auth on the next
+command published on the master-- causing another &quot;thundering herd&quot;. This can
+be avoided by setting the</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">random_reauth_delay</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">60</span>
+</pre></div>
+</div>
+<p>in the minions configuration file to a higher value and stagger the amount
+of re-auth attempts. Increasing this value will of course increase the time
+it takes until all minions are reachable via Salt commands.</p>
+</div>
+<div class="section" id="too-many-minions-re-connecting">
+<h3>Too many minions re-connecting<a class="headerlink" href="#too-many-minions-re-connecting" title="永久链接至标题">¶</a></h3>
+<p>By default the zmq socket will re-connect every 100ms which for some larger
+installations may be too quick. This will control how quickly the TCP session is
+re-established, but has no bearing on the auth load.</p>
+<p>To tune the minions sockets reconnect attempts, there are a few values in
+the sample configuration file (default values)</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">recon_default</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">100ms</span>
+<span class="l l-Scalar l-Scalar-Plain">recon_max</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">5000</span>
+<span class="l l-Scalar l-Scalar-Plain">recon_randomize</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>recon_default: the default value the socket should use, i.e. 100ms</li>
+<li>recon_max: the max value that the socket should use as a delay before trying to reconnect</li>
+<li>recon_randomize: enables randomization between recon_default and recon_max</li>
+</ul>
+<p>To tune this values to an existing environment, a few decision have to be made.</p>
+<ol class="arabic simple">
+<li>How long can one wait, before the minions should be online and reachable via Salt?</li>
+<li>How many reconnects can the Master handle without a syn flood?</li>
+</ol>
+<p>These questions can not be answered generally. Their answers depend on the
+hardware and the administrators requirements.</p>
+<p>Here is an example scenario with the goal, to have all minions reconnect
+within a 60 second time-frame on a Salt Master service restart.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">recon_default</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="l l-Scalar l-Scalar-Plain">recon_max</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">59000</span>
+<span class="l l-Scalar l-Scalar-Plain">recon_randomize</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>Each Minion will have a randomized reconnect value between 'recon_default'
+and 'recon_default + recon_max', which in this example means between 1000ms
+and 60000ms (or between 1 and 60 seconds). The generated random-value will
+be doubled after each attempt to reconnect (ZeroMQ default behavior).</p>
+<p>Lets say the generated random value is 11 seconds (or 11000ms).</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>reconnect 1: <span class="nb">wait</span> <span class="m">11</span> seconds
+reconnect 2: <span class="nb">wait</span> <span class="m">22</span> seconds
+reconnect 3: <span class="nb">wait</span> <span class="m">33</span> seconds
+reconnect 4: <span class="nb">wait</span> <span class="m">44</span> seconds
+reconnect 5: <span class="nb">wait</span> <span class="m">55</span> seconds
+reconnect 6: <span class="nb">wait</span> <span class="nb">time</span> is bigger than <span class="m">60</span> seconds <span class="o">(</span>recon_default + recon_max<span class="o">)</span>
+reconnect 7: <span class="nb">wait</span> <span class="m">11</span> seconds
+reconnect 8: <span class="nb">wait</span> <span class="m">22</span> seconds
+reconnect 9: <span class="nb">wait</span> <span class="m">33</span> seconds
+reconnect x: etc.
+</pre></div>
+</div>
+<p>With a thousand minions this will mean</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>1000/60 = ~16
+</pre></div>
+</div>
+<p>round about 16 connection attempts a second. These values should be altered to
+values that match your environment. Keep in mind though, that it may grow over
+time and that more minions might raise the problem again.</p>
+</div>
+<div class="section" id="too-many-minions-returning-at-once">
+<h3>Too many minions returning at once<a class="headerlink" href="#too-many-minions-returning-at-once" title="永久链接至标题">¶</a></h3>
+<p>This can also happen during the testing phase, if all minions are addressed at
+once with</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ salt * disk.usage
+</pre></div>
+</div>
+<p>it may cause thousands of minions trying to return their data to the Salt Master
+open port 4506. Also causing a flood of syn-flood if the Master can't handle that many
+returns at once.</p>
+<p>This can be easily avoided with Salt's batch mode:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ salt * disk.usage -b 50
+</pre></div>
+</div>
+<p>This will only address 50 minions at once while looping through all addressed
+minions.</p>
+</div>
+</div>
+<div class="section" id="too-few-resources">
+<h2>Too few resources<a class="headerlink" href="#too-few-resources" title="永久链接至标题">¶</a></h2>
+<p>The masters resources always have to match the environment. There is no way
+to give good advise without knowing the environment the Master is supposed to
+run in.  But here are some general tuning tips for different situations:</p>
+<div class="section" id="the-master-is-cpu-bound">
+<h3>The Master is CPU bound<a class="headerlink" href="#the-master-is-cpu-bound" title="永久链接至标题">¶</a></h3>
+<p>Salt uses RSA-Key-Pairs on the masters and minions end. Both generate 4096
+bit key-pairs on first start. While the key-size for the Master is currently
+not configurable, the minions keysize can be configured with different
+key-sizes. For example with a 2048 bit key:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">keysize</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">2048</span>
+</pre></div>
+</div>
+<p>With thousands of decryptions, the amount of time that can be saved on the
+masters end should not be neglected. See here for reference:
+<a class="reference external" href="https://github.com/saltstack/salt/pull/9235">Pull Request 9235</a> how much
+influence the key-size can have.</p>
+<p>Downsizing the Salt Master's key is not that important, because the minions
+do not encrypt as many messages as the Master does.</p>
+<p>In installations with large or with complex pillar files, it is possible
+for the master to exhibit poor performance as a result of having to render
+many pillar files at once. This exhibit itself in a number of ways, both
+as high load on the master and on minions which block on waiting for their
+pillar to be delivered to them.</p>
+<p>To reduce pillar rendering times, it is possible to cache pillars on the
+master. To do this, see the set of master configuration options which
+are prefixed with <cite>pillar_cache</cite>.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Caching pillars on the master may introduce security considerations.
+Be certain to read caveats outlined in the master configuration file
+to understand how pillar caching may affect a master's ability to
+protect sensitive data!</p>
+</div>
+</div>
+<div class="section" id="the-master-is-disk-io-bound">
+<h3>The Master is disk IO bound<a class="headerlink" href="#the-master-is-disk-io-bound" title="永久链接至标题">¶</a></h3>
+<p>By default, the Master saves every Minion's return for every job in its
+job-cache. The cache can then be used later, to lookup results for previous
+jobs. The default directory for this is:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">cachedir</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/var/cache/salt</span>
+</pre></div>
+</div>
+<p>and then in the <code class="docutils literal"><span class="pre">/proc</span></code> directory.</p>
+<p>Each job return for every Minion is saved in a single file. Over time this
+directory can grow quite large, depending on the number of published jobs. The
+amount of files and directories will scale with the number of jobs published and
+the retention time defined by</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">keep_jobs</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">24</span>
+</pre></div>
+</div>
+<div class="highlight-text"><div class="highlight"><pre><span></span>250 jobs/day * 2000 minions returns = 500.000 files a day
+</pre></div>
+</div>
+<p>If no job history is needed, the job cache can be disabled:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">job_cache</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+</pre></div>
+</div>
+<p>If the job cache is necessary there are (currently) 2 options:</p>
+<ul class="simple">
+<li>ext_job_cache: this will have the minions store their return data directly
+into a returner (not sent through the Master)</li>
+<li>master_job_cache (New in <cite>2014.7.0</cite>): this will make the Master store the job
+data using a returner (instead of the local job cache on disk).</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../topology/syndic.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt Syndic" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="multimaster.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Multi Master Tutorial" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../topology/index.html">Architecture</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../highavailability/index.html">High Availability Features in Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../topology/syndic.html">Salt Syndic</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Using Salt at scale</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-master">The Master</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#too-many-minions-authing">Too many minions authing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#too-many-minions-re-authing">Too many minions re-authing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#too-many-minions-re-connecting">Too many minions re-connecting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#too-many-minions-returning-at-once">Too many minions returning at once</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#too-few-resources">Too few resources</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#the-master-is-cpu-bound">The Master is CPU bound</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#the-master-is-disk-io-bound">The Master is disk IO bound</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="multimaster.html">Multi Master Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multimaster_pki.html">Multi-Master-PKI Tutorial With Failover</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

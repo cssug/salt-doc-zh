@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Troubleshooting the Salt Master</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="解决问题" href="index.html">
+        <link rel="next" title="Troubleshooting the Salt Minion" href="minion.html">
+        <link rel="prev" title="解决问题" href="index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="index.html" title="解决问题">上一页</a>
+            
+        </li>
+        <li>
+            <a href="minion.html" title="Troubleshooting the Salt Minion">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="troubleshooting-the-salt-master">
+<h1>Troubleshooting the Salt Master<a class="headerlink" href="#troubleshooting-the-salt-master" title="永久链接至标题">¶</a></h1>
+<div class="section" id="running-in-the-foreground">
+<h2>Running in the Foreground<a class="headerlink" href="#running-in-the-foreground" title="永久链接至标题">¶</a></h2>
+<p>A great deal of information is available via the debug logging system, if you
+are having issues with minions connecting or not starting run the master in
+the foreground:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-master -l debug</span>
+</pre></div>
+</div>
+<p>Anyone wanting to run Salt daemons via a process supervisor such as <a class="reference external" href="http://mmonit.com/monit/">monit</a>,
+<a class="reference external" href="http://smarden.org/runit/">runit</a>, or <a class="reference external" href="http://supervisord.org/">supervisord</a>, should omit the <code class="docutils literal"><span class="pre">-d</span></code> argument to the daemons and
+run them in the foreground.</p>
+</div>
+<div class="section" id="what-ports-does-the-master-need-open">
+<h2>What Ports does the Master Need Open?<a class="headerlink" href="#what-ports-does-the-master-need-open" title="永久链接至标题">¶</a></h2>
+<p>For the master, TCP ports 4505 and 4506 need to be open. If you've put both
+your Salt master and minion in debug mode and don't see an acknowledgment
+that your minion has connected, it could very well be a firewall interfering
+with the connection. See our <a class="reference internal" href="../tutorials/firewall.html"><em>firewall configuration</em></a> page for help opening the firewall on various
+platforms.</p>
+<p>If you've opened the correct TCP ports and still aren't seeing connections,
+check that no additional access control system such as <a class="reference external" href="https://en.wikipedia.org/wiki/Security-Enhanced_Linux">SELinux</a> or
+<a class="reference external" href="http://wiki.apparmor.net/index.php/Main_Page">AppArmor</a> is blocking Salt.</p>
+</div>
+<div class="section" id="too-many-open-files">
+<h2>Too many open files<a class="headerlink" href="#too-many-open-files" title="永久链接至标题">¶</a></h2>
+<p>The salt-master needs at least 2 sockets per host that connects to it, one for
+the Publisher and one for response port. Thus, large installations may, upon
+scaling up the number of minions accessing a given master, encounter:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>12:45:29,289 <span class="o">[</span>salt.master    <span class="o">][</span>INFO    <span class="o">]</span> Starting Salt worker process 38
+Too many open files
+sock !<span class="o">=</span> -1 <span class="o">(</span>tcp_listener.cpp:335<span class="o">)</span>
+</pre></div>
+</div>
+<p>The solution to this would be to check the number of files allowed to be
+opened by the user running salt-master (root by default):</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="o">[</span>root@salt-master ~<span class="o">]</span><span class="c1"># ulimit -n</span>
+1024
+</pre></div>
+</div>
+<p>If this value is not equal to at least twice the number of minions, then it
+will need to be raised. For example, in an environment with 1800 minions, the
+<code class="docutils literal"><span class="pre">nofile</span></code> limit should be set to no less than 3600. This can be done by
+creating the file <code class="docutils literal"><span class="pre">/etc/security/limits.d/99-salt.conf</span></code>, with the following
+contents:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>root        hard    nofile        4096
+root        soft    nofile        4096
+</pre></div>
+</div>
+<p>Replace <code class="docutils literal"><span class="pre">root</span></code> with the user under which the master runs, if different.</p>
+<p>If your master does not have an <code class="docutils literal"><span class="pre">/etc/security/limits.d</span></code> directory, the lines
+can simply be appended to <code class="docutils literal"><span class="pre">/etc/security/limits.conf</span></code>.</p>
+<p>As with any change to resource limits, it is best to stay logged into your
+current shell and open another shell to run <code class="docutils literal"><span class="pre">ulimit</span> <span class="pre">-n</span></code> again and verify that
+the changes were applied correctly. Additionally, if your master is running
+upstart, it may be necessary to specify the <code class="docutils literal"><span class="pre">nofile</span></code> limit in
+<code class="docutils literal"><span class="pre">/etc/default/salt-master</span></code> if upstart isn't respecting your resource limits:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>limit nofile 4096 4096
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The above is simply an example of how to set these values, and you may
+wish to increase them even further if your Salt master is doing more than
+just running Salt.</p>
+</div>
+</div>
+<div class="section" id="salt-master-stops-responding">
+<h2>Salt Master Stops Responding<a class="headerlink" href="#salt-master-stops-responding" title="永久链接至标题">¶</a></h2>
+<p>There are known bugs with ZeroMQ versions less than 2.1.11 which can cause the
+Salt master to not respond properly. If you're running a ZeroMQ version greater
+than or equal to 2.1.9, you can work around the bug by setting the sysctls
+<code class="docutils literal"><span class="pre">net.core.rmem_max</span></code> and <code class="docutils literal"><span class="pre">net.core.wmem_max</span></code> to 16777216. Next, set the third
+field in <code class="docutils literal"><span class="pre">net.ipv4.tcp_rmem</span></code> and <code class="docutils literal"><span class="pre">net.ipv4.tcp_wmem</span></code> to at least 16777216.</p>
+<p>You can do it manually with something like:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># echo 16777216 &gt; /proc/sys/net/core/rmem_max</span>
+<span class="c1"># echo 16777216 &gt; /proc/sys/net/core/wmem_max</span>
+<span class="c1"># echo &quot;4096 87380 16777216&quot; &gt; /proc/sys/net/ipv4/tcp_rmem</span>
+<span class="c1"># echo &quot;4096 87380 16777216&quot; &gt; /proc/sys/net/ipv4/tcp_wmem</span>
+</pre></div>
+</div>
+<p>Or with the following Salt state:</p>
+<div class="highlight-yaml"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">net.core.rmem_max</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">sysctl</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">16777216</span>
+
+<span class="l l-Scalar l-Scalar-Plain">net.core.wmem_max</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">sysctl</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">16777216</span>
+
+<span class="l l-Scalar l-Scalar-Plain">net.ipv4.tcp_rmem</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">sysctl</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">4096 87380 16777216</span>
+
+<span class="l l-Scalar l-Scalar-Plain">net.ipv4.tcp_wmem</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">sysctl</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">value</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">4096 87380 16777216</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="live-python-debug-output">
+<h2>Live Python Debug Output<a class="headerlink" href="#live-python-debug-output" title="永久链接至标题">¶</a></h2>
+<p>If the master seems to be unresponsive, a SIGUSR1 can be passed to the
+salt-master threads to display what piece of code is executing. This debug
+information can be invaluable in tracking down bugs.</p>
+<p>To pass a SIGUSR1 to the master, first make sure the minion is running in the
+foreground. Stop the service if it is running as a daemon, and start it in the
+foreground like so:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-master -l debug</span>
+</pre></div>
+</div>
+<p>Then pass the signal to the master when it seems to be unresponsive:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># killall -SIGUSR1 salt-master</span>
+</pre></div>
+</div>
+<p>When filing an issue or sending questions to the mailing list for a problem
+with an unresponsive daemon, be sure to include this information if possible.</p>
+</div>
+<div class="section" id="live-salt-master-profiling">
+<h2>Live Salt-Master Profiling<a class="headerlink" href="#live-salt-master-profiling" title="永久链接至标题">¶</a></h2>
+<p>When faced with performance problems one can turn on master process profiling by
+sending it SIGUSR2.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># killall -SIGUSR2 salt-master</span>
+</pre></div>
+</div>
+<p>This will activate <code class="docutils literal"><span class="pre">yappi</span></code> profiler inside salt-master code, then after some
+time one must send SIGUSR2 again to stop profiling and save results to file. If
+run in foreground salt-master will report filename for the results, which are
+usually located under <code class="docutils literal"><span class="pre">/tmp</span></code> on Unix-based OSes and <code class="docutils literal"><span class="pre">c:\temp</span></code> on windows.</p>
+<p>Results can then be analyzed with <a class="reference external" href="http://kcachegrind.sourceforge.net/html/Home.html">kcachegrind</a> or similar tool.</p>
+</div>
+<div class="section" id="commands-time-out-or-do-not-return-output">
+<h2>Commands Time Out or Do Not Return Output<a class="headerlink" href="#commands-time-out-or-do-not-return-output" title="永久链接至标题">¶</a></h2>
+<p>Depending on your OS (this is most common on Ubuntu due to apt-get) you may
+sometimes encounter times where your highstate, or other long running commands
+do not return output.</p>
+<p>By default the timeout is set to 5 seconds. The timeout value can easily be
+increased by modifying the <code class="docutils literal"><span class="pre">timeout</span></code> line within your <code class="docutils literal"><span class="pre">/etc/salt/master</span></code>
+configuration file.</p>
+<p>Having keys accepted for Salt minions that no longer exist or are not reachable
+also increases the possibility of timeouts, since the Salt master waits for
+those systems to return command results.</p>
+</div>
+<div class="section" id="passing-the-c-option-to-salt-returns-a-permissions-error">
+<h2>Passing the -c Option to Salt Returns a Permissions Error<a class="headerlink" href="#passing-the-c-option-to-salt-returns-a-permissions-error" title="永久链接至标题">¶</a></h2>
+<p>Using the <code class="docutils literal"><span class="pre">-c</span></code> option with the Salt command modifies the configuration
+directory. When the configuration file is read it will still base data off of
+the <code class="docutils literal"><span class="pre">root_dir</span></code> setting. This can result in unintended behavior if you are
+expecting files such as <code class="docutils literal"><span class="pre">/etc/salt/pki</span></code> to be pulled from the location
+specified with <code class="docutils literal"><span class="pre">-c</span></code>. Modify the <code class="docutils literal"><span class="pre">root_dir</span></code> setting to address this
+behavior.</p>
+</div>
+<div class="section" id="salt-master-doesn-t-return-anything-while-running-jobs">
+<h2>Salt Master Doesn't Return Anything While Running jobs<a class="headerlink" href="#salt-master-doesn-t-return-anything-while-running-jobs" title="永久链接至标题">¶</a></h2>
+<p>When a command being run via Salt takes a very long time to return
+(package installations, certain scripts, etc.) the master may drop you back
+to the shell. In most situations the job is still running but Salt has
+exceeded the set timeout before returning. Querying the job queue will
+provide the data of the job but is inconvenient. This can be resolved by
+either manually using the <code class="docutils literal"><span class="pre">-t</span></code> option to set a longer timeout when running
+commands (by default it is 5 seconds) or by modifying the master
+configuration file: <code class="docutils literal"><span class="pre">/etc/salt/master</span></code> and setting the <code class="docutils literal"><span class="pre">timeout</span></code> value to
+change the default timeout for all commands, and then restarting the
+salt-master service.</p>
+</div>
+<div class="section" id="salt-master-auth-flooding">
+<h2>Salt Master Auth Flooding<a class="headerlink" href="#salt-master-auth-flooding" title="永久链接至标题">¶</a></h2>
+<p>In large installations, care must be taken not to overwhealm the master with
+authentication requests. Several options can be set on the master which
+mitigate the chances of an authentication flood from causing an interuption in
+service.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>recon_default:</p>
+<p>The average number of seconds to wait between reconnection attempts.</p>
+<dl class="last docutils">
+<dt>recon_max:</dt>
+<dd>The maximum number of seconds to wait between reconnection attempts.</dd>
+<dt>recon_randomize:</dt>
+<dd>A flag to indicate whether the recon_default value should be randomized.</dd>
+<dt>acceptance_wait_time:</dt>
+<dd>The number of seconds to wait for a reply to each authentication request.</dd>
+<dt>random_reauth_delay:</dt>
+<dd>The range of seconds across which the minions should attempt to randomize
+authentication attempts.</dd>
+<dt>auth_timeout:</dt>
+<dd>The total time to wait for the authentication process to complete, regardless
+of the number of attempts.</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="section" id="running-state-locally">
+<h1>Running state locally<a class="headerlink" href="#running-state-locally" title="永久链接至标题">¶</a></h1>
+<p>To debug the states, you can use call locally.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-call -l trace --local state.highstate
+</pre></div>
+</div>
+<p>The top.sls file is used to map what SLS modules get loaded onto what minions via the state system.</p>
+<p>It is located in the file defined in the <code class="docutils literal"><span class="pre">file_roots</span></code> variable of the salt master
+configuration file which is defined by found in <code class="docutils literal"><span class="pre">CONFIG_DIR/master</span></code>, normally <code class="docutils literal"><span class="pre">/etc/salt/master</span></code></p>
+<p>The default configuration for the <code class="docutils literal"><span class="pre">file_roots</span></code> is:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">file_roots</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt</span>
+</pre></div>
+</div>
+<p>So the top file is defaulted to the location <code class="docutils literal"><span class="pre">/srv/salt/top.sls</span></code></p>
+<div class="section" id="salt-master-umask">
+<h2>Salt Master Umask<a class="headerlink" href="#salt-master-umask" title="永久链接至标题">¶</a></h2>
+<p>The salt master uses a cache to track jobs as they are published and returns come back.
+The recommended umask for a salt-master is <cite>022</cite>, which is the default for most users
+on a system. Incorrect umasks can result in permission-denied errors when the master
+tries to access files in its cache.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="解决问题" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="minion.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Troubleshooting the Salt Minion" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../using_salt.html">Using Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../grains/index.html">Grains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pillar/index.html">在Pillar中存储静态数据</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../targeting/index.html">Targeting Minions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mine/index.html">Salt Mine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/runners/index.html">Runners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../engines/index.html">Salt Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../yaml/index.html">了解YAML</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">解决问题</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#troubleshooting-the-salt-master">Troubleshooting the Salt Master</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="">Troubleshooting the Salt Master</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#running-in-the-foreground">Running in the Foreground</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#what-ports-does-the-master-need-open">What Ports does the Master Need Open?</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#too-many-open-files">Too many open files</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#salt-master-stops-responding">Salt Master Stops Responding</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#live-python-debug-output">Live Python Debug Output</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#live-salt-master-profiling">Live Salt-Master Profiling</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#commands-time-out-or-do-not-return-output">Commands Time Out or Do Not Return Output</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#passing-the-c-option-to-salt-returns-a-permissions-error">Passing the -c Option to Salt Returns a Permissions Error</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#salt-master-doesn-t-return-anything-while-running-jobs">Salt Master Doesn't Return Anything While Running jobs</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#salt-master-auth-flooding">Salt Master Auth Flooding</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#running-state-locally">Running state locally</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#salt-master-umask">Salt Master Umask</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#troubleshooting-the-salt-minion">Troubleshooting the Salt Minion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#running-in-the-foreground">Running in the Foreground</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#what-ports-do-the-master-and-minion-need-open">What Ports do the Master and Minion Need Open?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#using-salt-call">Using salt-call</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#too-many-open-files">Too many open files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#salt-master-stops-responding">Salt Master Stops Responding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#salt-and-selinux">Salt and SELinux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#red-hat-enterprise-linux-5">Red Hat Enterprise Linux 5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#common-yaml-gotchas">Common YAML Gotchas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#live-python-debug-output">Live Python Debug Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#salt-0-16-x-minions-cannot-communicate-with-a-0-17-x-master">Salt 0.16.x minions cannot communicate with a 0.17.x master</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#debugging-the-master-and-minion">Debugging the Master and Minion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../faq.html">常见问题</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../best_practices.html">Salt Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

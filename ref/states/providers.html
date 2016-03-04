@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>State Providers</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="State System Reference" href="index.html">
+        <link rel="next" title="Requisites and Other Global State Arguments" href="requisites.html">
+        <link rel="prev" title="Ordering States" href="ordering.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="ordering.html" title="Ordering States">上一页</a>
+            
+        </li>
+        <li>
+            <a href="requisites.html" title="Requisites and Other Global State Arguments">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="state-providers">
+<h1>State Providers<a class="headerlink" href="#state-providers" title="永久链接至标题">¶</a></h1>
+<div class="versionadded">
+<p><span class="versionmodified">0.9.8 新版功能.</span></p>
+</div>
+<p>Salt predetermines what modules should be mapped to what uses based on the
+properties of a system. These determinations are generally made for modules
+that provide things like package and service management.</p>
+<p>Sometimes in states, it may be necessary to use an alternative module to
+provide the needed functionality. For instance, an older Arch Linux system may
+not be running systemd, so instead of using the systemd service module, you can
+revert to the default service module:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">httpd</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">enable</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">service</span>
+</pre></div>
+</div>
+<p>In this instance, the basic <a class="reference internal" href="../modules/all/salt.modules.service.html#module-salt.modules.service" title="salt.modules.service"><code class="xref py py-mod docutils literal"><span class="pre">service</span></code></a> module (which
+manages <strong class="program">sysvinit</strong>-based services) will replace the
+<a class="reference internal" href="../modules/all/salt.modules.systemd.html#module-salt.modules.systemd" title="salt.modules.systemd"><code class="xref py py-mod docutils literal"><span class="pre">systemd</span></code></a> module which is used by default on Arch Linux.</p>
+<p>However, if it is necessary to make this override for most or every service,
+it is better to just override the provider in the minion config file, as
+described in the section below.</p>
+<div class="section" id="setting-a-provider-in-the-minion-config-file">
+<h2>Setting a Provider in the Minion Config File<a class="headerlink" href="#setting-a-provider-in-the-minion-config-file" title="永久链接至标题">¶</a></h2>
+<p>Sometimes, when running Salt on custom Linux spins, or distribution that are derived
+from other distributions, Salt does not successfully detect providers. The providers
+which are most likely to be affected by this are:</p>
+<ul class="simple">
+<li>pkg</li>
+<li>service</li>
+<li>user</li>
+<li>group</li>
+</ul>
+<p>When something like this happens, rather than specifying the provider manually
+in each state, it easier to use the <a class="reference internal" href="../configuration/minion.html#std:conf_minion-providers"><code class="xref std std-conf_minion docutils literal"><span class="pre">providers</span></code></a> parameter in the
+minion config file to set the provider.</p>
+<p>If you end up needing to override a provider because it was not detected,
+please let us know! File an issue on the <a class="reference external" href="https://github.com/saltstack/salt/issues">issue tracker</a>, and provide the
+output from the <a class="reference internal" href="../modules/all/salt.modules.grains.html#salt.modules.grains.items" title="salt.modules.grains.items"><code class="xref py py-mod docutils literal"><span class="pre">grains.items</span></code></a> function,
+taking care to sanitize any sensitive information.</p>
+<p>Below are tables that should help with deciding which provider to use if one
+needs to be overridden.</p>
+<div class="section" id="provider-pkg">
+<h3>Provider: <code class="docutils literal"><span class="pre">pkg</span></code><a class="headerlink" href="#provider-pkg" title="永久链接至标题">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Execution Module</th>
+<th class="head">Used for</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>apt</td>
+<td>Debian/Ubuntu-based distros which use <code class="docutils literal"><span class="pre">apt-get(8)</span></code>
+for package management</td>
+</tr>
+<tr class="row-odd"><td>brew</td>
+<td>Mac OS software management using <a class="reference external" href="http://brew.sh/">Homebrew</a></td>
+</tr>
+<tr class="row-even"><td>ebuild</td>
+<td>Gentoo-based systems (utilizes the <code class="docutils literal"><span class="pre">portage</span></code> python
+module as well as <code class="docutils literal"><span class="pre">emerge(1)</span></code>)</td>
+</tr>
+<tr class="row-odd"><td>freebsdpkg</td>
+<td>FreeBSD-based OSes using <code class="docutils literal"><span class="pre">pkg_add(1)</span></code></td>
+</tr>
+<tr class="row-even"><td>openbsdpkg</td>
+<td>OpenBSD-based OSes using <code class="docutils literal"><span class="pre">pkg_add(1)</span></code></td>
+</tr>
+<tr class="row-odd"><td>pacman</td>
+<td>Arch Linux-based distros using <code class="docutils literal"><span class="pre">pacman(8)</span></code></td>
+</tr>
+<tr class="row-even"><td>pkgin</td>
+<td>NetBSD-based OSes using <code class="docutils literal"><span class="pre">pkgin(1)</span></code></td>
+</tr>
+<tr class="row-odd"><td>pkgng</td>
+<td>FreeBSD-based OSes using <code class="docutils literal"><span class="pre">pkg(8)</span></code></td>
+</tr>
+<tr class="row-even"><td>pkgutil</td>
+<td>Solaris-based OSes using <a class="reference external" href="http://www.opencsw.org/">OpenCSW</a>'s <code class="docutils literal"><span class="pre">pkgutil(1)</span></code></td>
+</tr>
+<tr class="row-odd"><td>solarispkg</td>
+<td>Solaris-based OSes using <code class="docutils literal"><span class="pre">pkgadd(1M)</span></code></td>
+</tr>
+<tr class="row-even"><td>solarisips</td>
+<td>Solaris-based OSes using IPS <code class="docutils literal"><span class="pre">pkg(1)</span></code></td>
+</tr>
+<tr class="row-odd"><td>win_pkg</td>
+<td>Windows</td>
+</tr>
+<tr class="row-even"><td>yumpkg</td>
+<td>RedHat-based distros and derivatives (wraps <code class="docutils literal"><span class="pre">yum(8)</span></code>)</td>
+</tr>
+<tr class="row-odd"><td>zypper</td>
+<td>SUSE-based distros using <code class="docutils literal"><span class="pre">zypper(8)</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="provider-service">
+<h3>Provider: <code class="docutils literal"><span class="pre">service</span></code><a class="headerlink" href="#provider-service" title="永久链接至标题">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Execution Module</th>
+<th class="head">Used for</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>debian_service</td>
+<td>Debian (non-systemd)</td>
+</tr>
+<tr class="row-odd"><td>freebsdservice</td>
+<td>FreeBSD-based OSes using <code class="docutils literal"><span class="pre">service(8)</span></code></td>
+</tr>
+<tr class="row-even"><td>gentoo_service</td>
+<td>Gentoo Linux using <strong class="program">sysvinit</strong> and
+<code class="docutils literal"><span class="pre">rc-update(8)</span></code></td>
+</tr>
+<tr class="row-odd"><td>launchctl</td>
+<td>Mac OS hosts using <code class="docutils literal"><span class="pre">launchctl(1)</span></code></td>
+</tr>
+<tr class="row-even"><td>netbsdservice</td>
+<td>NetBSD-based OSes</td>
+</tr>
+<tr class="row-odd"><td>openbsdservice</td>
+<td>OpenBSD-based OSes</td>
+</tr>
+<tr class="row-even"><td>rh_service</td>
+<td>RedHat-based distros and derivatives using
+<code class="docutils literal"><span class="pre">service(8)</span></code> and <code class="docutils literal"><span class="pre">chkconfig(8)</span></code>. Supports both
+pure sysvinit and mixed sysvinit/upstart systems.</td>
+</tr>
+<tr class="row-odd"><td>service</td>
+<td>Fallback which simply wraps sysvinit scripts</td>
+</tr>
+<tr class="row-even"><td>smf</td>
+<td>Solaris-based OSes which use SMF</td>
+</tr>
+<tr class="row-odd"><td>systemd</td>
+<td>Linux distros which use systemd</td>
+</tr>
+<tr class="row-even"><td>upstart</td>
+<td>Ubuntu-based distros using upstart</td>
+</tr>
+<tr class="row-odd"><td>win_service</td>
+<td>Windows</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="provider-user">
+<h3>Provider: <code class="docutils literal"><span class="pre">user</span></code><a class="headerlink" href="#provider-user" title="永久链接至标题">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Execution Module</th>
+<th class="head">Used for</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>useradd</td>
+<td>Linux, NetBSD, and OpenBSD systems using
+<code class="docutils literal"><span class="pre">useradd(8)</span></code>, <code class="docutils literal"><span class="pre">userdel(8)</span></code>, and <code class="docutils literal"><span class="pre">usermod(8)</span></code></td>
+</tr>
+<tr class="row-odd"><td>pw_user</td>
+<td>FreeBSD-based OSes using <code class="docutils literal"><span class="pre">pw(8)</span></code></td>
+</tr>
+<tr class="row-even"><td>solaris_user</td>
+<td>Solaris-based OSes using <code class="docutils literal"><span class="pre">useradd(1M)</span></code>,
+<code class="docutils literal"><span class="pre">userdel(1M)</span></code>, and <code class="docutils literal"><span class="pre">usermod(1M)</span></code></td>
+</tr>
+<tr class="row-odd"><td>win_useradd</td>
+<td>Windows</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="provider-group">
+<h3>Provider: <code class="docutils literal"><span class="pre">group</span></code><a class="headerlink" href="#provider-group" title="永久链接至标题">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Execution Module</th>
+<th class="head">Used for</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>groupadd</td>
+<td>Linux, NetBSD, and OpenBSD systems using
+<code class="docutils literal"><span class="pre">groupadd(8)</span></code>, <code class="docutils literal"><span class="pre">groupdel(8)</span></code>, and <code class="docutils literal"><span class="pre">groupmod(8)</span></code></td>
+</tr>
+<tr class="row-odd"><td>pw_group</td>
+<td>FreeBSD-based OSes using <code class="docutils literal"><span class="pre">pw(8)</span></code></td>
+</tr>
+<tr class="row-even"><td>solaris_group</td>
+<td>Solaris-based OSes using <code class="docutils literal"><span class="pre">groupadd(1M)</span></code>,
+<code class="docutils literal"><span class="pre">groupdel(1M)</span></code>, and <code class="docutils literal"><span class="pre">groupmod(1M)</span></code></td>
+</tr>
+<tr class="row-odd"><td>win_groupadd</td>
+<td>Windows</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="arbitrary-module-redirects">
+<h2>Arbitrary Module Redirects<a class="headerlink" href="#arbitrary-module-redirects" title="永久链接至标题">¶</a></h2>
+<p>The provider statement can also be used for more powerful means, instead of
+overwriting or extending the module used for the named service an arbitrary
+module can be used to provide certain functionality.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">emacs</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cmd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">customcmd</span>
+</pre></div>
+</div>
+<p>In this example, the state is being instructed to use a custom module to invoke
+commands.</p>
+<p>Arbitrary module redirects can be used to dramatically change the behavior of a
+given state.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="ordering.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Ordering States" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="requisites.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Requisites and Other Global State Arguments" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../topics/states/index.html">Configuration Management</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/starting_states.html">我们如何使用Salt States？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt1.html">States教程，第1部分 - 基础用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt2.html">States tutorial, part 2 - More Complex States, Requisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt3.html">States tutorial, part 3 - Templating, Includes, Extends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt4.html">States tutorial, part 4</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">State System Reference</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aggregate.html">Mod Aggregate State Runtime Modifications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="altering_states.html">Altering States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="backup_mode.html">File State Backups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compiler_ordering.html">Understanding State Compiler Ordering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extend.html">Extending External SLS Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="failhard.html">Failhard Global Option</a></li>
+<li class="toctree-l3"><a class="reference internal" href="global_state_arguments.html">Global State Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html">Highstate data structure definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="include.html">Include and Exclude</a></li>
+<li class="toctree-l3"><a class="reference internal" href="layers.html">State System Layers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="master_side.html">The Orchestrate Runner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ordering.html">Ordering States</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">State Providers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#setting-a-provider-in-the-minion-config-file">Setting a Provider in the Minion Config File</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#provider-pkg">Provider: <code class="docutils literal"><span class="pre">pkg</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#provider-service">Provider: <code class="docutils literal"><span class="pre">service</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#provider-user">Provider: <code class="docutils literal"><span class="pre">user</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="#provider-group">Provider: <code class="docutils literal"><span class="pre">group</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#arbitrary-module-redirects">Arbitrary Module Redirects</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="requisites.html">Requisites and Other Global State Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="startup.html">Startup States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html">State Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="top.html">顶级配置文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vars.html">SLS Template Variable Reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="writing.html">State Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#state-management">State Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#understanding-the-salt-state-system-components">理解Salt状态系统组件</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

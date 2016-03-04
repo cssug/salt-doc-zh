@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Standalone Minion</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="安装教程" href="../installation/index.html">
+        <link rel="next" title="Salt无Master快速入门" href="quickstart.html">
+        <link rel="prev" title="running salt as normal user tutorial" href="rooted.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="rooted.html" title="running salt as normal user tutorial">上一页</a>
+            
+        </li>
+        <li>
+            <a href="quickstart.html" title="Salt无Master快速入门">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="standalone-minion">
+<span id="tutorial-standalone-minion"></span><h1>Standalone Minion<a class="headerlink" href="#standalone-minion" title="永久链接至标题">¶</a></h1>
+<p>Since the Salt minion contains such extensive functionality it can be useful
+to run it standalone. A standalone minion can be used to do a number of
+things:</p>
+<ul class="simple">
+<li><p class="first">在一个系统使用salt-call命令不连接到一个master</p>
+</li>
+<li><p class="first">无Master states，完全从minion本地文件运行states</p>
+</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">When running Salt in masterless mode, do not run the salt-minion daemon.
+Otherwise, it will attempt to connect to a master and fail. The salt-call
+command stands on its own and does not need the salt-minion daemon.</p>
+</div>
+<div class="section" id="telling-salt-call-to-run-masterless">
+<h2>Telling Salt Call to Run Masterless<a class="headerlink" href="#telling-salt-call-to-run-masterless" title="永久链接至标题">¶</a></h2>
+<p>The salt-call command is used to run module functions locally on a minion
+instead of executing them from the master. Normally the salt-call command
+checks into the master to retrieve file server and pillar data, but when
+running standalone salt-call needs to be instructed to not check the master for
+this data. To instruct the minion to not look for a master when running
+salt-call the <a class="reference internal" href="../../ref/configuration/minion.html#std:conf_minion-file_client"><code class="xref std std-conf_minion docutils literal"><span class="pre">file_client</span></code></a> configuration option needs to be set.
+By default the <a class="reference internal" href="../../ref/configuration/minion.html#std:conf_minion-file_client"><code class="xref std std-conf_minion docutils literal"><span class="pre">file_client</span></code></a> is set to <code class="docutils literal"><span class="pre">remote</span></code> so that the
+minion knows that file server and pillar data are to be gathered from the
+master. When setting the <a class="reference internal" href="../../ref/configuration/minion.html#std:conf_minion-file_client"><code class="xref std std-conf_minion docutils literal"><span class="pre">file_client</span></code></a> option to <code class="docutils literal"><span class="pre">local</span></code> the
+minion is configured to not gather this data from the master.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">file_client</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">local</span>
+</pre></div>
+</div>
+<p>Now the salt-call command will not look for a master and will assume that the
+local system has all of the file and pillar resources.</p>
+</div>
+<div class="section" id="running-states-masterless">
+<h2>Running States Masterless<a class="headerlink" href="#running-states-masterless" title="永久链接至标题">¶</a></h2>
+<p>The state system can be easily run without a Salt master, with all needed files
+local to the minion. To do this the minion configuration file needs to be set
+up to know how to return file_roots information like the master. The file_roots
+setting defaults to /srv/salt for the base environment just like on the master:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">file_roots</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt</span>
+</pre></div>
+</div>
+<p>Now set up the Salt State Tree, top file, and SLS modules in the same way that
+they would be set up on a master. Now, with the <a class="reference internal" href="../../ref/configuration/minion.html#std:conf_minion-file_client"><code class="xref std std-conf_minion docutils literal"><span class="pre">file_client</span></code></a>
+option set to <code class="docutils literal"><span class="pre">local</span></code> and an available state tree then calls to functions in
+the state module will use the information in the file_roots on the minion
+instead of checking in with the master.</p>
+<p>Remember that when creating a state tree on a minion there are no syntax or
+path changes needed, SLS modules written to be used from a master do not need
+to be modified in any way to work with a minion.</p>
+<p>This makes it easy to &quot;script&quot; deployments with Salt states without having to
+set up a master, and allows for these SLS modules to be easily moved into a
+Salt master as the deployment grows.</p>
+<p>The declared state can now be executed with:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-call state.highstate
+</pre></div>
+</div>
+<p>Or the salt-call command can be executed with the <code class="docutils literal"><span class="pre">--local</span></code> flag, this makes
+it unnecessary to change the configuration file:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-call state.highstate --local
+</pre></div>
+</div>
+</div>
+<div class="section" id="external-pillars">
+<h2>External Pillars<a class="headerlink" href="#external-pillars" title="永久链接至标题">¶</a></h2>
+<p><a class="reference internal" href="../development/external_pillars.html#external-pillars"><span>External pillars</span></a> are supported when running in masterless mode.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="rooted.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="running salt as normal user tutorial" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="quickstart.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt无Master快速入门" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../installation/index.html">安装教程</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html#quick-install">快速安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html#platform-specific-installation-instructions">对应平台的安装教程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html#initial-configuration">Initial Configuration</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../installation/index.html#additional-installation-guides">Additional Installation Guides</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="salt_bootstrap.html">Salt Bootstrap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="firewall.html">为Salt开启防火墙配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="firewall.html#whitelist-communication-to-master">Master端白名单</a></li>
+<li class="toctree-l3"><a class="reference internal" href="preseed_key.html">Preseed Minion with Accepted Key</a></li>
+<li class="toctree-l3"><a class="reference internal" href="walkthrough_macosx.html">The MacOS X (Maverick) Developer Step By Step Guide To Salt Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rooted.html">running salt as normal user tutorial</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Standalone Minion</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#telling-salt-call-to-run-masterless">Telling Salt Call to Run Masterless</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-states-masterless">Running States Masterless</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#external-pillars">External Pillars</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="quickstart.html">Salt无Master快速入门</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html#dependencies">依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html#optional-dependencies">可选依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html#upgrading-salt">升级Salt</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

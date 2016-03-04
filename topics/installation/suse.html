@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>SUSE</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="安装教程" href="index.html">
+        <link rel="next" title="配置Salt" href="../../ref/configuration/index.html">
+        <link rel="prev" title="Windows" href="windows.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="windows.html" title="Windows">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../../ref/configuration/index.html" title="配置Salt">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="suse">
+<h1>SUSE<a class="headerlink" href="#suse" title="永久链接至标题">¶</a></h1>
+<p>Since openSUSE 13.2, Salt 2014.1.11 is available in the primary repositories.
+With the release of SUSE manager 3 a new repository setup has been created.
+The new repo will by systemsmanagement:saltstack, which is the source
+for newer stable packages. For backward compatibilty a linkpackage will be
+created to the old devel:language:python repo.
+All development of suse packages will be done in systemsmanagement:saltstack:testing.
+This will ensure that salt will be in mainline suse repo's, a stable release
+repo and a testing repo for further enhancements.</p>
+<div class="section" id="installation">
+<h2>安装教程<a class="headerlink" href="#installation" title="永久链接至标题">¶</a></h2>
+<p>Salt can be installed using <code class="docutils literal"><span class="pre">zypper</span></code> and is available in the standard openSUSE/SLES
+repositories.</p>
+<div class="section" id="stable-release">
+<h3>稳定版本<a class="headerlink" href="#stable-release" title="永久链接至标题">¶</a></h3>
+<p>Salt的master和minion包是分开的。机器只需要安装相应的包即可运行。通常情况下，会有一个master和多个minions。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>zypper install salt-master
+zypper install salt-minion
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="post-installation-tasks-opensuse">
+<h2>openSUSE中安装后的工作<a class="headerlink" href="#post-installation-tasks-opensuse" title="永久链接至标题">¶</a></h2>
+<p><strong>Master</strong></p>
+<p>配置master开机自动启动:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>systemctl <span class="nb">enable</span> salt-master.service
+</pre></div>
+</div>
+<p>启动Master:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>systemctl start salt-master.service
+</pre></div>
+</div>
+<p><strong>Minion</strong></p>
+<p>配置Minion开机自动启动:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>systemctl <span class="nb">enable</span> salt-minion.service
+</pre></div>
+</div>
+<p>启动Minion:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>systemctl start salt-minion.service
+</pre></div>
+</div>
+</div>
+<div class="section" id="post-installation-tasks-sles">
+<h2>SLES中安装后的工作<a class="headerlink" href="#post-installation-tasks-sles" title="永久链接至标题">¶</a></h2>
+<p><strong>Master</strong></p>
+<p>配置master开机自动启动:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>chkconfig salt-master on
+</pre></div>
+</div>
+<p>启动Master:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>rcsalt-master start
+</pre></div>
+</div>
+<p><strong>Minion</strong></p>
+<p>配置Minion开机自动启动:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>chkconfig salt-minion on
+</pre></div>
+</div>
+<p>启动Minion:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>rcsalt-minion start
+</pre></div>
+</div>
+<div class="section" id="unstable-release">
+<h3>不稳定版<a class="headerlink" href="#unstable-release" title="永久链接至标题">¶</a></h3>
+</div>
+<div class="section" id="opensuse">
+<h3>openSUSE<a class="headerlink" href="#opensuse" title="永久链接至标题">¶</a></h3>
+<p>For openSUSE Tumbleweed run the following as root:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>zypper addrepo http://download.opensuse.org/repositories/systemsmanagement:/saltstack/openSUSE_Tumbleweed/systemsmanagement:saltstack.repo
+zypper refresh
+zypper install salt salt-minion salt-master
+</pre></div>
+</div>
+<p>For openSUSE 42.1 Leap run the following as root:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>zypper addrepo http://download.opensuse.org/repositories/systemsmanagement:/saltstack/openSUSE_Leap_42.1/systemsmanagement:saltstack.repo
+zypper refresh
+zypper install salt salt-minion salt-master
+</pre></div>
+</div>
+<p>For openSUSE 13.2 run the following as root:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>zypper addrepo http://download.opensuse.org/repositories/systemsmanagement:/saltstack/openSUSE_13.2/systemsmanagement:saltstack.repo
+zypper refresh
+zypper install salt salt-minion salt-master
+</pre></div>
+</div>
+</div>
+<div class="section" id="suse-linux-enterprise">
+<h3>Suse Linux Enterprise<a class="headerlink" href="#suse-linux-enterprise" title="永久链接至标题">¶</a></h3>
+<p>For SLE 12 run the following as root:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>zypper addrepo http://download.opensuse.org/repositories/systemsmanagement:/saltstack/SLE_12/systemsmanagement:saltstack.repo
+zypper refresh
+zypper install salt salt-minion salt-master
+</pre></div>
+</div>
+<p>For SLE 11 SP4 run the following as root:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>zypper addrepo http://download.opensuse.org/repositories/systemsmanagement:/saltstack/SLE_11_SP4/systemsmanagement:saltstack.repo
+zypper refresh
+zypper install salt salt-minion salt-master
+</pre></div>
+</div>
+<p>现在前往 <a class="reference internal" href="../../ref/configuration/index.html"><em>配置Salt</em></a> 页.</p>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="windows.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Windows" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../../ref/configuration/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="配置Salt" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">安装教程</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#quick-install">快速安装</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#platform-specific-installation-instructions">对应平台的安装教程</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="arch.html">Arch Linux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="debian.html">Debian GNU/Linux / Raspbian</a></li>
+<li class="toctree-l3"><a class="reference internal" href="fedora.html">Fedora</a></li>
+<li class="toctree-l3"><a class="reference internal" href="freebsd.html">FreeBSD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gentoo.html">Gentoo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="openbsd.html">OpenBSD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="osx.html">OS X</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rhel.html">RHEL / CentOS / Scientific Linux / Amazon Linux / Oracle Linux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="solaris.html">Solaris</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ubuntu.html">Ubuntu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="windows.html">Windows</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">SUSE</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#installation">安装教程</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#stable-release">稳定版本</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#post-installation-tasks-opensuse">openSUSE中安装后的工作</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#post-installation-tasks-sles">SLES中安装后的工作</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#unstable-release">不稳定版</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#opensuse">openSUSE</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#suse-linux-enterprise">Suse Linux Enterprise</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#initial-configuration">Initial Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#additional-installation-guides">Additional Installation Guides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#dependencies">依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#optional-dependencies">可选依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#upgrading-salt">升级Salt</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

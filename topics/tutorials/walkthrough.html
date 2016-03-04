@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt in 10 Minutes</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="SaltStack" href="../../index.html">
+        <link rel="next" title="安装教程" href="../installation/index.html">
+        <link rel="prev" title="Salt 介绍" href="../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../index.html" title="Salt 介绍">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../installation/index.html" title="安装教程">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="salt-in-10-minutes">
+<h1>Salt in 10 Minutes<a class="headerlink" href="#salt-in-10-minutes" title="永久链接至标题">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>欢迎来到Salt Stack！我很激动你对Salt充满兴趣并且从Salt开始走上更好的基础设施管理之路。我带着创造最好软件的目标来开发(并且会持续开发)Salt，以便它能够管理几乎所有类型的计算机。我希望你能够享受Salt之旅以及这个软件能够解决你的真实世界需求。</p>
+<ul class="last simple">
+<li>Thomas S Hatch</li>
+<li><p class="first">Salt创造者和Chief开发者</p>
+</li>
+<li>CTO of SaltStack, Inc.</li>
+</ul>
+</div>
+<div class="section" id="getting-started">
+<h2>入门指南<a class="headerlink" href="#getting-started" title="永久链接至标题">¶</a></h2>
+<div class="section" id="what-is-salt">
+<h3>SaltStack是什么？<a class="headerlink" href="#what-is-salt" title="永久链接至标题">¶</a></h3>
+<p>Salt是一种和以往不同的基础设施管理方法，它是建立在大规模系统高速通讯能力可以大幅提升的想法上。这种方法使得Salt成为一个强大的能够解决基础设施中许多特定问题的多任务系统。远程执行引擎是Salt的核心，它能够为多组系统创建高速、安全的双向通讯网络。基于这个通许系统，Salt提供了一个非常快速、灵活并且容易使用的配置管理系统，称之为“Salt States”。</p>
+<p>The backbone of Salt is the remote execution engine, which creates a high-speed,
+secure and bi-directional communication net for groups of systems. On top of this
+communication system, Salt provides an extremely fast, flexible, and easy-to-use
+configuration management system called <code class="docutils literal"><span class="pre">Salt</span> <span class="pre">States</span></code>.</p>
+</div>
+<div class="section" id="installing-salt">
+<h3>安装Salt<a class="headerlink" href="#installing-salt" title="永久链接至标题">¶</a></h3>
+<p>SaltStack has been made to be very easy to install and get started. The
+<a class="reference internal" href="../installation/index.html"><em>installation documents</em></a> contain instructions
+for all supported platforms.</p>
+</div>
+<div class="section" id="starting-salt">
+<h3>Salt入门<a class="headerlink" href="#starting-salt" title="永久链接至标题">¶</a></h3>
+<p>Salt functions on a master/minion topology. A master server acts as a
+central control bus for the clients, which are called <code class="docutils literal"><span class="pre">minions</span></code>. The minions
+connect back to the master.</p>
+<div class="section" id="setting-up-the-salt-master">
+<h4>设置Salt Master<a class="headerlink" href="#setting-up-the-salt-master" title="永久链接至标题">¶</a></h4>
+<p>运行Salt Master很容易，就是执行它！默认配置适用于大多数不同安装。Salt Master能够由Linux/Unix本地服务管理器控制。</p>
+<p>On Systemd based platforms (newer Debian, OpenSuse, Fedora):</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>systemctl start salt-master
+</pre></div>
+</div>
+<p>在基于Upstart的系统上(Ubuntu, Older Fedora/RHEL):</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>service salt-master start
+</pre></div>
+</div>
+<p>On SysV Init systems (Gentoo, older Debian etc.):</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>/etc/init.d/salt-master start
+</pre></div>
+</div>
+<p>另一种方式，Master可以直接在命令行启动:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-master -d
+</pre></div>
+</div>
+<p>Salt Master也能够在前台以debug模式启动，这样会极大增加命令输出:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-master -l debug
+</pre></div>
+</div>
+<p>Salt Master需要绑定系统上2个TCP端口，分别是4505和4506。更多这些端口更深入的关于防火墙信息，参见防火墙教程。<a class="reference internal" href="firewall.html"><em>here</em></a>.</p>
+</div>
+<div class="section" id="finding-the-salt-master">
+<span id="master-dns"></span><h4>Finding the Salt Master<a class="headerlink" href="#finding-the-salt-master" title="永久链接至标题">¶</a></h4>
+<p>When a minion starts, by default it searches for a system that resolves to the <code class="docutils literal"><span class="pre">salt</span></code> hostname`` on the network.
+If found, the minion initiates the handshake and key authentication process with the Salt master.
+This means that the easiest configuration approach is to set internal DNS to resolve the name <code class="docutils literal"><span class="pre">salt</span></code> back to the Salt Master IP.</p>
+<p>否则，需要编辑minion配置文件配置 <code class="docutils literal"><span class="pre">master</span></code> 选项指向Salt Master的DNS名或IP:</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">默认配置文件路径位于/etc/salt下。大多数平台会遵守这个约定，但是像FreeBSD和Microsoft Windows这样的平台会将这个文件放在不同的路径。</p>
+</div>
+<p>/etc/salt/minion:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">saltmaster.example.com</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setting-up-a-salt-minion">
+<h4>设置Salt Minion<a class="headerlink" href="#setting-up-a-salt-minion" title="永久链接至标题">¶</a></h4>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>Salt Minion有无Salt Master时都可以运作。本演练将假定minion可以连接到master，想了解如何运行一个无master的minion的资料请参考master-less quick-start guide:</p>
+<p class="last"><a class="reference internal" href="quickstart.html"><em>Masterless Minion 快速入门</em></a></p>
+</div>
+<p>现在已经能够找到master了，同master一样以相同方式启动minion；使用平台init系统或者直接通过命令行。</p>
+<p>以daemon模式运行</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-minion -d
+</pre></div>
+</div>
+<p>在前台以debug模式运行</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-minion -l debug
+</pre></div>
+</div>
+<p id="minion-id-generation">当minion启动后，它会产生一个 <code class="docutils literal"><span class="pre">id</span></code> 值，除非已经在之前的运行过程中产生过并且缓存在配置路径下，默认是 <code class="docutils literal"><span class="pre">/etc/salt</span></code> 。minion用这个值作为名称尝试去master进行验证。尝试下面几步操作，以便找到一个不是 <code class="docutils literal"><span class="pre">localhost</span></code> 的值:</p>
+<ol class="arabic simple">
+<li><p class="first">运行Python函数&quot;socket.getfqdn()&quot;</p>
+</li>
+<li><p class="first">核对&quot;/etc/hostname&quot;(仅针对非Windows系统)</p>
+</li>
+<li><p class="first">核对&quot;/etc/hosts&quot;(在Windows主机上是&quot;%WINDIR%system32driversetchosts&quot;) 上的包括&quot;127.0.0.0/8&quot;在内的所有主机名。</p>
+</li>
+</ol>
+<p>如果以上都不能产生除&quot;localhost&quot;以外的id，那么就会按顺序检测minion上的IP地址列表(排除&quot;127.0.0.0/8&quot;在内)。如果存在，就会使用第一个公网路由IP地址，否则就会使用第一个私网路由IP地址。</p>
+<p>如果所有这些都失败了，那么就会使用&quot;localhost&quot;作为备选。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>覆盖&quot;id&quot;值</p>
+<p class="last">minion的id也可以通过minion配置文件中 :conf_minion:<a href="#id1"><span class="problematic" id="id2">`</span></a>id`选项手动指定。如果指定这个配置值，它会覆盖所有其他来源的&quot;id&quot;值。</p>
+</div>
+<p>现在minion已经运行了，它会产生秘钥对并且尝试连接master。下一步就是折回master服务器接受新minion的公钥。</p>
+</div>
+<div class="section" id="using-salt-key">
+<span id="id1"></span><h4>使用salt-key<a class="headerlink" href="#using-salt-key" title="永久链接至标题">¶</a></h4>
+<p>Salt通过公钥加密和认证minions。想要让minion从master端接受命令，minions的密钥需要被master接受。</p>
+<p><code class="docutils literal"><span class="pre">salt-key</span></code> 命令时用来管理master上所有的密钥的。列出master上的密钥:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-key -L
+</pre></div>
+</div>
+<p>The keys that have been rejected, accepted, and pending acceptance are listed.
+The easiest way to accept the minion key is to accept all pending keys:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-key -A
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>Keys should be verified! Print the master key fingerprint by running <code class="docutils literal"><span class="pre">salt-key</span> <span class="pre">-F</span> <span class="pre">master</span></code>
+on the Salt master. Copy the <code class="docutils literal"><span class="pre">master.pub</span></code> fingerprint from the Local Keys section,
+and then set this value as the <a class="reference internal" href="../../ref/configuration/minion.html#std:conf_minion-master_finger"><code class="xref std std-conf_minion docutils literal"><span class="pre">master_finger</span></code></a> in the minion configuration
+file. Restart the Salt minion.</p>
+<p>On the master, run <code class="docutils literal"><span class="pre">salt-key</span> <span class="pre">-f</span> <span class="pre">minion-id</span></code> to print the fingerprint of the
+minion's public key that was received by the master. On the minion, run
+<code class="docutils literal"><span class="pre">salt-call</span> <span class="pre">key.finger</span> <span class="pre">--local</span></code> to print the fingerprint of the minion key.</p>
+<p>On the master:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-key -f foo.domain.com</span>
+Unaccepted Keys:
+foo.domain.com:  39:f9:e4:8a:aa:74:8d:52:1a:ec:92:03:82:09:c8:f9
+</pre></div>
+</div>
+<p>On the minion:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-call key.finger --local</span>
+local:
+    39:f9:e4:8a:aa:74:8d:52:1a:ec:92:03:82:09:c8:f9
+</pre></div>
+</div>
+<p class="last">If they match, approve the key with <code class="docutils literal"><span class="pre">salt-key</span> <span class="pre">-a</span> <span class="pre">foo.domain.com</span></code>.</p>
+</div>
+</div>
+<div class="section" id="sending-the-first-commands">
+<h4>发送第一个命令<a class="headerlink" href="#sending-the-first-commands" title="永久链接至标题">¶</a></h4>
+<p>现在minion已经连接到master并且通过认证，master可以发送命令到minion。</p>
+<p>Salt命令允许执行海量的函数库，并且可以针对特殊的minions和minions组为目标执行。</p>
+<p><code class="docutils literal"><span class="pre">salt</span></code> 命令包含命令选项，目标说明，要执行的函数，和函数的参数。</p>
+<p>一个简单的入门级命令看起来像是这样:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> test.ping
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">*</span></code> 是指向所有minions的目标。</p>
+<p><code class="docutils literal"><span class="pre">test.ping</span></code> 告诉minon运行 <a class="reference internal" href="../../ref/modules/all/salt.modules.test.html#salt.modules.test.ping" title="salt.modules.test.ping"><code class="xref py py-func docutils literal"><span class="pre">test.ping</span></code></a> 函数。</p>
+<p>In the case of <code class="docutils literal"><span class="pre">test.ping</span></code>, <code class="docutils literal"><span class="pre">test</span></code> refers to a <a class="reference internal" href="../../ref/modules/index.html"><em>execution module</em></a>.  <code class="docutils literal"><span class="pre">ping</span></code> refers to the <a class="reference internal" href="../../ref/modules/all/salt.modules.test.html#salt.modules.test.ping" title="salt.modules.test.ping"><code class="xref py py-func docutils literal"><span class="pre">ping</span></code></a> function contained in the aforementioned <code class="docutils literal"><span class="pre">test</span></code>
+module.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Execution modules are the workhorses of Salt. They do the work on the
+system to perform various tasks, such as manipulating files and restarting
+services.</p>
+</div>
+<p>运行这条命令的结果将会是master指示所有的minions并行执行 <a class="reference internal" href="../../ref/modules/all/salt.modules.test.html#salt.modules.test.ping" title="salt.modules.test.ping"><code class="xref py py-func docutils literal"><span class="pre">test.ping</span></code></a> 并返回结果。</p>
+<p>这不是真正的ICMP ping，而是一个简单的函数返回 <code class="docutils literal"><span class="pre">True</span></code>。使用  <a class="reference internal" href="../../ref/modules/all/salt.modules.test.html#salt.modules.test.ping" title="salt.modules.test.ping"><code class="xref py py-func docutils literal"><span class="pre">test.ping</span></code></a> 是确认一个minion是否连接正常的好方法。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">每个minion使用唯一的minion ID注册自身，但是也能够通过使用minion配置中的 <a class="reference internal" href="../../ref/configuration/minion.html#std:conf_minion-id"><code class="xref std std-conf_minion docutils literal"><span class="pre">id</span></code></a> 选项来明确定义。</p>
+</div>
+<p>Of course, there are hundreds of other modules that can be called just as
+<code class="docutils literal"><span class="pre">test.ping</span></code> can.  For example, the following would return disk usage on all
+targeted minions:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> disk.usage
+</pre></div>
+</div>
+</div>
+<div class="section" id="getting-to-know-the-functions">
+<h4>函数概况<a class="headerlink" href="#getting-to-know-the-functions" title="永久链接至标题">¶</a></h4>
+<p>Salt拥有一个巨大的函数库可用于执行，而且Salt函数是自带文档说明的。在minions上执行 <code class="xref py py-func docutils literal"><span class="pre">sys.doc</span></code>  函数可以查看哪些函数可用：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> sys.doc
+</pre></div>
+</div>
+<p>这会显示一个非常大的可用函数和函数文档列表。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">模块文档也可以 <a class="reference internal" href="../../ref/modules/all/index.html"><em>在线</em></a> 查看。</p>
+</div>
+<p>这些函数覆盖从shell命令到包管理到数据库服务器操作等所有内容。它们包含强大的系统管理API，而这则是Salt配置管理和很多其他部分的核心。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Salt拥有很多插件系统。这些函数通过文档:<a href="#id1"><span class="problematic" id="id2">`</span></a>执行模块 &lt;/ref/modules/all/index&gt;`的&quot;salt&quot;命令可用。</p>
+</div>
+</div>
+<div class="section" id="helpful-functions-to-know">
+<h4>了解一些有帮助的函数<a class="headerlink" href="#helpful-functions-to-know" title="永久链接至标题">¶</a></h4>
+<p>文档`cmd &lt;/ref/modules/all/salt.modules.cmdmod&gt;`模块包含在minions上执行shell命令的函数，比如模块`cmd.run &lt;salt.modules.cmdmod.run&gt;`和模块`cmd.run_all &lt;salt.modules.cmdmod.run_all&gt;`：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> cmd.run <span class="s1">&#39;ls -l /etc&#39;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">pkg</span></code> 函数会自动将本地系统包管理器映射到相同的salt函数。这意味着 <code class="docutils literal"><span class="pre">pkg.install</span></code> 在基于Red Hat系统上将使用 <code class="docutils literal"><span class="pre">yum</span></code> 而在Debian系统上则使用 <code class="docutils literal"><span class="pre">apt</span></code> 来安装包，等等。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> pkg.install vim
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">一些自定义的Linux和其他发行版的衍生版可能不能被Salt正确检测。如果上述命令返回 <code class="docutils literal"><span class="pre">pkg.install</span></code> is not available的错误信息，那么你可能就需要重写pkg provider。这个过程在 <a class="reference internal" href="../../ref/states/providers.html"><em>这里</em></a> 有详解。</p>
+</div>
+<p>模块函数`network.interfaces &lt;salt.modules.network.interfaces&gt;` 将会列出minion上的所有接口，以及它们的IP地址，子网掩码，MAC地址等：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> network.interfaces
+</pre></div>
+</div>
+</div>
+<div class="section" id="changing-the-output-format">
+<h4>Changing the Output Format<a class="headerlink" href="#changing-the-output-format" title="永久链接至标题">¶</a></h4>
+<p>The default output format used for most Salt commands is called the <code class="docutils literal"><span class="pre">nested</span></code>
+outputter, but there are several other outputters that can be used to change
+the way the output is displayed. For instance, the <code class="docutils literal"><span class="pre">pprint</span></code> outputter can be
+used to display the return data using Python's <code class="docutils literal"><span class="pre">pprint</span></code> module:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>root@saltmaster:~# salt myminion grains.item pythonpath --out<span class="o">=</span>pprint
+<span class="o">{</span><span class="s1">&#39;myminion&#39;</span>: <span class="o">{</span><span class="s1">&#39;pythonpath&#39;</span>: <span class="o">[</span><span class="s1">&#39;/usr/lib64/python2.7&#39;</span>,
+                             <span class="s1">&#39;/usr/lib/python2.7/plat-linux2&#39;</span>,
+                             <span class="s1">&#39;/usr/lib64/python2.7/lib-tk&#39;</span>,
+                             <span class="s1">&#39;/usr/lib/python2.7/lib-tk&#39;</span>,
+                             <span class="s1">&#39;/usr/lib/python2.7/site-packages&#39;</span>,
+                             <span class="s1">&#39;/usr/lib/python2.7/site-packages/gst-0.10&#39;</span>,
+                             <span class="s1">&#39;/usr/lib/python2.7/site-packages/gtk-2.0&#39;</span><span class="o">]}}</span>
+</pre></div>
+</div>
+<p>The full list of Salt outputters, as well as example output, can be found
+<a class="reference internal" href="../../ref/output/all/index.html#all-salt-output"><span>here</span></a>.</p>
+</div>
+<div class="section" id="salt-call">
+<h4>salt-call<a class="headerlink" href="#salt-call" title="永久链接至标题">¶</a></h4>
+<p>The examples so far have described running commands from the Master using the
+<code class="docutils literal"><span class="pre">salt</span></code> command, but when troubleshooting it can be more beneficial to login
+to the minion directly and use <code class="docutils literal"><span class="pre">salt-call</span></code>.</p>
+<p>Doing so allows you to see the minion log messages specific to the command you
+are running (which are <em>not</em> part of the return data you see when running the
+command from the Master using <code class="docutils literal"><span class="pre">salt</span></code>), making it unnecessary to tail the
+minion log. More information on <code class="docutils literal"><span class="pre">salt-call</span></code> and how to use it can be found
+<a class="reference internal" href="../troubleshooting/index.html#using-salt-call"><span>here</span></a>.</p>
+</div>
+<div class="section" id="grains">
+<h4>grains是minion启动时加载的，在运行过程中不会发生变化，所以是静态数据。grains中包含诸如运行的内核版本，操作系统等信息。<a class="headerlink" href="#grains" title="永久链接至标题">¶</a></h4>
+<p>Salt使用一个叫做 :doc:<a href="#id1"><span class="problematic" id="id2">`</span></a>Grains &lt;../targeting/grains&gt;`的系统来建立关于minions的静态数据。这个数据包含了关于操作系统运行状态，CPU架构等信息。grains系统贯穿Salt用于发送平台数据到许多组件和用户。</p>
+<p>Grains can also be statically set, this makes it easy to assign values to
+minions for grouping and managing.</p>
+<p>A common practice is to assign grains to minions to specify what the role or
+roles a minion might be. These static grains can be set in the minion
+configuration file or via the <a class="reference internal" href="../../ref/modules/all/salt.modules.grains.html#salt.modules.grains.setval" title="salt.modules.grains.setval"><code class="xref py py-mod docutils literal"><span class="pre">grains.setval</span></code></a>
+function.</p>
+</div>
+<div class="section" id="targeting">
+<h4>Targeting<a class="headerlink" href="#targeting" title="永久链接至标题">¶</a></h4>
+<p>Salt allows for minions to be targeted based on a wide range of criteria.  The
+default targeting system uses globular expressions to match minions, hence if
+there are minions named <code class="docutils literal"><span class="pre">larry1</span></code>, <code class="docutils literal"><span class="pre">larry2</span></code>, <code class="docutils literal"><span class="pre">curly1</span></code>, and <code class="docutils literal"><span class="pre">curly2</span></code>, a
+glob of <code class="docutils literal"><span class="pre">larry*</span></code> will match <code class="docutils literal"><span class="pre">larry1</span></code> and <code class="docutils literal"><span class="pre">larry2</span></code>, and a glob of <code class="docutils literal"><span class="pre">*1</span></code>
+will match <code class="docutils literal"><span class="pre">larry1</span></code> and <code class="docutils literal"><span class="pre">curly1</span></code>.</p>
+<p>除了通配符之外还有许多其他的目标系统可以使用，这些系统包括:</p>
+<dl class="docutils">
+<dt>正则表达式</dt>
+<dd><p class="first last">使用PCRE引擎的正则表达式的目标</p>
+</dd>
+<dt>grains是minion启动时加载的，在运行过程中不会发生变化，所以是静态数据。grains中包含诸如运行的内核版本，操作系统等信息。</dt>
+<dd><p class="first last">基于grains数据的目标: <a class="reference internal" href="../targeting/grains.html"><em>Targeting with Grains</em></a></p>
+</dd>
+<dt>Pilar</dt>
+<dd><p class="first last">基于pilar数据的目标: <a class="reference internal" href="../../ref/pillar/index.html"><em>Targeting with Pillar</em></a></p>
+</dd>
+<dt>IP</dt>
+<dd><p class="first last">基于IP地址/子网/范围的目标</p>
+</dd>
+<dt>杂合</dt>
+<dd><p class="first last">创建基于多个目标的逻辑目标规则: <a class="reference internal" href="../targeting/compound.html"><em>Targeting with Compound</em></a></p>
+</dd>
+<dt>节点组</dt>
+<dd><p class="first last">节点组目标: <a class="reference internal" href="../targeting/nodegroups.html"><em>Targeting with Nodegroup</em></a></p>
+</dd>
+</dl>
+<p>目标的概念不仅在可以Salt命令行上使用，而且在很多其他的区域同样可以运行，包括state系统和用于ACLs和用户权限的系统。</p>
+</div>
+<div class="section" id="passing-in-arguments">
+<h4>传递参数<a class="headerlink" href="#passing-in-arguments" title="永久链接至标题">¶</a></h4>
+<p>很多函数可以通过命令行接收参数:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> pkg.install vim
+</pre></div>
+</div>
+<p>This example passes the argument <code class="docutils literal"><span class="pre">vim</span></code> to the pkg.install function. Since
+many functions can accept more complex input than just a string, the arguments
+are parsed through YAML, allowing for more complex data to be sent on the
+command line:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> test.echo <span class="s1">&#39;foo: bar&#39;</span>
+</pre></div>
+</div>
+<p>一般Salt将这种字符串'foo: bar'翻译为字典&quot;{'foo': 'bar'}&quot;</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">任何包含一个换行符的行不会通过YAML解析。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="salt-states">
+<h2>Salt States<a class="headerlink" href="#salt-states" title="永久链接至标题">¶</a></h2>
+<p>Now that the basics are covered the time has come to evaluate <code class="docutils literal"><span class="pre">States</span></code>.  Salt
+<code class="docutils literal"><span class="pre">States</span></code>, or the <code class="docutils literal"><span class="pre">State</span> <span class="pre">System</span></code> is the component of Salt made for
+configuration management.</p>
+<p>The state system is already available with a basic Salt setup, no additional
+configuration is required. States can be set up immediately.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>Before diving into the state system, a brief overview of how states are
+constructed will make many of the concepts clearer. Salt states are based
+on data modeling and build on a low level data structure that is used to
+execute each state function. Then more logical layers are built on top of
+each other.</p>
+<p>The high layers of the state system which this tutorial will
+cover consists of everything that needs to be known to use states, the two
+high layers covered here are the <cite>sls</cite> layer and the highest layer
+<cite>highstate</cite>.</p>
+<p class="last">Understanding the layers of data management in the State System will help with
+understanding states, but they never need to be used. Just as understanding
+how a compiler functions assists when learning a programming language,
+understanding what is going on under the hood of a configuration management
+system will also prove to be a valuable asset.</p>
+</div>
+<div class="section" id="the-first-sls-formula">
+<h3>第一个SLS公式<a class="headerlink" href="#the-first-sls-formula" title="永久链接至标题">¶</a></h3>
+<p>The state system is built on SLS formulas. These formulas are built out in
+files on Salt's file server. To make a very basic SLS formula open up a file
+under /srv/salt named vim.sls. The following state ensures that vim is installed
+on a system to which that state has been applied.</p>
+<p><code class="docutils literal"><span class="pre">/srv/salt/vim.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">vim</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span>
+</pre></div>
+</div>
+<p>Now install vim on the minions by calling the SLS directly:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> state.sls vim
+</pre></div>
+</div>
+<p>This command will invoke the state system and run the <code class="docutils literal"><span class="pre">vim</span></code> SLS.</p>
+<p>Now, to beef up the vim SLS formula, a <code class="docutils literal"><span class="pre">vimrc</span></code> can be added:</p>
+<p><code class="docutils literal"><span class="pre">/srv/salt/vim.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">vim</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+
+<span class="l l-Scalar l-Scalar-Plain">/etc/vimrc</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://vimrc</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">644</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+</pre></div>
+</div>
+<p>Now the desired <code class="docutils literal"><span class="pre">vimrc</span></code> needs to be copied into the Salt file server to
+<code class="docutils literal"><span class="pre">/srv/salt/vimrc</span></code>. In Salt, everything is a file, so no path redirection needs
+to be accounted for. The <code class="docutils literal"><span class="pre">vimrc</span></code> file is placed right next to the <code class="docutils literal"><span class="pre">vim.sls</span></code> file.
+The same command as above can be executed to all the vim SLS formulas and now
+include managing the file.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Salt does not need to be restarted/reloaded or have the master manipulated
+in any way when changing SLS formulas. They are instantly available.</p>
+</div>
+</div>
+<div class="section" id="adding-some-depth">
+<h3>增加一些深度<a class="headerlink" href="#adding-some-depth" title="永久链接至标题">¶</a></h3>
+<p>Obviously maintaining SLS formulas right in a single directory at the root of
+the file server will not scale out to reasonably sized deployments. This is
+why more depth is required. Start by making an nginx formula a better way,
+make an nginx subdirectory and add an init.sls file:</p>
+<p><code class="docutils literal"><span class="pre">/srv/salt/nginx/init.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">nginx</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</pre></div>
+</div>
+<p>A few concepts are introduced in this SLS formula.</p>
+<p>First is the service statement which ensures that the <code class="docutils literal"><span class="pre">nginx</span></code> service is running.</p>
+<p>Of course, the nginx service can't be started unless the package is installed --
+hence the <code class="docutils literal"><span class="pre">require</span></code> statement which sets up a dependency between the two.</p>
+<p>The <code class="docutils literal"><span class="pre">require</span></code> statement makes sure that the required component is executed before
+and that it results in success.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>The <cite>require</cite> option belongs to a family of options called <cite>requisites</cite>.
+Requisites are a powerful component of Salt States, for more information
+on how requisites work and what is available see:
+<a class="reference internal" href="../../ref/states/requisites.html"><em>Requisites</em></a></p>
+<p class="last">Also evaluation ordering is available in Salt as well:
+<a class="reference internal" href="../../ref/states/ordering.html"><em>Ordering States</em></a></p>
+</div>
+<p>This new sls formula has a special name --  <code class="docutils literal"><span class="pre">init.sls</span></code>. When an SLS formula is
+named <code class="docutils literal"><span class="pre">init.sls</span></code> it inherits the name of the directory path that contains it.
+This formula can be referenced via the following command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> state.sls nginx
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>Reminder!</p>
+<p class="last">Just as one could call the <code class="docutils literal"><span class="pre">test.ping</span></code> or <code class="docutils literal"><span class="pre">disk.usage</span></code> execution modules,
+<code class="docutils literal"><span class="pre">state.sls</span></code> is simply another execution module. It simply takes the name of an
+SLS file as an argument.</p>
+</div>
+<p>Now that subdirectories can be used, the <code class="docutils literal"><span class="pre">vim.sls</span></code> formula can be cleaned up.
+To make things more flexible, move the <code class="docutils literal"><span class="pre">vim.sls</span></code> and vimrc into a new subdirectory
+called <code class="docutils literal"><span class="pre">edit</span></code> and change the <code class="docutils literal"><span class="pre">vim.sls</span></code> file to reflect the change:</p>
+<p><code class="docutils literal"><span class="pre">/srv/salt/edit/vim.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">vim</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span>
+
+<span class="l l-Scalar l-Scalar-Plain">/etc/vimrc</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://edit/vimrc</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">644</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+</pre></div>
+</div>
+<p>Only the source path to the vimrc file has changed. Now the formula is
+referenced as <code class="docutils literal"><span class="pre">edit.vim</span></code> because it resides in the edit subdirectory.
+Now the edit subdirectory can contain formulas for emacs, nano, joe or any other
+editor that may need to be deployed.</p>
+</div>
+<div class="section" id="next-reading">
+<h3>接下来阅读<a class="headerlink" href="#next-reading" title="永久链接至标题">¶</a></h3>
+<p>Two walk-throughs are specifically recommended at this point. First, a deeper
+run through States, followed by an explanation of Pillar.</p>
+<ol class="arabic simple">
+<li><p class="first"><a class="reference internal" href="starting_states.html"><em>States 入门</em></a></p>
+</li>
+<li><p class="first"><a class="reference internal" href="pillar.html"><em>Pillar 演练</em></a></p>
+</li>
+</ol>
+<p>一个对于理解Pilar的非常有用的方式是使用States。</p>
+</div>
+<div class="section" id="getting-deeper-into-states">
+<h3>更加深入States<a class="headerlink" href="#getting-deeper-into-states" title="永久链接至标题">¶</a></h3>
+<p>两个更深入的States教程已经存在，用以更加深入学习States功能。</p>
+<ol class="arabic simple">
+<li><a class="reference internal" href="starting_states.html"><em>How Do I Use Salt States?</em></a>, covers much
+more to get off the ground with States.</li>
+<li>The <a class="reference internal" href="states_pt1.html"><em>States Tutorial</em></a> also provides a
+fantastic introduction.</li>
+</ol>
+<p>These tutorials include much more in-depth information including templating
+SLS formulas etc.</p>
+</div>
+</div>
+<div class="section" id="so-much-more">
+<h2>还有更多！<a class="headerlink" href="#so-much-more" title="永久链接至标题">¶</a></h2>
+<p>This concludes the initial Salt walk-through, but there are many more things still
+to learn! These documents will cover important core aspects of Salt:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../pillar/index.html"><em>Pillar</em></a></li>
+<li><p class="first"><a class="reference internal" href="../jobs/index.html"><em>Job管理</em></a></p>
+</li>
+</ul>
+<p>更多教程可以参考：</p>
+<ul class="simple">
+<li><p class="first"><a class="reference internal" href="modules.html"><em>远程执行教程</em></a></p>
+</li>
+<li><p class="first"><a class="reference internal" href="standalone_minion.html"><em>独立Minion</em></a></p>
+</li>
+</ul>
+<p>这只介绍了了一些毛皮而已，更多组件像是reactor和事件系统，扩展Salt，模块化组件等这些更多内容此处并未涉及。Salt特性和文档概览，请看这里 <a class="reference internal" href="../../contents.html"><em>目录</em></a>。</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt 介绍" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../installation/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="安装教程" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">SaltStack</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html">Salt 介绍</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html#id1">Get Started</a><ul class="current">
+<li class="toctree-l3"><a class="reference external" href="https://docs.saltstack.com/en/getstarted/">Get Started Guide</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Salt in 10 Minutes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#getting-started">入门指南</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#what-is-salt">SaltStack是什么？</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#installing-salt">安装Salt</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#starting-salt">Salt入门</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#setting-up-the-salt-master">设置Salt Master</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#finding-the-salt-master">Finding the Salt Master</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#setting-up-a-salt-minion">设置Salt Minion</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#using-salt-key">使用salt-key</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#sending-the-first-commands">发送第一个命令</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#getting-to-know-the-functions">函数概况</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#helpful-functions-to-know">了解一些有帮助的函数</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#changing-the-output-format">Changing the Output Format</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#salt-call">salt-call</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#grains">grains是minion启动时加载的，在运行过程中不会发生变化，所以是静态数据。grains中包含诸如运行的内核版本，操作系统等信息。</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#targeting">Targeting</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#passing-in-arguments">传递参数</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#salt-states">Salt States</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#the-first-sls-formula">第一个SLS公式</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#adding-some-depth">增加一些深度</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#next-reading">接下来阅读</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#getting-deeper-into-states">更加深入States</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#so-much-more">还有更多！</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../index.html#install-salt">Install Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../index.html#demo-environments">Demo Environments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../index.html#example-formulas">Example Formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../index.html#mailing-list">Mailing List</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../index.html#irc">IRC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../index.html#follow-on-github">Follow on GitHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../index.html#hack-the-source">Hack the Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

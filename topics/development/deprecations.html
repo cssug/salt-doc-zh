@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>代码弃用</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt开发" href="index.html">
+        <link rel="next" title="Dunder Dictionaries" href="dunder_dictionaries.html">
+        <link rel="prev" title="Contributing" href="contributing.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="contributing.html" title="Contributing">上一页</a>
+            
+        </li>
+        <li>
+            <a href="dunder_dictionaries.html" title="Dunder Dictionaries">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="deprecating-code">
+<h1>代码弃用<a class="headerlink" href="#deprecating-code" title="永久链接至标题">¶</a></h1>
+<p>Salt应该保持向后兼容，虽然有时候由于一些特性和/或解决方案不在适用时这种兼容性可能会被破坏。开始时，开发者可能会想，看来没有任何地方用到了这段代码，所以删除它是安全的。然后，新版本发布后，用户就是开始埋怨他们正在使用的功能被删除了。这种情况应该避免，在这种情况下，代码应该被弃用。</p>
+<p>In order to give users enough time to migrate from the old code behavior to the
+new behavior, the deprecation time frame should be carefully determined based
+on the significance and complexity of the changes required by the user.</p>
+<p>Salt feature releases are based on the Periodic Table. Any new features going
+into the develop branch will be named after the next element in the Periodic
+Table. For example, Beryllium was the feature release name of the develop branch
+before the 2015.8 branch was tagged. At that point in time, any new features going
+into the develop branch after 2015.8 was branched were part of the Boron feature
+release.</p>
+<p>A deprecation warning should be in place for at least two major releases before
+the deprecated code and its accompanying deprecation warning are removed.  More
+time should be given for more complex changes.  For example, if the current
+release under development is <code class="docutils literal"><span class="pre">Sodium</span></code>, the deprecated code and associated
+warnings should remain in place and warn for at least <code class="docutils literal"><span class="pre">Aluminum</span></code>.</p>
+<p>To help in this deprecation task, salt provides <code class="xref py py-func docutils literal"><span class="pre">salt.utils.warn_until</span></code>. The idea behind this helper function is to show the
+deprecation warning to the user until salt reaches the provided version. Once
+that provided version is equaled <code class="xref py py-func docutils literal"><span class="pre">salt.utils.warn_until</span></code> will raise a <a class="reference external" href="http://docs.python.org/3/library/exceptions.html#RuntimeError" title="(在 Python v3.5)"><code class="xref py py-exc docutils literal"><span class="pre">RuntimeError</span></code></a> making salt stop
+its execution. This stoppage is unpleasant and will remind the developer that
+the deprecation limit has been reached and that the code can then be safely
+removed.</p>
+<p>请看下面的例子</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">some_function</span><span class="p">(</span><span class="n">bar</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">foo</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">foo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">warn_until</span><span class="p">(</span>
+            <span class="s1">&#39;Aluminum&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;The </span><span class="se">\&#39;</span><span class="s1">foo</span><span class="se">\&#39;</span><span class="s1"> argument has been deprecated and its &#39;</span>
+            <span class="s1">&#39;functionality removed, as such, its usage is no longer &#39;</span>
+            <span class="s1">&#39;required.&#39;</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p>Development begins on the <code class="docutils literal"><span class="pre">Aluminum</span></code> release when the <code class="docutils literal"><span class="pre">Magnesium</span></code> branch is
+forked from the develop branch.  Once this occurs, all uses of the
+<code class="docutils literal"><span class="pre">warn_until</span></code> function targeting <code class="docutils literal"><span class="pre">Aluminum</span></code>, along with the code they are
+warning about should be removed from the code.</p>
+</div>
+
+
+                            </div>
+                            <a href="contributing.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Contributing" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="dunder_dictionaries.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Dunder Dictionaries" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt开发</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="architecture.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#salt-client">Salt Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#salt-master">Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#salt-minion">Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#a-note-on-clearfuncs-vs-aesfuncs">A Note on ClearFuncs vs. AESFuncs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">代码弃用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dunder_dictionaries.html">Dunder Dictionaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_pillars.html">External Pillars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hacking.html">Installing Salt for development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="labels.html">GitHub Labels and Milestones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logging.html">内部日志</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular_systems.html">模块化系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="package_providers.html">Package Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reporting_bugs.html">Reporting Bugs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salt_projects.html">Community Projects That Use Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="topology.html">Salt Topology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="translating.html">翻译文档</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html">Developing Salt Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html">Running The Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html#automated-test-runs">Automated Test Runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raet/index.html">raet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="git/index.html">SaltStack Git Policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions/index.html">Salt Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/internals/index.html">Salt code and internals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../projects/index.html">Salt Based Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/writing_tests.html">编写Salt测试</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.runners.lxc</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+        <link rel="up" title="Full list of runner modules" href="index.html">
+        <link rel="next" title="salt.runners.manage" href="salt.runners.manage.html">
+        <link rel="prev" title="salt.runners.launchd" href="salt.runners.launchd.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="salt.runners.launchd.html" title="salt.runners.launchd">上一页</a>
+            
+        </li>
+        <li>
+            <a href="salt.runners.manage.html" title="salt.runners.manage">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.runners.lxc">
+<span id="salt-runners-lxc"></span><h1>salt.runners.lxc<a class="headerlink" href="#module-salt.runners.lxc" title="永久链接至标题">¶</a></h1>
+<p>Control Linux Containers via Salt</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">depends:</th><td class="field-body">lxc execution module</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="salt.runners.lxc.cloud_init">
+<code class="descclassname">salt.runners.lxc.</code><code class="descname">cloud_init</code><span class="sig-paren">(</span><em>names</em>, <em>host=None</em>, <em>quiet=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.lxc.cloud_init" title="永久链接至目标">¶</a></dt>
+<dd><p>Wrapper for using lxc.init in saltcloud compatibility mode</p>
+<dl class="docutils">
+<dt>names</dt>
+<dd>Name of the containers, supports a single name or a comma delimited
+list of names.</dd>
+<dt>host</dt>
+<dd>Minion to start the container on. Required.</dd>
+<dt>path</dt>
+<dd><p class="first">path to the container parent
+default: /var/lib/lxc (system default)</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+</dd>
+<dt>saltcloud_mode</dt>
+<dd>init the container with the saltcloud opts format instead</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.lxc.find_guest">
+<code class="descclassname">salt.runners.lxc.</code><code class="descname">find_guest</code><span class="sig-paren">(</span><em>name</em>, <em>quiet=False</em>, <em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.lxc.find_guest" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns the host for a container.</p>
+<dl class="docutils">
+<dt>path</dt>
+<dd><p class="first">path to the container parent
+default: /var/lib/lxc (system default)</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+</dd>
+</dl>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run lxc.find_guest name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.lxc.find_guests">
+<code class="descclassname">salt.runners.lxc.</code><code class="descname">find_guests</code><span class="sig-paren">(</span><em>names</em>, <em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.lxc.find_guests" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a dict of hosts and named guests</p>
+<dl class="docutils">
+<dt>path</dt>
+<dd><p class="first">path to the container parent
+default: /var/lib/lxc (system default)</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.lxc.freeze">
+<code class="descclassname">salt.runners.lxc.</code><code class="descname">freeze</code><span class="sig-paren">(</span><em>name</em>, <em>quiet=False</em>, <em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.lxc.freeze" title="永久链接至目标">¶</a></dt>
+<dd><p>Freeze the named container</p>
+<dl class="docutils">
+<dt>path</dt>
+<dd><p class="first">path to the container parent
+default: /var/lib/lxc (system default)</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+</dd>
+</dl>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run lxc.freeze name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.lxc.info">
+<code class="descclassname">salt.runners.lxc.</code><code class="descname">info</code><span class="sig-paren">(</span><em>name</em>, <em>quiet=False</em>, <em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.lxc.info" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns information about a container.</p>
+<dl class="docutils">
+<dt>path</dt>
+<dd><p class="first">path to the container parent
+default: /var/lib/lxc (system default)</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+</dd>
+</dl>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run lxc.info name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.lxc.init">
+<code class="descclassname">salt.runners.lxc.</code><code class="descname">init</code><span class="sig-paren">(</span><em>names</em>, <em>host=None</em>, <em>saltcloud_mode=False</em>, <em>quiet=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.lxc.init" title="永久链接至目标">¶</a></dt>
+<dd><p>Initialize a new container</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run lxc.init name <span class="nv">host</span><span class="o">=</span>minion_id <span class="o">[</span><span class="nv">cpuset</span><span class="o">=</span>cgroups_cpuset<span class="o">]</span> <span class="se">\</span>
+        <span class="o">[</span><span class="nv">cpushare</span><span class="o">=</span>cgroups_cpushare<span class="o">]</span> <span class="o">[</span><span class="nv">memory</span><span class="o">=</span>cgroups_memory<span class="o">]</span> <span class="se">\</span>
+        <span class="o">[</span><span class="nv">template</span><span class="o">=</span>lxc_template_name<span class="o">]</span> <span class="o">[</span><span class="nv">clone</span><span class="o">=</span>original name<span class="o">]</span> <span class="se">\</span>
+        <span class="o">[</span><span class="nv">profile</span><span class="o">=</span>lxc_profile<span class="o">]</span> <span class="o">[</span><span class="nv">network_proflile</span><span class="o">=</span>network_profile<span class="o">]</span> <span class="se">\</span>
+        <span class="o">[</span><span class="nv">nic</span><span class="o">=</span>network_profile<span class="o">]</span> <span class="o">[</span><span class="nv">nic_opts</span><span class="o">=</span>nic_opts<span class="o">]</span> <span class="se">\</span>
+        <span class="o">[</span><span class="nv">start</span><span class="o">=(</span>true<span class="p">|</span><span class="nb">false</span><span class="o">)]</span> <span class="o">[</span><span class="nv">seed</span><span class="o">=(</span>true<span class="p">|</span><span class="nb">false</span><span class="o">)]</span> <span class="se">\</span>
+        <span class="o">[</span><span class="nv">install</span><span class="o">=(</span>true<span class="p">|</span><span class="nb">false</span><span class="o">)]</span> <span class="o">[</span><span class="nv">config</span><span class="o">=</span>minion_config<span class="o">]</span> <span class="se">\</span>
+        <span class="o">[</span><span class="nv">snapshot</span><span class="o">=(</span>true<span class="p">|</span><span class="nb">false</span><span class="o">)]</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>names</dt>
+<dd>Name of the containers, supports a single name or a comma delimited
+list of names.</dd>
+<dt>host</dt>
+<dd>Minion on which to initialize the container <strong>(required)</strong></dd>
+<dt>path</dt>
+<dd><p class="first">path to the container parent
+default: /var/lib/lxc (system default)</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+</dd>
+<dt>saltcloud_mode</dt>
+<dd>init the container with the saltcloud opts format instead
+See lxc.init_interface module documentation</dd>
+<dt>cpuset</dt>
+<dd>cgroups cpuset.</dd>
+<dt>cpushare</dt>
+<dd>cgroups cpu shares.</dd>
+<dt>memory</dt>
+<dd><p class="first">cgroups memory limit, in MB</p>
+<div class="last versionchanged">
+<p><span class="versionmodified">在 2015.5.0 版更改: </span>If no value is passed, no limit is set. In earlier Salt versions,
+not passing this value causes a 1024MB memory limit to be set, and
+it was necessary to pass <code class="docutils literal"><span class="pre">memory=0</span></code> to set no limit.</p>
+</div>
+</dd>
+<dt>模板</dt>
+<dd>Name of LXC template on which to base this container</dd>
+<dt>clone</dt>
+<dd>Clone this container from an existing container</dd>
+<dt>profile</dt>
+<dd>A LXC profile (defined in config or pillar).</dd>
+<dt>network_profile</dt>
+<dd><p class="first">Network profile to use for the container</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2015.5.2 新版功能.</span></p>
+</div>
+</dd>
+<dt>nic</dt>
+<dd><div class="first last deprecated">
+<p><span class="versionmodified">2015.5.0 版后已移除: </span>Use <code class="docutils literal"><span class="pre">network_profile</span></code> instead</p>
+</div>
+</dd>
+<dt>nic_opts</dt>
+<dd><p class="first">Extra options for network interfaces. E.g.:</p>
+<p class="last"><code class="docutils literal"><span class="pre">{&quot;eth0&quot;:</span> <span class="pre">{&quot;mac&quot;:</span> <span class="pre">&quot;aa:bb:cc:dd:ee:ff&quot;,</span> <span class="pre">&quot;ipv4&quot;:</span> <span class="pre">&quot;10.1.1.1&quot;,</span> <span class="pre">&quot;ipv6&quot;:</span> <span class="pre">&quot;2001:db8::ff00:42:8329&quot;}}</span></code></p>
+</dd>
+<dt>start</dt>
+<dd>Start the newly created container.</dd>
+<dt>seed</dt>
+<dd>Seed the container with the minion config and autosign its key.
+Default: true</dd>
+<dt>install</dt>
+<dd>If salt-minion is not already installed, install it. Default: true</dd>
+<dt>config</dt>
+<dd>Optional config parameters. By default, the id is set to
+the name of the container.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.lxc.list">
+<code class="descclassname">salt.runners.lxc.</code><code class="descname">list</code><span class="sig-paren">(</span><em>host=None</em>, <em>quiet=False</em>, <em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.lxc.list" title="永久链接至目标">¶</a></dt>
+<dd><p>List defined containers (running, stopped, and frozen) for the named
+(or all) host(s).</p>
+<dl class="docutils">
+<dt>path</dt>
+<dd><p class="first">path to the container parent
+default: /var/lib/lxc (system default)</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+</dd>
+</dl>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run lxc.list <span class="o">[</span><span class="nv">host</span><span class="o">=</span>minion_id<span class="o">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.lxc.purge">
+<code class="descclassname">salt.runners.lxc.</code><code class="descname">purge</code><span class="sig-paren">(</span><em>name</em>, <em>delete_key=True</em>, <em>quiet=False</em>, <em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.lxc.purge" title="永久链接至目标">¶</a></dt>
+<dd><p>Purge the named container and delete its minion key if present.
+WARNING: Destroys all data associated with the container.</p>
+<dl class="docutils">
+<dt>path</dt>
+<dd><p class="first">path to the container parent
+default: /var/lib/lxc (system default)</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+</dd>
+</dl>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run lxc.purge name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.lxc.start">
+<code class="descclassname">salt.runners.lxc.</code><code class="descname">start</code><span class="sig-paren">(</span><em>name</em>, <em>quiet=False</em>, <em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.lxc.start" title="永久链接至目标">¶</a></dt>
+<dd><p>Start the named container.</p>
+<dl class="docutils">
+<dt>path</dt>
+<dd><p class="first">path to the container parent
+default: /var/lib/lxc (system default)</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+</dd>
+</dl>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run lxc.start name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.lxc.stop">
+<code class="descclassname">salt.runners.lxc.</code><code class="descname">stop</code><span class="sig-paren">(</span><em>name</em>, <em>quiet=False</em>, <em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.lxc.stop" title="永久链接至目标">¶</a></dt>
+<dd><p>Stop the named container.</p>
+<dl class="docutils">
+<dt>path</dt>
+<dd><p class="first">path to the container parent
+default: /var/lib/lxc (system default)</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+</dd>
+</dl>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run lxc.stop name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.runners.lxc.unfreeze">
+<code class="descclassname">salt.runners.lxc.</code><code class="descname">unfreeze</code><span class="sig-paren">(</span><em>name</em>, <em>quiet=False</em>, <em>path=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.runners.lxc.unfreeze" title="永久链接至目标">¶</a></dt>
+<dd><p>Unfreeze the named container</p>
+<dl class="docutils">
+<dt>path</dt>
+<dd><p class="first">path to the container parent
+default: /var/lib/lxc (system default)</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+</dd>
+</dl>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run lxc.unfreeze name
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+                            </div>
+                            <a href="salt.runners.launchd.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.runners.launchd" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="salt.runners.manage.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.runners.manage" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Salt Module Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../auth/all/index.html">内建身份认证模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../beacons/all/index.html">Full list of builtin beacon modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../engines/all/index.html">Full list of builtin engine modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../file_server/all/index.html">文件服务内置模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../grains/all/index.html">Full list of builtin grains modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/all/index.html">Full list of builtin execution modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../netapi/all/index.html">Full list of netapi modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../output/all/index.html">完整的内置输出模块的列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../pillar/all/index.html">Full list of builtin pillar modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../proxy/all/index.html">Full list of builtin proxy modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../queues/all/index.html">Full list of builtin queues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../renderers/all/index.html">Full list of builtin renderer modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../returners/all/index.html">所有内置的返回接收器模块列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../roster/all/index.html">Full list of builtin roster modules</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Full list of runner modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.asam.html">salt.runners.asam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.cache.html">salt.runners.cache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.cloud.html">salt.runners.cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.ddns.html">salt.runners.ddns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.doc.html">salt.runners.doc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.drac.html">salt.runners.drac</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.error.html">salt.runners.error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.f5.html">salt.runners.f5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.fileserver.html">salt.runners.fileserver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.git_pillar.html">salt.runners.git_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.http.html">salt.runners.http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.jobs.html">salt.runners.jobs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.launchd.html">salt.runners.launchd</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">salt.runners.lxc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.manage.html">salt.runners.manage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.mine.html">salt.runners.mine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.nacl.html">salt.runners.nacl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.network.html">salt.runners.network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.pagerduty.html">salt.runners.pagerduty</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.pillar.html">salt.runners.pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.pkg.html">salt.runners.pkg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.queue.html">salt.runners.queue</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.reactor.html">salt.runners.reactor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.sdb.html">salt.runners.sdb</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.ssh.html">salt.runners.ssh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.search.html">salt.runners.search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.spacewalk.html">salt.runners.spacewalk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.ssh.html">salt.runners.ssh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.state.html">salt.runners.state</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.survey.html">salt.runners.survey</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.test.html">salt.runners.test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.thin.html">salt.runners.thin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.virt.html">salt.runners.virt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.runners.winrepo.html">salt.runners.winrepo</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../sdb/all/index.html">Full list of builtin sdb modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../serializers/all/index.html">Full list of builtin serializers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../states/all/index.html">所有内置的state模块列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tops/all/index.html">master内置顶级模块的全部列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../wheel/all/index.html">Full list of builtin wheel modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

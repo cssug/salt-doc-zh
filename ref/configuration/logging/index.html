@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Logging</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+        <link rel="up" title="Configuring Salt" href="../../../topics/configuration/index.html">
+        <link rel="next" title="Salt文件服务器" href="../../file_server/index.html">
+        <link rel="prev" title="Storing Job Results in an External System" href="../../../topics/jobs/external_cache.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../../topics/jobs/external_cache.html" title="Storing Job Results in an External System">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../../file_server/index.html" title="Salt文件服务器">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="logging">
+<h1>Logging<a class="headerlink" href="#logging" title="永久链接至标题">¶</a></h1>
+<p>The salt project tries to get the logging to work for you and help us solve any
+issues you might find along the way.</p>
+<p>If you want to get some more information on the nitty-gritty of salt's logging
+system, please head over to the <a class="reference internal" href="../../../topics/development/logging.html"><em>logging development
+document</em></a>, if all you're after is salt's logging
+configurations, please continue reading.</p>
+<div class="section" id="available-configuration-settings">
+<h2>Available Configuration Settings<a class="headerlink" href="#available-configuration-settings" title="永久链接至标题">¶</a></h2>
+<div class="section" id="log-file">
+<span id="std:conf_log-log_file"></span><h3><code class="docutils literal"><span class="pre">log_file</span></code><a class="headerlink" href="#log-file" title="永久链接至标题">¶</a></h3>
+<p>The log records can be sent to a regular file, local path name, or network location.
+Remote logging works best when configured to use rsyslogd(8) (e.g.: <code class="docutils literal"><span class="pre">file:///dev/log</span></code>),
+with rsyslogd(8) configured for network logging.  The format for remote addresses is:
+<code class="docutils literal"><span class="pre">&lt;file|udp|tcp&gt;://&lt;host|socketpath&gt;:&lt;port-if-required&gt;/&lt;log-facility&gt;</span></code>. Where <code class="docutils literal"><span class="pre">log-facility</span></code> is the symbolic name of a syslog facility as defined in the <span class="xref std std-ref">SysLogHandler documentation</span> . It defaults to <code class="docutils literal"><span class="pre">LOG_USER</span></code>.</p>
+<p>Default: Dependent of the binary being executed, for example, for <code class="docutils literal"><span class="pre">salt-master</span></code>,
+<code class="docutils literal"><span class="pre">/var/log/salt/master</span></code>.</p>
+<p>Examples:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">log_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/var/log/salt/master</span>
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">log_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/var/log/salt/minion</span>
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">log_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">file:///dev/log</span>
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">log_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">file:///dev/log/LOG_DAEMON</span>
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">log_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">udp://loghost:10514</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="log-level">
+<span id="std:conf_log-log_level"></span><h3><code class="docutils literal"><span class="pre">log_level</span></code><a class="headerlink" href="#log-level" title="永久链接至标题">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">info</span></code></p>
+<p>The level of log record messages to send to the console.
+One of <code class="docutils literal"><span class="pre">all</span></code>, <code class="docutils literal"><span class="pre">garbage</span></code>, <code class="docutils literal"><span class="pre">trace</span></code>, <code class="docutils literal"><span class="pre">debug</span></code>, <code class="docutils literal"><span class="pre">info</span></code>, <code class="docutils literal"><span class="pre">warning</span></code>,
+<code class="docutils literal"><span class="pre">error</span></code>, <code class="docutils literal"><span class="pre">critical</span></code>, <code class="docutils literal"><span class="pre">quiet</span></code>.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">log_level</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">warning</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Add <code class="docutils literal"><span class="pre">log_level:</span> <span class="pre">quiet```in</span> <span class="pre">salt</span> <span class="pre">configuration</span> <span class="pre">file</span> <span class="pre">to</span> <span class="pre">completely</span> <span class="pre">disable</span>
+<span class="pre">logging.</span> <span class="pre">In</span> <span class="pre">case</span> <span class="pre">of</span> <span class="pre">running</span> <span class="pre">salt</span> <span class="pre">in</span> <span class="pre">command</span> <span class="pre">line</span> <span class="pre">use</span></code>--log-level=quiet``
+instead.</p>
+</div>
+</div>
+<div class="section" id="log-level-logfile">
+<span id="std:conf_log-log_level_logfile"></span><h3><code class="docutils literal"><span class="pre">log_level_logfile</span></code><a class="headerlink" href="#log-level-logfile" title="永久链接至标题">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">info</span></code></p>
+<p>The level of messages to send to the log file.
+One of <code class="docutils literal"><span class="pre">all</span></code>, <code class="docutils literal"><span class="pre">garbage</span></code>, <code class="docutils literal"><span class="pre">trace</span></code>, <code class="docutils literal"><span class="pre">debug</span></code>, <code class="docutils literal"><span class="pre">info</span></code>, <code class="docutils literal"><span class="pre">warning</span></code>,
+<code class="docutils literal"><span class="pre">error</span></code>, <code class="docutils literal"><span class="pre">critical</span></code>, <code class="docutils literal"><span class="pre">quiet</span></code>.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">log_level_logfile</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">warning</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="log-datefmt">
+<span id="std:conf_log-log_datefmt"></span><h3><code class="docutils literal"><span class="pre">log_datefmt</span></code><a class="headerlink" href="#log-datefmt" title="永久链接至标题">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">%H:%M:%S</span></code></p>
+<p>The date and time format used in console log messages. Allowed date/time
+formatting can be seen on <a class="reference external" href="http://docs.python.org/2/library/time.html#time.strftime" title="(在 Python v2.7)"><code class="xref py py-func docutils literal"><span class="pre">time.strftime</span></code></a>.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">log_datefmt</span><span class="p p-Indicator">:</span> <span class="s">&#39;%H:%M:%S&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="log-datefmt-logfile">
+<span id="std:conf_log-log_datefmt_logfile"></span><h3><code class="docutils literal"><span class="pre">log_datefmt_logfile</span></code><a class="headerlink" href="#log-datefmt-logfile" title="永久链接至标题">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">%Y-%m-%d</span> <span class="pre">%H:%M:%S</span></code></p>
+<p>The date and time format used in log file messages. Allowed date/time
+formatting can be seen on <a class="reference external" href="http://docs.python.org/2/library/time.html#time.strftime" title="(在 Python v2.7)"><code class="xref py py-func docutils literal"><span class="pre">time.strftime</span></code></a>.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">log_datefmt_logfile</span><span class="p p-Indicator">:</span> <span class="s">&#39;%Y-%m-%d</span><span class="nv"> </span><span class="s">%H:%M:%S&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="log-fmt-console">
+<span id="std:conf_log-log_fmt_console"></span><h3><code class="docutils literal"><span class="pre">log_fmt_console</span></code><a class="headerlink" href="#log-fmt-console" title="永久链接至标题">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">[%(levelname)-8s]</span> <span class="pre">%(message)s</span></code></p>
+<p>The format of the console logging messages. All standard python logging
+<a class="reference external" href="http://docs.python.org/2/library/logging.html#logrecord-attributes" title="(在 Python v2.7)"><span class="xref std std-ref">LogRecord attributes</span></a> can be used.  Salt
+also provides these custom LogRecord attributes to colorize console log output:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="s1">&#39;</span><span class="si">%(colorlevel)s</span><span class="s1">&#39;</span>   <span class="c1"># log level name colorized by level</span>
+<span class="s1">&#39;</span><span class="si">%(colorname)s</span><span class="s1">&#39;</span>    <span class="c1"># colorized module name</span>
+<span class="s1">&#39;</span><span class="si">%(colorprocess)s</span><span class="s1">&#39;</span> <span class="c1"># colorized process number</span>
+<span class="s1">&#39;</span><span class="si">%(colormsg)s</span><span class="s1">&#39;</span>     <span class="c1"># log message colorized by level</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The <code class="docutils literal"><span class="pre">%(colorlevel)s</span></code>, <code class="docutils literal"><span class="pre">%(colorname)s</span></code>, and <code class="docutils literal"><span class="pre">%(colorprocess)</span></code>
+LogRecord attributes also include padding and enclosing brackets, <code class="docutils literal"><span class="pre">[</span></code> and
+<code class="docutils literal"><span class="pre">]</span></code> to match the default values of their collateral non-colorized
+LogRecord attributes.</p>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">log_fmt_console</span><span class="p p-Indicator">:</span> <span class="s">&#39;[%(levelname)-8s]</span><span class="nv"> </span><span class="s">%(message)s&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="log-fmt-logfile">
+<span id="std:conf_log-log_fmt_logfile"></span><h3><code class="docutils literal"><span class="pre">log_fmt_logfile</span></code><a class="headerlink" href="#log-fmt-logfile" title="永久链接至标题">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">%(asctime)s,%(msecs)03.0f</span> <span class="pre">[%(name)-17s][%(levelname)-8s]</span> <span class="pre">%(message)s</span></code></p>
+<p>The format of the log file logging messages. All standard python logging
+<a class="reference external" href="http://docs.python.org/2/library/logging.html#logrecord-attributes" title="(在 Python v2.7)"><span class="xref std std-ref">LogRecord attributes</span></a> can be used.  Salt
+also provides these custom LogRecord attributes that include padding and
+enclosing brackets <code class="docutils literal"><span class="pre">[</span></code> and <code class="docutils literal"><span class="pre">]</span></code>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="s1">&#39;</span><span class="si">%(bracketlevel)s</span><span class="s1">&#39;</span>   <span class="c1"># equivalent to [%(levelname)-8s]</span>
+<span class="s1">&#39;</span><span class="si">%(bracketname)s</span><span class="s1">&#39;</span>    <span class="c1"># equivalent to [%(name)-17s]</span>
+<span class="s1">&#39;</span><span class="si">%(bracketprocess)s</span><span class="s1">&#39;</span> <span class="c1"># equivalent to [%(process)5s]</span>
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">log_fmt_logfile</span><span class="p p-Indicator">:</span> <span class="s">&#39;%(asctime)s,%(msecs)03.0f</span><span class="nv"> </span><span class="s">[%(name)-17s][%(levelname)-8s]</span><span class="nv"> </span><span class="s">%(message)s&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="log-granular-levels">
+<span id="std:conf_log-log_granular_levels"></span><h3><code class="docutils literal"><span class="pre">log_granular_levels</span></code><a class="headerlink" href="#log-granular-levels" title="永久链接至标题">¶</a></h3>
+<p>Default: <code class="docutils literal"><span class="pre">{}</span></code></p>
+<p>This can be used to control logging levels more specifically.  The example sets
+the main salt library at the 'warning' level, but sets <code class="docutils literal"><span class="pre">salt.modules</span></code> to log
+at the <code class="docutils literal"><span class="pre">debug</span></code> level:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">log_granular_levels</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;salt&#39;</span><span class="p p-Indicator">:</span> <span class="s">&#39;warning&#39;</span>
+  <span class="s">&#39;salt.modules&#39;</span><span class="p p-Indicator">:</span> <span class="s">&#39;debug&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="external-logging-handlers">
+<h3>External Logging Handlers<a class="headerlink" href="#external-logging-handlers" title="永久链接至标题">¶</a></h3>
+<p>Besides the internal logging handlers used by salt, there are some external
+which can be used, see the <a class="reference internal" href="handlers/index.html"><em>external logging handlers</em></a>
+document.</p>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../../../topics/jobs/external_cache.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Storing Job Results in an External System" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../../file_server/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt文件服务器" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../master.html">配置Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../minion.html">配置Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html">Configuration file examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/blackout/index.html">Minion Blackout Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/eauth/access_control.html">Access Control System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/jobs/index.html">Job Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/jobs/job_cache.html">Managing the Job Cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/jobs/external_cache.html">Storing Job Results in an External System</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Logging</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#available-configuration-settings">Available Configuration Settings</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#log-file"><code class="docutils literal"><span class="pre">log_file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#log-level"><code class="docutils literal"><span class="pre">log_level</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#log-level-logfile"><code class="docutils literal"><span class="pre">log_level_logfile</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#log-datefmt"><code class="docutils literal"><span class="pre">log_datefmt</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#log-datefmt-logfile"><code class="docutils literal"><span class="pre">log_datefmt_logfile</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#log-fmt-console"><code class="docutils literal"><span class="pre">log_fmt_console</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#log-fmt-logfile"><code class="docutils literal"><span class="pre">log_fmt_logfile</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#log-granular-levels"><code class="docutils literal"><span class="pre">log_granular_levels</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#external-logging-handlers">External Logging Handlers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../file_server/index.html">Salt文件服务器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/tutorials/gitfs.html">Git Fileserver Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/tutorials/minionfs.html">MinionFS Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/spm/index.html">Salt Package Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/sdb/index.html">Storing Data in Other Databases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nonroot.html">以非特权用户身份运行Salt Master/Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/tutorials/cron.html">使用cron运行Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/hardening.html">Hardening Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../security/index.html">Security disclosure policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/transports/index.html">Salt Transport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/master_tops/index.html">Master Tops系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../returners/index.html">返回器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../renderers/index.html">Renderers渲染器</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

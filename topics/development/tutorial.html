@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Developing Salt Tutorial</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt开发" href="index.html">
+        <link rel="next" title="Running The Tests" href="tests/index.html">
+        <link rel="prev" title="翻译文档" href="translating.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="translating.html" title="翻译文档">上一页</a>
+            
+        </li>
+        <li>
+            <a href="tests/index.html" title="Running The Tests">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="developing-salt-tutorial">
+<span id="developing-tutorial"></span><h1>Developing Salt Tutorial<a class="headerlink" href="#developing-salt-tutorial" title="永久链接至标题">¶</a></h1>
+<p>This tutorial assumes you have:
+* a web browser
+* a GitHub account (<code class="docutils literal"><span class="pre">&lt;my_account&gt;</span></code>)
+* a command line (CLI)
+* git
+* a text editor</p>
+<div class="section" id="fork">
+<h2>Fork<a class="headerlink" href="#fork" title="永久链接至标题">¶</a></h2>
+<p>In your browser, navigate to the <code class="docutils literal"><span class="pre">saltstack/salt</span></code> <a class="reference external" href="https://github.com/saltstack/salt">GitHub repository</a>.</p>
+<p>Click on <code class="docutils literal"><span class="pre">Fork</span></code> (<a class="reference external" href="https://github.com/saltstack/salt/#fork-destination-box">https://github.com/saltstack/salt/#fork-destination-box</a>).</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">If you have more than one GitHub presence, for example if you are a member
+of a team, GitHub will ask you into which area to clone Salt.  If you don't
+know where, then select your personal GitHub account.</p>
+</div>
+</div>
+<div class="section" id="clone">
+<h2>Clone<a class="headerlink" href="#clone" title="永久链接至标题">¶</a></h2>
+<p>In your CLI, navigate to the directory into which you want clone the Salt
+codebase and submit the following command:</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ git clone https://github.com/&lt;my_account&gt;/salt.git
+</pre></div>
+</div>
+<p>where <code class="docutils literal"><span class="pre">&lt;my_account&gt;</span></code> is the name of your GitHub account.  After the clone has
+completed, add SaltStack as a second remote and fetch any changes from
+<code class="docutils literal"><span class="pre">upstream</span></code>.</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> salt
+$ git remote add upstream https://github.com/saltstack/salt.git
+$ git fetch upstream
+</pre></div>
+</div>
+<p>For this tutorial, we will be working off from the <code class="docutils literal"><span class="pre">develop</span></code> branch, which is
+the default branch for the SaltStack GitHub project.  This branch needs to
+track <code class="docutils literal"><span class="pre">upstream/develop</span></code> so that we will get all upstream changes when they
+happen.</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ git checkout develop
+$ git branch --set-upstream-to upstream/develop
+</pre></div>
+</div>
+</div>
+<div class="section" id="fetch">
+<h2>Fetch<a class="headerlink" href="#fetch" title="永久链接至标题">¶</a></h2>
+<p>Fetch any <code class="docutils literal"><span class="pre">upstream</span></code> changes on the <code class="docutils literal"><span class="pre">develop</span></code> branch and sync them to your
+local copy of the branch with a single command:</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ git pull --rebase
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">For an explanation on <code class="docutils literal"><span class="pre">pull</span></code> vs <code class="docutils literal"><span class="pre">pull</span> <span class="pre">--rebase</span></code> and other excellent
+points, see <a class="reference external" href="http://mislav.net/2013/02/merge-vs-rebase/">this article</a> by
+Mislav Marohnić.</p>
+</div>
+</div>
+<div class="section" id="branch">
+<h2>Branch<a class="headerlink" href="#branch" title="永久链接至标题">¶</a></h2>
+<p>Now we are ready to get to work.  Consult the <a class="reference external" href="https://github.com/saltstack/salt/wiki/December-2015-Sprint-Beginner-Bug-List">sprint beginner bug list</a>
+and select an execution module whose <code class="docutils literal"><span class="pre">__virtual__</span></code> function needs to be
+updated.  I'll select the <code class="docutils literal"><span class="pre">alternatives</span></code> module.</p>
+<p>Create a new branch off from <code class="docutils literal"><span class="pre">develop</span></code>.  Be sure to name it something short
+and descriptive.</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ git checkout -b virt_ret
+</pre></div>
+</div>
+</div>
+<div class="section" id="edit">
+<h2>Edit<a class="headerlink" href="#edit" title="永久链接至标题">¶</a></h2>
+<p>Edit the file you have selected, and verify that the changes are correct.</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ vim salt/modules/alternatives.py
+$ git diff
+diff --git a/salt/modules/alternatives.py b/salt/modules/alternatives.py
+index 1653e5f..30c0a59 100644
+--- a/salt/modules/alternatives.py
++++ b/salt/modules/alternatives.py
+@@ -30,7 +30,7 @@ def __virtual__():
+         &#39;&#39;&#39;
+         if os.path.isdir(&#39;/etc/alternatives&#39;):
+                 return True
+-        return False
++        return (False, &#39;Cannot load alternatives module: /etc/alternatives dir not found&#39;)
+
+
+ def _get_cmd():
+</pre></div>
+</div>
+</div>
+<div class="section" id="commit">
+<h2>Commit<a class="headerlink" href="#commit" title="永久链接至标题">¶</a></h2>
+<p>Stage and commit the changes.  Write a descriptive commit summary, but try to
+keep it less than 50 characters.  Review your commit.</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ git add salt/modules/alternatives.py
+$ git commit -m <span class="s1">&#39;modules.alternatives: __virtual__ return err msg&#39;</span>
+$ git show
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">If you need more room to describe the changes in your commit, run <code class="docutils literal"><span class="pre">git</span>
+<span class="pre">commit</span></code> (without the <code class="docutils literal"><span class="pre">-m</span></code>, message, option) and you will be presented
+with an editor.  The first line is the commit summary and should still be
+50 characters or less.  The following paragraphs you create are free form
+and will be preserved as part of the commit.</p>
+</div>
+</div>
+<div class="section" id="push">
+<h2>Push<a class="headerlink" href="#push" title="永久链接至标题">¶</a></h2>
+<p>Push your branch to your GitHub account.  You will likely need to enter your
+GitHub username and password.</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ git push origin virt_ret
+Username <span class="k">for</span> <span class="s1">&#39;https://github.com&#39;</span>: &lt;my_account&gt;
+Password <span class="k">for</span> <span class="s1">&#39;https://&lt;my_account&gt;@github.com&#39;</span>:
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>If authentication over https does not work, you can alternatively setup
+<a class="reference external" href="https://help.github.com/articles/generating-ssh-keys/">ssh keys</a>.  Once
+you have done this, you may need add the keys to your git repository
+configuration</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>$ git config ssh.key ~/.ssh/&lt;key_name&gt;
+</pre></div>
+</div>
+<p class="last">where <code class="docutils literal"><span class="pre">&lt;key_name&gt;</span></code> is the file name of the private key you created.</p>
+</div>
+</div>
+<div class="section" id="merge">
+<h2>Merge<a class="headerlink" href="#merge" title="永久链接至标题">¶</a></h2>
+<p>In your browser, navigate to the <a class="reference external" href="https://github.com/saltstack/salt/compare">new pull request</a> page on the <code class="docutils literal"><span class="pre">saltstack/salt</span></code>
+GitHub repository and click on <code class="docutils literal"><span class="pre">compare</span> <span class="pre">across</span> <span class="pre">forks</span></code>.  Select
+<code class="docutils literal"><span class="pre">&lt;my_account&gt;</span></code> from the list of head forks and the branch you are wanting to
+merge into <code class="docutils literal"><span class="pre">develop</span></code> (<code class="docutils literal"><span class="pre">virt_ret</span></code> in this case).</p>
+<p>When you have finished reviewing the changes, click <code class="docutils literal"><span class="pre">Create</span> <span class="pre">pull</span> <span class="pre">request</span></code>.</p>
+<p>If your pull request contains only a single commit, the title and comment will
+be taken from that commit's summary and message, otherwise the branch name is
+used for the title.  Edit these fields as necessary  and click <code class="docutils literal"><span class="pre">Create</span> <span class="pre">pull</span>
+<span class="pre">request</span></code>.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>Although these instructions seem to be the official pull request proceedure
+on github's website, here are two alternative methods that are simpler.</p>
+<ul class="last">
+<li><p class="first">If you navigate to your clone of salt,
+<code class="docutils literal"><span class="pre">https://github.com/&lt;my_account&gt;/salt</span></code>, depending on how old your
+branch is or how recently you pushed updates on it, you may be presented
+with a button to create a pull request with your branch.</p>
+</li>
+<li><p class="first">I find it easiest to edit the following URL:</p>
+<p><code class="docutils literal"><span class="pre">https://github.com/saltstack/salt/compare/develop...&lt;my_account&gt;:virt_ret</span></code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="resources">
+<h2>Resources<a class="headerlink" href="#resources" title="永久链接至标题">¶</a></h2>
+<p>GitHub offers many great tutorials on various aspects of the git- and
+GitHub-centric development workflow:</p>
+<p><a class="reference external" href="https://help.github.com/">https://help.github.com/</a></p>
+<p>There are many topics covered by the Salt Developer documentation:</p>
+<p><a class="reference external" href="https://docs.saltstack.com/en/latest/topics/development/index.html">https://docs.saltstack.com/en/latest/topics/development/index.html</a></p>
+<p>The contributing documentation presents more details on specific contributing
+topics:</p>
+<p><a class="reference external" href="https://docs.saltstack.com/en/latest/topics/development/contributing.html">https://docs.saltstack.com/en/latest/topics/development/contributing.html</a></p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="translating.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="翻译文档" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="tests/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Running The Tests" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt开发</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="architecture.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#salt-client">Salt Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#salt-master">Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#salt-minion">Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#a-note-on-clearfuncs-vs-aesfuncs">A Note on ClearFuncs vs. AESFuncs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deprecations.html">代码弃用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dunder_dictionaries.html">Dunder Dictionaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_pillars.html">External Pillars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hacking.html">Installing Salt for development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="labels.html">GitHub Labels and Milestones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logging.html">内部日志</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular_systems.html">模块化系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="package_providers.html">Package Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reporting_bugs.html">Reporting Bugs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salt_projects.html">Community Projects That Use Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="topology.html">Salt Topology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="translating.html">翻译文档</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Developing Salt Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fork">Fork</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#clone">Clone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fetch">Fetch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#branch">Branch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#edit">Edit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commit">Commit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#push">Push</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#merge">Merge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resources">Resources</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html">Running The Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html#automated-test-runs">Automated Test Runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raet/index.html">raet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="git/index.html">SaltStack Git Policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions/index.html">Salt Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/internals/index.html">Salt code and internals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../projects/index.html">Salt Based Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/writing_tests.html">编写Salt测试</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

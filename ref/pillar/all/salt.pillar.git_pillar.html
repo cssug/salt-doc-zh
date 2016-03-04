@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.pillar.git_pillar</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+        <link rel="up" title="Full list of builtin pillar modules" href="index.html">
+        <link rel="next" title="salt.pillar.hg_pillar" href="salt.pillar.hg_pillar.html">
+        <link rel="prev" title="salt.pillar.foreman" href="salt.pillar.foreman.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="salt.pillar.foreman.html" title="salt.pillar.foreman">上一页</a>
+            
+        </li>
+        <li>
+            <a href="salt.pillar.hg_pillar.html" title="salt.pillar.hg_pillar">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.pillar.git_pillar">
+<span id="salt-pillar-git-pillar"></span><h1>salt.pillar.git_pillar<a class="headerlink" href="#module-salt.pillar.git_pillar" title="永久链接至标题">¶</a></h1>
+<div class="section" id="use-a-git-repository-as-a-pillar-source">
+<h2>Use a git repository as a Pillar source<a class="headerlink" href="#use-a-git-repository-as-a-pillar-source" title="永久链接至标题">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">This external pillar has been rewritten for the <a class="reference internal" href="../../../topics/releases/2015.8.0.html"><em>2015.8.0</em></a> release. The old method of configuring this
+external pillar will be maintained for a couple releases, allowing time for
+configurations to be updated to reflect the new usage.</p>
+</div>
+<p>This external pillar allows for a Pillar top file and Pillar SLS files to be
+sourced from a git repository.</p>
+<p>However, since git_pillar does not have an equivalent to the
+<a class="reference internal" href="../../configuration/master.html#std:conf_master-pillar_roots"><code class="xref std std-conf_master docutils literal"><span class="pre">pillar_roots</span></code></a> parameter, configuration is slightly different. A
+Pillar top file is required to be in the git repository and must still contain
+the relevant environment, like so:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">foo</span>
+</pre></div>
+</div>
+<p>The branch/tag which maps to that environment must then be specified along with
+the repo's URL. Configuration details can be found below.</p>
+<div class="section" id="configuring-git-pillar-for-salt-releases-before-2015-8-0">
+<span id="git-pillar-pre-2015-8-0"></span><h3>Configuring git_pillar for Salt releases before 2015.8.0<a class="headerlink" href="#configuring-git-pillar-for-salt-releases-before-2015-8-0" title="永久链接至标题">¶</a></h3>
+<p>For Salt releases earlier than <a class="reference internal" href="../../../topics/releases/2015.8.0.html"><em>2015.8.0</em></a>,
+GitPython is the only supported provider for git_pillar. Individual
+repositories can be configured under the <a class="reference internal" href="../../configuration/master.html#std:conf_master-ext_pillar"><code class="xref std std-conf_master docutils literal"><span class="pre">ext_pillar</span></code></a>
+configuration parameter like so:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ext_pillar</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">git</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">master https://gitserver/git-pillar.git root=subdirectory</span>
+</pre></div>
+</div>
+<p>The repository is specified in the format <code class="docutils literal"><span class="pre">&lt;branch&gt;</span> <span class="pre">&lt;repo_url&gt;</span></code>, with an
+optional <code class="docutils literal"><span class="pre">root</span></code> parameter (added in the <a class="reference internal" href="../../../topics/releases/2014.7.0.html"><em>2014.7.0</em></a> release) which allows the pillar SLS files to be
+served up from a subdirectory (similar to <a class="reference internal" href="../../configuration/master.html#std:conf_master-gitfs_root"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_root</span></code></a> in gitfs).</p>
+<p>To use more than one branch from the same repo, multiple lines must be
+specified under <a class="reference internal" href="../../configuration/master.html#std:conf_master-ext_pillar"><code class="xref std std-conf_master docutils literal"><span class="pre">ext_pillar</span></code></a>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ext_pillar</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">git</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">master https://gitserver/git-pillar.git</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">git</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">dev https://gitserver/git-pillar.git</span>
+</pre></div>
+</div>
+<p>To remap a specific branch to a specific Pillar environment, use the format
+<code class="docutils literal"><span class="pre">&lt;branch&gt;:&lt;env&gt;</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ext_pillar</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">git</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">develop:dev https://gitserver/git-pillar.git</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">git</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">master:prod https://gitserver/git-pillar.git</span>
+</pre></div>
+</div>
+<p>In this case, the <code class="docutils literal"><span class="pre">develop</span></code> branch would need its own <code class="docutils literal"><span class="pre">top.sls</span></code> with a
+<code class="docutils literal"><span class="pre">dev</span></code> section in it, like this:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">dev</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bar</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">master</span></code> branch would need its own <code class="docutils literal"><span class="pre">top.sls</span></code> with a <code class="docutils literal"><span class="pre">prod</span></code> section in
+it:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">prod</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bar</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal"><span class="pre">__env__</span></code> is specified as the branch name, then git_pillar will use the
+branch specified by <a class="reference internal" href="../../configuration/master.html#std:conf_master-gitfs_base"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_base</span></code></a>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ext_pillar</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">git</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">__env__ https://gitserver/git-pillar.git root=pillar</span>
+</pre></div>
+</div>
+<p>The corresponding Pillar top file would look like this:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="p p-Indicator">{{</span><span class="nv">env</span><span class="p p-Indicator">}}:</span>
+  <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bar</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="configuring-git-pillar-for-salt-releases-2015-8-0-and-later">
+<span id="git-pillar-2015-8-0-and-later"></span><h3>Configuring git_pillar for Salt releases 2015.8.0 and later<a class="headerlink" href="#configuring-git-pillar-for-salt-releases-2015-8-0-and-later" title="永久链接至标题">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">In version 2015.8.0, the method of configuring git external pillars has
+changed, and now more closely resembles that of the <a class="reference internal" href="../../../topics/tutorials/gitfs.html#tutorial-gitfs"><span>Git Fileserver
+Backend</span></a>. If Salt detects the old configuration schema, it
+will use the pre-2015.8.0 code to compile the external pillar. A warning
+will also be logged.</p>
+</div>
+<p>Beginning with Salt version 2015.8.0, <a class="reference external" href="https://github.com/libgit2/pygit2">pygit2</a> is now supported in addition to
+<a class="reference external" href="https://github.com/gitpython-developers/GitPython">GitPython</a> (<a class="reference external" href="https://www.samba.org/~jelmer/dulwich/">Dulwich</a> will not be supported for the forseeable future). The
+requirements for <a class="reference external" href="https://github.com/gitpython-developers/GitPython">GitPython</a> and <a class="reference external" href="https://github.com/libgit2/pygit2">pygit2</a> are the same as for gitfs, as described
+<a class="reference internal" href="../../../topics/tutorials/gitfs.html#gitfs-dependencies"><span>here</span></a>.</p>
+<div class="admonition important">
+<p class="first admonition-title">重要</p>
+<p>git_pillar has its own set of global configuration parameters. While it may
+seem intuitive to use the global gitfs configuration parameters
+(<a class="reference internal" href="../../configuration/master.html#std:conf_master-gitfs_base"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_base</span></code></a>, etc.) to manage git_pillar, this will not work.
+The main difference for this is the fact that the different components
+which use Salt's git backend code do not all function identically. For
+instance, in git_pillar it is necessary to specify which branch/tag to be
+used for git_pillar remotes. This is the reverse behavior from gitfs, where
+branches/tags make up your environments.</p>
+<p class="last">See <a class="reference internal" href="../../configuration/master.html#git-pillar-config-opts"><span>here</span></a> for documentation on the
+git_pillar configuration options and their usage.</p>
+</div>
+<p>Here is an example git_pillar configuration:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ext_pillar</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">git</span><span class="p p-Indicator">:</span>
+    <span class="c1"># Use &#39;prod&#39; instead of the branch name &#39;production&#39; as the environment</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">production https://gitserver/git-pillar.git</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">env</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">prod</span>
+    <span class="c1"># Use &#39;dev&#39; instead of the branch name &#39;develop&#39; as the environment</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">develop https://gitserver/git-pillar.git</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">env</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">dev</span>
+    <span class="c1"># No per-remote config parameters (and no trailing colon), &#39;qa&#39; will</span>
+    <span class="c1"># be used as the environment</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">qa https://gitserver/git-pillar.git</span>
+    <span class="c1"># SSH key authentication</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">master git@other-git-server:pillardata-ssh.git</span><span class="p p-Indicator">:</span>
+      <span class="c1"># Pillar SLS files will be read from the &#39;pillar&#39; subdirectory in</span>
+      <span class="c1"># this repository</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">root</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">pillar</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">privkey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/path/to/key</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pubkey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/path/to/key.pub</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">passphrase</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">CorrectHorseBatteryStaple</span>
+    <span class="c1"># HTTPS authentication</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">master https://other-git-server/pillardata-https.git</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">git</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">CorrectHorseBatteryStaple</span>
+</pre></div>
+</div>
+<p>The main difference between this and the old way of configuring git_pillar is
+that multiple remotes can be configured under one <code class="docutils literal"><span class="pre">git</span></code> section under
+<a class="reference internal" href="../../configuration/master.html#std:conf_master-ext_pillar"><code class="xref std std-conf_master docutils literal"><span class="pre">ext_pillar</span></code></a>. More than one <code class="docutils literal"><span class="pre">git</span></code> section can be used, but it is
+not necessary. Remotes will be evaluated sequentially.</p>
+<p>Per-remote configuration parameters are supported (similar to <a class="reference internal" href="../../../topics/tutorials/gitfs.html#gitfs-per-remote-config"><span>gitfs</span></a>), and global versions of the git_pillar
+configuration parameters can also be set.</p>
+<p>With the addition of <a class="reference external" href="https://github.com/libgit2/pygit2">pygit2</a> support, git_pillar can now interact with
+authenticated remotes. Authentication works just like in gitfs (as outlined in
+the <a class="reference internal" href="../../../topics/tutorials/gitfs.html#gitfs-authentication"><span>Git Fileserver Backend Walkthrough</span></a>), only
+with the global authenication parameter names prefixed with <code class="docutils literal"><span class="pre">git_pillar</span></code>
+instead of <code class="docutils literal"><span class="pre">gitfs</span></code> (e.g. <a class="reference internal" href="../../configuration/master.html#std:conf_master-git_pillar_pubkey"><code class="xref std std-conf_master docutils literal"><span class="pre">git_pillar_pubkey</span></code></a>,
+<a class="reference internal" href="../../configuration/master.html#std:conf_master-git_pillar_privkey"><code class="xref std std-conf_master docutils literal"><span class="pre">git_pillar_privkey</span></code></a>, <a class="reference internal" href="../../configuration/master.html#std:conf_master-git_pillar_passphrase"><code class="xref std std-conf_master docutils literal"><span class="pre">git_pillar_passphrase</span></code></a>, etc.).</p>
+<dl class="function">
+<dt id="salt.pillar.git_pillar.ext_pillar">
+<code class="descclassname">salt.pillar.git_pillar.</code><code class="descname">ext_pillar</code><span class="sig-paren">(</span><em>minion_id</em>, <em>repo</em>, <em>pillar_dirs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.pillar.git_pillar.ext_pillar" title="永久链接至目标">¶</a></dt>
+<dd><p>Checkout the ext_pillar sources and compile the resulting pillar SLS</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="salt.pillar.foreman.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.pillar.foreman" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="salt.pillar.hg_pillar.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.pillar.hg_pillar" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Salt Module Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../auth/all/index.html">内建身份认证模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../beacons/all/index.html">Full list of builtin beacon modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../engines/all/index.html">Full list of builtin engine modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../file_server/all/index.html">文件服务内置模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../grains/all/index.html">Full list of builtin grains modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/all/index.html">Full list of builtin execution modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../netapi/all/index.html">Full list of netapi modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../output/all/index.html">完整的内置输出模块的列表</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Full list of builtin pillar modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.cmd_json.html">salt.pillar.cmd_json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.cmd_yaml.html">salt.pillar.cmd_yaml</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.cmd_yamlex.html">salt.pillar.cmd_yamlex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.cobbler.html">salt.pillar.cobbler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.consul_pillar.html">salt.pillar.consul_pillar module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.django_orm.html">salt.pillar.django_orm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.ec2_pillar.html">salt.pillar.ec2_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.etcd_pillar.html">salt.pillar.etcd_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.file_tree.html">salt.pillar.file_tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.foreman.html">salt.pillar.foreman</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">salt.pillar.git_pillar</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#use-a-git-repository-as-a-pillar-source">Use a git repository as a Pillar source</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#configuring-git-pillar-for-salt-releases-before-2015-8-0">Configuring git_pillar for Salt releases before 2015.8.0</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#configuring-git-pillar-for-salt-releases-2015-8-0-and-later">Configuring git_pillar for Salt releases 2015.8.0 and later</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.hg_pillar.html">salt.pillar.hg_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.hiera.html">salt.pillar.hiera</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.http_yaml.html">salt.pillar.http_yaml module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.libvirt.html">salt.pillar.libvirt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.mongo.html">salt.pillar.mongo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.mysql.html">salt.pillar.mysql</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.neutron.html">salt.pillar.neutron module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.pepa.html">salt.pillar.pepa</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.pillar_ldap.html">salt.pillar.pillar_ldap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.puppet.html">salt.pillar.puppet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.reclass_adapter.html">salt.pillar.reclass_adapter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.redismod.html">salt.pillar.redismod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.s3.html">salt.pillar.s3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.sql_base.html">salt.pillar.sql_base module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.sqlcipher.html">salt.pillar.sqlcipher module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.sqlite3.html">salt.pillar.sqlite3 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.stack.html">salt.pillar.stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.svn_pillar.html">salt.pillar.svn_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.varstack_pillar.html">salt.pillar.varstack_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.virtkey.html">salt.pillar.virtkey</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../proxy/all/index.html">Full list of builtin proxy modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../queues/all/index.html">Full list of builtin queues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../renderers/all/index.html">Full list of builtin renderer modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../returners/all/index.html">所有内置的返回接收器模块列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../roster/all/index.html">Full list of builtin roster modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../runners/all/index.html">Full list of runner modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sdb/all/index.html">Full list of builtin sdb modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../serializers/all/index.html">Full list of builtin serializers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../states/all/index.html">所有内置的state模块列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tops/all/index.html">master内置顶级模块的全部列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../wheel/all/index.html">Full list of builtin wheel modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

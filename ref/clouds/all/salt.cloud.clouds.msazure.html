@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.cloud.clouds.msazure</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.cloud.clouds.msazure">
+<span id="salt-cloud-clouds-msazure"></span><h1>salt.cloud.clouds.msazure<a class="headerlink" href="#module-salt.cloud.clouds.msazure" title="永久链接至标题">¶</a></h1>
+<div class="section" id="azure-cloud-module">
+<h2>Azure Cloud Module<a class="headerlink" href="#azure-cloud-module" title="永久链接至标题">¶</a></h2>
+<p>The Azure cloud module is used to control access to Microsoft Azure</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">depends:</th><td class="field-body"><ul class="first simple">
+<li><a class="reference external" href="https://pypi.python.org/pypi/azure/1.0.2">Microsoft Azure SDK for Python</a> &gt;= 1.0.2</li>
+<li>python-requests, for Python &lt; 2.7.9</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">configuration:</th><td class="field-body"><p class="first">Required provider parameters:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">apikey</span></code></li>
+<li><code class="docutils literal"><span class="pre">certificate_path</span></code></li>
+<li><code class="docutils literal"><span class="pre">subscription_id</span></code></li>
+<li><code class="docutils literal"><span class="pre">requests_lib</span></code></li>
+</ul>
+<p>A Management Certificate (.pem and .crt files) must be created and the .pem
+file placed on the same machine that salt-cloud is run from. Information on
+creating the pem file to use, and uploading the associated cer file can be
+found at:</p>
+<p><a class="reference external" href="http://www.windowsazure.com/en-us/develop/python/how-to-guides/service-management/">http://www.windowsazure.com/en-us/develop/python/how-to-guides/service-management/</a></p>
+<p class="last">For users with Python &lt; 2.7.9, requests_lib must currently be set to True.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Example <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers</span></code> or
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/azure.conf</span></code> configuration:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-azure-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">azure</span>
+  <span class="l l-Scalar l-Scalar-Plain">subscription_id</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">3287abc8-f98a-c678-3bde-326766fd3617</span>
+  <span class="l l-Scalar l-Scalar-Plain">certificate_path</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/salt/azure.pem</span>
+  <span class="l l-Scalar l-Scalar-Plain">management_host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">management.core.windows.net</span>
+</pre></div>
+</div>
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.add_input_endpoint">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">add_input_endpoint</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.add_input_endpoint" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Add an input endpoint to the deployment. Please note that
+there may be a delay before the changes show up.</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f add_input_endpoint my-azure <span class="nv">service</span><span class="o">=</span>myservice <span class="se">\</span>
+    <span class="nv">deployment</span><span class="o">=</span>mydeployment <span class="nv">role</span><span class="o">=</span>myrole <span class="nv">name</span><span class="o">=</span>HTTP <span class="nv">local_port</span><span class="o">=</span><span class="m">80</span> <span class="se">\</span>
+    <span class="nv">port</span><span class="o">=</span><span class="m">80</span> <span class="nv">protocol</span><span class="o">=</span>tcp <span class="nv">enable_direct_server_return</span><span class="o">=</span>False <span class="se">\</span>
+    <span class="nv">timeout_for_tcp_idle_connection</span><span class="o">=</span>4
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.add_management_certificate">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">add_management_certificate</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.add_management_certificate" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Add a new management certificate</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f add_management_certificate my-azure <span class="nv">public_key</span><span class="o">=</span><span class="s1">&#39;...PUBKEY...&#39;</span> <span class="se">\</span>
+    <span class="nv">thumbprint</span><span class="o">=</span>0123456789ABCDEF <span class="nv">data</span><span class="o">=</span><span class="s1">&#39;...CERT_DATA...&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.add_service_certificate">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">add_service_certificate</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.add_service_certificate" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Add a new service certificate</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f add_service_certificate my-azure <span class="nv">name</span><span class="o">=</span>my_service_certificate <span class="se">\</span>
+    <span class="nv">data</span><span class="o">=</span><span class="s1">&#39;...CERT_DATA...&#39;</span> <span class="nv">certificate_format</span><span class="o">=</span>sha1 <span class="nv">password</span><span class="o">=</span>verybadpass
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.avail_images">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">avail_images</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.avail_images" title="永久链接至目标">¶</a></dt>
+<dd><p>List available images for Azure</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.avail_locations">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">avail_locations</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.avail_locations" title="永久链接至目标">¶</a></dt>
+<dd><p>List available locations for Azure</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.avail_sizes">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">avail_sizes</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.avail_sizes" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of sizes from Azure</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.cleanup_unattached_disks">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">cleanup_unattached_disks</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.cleanup_unattached_disks" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Cleans up all disks associated with the account, which are not attached.
+<strong>* CAUTION *</strong> This is a destructive function with no undo button, and no
+&quot;Are you sure?&quot; confirmation!</p>
+<p>CLI Examples:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f cleanup_unattached_disks my-azure <span class="nv">name</span><span class="o">=</span>my_disk
+salt-cloud -f cleanup_unattached_disks my-azure <span class="nv">name</span><span class="o">=</span>my_disk <span class="nv">delete_vhd</span><span class="o">=</span>True
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.create">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">create</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.create" title="永久链接至目标">¶</a></dt>
+<dd><p>从一个字典数据中创建单一的VM</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.create_affinity_group">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">create_affinity_group</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.create_affinity_group" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Create a new affinity group</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_affinity_group my-azure <span class="nv">name</span><span class="o">=</span>my_affinity_group
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.create_attach_volumes">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">create_attach_volumes</code><span class="sig-paren">(</span><em>name</em>, <em>kwargs</em>, <em>call=None</em>, <em>wait_to_finish=True</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.create_attach_volumes" title="永久链接至目标">¶</a></dt>
+<dd><p>Create and attach volumes to created node</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.create_service">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">create_service</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.create_service" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Create a new hosted service</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_service my-azure <span class="nv">name</span><span class="o">=</span>my_service <span class="nv">label</span><span class="o">=</span>my_service <span class="nv">location</span><span class="o">=</span><span class="s1">&#39;West US&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.create_storage">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">create_storage</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.create_storage" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Create a new storage account</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_storage my-azure <span class="nv">name</span><span class="o">=</span>my_storage <span class="nv">label</span><span class="o">=</span>my_storage <span class="nv">location</span><span class="o">=</span><span class="s1">&#39;West US&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.create_storage_container">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">create_storage_container</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.create_storage_container" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Create a storage container</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_storage_container my-azure <span class="nv">name</span><span class="o">=</span>mycontainer
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>name:</dt>
+<dd>Name of container to create.</dd>
+<dt>meta_name_values:</dt>
+<dd>Optional. A dict with name_value pairs to associate with the
+container as metadata. Example:{'Category':'test'}</dd>
+<dt>blob_public_access:</dt>
+<dd>Optional. Possible values include: container, blob</dd>
+<dt>fail_on_exist:</dt>
+<dd>Specify whether to throw an exception when the container exists.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.delete_affinity_group">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">delete_affinity_group</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.delete_affinity_group" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Delete a specific affinity group associated with the account</p>
+<p>CLI Examples:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_affinity_group my-azure <span class="nv">name</span><span class="o">=</span>my_affinity_group
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.delete_disk">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">delete_disk</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.delete_disk" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Delete a specific disk associated with the account</p>
+<p>CLI Examples:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_disk my-azure <span class="nv">name</span><span class="o">=</span>my_disk
+salt-cloud -f delete_disk my-azure <span class="nv">name</span><span class="o">=</span>my_disk <span class="nv">delete_vhd</span><span class="o">=</span>True
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.delete_input_endpoint">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">delete_input_endpoint</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.delete_input_endpoint" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Delete an input endpoint from the deployment. Please note that
+there may be a delay before the changes show up.</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_input_endpoint my-azure <span class="nv">service</span><span class="o">=</span>myservice <span class="se">\</span>
+    <span class="nv">deployment</span><span class="o">=</span>mydeployment <span class="nv">role</span><span class="o">=</span>myrole <span class="nv">name</span><span class="o">=</span>HTTP
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.delete_management_certificate">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">delete_management_certificate</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.delete_management_certificate" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Delete a specific certificate associated with the management</p>
+<p>CLI Examples:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_management_certificate my-azure <span class="nv">name</span><span class="o">=</span>my_management_certificate <span class="se">\</span>
+    <span class="nv">thumbalgorithm</span><span class="o">=</span>sha1 <span class="nv">thumbprint</span><span class="o">=</span>0123456789ABCDEF
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.delete_service">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">delete_service</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.delete_service" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Delete a specific service associated with the account</p>
+<p>CLI Examples:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_service my-azure <span class="nv">name</span><span class="o">=</span>my_service
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.delete_service_certificate">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">delete_service_certificate</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.delete_service_certificate" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Delete a specific certificate associated with the service</p>
+<p>CLI Examples:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_service_certificate my-azure <span class="nv">name</span><span class="o">=</span>my_service_certificate <span class="se">\</span>
+    <span class="nv">thumbalgorithm</span><span class="o">=</span>sha1 <span class="nv">thumbprint</span><span class="o">=</span>0123456789ABCDEF
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.delete_storage">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">delete_storage</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.delete_storage" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Delete a specific storage account</p>
+<p>CLI Examples:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_storage my-azure <span class="nv">name</span><span class="o">=</span>my_storage
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.delete_storage_container">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">delete_storage_container</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.delete_storage_container" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Delete a container associated with the storage account</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_storage_container my-azure <span class="nv">name</span><span class="o">=</span>mycontainer
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>name:</dt>
+<dd>Name of container to create.</dd>
+<dt>fail_not_exist:</dt>
+<dd>Specify whether to throw an exception when the container exists.</dd>
+<dt>lease_id:</dt>
+<dd>If specified, delete_storage_container only succeeds if the
+container's lease is active and matches this ID.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.destroy">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">destroy</code><span class="sig-paren">(</span><em>name</em>, <em>conn=None</em>, <em>call=None</em>, <em>kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.destroy" title="永久链接至目标">¶</a></dt>
+<dd><p>Destroy a VM</p>
+<p>CLI Examples:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -d myminion
+salt-cloud -a destroy myminion <span class="nv">service_name</span><span class="o">=</span>myservice
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_affinity_group">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_affinity_group</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_affinity_group" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Show an affinity group associated with the account</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_affinity_group my-azure <span class="nv">service</span><span class="o">=</span>myservice <span class="se">\</span>
+    <span class="nv">deployment</span><span class="o">=</span>mydeployment <span class="nv">name</span><span class="o">=</span>SSH
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_blob">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_blob</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_blob" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Download a blob</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f get_blob my-azure <span class="nv">container</span><span class="o">=</span>base <span class="nv">name</span><span class="o">=</span>top.sls <span class="nv">local_path</span><span class="o">=</span>/srv/salt/top.sls
+salt-cloud -f get_blob my-azure <span class="nv">container</span><span class="o">=</span>base <span class="nv">name</span><span class="o">=</span>content.txt <span class="nv">return_content</span><span class="o">=</span>True
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>container:</dt>
+<dd>Name of existing container.</dd>
+<dt>name:</dt>
+<dd>Name of existing blob.</dd>
+<dt>local_path:</dt>
+<dd>The path on the local machine to download the blob to. Either this or
+return_content must be specified.</dd>
+<dt>return_content:</dt>
+<dd>Whether or not to return the content directly from the blob. If
+specified, must be True or False. Either this or the local_path must
+be specified.</dd>
+<dt>snapshot:</dt>
+<dd>Optional. The snapshot parameter is an opaque DateTime value that,
+when present, specifies the blob snapshot to retrieve.</dd>
+<dt>lease_id:</dt>
+<dd>Required if the blob has an active lease.</dd>
+<dt>progress_callback:</dt>
+<dd>callback for progress with signature function(current, total) where
+current is the number of bytes transferred so far, and total is the
+size of the blob.</dd>
+<dt>max_connections:</dt>
+<dd>Maximum number of parallel connections to use when the blob size
+exceeds 64MB.
+Set to 1 to download the blob chunks sequentially.
+Set to 2 or more to download the blob chunks in parallel. This uses
+more system resources but will download faster.</dd>
+<dt>max_retries:</dt>
+<dd>Number of times to retry download of blob chunk if an error occurs.</dd>
+<dt>retry_wait:</dt>
+<dd>Sleep time in secs between retries.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_blob_properties">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_blob_properties</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_blob_properties" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Returns all user-defined metadata, standard HTTP properties, and
+system properties for the blob.</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_blob_properties my-azure <span class="nv">container</span><span class="o">=</span>mycontainer <span class="nv">blob</span><span class="o">=</span>myblob
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>container:</dt>
+<dd>Name of existing container.</dd>
+<dt>blob:</dt>
+<dd>Name of existing blob.</dd>
+<dt>lease_id:</dt>
+<dd>Required if the blob has an active lease.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_blob_service_properties">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_blob_service_properties</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_blob_service_properties" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Show a blob's service properties</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_blob_service_properties my-azure
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_configured_provider">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_configured_provider</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_configured_provider" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the first configured instance.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_conn">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_conn</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_conn" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a conn object for the passed VM data</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_dependencies">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_dependencies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_dependencies" title="永久链接至目标">¶</a></dt>
+<dd><p>Warn if dependencies aren't met.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_deployment">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_deployment</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_deployment" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Return information about a deployment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_deployment my-azure <span class="nv">name</span><span class="o">=</span>my_deployment
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_disk">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_disk</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_disk" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Return information about a disk</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_disk my-azure <span class="nv">name</span><span class="o">=</span>my_disk
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_input_endpoint">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_input_endpoint</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_input_endpoint" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Show an input endpoint associated with the deployment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_input_endpoint my-azure <span class="nv">service</span><span class="o">=</span>myservice <span class="se">\</span>
+    <span class="nv">deployment</span><span class="o">=</span>mydeployment <span class="nv">name</span><span class="o">=</span>SSH
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_management_certificate">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_management_certificate</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_management_certificate" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Return information about a management_certificate</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f get_management_certificate my-azure <span class="nv">name</span><span class="o">=</span>my_management_certificate <span class="se">\</span>
+    <span class="nv">thumbalgorithm</span><span class="o">=</span>sha1 <span class="nv">thumbprint</span><span class="o">=</span>0123456789ABCDEF
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_operation_status">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_operation_status</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_operation_status" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Get Operation Status, based on a request ID</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f get_operation_status my-azure <span class="nv">id</span><span class="o">=</span>0123456789abcdef0123456789abcdef
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_service_certificate">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_service_certificate</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_service_certificate" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Return information about a service certificate</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_service_certificate my-azure <span class="nv">name</span><span class="o">=</span>my_service_certificate <span class="se">\</span>
+    <span class="nv">thumbalgorithm</span><span class="o">=</span>sha1 <span class="nv">thumbprint</span><span class="o">=</span>0123456789ABCDEF
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_storage">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_storage</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_storage" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>List storage service properties</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_storage my-azure <span class="nv">name</span><span class="o">=</span>my_storage
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_storage_conn">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_storage_conn</code><span class="sig-paren">(</span><em>storage_account=None</em>, <em>storage_key=None</em>, <em>conn_kwargs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_storage_conn" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Return a storage_conn object for the storage account</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_storage_container">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_storage_container</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_storage_container" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Show a container associated with the storage account</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_storage_container my-azure <span class="nv">name</span><span class="o">=</span>myservice
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>name:</dt>
+<dd>Name of container to show.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_storage_container_acl">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_storage_container_acl</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_storage_container_acl" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Show a storage container's acl</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_storage_container_acl my-azure <span class="nv">name</span><span class="o">=</span>myservice
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>name:</dt>
+<dd>Name of existing container.</dd>
+<dt>lease_id:</dt>
+<dd>If specified, show_storage_container_acl only succeeds if the
+container's lease is active and matches this ID.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_storage_container_metadata">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_storage_container_metadata</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_storage_container_metadata" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Show a storage container's metadata</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_storage_container_metadata my-azure <span class="nv">name</span><span class="o">=</span>myservice
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>name:</dt>
+<dd>Name of container to show.</dd>
+<dt>lease_id:</dt>
+<dd>If specified, show_storage_container_metadata only succeeds if the
+container's lease is active and matches this ID.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.get_storage_keys">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">get_storage_keys</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.get_storage_keys" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Show storage account keys</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_storage_keys my-azure <span class="nv">name</span><span class="o">=</span>my_storage
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.lease_storage_container">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">lease_storage_container</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.lease_storage_container" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Lease a container associated with the storage account</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f lease_storage_container my-azure <span class="nv">name</span><span class="o">=</span>mycontainer
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>name:</dt>
+<dd>Name of container to create.</dd>
+<dt>lease_action:</dt>
+<dd>Required. Possible values: acquire|renew|release|break|change</dd>
+<dt>lease_id:</dt>
+<dd>Required if the container has an active lease.</dd>
+<dt>lease_duration:</dt>
+<dd>Specifies the duration of the lease, in seconds, or negative one
+(-1) for a lease that never expires. A non-infinite lease can be
+between 15 and 60 seconds. A lease duration cannot be changed
+using renew or change. For backwards compatibility, the default is
+60, and the value is only used on an acquire operation.</dd>
+<dt>lease_break_period:</dt>
+<dd>Optional. For a break operation, this is the proposed duration of
+seconds that the lease should continue before it is broken, between
+0 and 60 seconds. This break period is only used if it is shorter
+than the time remaining on the lease. If longer, the time remaining
+on the lease is used. A new lease will not be available before the
+break period has expired, but the lease may be held for longer than
+the break period. If this header does not appear with a break
+operation, a fixed-duration lease breaks after the remaining lease
+period elapses, and an infinite lease breaks immediately.</dd>
+<dt>proposed_lease_id:</dt>
+<dd>Optional for acquire, required for change. Proposed lease ID, in a
+GUID string format.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.list_affinity_groups">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">list_affinity_groups</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.list_affinity_groups" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>List input endpoints associated with the deployment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_affinity_groups my-azure
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.list_blobs">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">list_blobs</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.list_blobs" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>List blobs associated with the container</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_blobs my-azure <span class="nv">container</span><span class="o">=</span>mycontainer
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>container:</dt>
+<dd>The name of the storage container</dd>
+<dt>prefix:</dt>
+<dd>Optional. Filters the results to return only blobs whose names
+begin with the specified prefix.</dd>
+<dt>marker:</dt>
+<dd>Optional. A string value that identifies the portion of the list
+to be returned with the next list operation. The operation returns
+a marker value within the response body if the list returned was
+not complete. The marker value may then be used in a subsequent
+call to request the next set of list items. The marker value is
+opaque to the client.</dd>
+<dt>maxresults:</dt>
+<dd>Optional. Specifies the maximum number of blobs to return,
+including all BlobPrefix elements. If the request does not specify
+maxresults or specifies a value greater than 5,000, the server will
+return up to 5,000 items. Setting maxresults to a value less than
+or equal to zero results in error response code 400 (Bad Request).</dd>
+<dt>include:</dt>
+<dd><p class="first">Optional. Specifies one or more datasets to include in the
+response. To specify more than one of these options on the URI,
+you must separate each option with a comma. Valid values are:</p>
+<dl class="last docutils">
+<dt>snapshots:</dt>
+<dd>Specifies that snapshots should be included in the
+enumeration. Snapshots are listed from oldest to newest in
+the response.</dd>
+<dt>metadata:</dt>
+<dd>Specifies that blob metadata be returned in the response.</dd>
+<dt>uncommittedblobs:</dt>
+<dd>Specifies that blobs for which blocks have been uploaded,
+but which have not been committed using Put Block List
+(REST API), be included in the response.</dd>
+<dt>copy:</dt>
+<dd>Version 2012-02-12 and newer. Specifies that metadata
+related to any current or previous Copy Blob operation
+should be included in the response.</dd>
+</dl>
+</dd>
+<dt>delimiter:</dt>
+<dd>Optional. When the request includes this parameter, the operation
+returns a BlobPrefix element in the response body that acts as a
+placeholder for all blobs whose names begin with the same
+substring up to the appearance of the delimiter character. The
+delimiter may be a single character or a string.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.list_disks">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">list_disks</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.list_disks" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>List disks associated with the account</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_disks my-azure
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.list_hosted_services">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">list_hosted_services</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.list_hosted_services" title="永久链接至目标">¶</a></dt>
+<dd><p>List VMs on this Azure account, with full information</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.list_input_endpoints">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">list_input_endpoints</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.list_input_endpoints" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>List input endpoints associated with the deployment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_input_endpoints my-azure <span class="nv">service</span><span class="o">=</span>myservice <span class="nv">deployment</span><span class="o">=</span>mydeployment
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.list_management_certificates">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">list_management_certificates</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.list_management_certificates" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>List management certificates associated with the subscription</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_management_certificates my-azure <span class="nv">name</span><span class="o">=</span>my_management
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.list_nodes">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">list_nodes</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.list_nodes" title="永久链接至目标">¶</a></dt>
+<dd><p>List VMs on this Azure account</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.list_nodes_full">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">list_nodes_full</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.list_nodes_full" title="永久链接至目标">¶</a></dt>
+<dd><p>List VMs on this Azure account, with full information</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.list_nodes_select">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">list_nodes_select</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.list_nodes_select" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of the VMs that are on the provider, with select fields</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.list_service_certificates">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">list_service_certificates</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.list_service_certificates" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>List certificates associated with the service</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_service_certificates my-azure <span class="nv">name</span><span class="o">=</span>my_service
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.list_services">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">list_services</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.list_services" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>List hosted services associated with the account</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_services my-azure
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.list_storage">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">list_storage</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.list_storage" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>List storage accounts associated with the account</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_storage my-azure
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.list_storage_containers">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">list_storage_containers</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.list_storage_containers" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>List containers associated with the storage account</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_storage_containers my-azure
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.list_storage_services">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">list_storage_services</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.list_storage_services" title="永久链接至目标">¶</a></dt>
+<dd><p>List VMs on this Azure account, with full information</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.list_virtual_networks">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">list_virtual_networks</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.list_virtual_networks" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>List input endpoints associated with the deployment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_virtual_networks my-azure <span class="nv">service</span><span class="o">=</span>myservice <span class="nv">deployment</span><span class="o">=</span>mydeployment
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.make_blob_url">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">make_blob_url</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.make_blob_url" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Creates the URL to access a blob</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f make_blob_url my-azure <span class="nv">container</span><span class="o">=</span>mycontainer <span class="nv">blob</span><span class="o">=</span>myblob
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>container:</dt>
+<dd>Name of the container.</dd>
+<dt>blob:</dt>
+<dd>Name of the blob.</dd>
+<dt>account:</dt>
+<dd>Name of the storage account. If not specified, derives the host base
+from the provider configuration.</dd>
+<dt>protocol:</dt>
+<dd>Protocol to use: 'http' or 'https'. If not specified, derives the host
+base from the provider configuration.</dd>
+<dt>host_base:</dt>
+<dd>Live host base URL.  If not specified, derives the host base from the
+provider configuration.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.put_blob">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">put_blob</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.put_blob" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Upload a blob</p>
+<p>CLI Examples:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f put_blob my-azure <span class="nv">container</span><span class="o">=</span>base <span class="nv">name</span><span class="o">=</span>top.sls <span class="nv">blob_path</span><span class="o">=</span>/srv/salt/top.sls
+salt-cloud -f put_blob my-azure <span class="nv">container</span><span class="o">=</span>base <span class="nv">name</span><span class="o">=</span>content.txt <span class="nv">blob_content</span><span class="o">=</span><span class="s1">&#39;Some content&#39;</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>container:</dt>
+<dd>Name of existing container.</dd>
+<dt>name:</dt>
+<dd>Name of existing blob.</dd>
+<dt>blob_path:</dt>
+<dd>The path on the local machine of the file to upload as a blob. Either
+this or blob_content must be specified.</dd>
+<dt>blob_content:</dt>
+<dd>The actual content to be uploaded as a blob. Either this or blob_path
+must me specified.</dd>
+<dt>cache_control:</dt>
+<dd>Optional. The Blob service stores this value but does not use or
+modify it.</dd>
+<dt>content_language:</dt>
+<dd>Optional. Specifies the natural languages used by this resource.</dd>
+<dt>content_md5:</dt>
+<dd>Optional. An MD5 hash of the blob content. This hash is used to
+verify the integrity of the blob during transport. When this header
+is specified, the storage service checks the hash that has arrived
+with the one that was sent. If the two hashes do not match, the
+operation will fail with error code 400 (Bad Request).</dd>
+<dt>blob_content_type:</dt>
+<dd>Optional. Set the blob's content type.</dd>
+<dt>blob_content_encoding:</dt>
+<dd>Optional. Set the blob's content encoding.</dd>
+<dt>blob_content_language:</dt>
+<dd>Optional. Set the blob's content language.</dd>
+<dt>blob_content_md5:</dt>
+<dd>Optional. Set the blob's MD5 hash.</dd>
+<dt>blob_cache_control:</dt>
+<dd>Optional. Sets the blob's cache control.</dd>
+<dt>meta_name_values:</dt>
+<dd>A dict containing name, value for metadata.</dd>
+<dt>lease_id:</dt>
+<dd>Required if the blob has an active lease.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.query">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">query</code><span class="sig-paren">(</span><em>path</em>, <em>method='GET'</em>, <em>data=None</em>, <em>params=None</em>, <em>header_dict=None</em>, <em>decode=True</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.query" title="永久链接至目标">¶</a></dt>
+<dd><p>Perform a query directly against the Azure REST API</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.regenerate_storage_keys">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">regenerate_storage_keys</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.regenerate_storage_keys" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Regenerate storage account keys. Requires a key_type (&quot;primary&quot; or
+&quot;secondary&quot;) to be specified.</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f regenerate_storage_keys my-azure <span class="nv">name</span><span class="o">=</span>my_storage <span class="nv">key_type</span><span class="o">=</span>primary
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.script">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">script</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.script" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the script deployment object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.set_blob_properties">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">set_blob_properties</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.set_blob_properties" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Set a blob's properties</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f set_blob_properties my-azure
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>container:</dt>
+<dd>Name of existing container.</dd>
+<dt>blob:</dt>
+<dd>Name of existing blob.</dd>
+<dt>blob_cache_control:</dt>
+<dd>Optional. Modifies the cache control string for the blob.</dd>
+<dt>blob_content_type:</dt>
+<dd>Optional. Sets the blob's content type.</dd>
+<dt>blob_content_md5:</dt>
+<dd>Optional. Sets the blob's MD5 hash.</dd>
+<dt>blob_content_encoding:</dt>
+<dd>Optional. Sets the blob's content encoding.</dd>
+<dt>blob_content_language:</dt>
+<dd>Optional. Sets the blob's content language.</dd>
+<dt>lease_id:</dt>
+<dd>Required if the blob has an active lease.</dd>
+<dt>blob_content_disposition:</dt>
+<dd>Optional. Sets the blob's Content-Disposition header.
+The Content-Disposition response header field conveys additional
+information about how to process the response payload, and also can
+be used to attach additional metadata. For example, if set to
+attachment, it indicates that the user-agent should not display the
+response, but instead show a Save As dialog with a filename other
+than the blob name specified.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.set_blob_service_properties">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">set_blob_service_properties</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.set_blob_service_properties" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Sets the properties of a storage account's Blob service, including
+Windows Azure Storage Analytics. You can also use this operation to
+set the default request version for all incoming requests that do not
+have a version specified.</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f set_blob_service_properties my-azure
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>properties:</dt>
+<dd>a StorageServiceProperties object.</dd>
+<dt>timeout:</dt>
+<dd>Optional. The timeout parameter is expressed in seconds.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.set_storage_container_acl">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">set_storage_container_acl</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.set_storage_container_acl" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Set a storage container's acl</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f set_storage_container my-azure <span class="nv">name</span><span class="o">=</span>mycontainer
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>name:</dt>
+<dd>Name of existing container.</dd>
+<dt>signed_identifiers:</dt>
+<dd>SignedIdentifers instance</dd>
+<dt>blob_public_access:</dt>
+<dd>Optional. Possible values include: container, blob</dd>
+<dt>lease_id:</dt>
+<dd>If specified, set_storage_container_acl only succeeds if the
+container's lease is active and matches this ID.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.set_storage_container_metadata">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">set_storage_container_metadata</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.set_storage_container_metadata" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Set a storage container's metadata</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f set_storage_container my-azure <span class="nv">name</span><span class="o">=</span>mycontainer <span class="se">\</span>
+    <span class="nv">x_ms_meta_name_values</span><span class="o">=</span><span class="s1">&#39;{&quot;my_name&quot;: &quot;my_value&quot;}&#39;</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>name:</dt>
+<dd>Name of existing container.</dd>
+<dt>meta_name_values:</dt>
+<dd>A dict containing name, value for metadata.
+Example: {'category':'test'}</dd>
+<dt>lease_id:</dt>
+<dd>If specified, set_storage_container_metadata only succeeds if the
+container's lease is active and matches this ID.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.show_affinity_group">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">show_affinity_group</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.show_affinity_group" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Show an affinity group associated with the account</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_affinity_group my-azure <span class="nv">service</span><span class="o">=</span>myservice <span class="se">\</span>
+    <span class="nv">deployment</span><span class="o">=</span>mydeployment <span class="nv">name</span><span class="o">=</span>SSH
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.show_blob_properties">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">show_blob_properties</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.show_blob_properties" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Returns all user-defined metadata, standard HTTP properties, and
+system properties for the blob.</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_blob_properties my-azure <span class="nv">container</span><span class="o">=</span>mycontainer <span class="nv">blob</span><span class="o">=</span>myblob
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>container:</dt>
+<dd>Name of existing container.</dd>
+<dt>blob:</dt>
+<dd>Name of existing blob.</dd>
+<dt>lease_id:</dt>
+<dd>Required if the blob has an active lease.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.show_blob_service_properties">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">show_blob_service_properties</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.show_blob_service_properties" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Show a blob's service properties</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_blob_service_properties my-azure
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.show_deployment">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">show_deployment</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.show_deployment" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Return information about a deployment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_deployment my-azure <span class="nv">name</span><span class="o">=</span>my_deployment
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.show_disk">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">show_disk</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.show_disk" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Return information about a disk</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_disk my-azure <span class="nv">name</span><span class="o">=</span>my_disk
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.show_input_endpoint">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">show_input_endpoint</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.show_input_endpoint" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Show an input endpoint associated with the deployment</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_input_endpoint my-azure <span class="nv">service</span><span class="o">=</span>myservice <span class="se">\</span>
+    <span class="nv">deployment</span><span class="o">=</span>mydeployment <span class="nv">name</span><span class="o">=</span>SSH
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.show_instance">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">show_instance</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.show_instance" title="永久链接至目标">¶</a></dt>
+<dd><p>Show the details from the provider concerning an instance</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.show_management_certificate">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">show_management_certificate</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.show_management_certificate" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Return information about a management_certificate</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f get_management_certificate my-azure <span class="nv">name</span><span class="o">=</span>my_management_certificate <span class="se">\</span>
+    <span class="nv">thumbalgorithm</span><span class="o">=</span>sha1 <span class="nv">thumbprint</span><span class="o">=</span>0123456789ABCDEF
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.show_service">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">show_service</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.show_service" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>List hosted service properties</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_service my-azure <span class="nv">name</span><span class="o">=</span>my_service
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.show_service_certificate">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">show_service_certificate</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.show_service_certificate" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Return information about a service certificate</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_service_certificate my-azure <span class="nv">name</span><span class="o">=</span>my_service_certificate <span class="se">\</span>
+    <span class="nv">thumbalgorithm</span><span class="o">=</span>sha1 <span class="nv">thumbprint</span><span class="o">=</span>0123456789ABCDEF
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.show_storage">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">show_storage</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.show_storage" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>List storage service properties</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_storage my-azure <span class="nv">name</span><span class="o">=</span>my_storage
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.show_storage_container">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">show_storage_container</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.show_storage_container" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Show a container associated with the storage account</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_storage_container my-azure <span class="nv">name</span><span class="o">=</span>myservice
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>name:</dt>
+<dd>Name of container to show.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.show_storage_container_acl">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">show_storage_container_acl</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.show_storage_container_acl" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Show a storage container's acl</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_storage_container_acl my-azure <span class="nv">name</span><span class="o">=</span>myservice
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>name:</dt>
+<dd>Name of existing container.</dd>
+<dt>lease_id:</dt>
+<dd>If specified, show_storage_container_acl only succeeds if the
+container's lease is active and matches this ID.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.show_storage_container_metadata">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">show_storage_container_metadata</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>storage_conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.show_storage_container_metadata" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Show a storage container's metadata</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_storage_container_metadata my-azure <span class="nv">name</span><span class="o">=</span>myservice
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>name:</dt>
+<dd>Name of container to show.</dd>
+<dt>lease_id:</dt>
+<dd>If specified, show_storage_container_metadata only succeeds if the
+container's lease is active and matches this ID.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.show_storage_keys">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">show_storage_keys</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.show_storage_keys" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Show storage account keys</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_storage_keys my-azure <span class="nv">name</span><span class="o">=</span>my_storage
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.update_affinity_group">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">update_affinity_group</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.update_affinity_group" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Update an affinity group's properties</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f update_affinity_group my-azure <span class="nv">name</span><span class="o">=</span>my_group <span class="nv">label</span><span class="o">=</span>my_group
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.update_disk">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">update_disk</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.update_disk" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Update a disk's properties</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f update_disk my-azure <span class="nv">name</span><span class="o">=</span>my_disk <span class="nv">label</span><span class="o">=</span>my_disk
+salt-cloud -f update_disk my-azure <span class="nv">name</span><span class="o">=</span>my_disk <span class="nv">new_name</span><span class="o">=</span>another_disk
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.update_input_endpoint">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">update_input_endpoint</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em>, <em>activity='update'</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.update_input_endpoint" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Update an input endpoint associated with the deployment. Please note that
+there may be a delay before the changes show up.</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f update_input_endpoint my-azure <span class="nv">service</span><span class="o">=</span>myservice <span class="se">\</span>
+    <span class="nv">deployment</span><span class="o">=</span>mydeployment <span class="nv">role</span><span class="o">=</span>myrole <span class="nv">name</span><span class="o">=</span>HTTP <span class="nv">local_port</span><span class="o">=</span><span class="m">80</span> <span class="se">\</span>
+    <span class="nv">port</span><span class="o">=</span><span class="m">80</span> <span class="nv">protocol</span><span class="o">=</span>tcp <span class="nv">enable_direct_server_return</span><span class="o">=</span>False <span class="se">\</span>
+    <span class="nv">timeout_for_tcp_idle_connection</span><span class="o">=</span>4
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.msazure.update_storage">
+<code class="descclassname">salt.cloud.clouds.msazure.</code><code class="descname">update_storage</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.msazure.update_storage" title="永久链接至目标">¶</a></dt>
+<dd><div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Update a storage account's properties</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f update_storage my-azure <span class="nv">name</span><span class="o">=</span>my_storage <span class="nv">label</span><span class="o">=</span>my_storage
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

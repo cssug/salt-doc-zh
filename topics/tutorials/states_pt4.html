@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>States tutorial, part 4</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Configuration Management" href="../states/index.html">
+        <link rel="next" title="State System Reference" href="../../ref/states/index.html">
+        <link rel="prev" title="States tutorial, part 3 - Templating, Includes, Extends" href="states_pt3.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="states_pt3.html" title="States tutorial, part 3 - Templating, Includes, Extends">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../../ref/states/index.html" title="State System Reference">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="states-tutorial-part-4">
+<h1>States tutorial, part 4<a class="headerlink" href="#states-tutorial-part-4" title="永久链接至标题">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">This tutorial builds on topics covered in <a class="reference internal" href="states_pt1.html"><em>part 1</em></a>,
+<a class="reference internal" href="states_pt2.html"><em>part 2</em></a> and <a class="reference internal" href="states_pt3.html"><em>part 3</em></a>. It is recommended
+that you begin there.</p>
+</div>
+<p>This part of the tutorial will show how to use salt's <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-file_roots"><code class="xref std std-conf_master docutils literal"><span class="pre">file_roots</span></code></a>
+to set up a workflow in which states can be &quot;promoted&quot; from dev, to QA, to
+production.</p>
+<div class="section" id="salt-fileserver-path-inheritance">
+<h2>Salt fileserver path inheritance<a class="headerlink" href="#salt-fileserver-path-inheritance" title="永久链接至标题">¶</a></h2>
+<p>Salt's fileserver allows for more than one root directory per environment, like
+in the below example, which uses both a local directory and a secondary
+location shared to the salt master via NFS:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># In the master config file (/etc/salt/master)</span>
+<span class="l l-Scalar l-Scalar-Plain">file_roots</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/mnt/salt-nfs/base</span>
+</pre></div>
+</div>
+<p>Salt's fileserver collapses the list of root directories into a single virtual
+environment containing all files from each root. If the same file exists at the
+same relative path in more than one root, then the top-most match &quot;wins&quot;. For
+example, if <code class="docutils literal"><span class="pre">/srv/salt/foo.txt</span></code> and <code class="docutils literal"><span class="pre">/mnt/salt-nfs/base/foo.txt</span></code> both
+exist, then <code class="docutils literal"><span class="pre">salt://foo.txt</span></code> will point to <code class="docutils literal"><span class="pre">/srv/salt/foo.txt</span></code>.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>When using multiple fileserver backends, the order in which they are listed
+in the <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-fileserver_backend"><code class="xref std std-conf_master docutils literal"><span class="pre">fileserver_backend</span></code></a> parameter also matters. If both
+<code class="docutils literal"><span class="pre">roots</span></code> and <code class="docutils literal"><span class="pre">git</span></code> backends contain a file with the same relative path,
+and <code class="docutils literal"><span class="pre">roots</span></code> appears before <code class="docutils literal"><span class="pre">git</span></code> in the
+<a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-fileserver_backend"><code class="xref std std-conf_master docutils literal"><span class="pre">fileserver_backend</span></code></a> list, then the file in <code class="docutils literal"><span class="pre">roots</span></code> will
+&quot;win&quot;, and the file in gitfs will be ignored.</p>
+<p class="last">A more thorough explanation of how Salt's modular fileserver works can be
+found <a class="reference internal" href="../../ref/file_server/backends.html#file-server-backends"><span>here</span></a>. We recommend reading this.</p>
+</div>
+</div>
+<div class="section" id="environment-configuration">
+<h2>Environment configuration<a class="headerlink" href="#environment-configuration" title="永久链接至标题">¶</a></h2>
+<p>Configure a multiple-environment setup like so:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">file_roots</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt/prod</span>
+  <span class="l l-Scalar l-Scalar-Plain">qa</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt/qa</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt/prod</span>
+  <span class="l l-Scalar l-Scalar-Plain">dev</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt/dev</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt/qa</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt/prod</span>
+</pre></div>
+</div>
+<p>Given the path inheritance described above, files within <code class="docutils literal"><span class="pre">/srv/salt/prod</span></code>
+would be available in all environments. Files within <code class="docutils literal"><span class="pre">/srv/salt/qa</span></code> would be
+available in both <code class="docutils literal"><span class="pre">qa</span></code>, and <code class="docutils literal"><span class="pre">dev</span></code>. Finally, the files within
+<code class="docutils literal"><span class="pre">/srv/salt/dev</span></code> would only be available within the <code class="docutils literal"><span class="pre">dev</span></code> environment.</p>
+<p>Based on the order in which the roots are defined, new files/states can be
+placed within <code class="docutils literal"><span class="pre">/srv/salt/dev</span></code>, and pushed out to the dev hosts for testing.</p>
+<p>Those files/states can then be moved to the same relative path within
+<code class="docutils literal"><span class="pre">/srv/salt/qa</span></code>, and they are now available only in the <code class="docutils literal"><span class="pre">dev</span></code> and <code class="docutils literal"><span class="pre">qa</span></code>
+environments, allowing them to be pushed to QA hosts and tested.</p>
+<p>Finally, if moved to the same relative path within <code class="docutils literal"><span class="pre">/srv/salt/prod</span></code>, the
+files are now available in all three environments.</p>
+</div>
+<div class="section" id="practical-example">
+<h2>Practical Example<a class="headerlink" href="#practical-example" title="永久链接至标题">¶</a></h2>
+<p>As an example, consider a simple website, installed to <code class="docutils literal"><span class="pre">/var/www/foobarcom</span></code>.
+Below is a top.sls that can be used to deploy the website:</p>
+<p><code class="docutils literal"><span class="pre">/srv/salt/prod/top.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;web*prod*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">webserver.foobarcom</span>
+<span class="l l-Scalar l-Scalar-Plain">qa</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;web*qa*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">webserver.foobarcom</span>
+<span class="l l-Scalar l-Scalar-Plain">dev</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;web*dev*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">webserver.foobarcom</span>
+</pre></div>
+</div>
+<p>Using pillar, roles can be assigned to the hosts:</p>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/top.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;web*prod*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">webserver.prod</span>
+  <span class="s">&#39;web*qa*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">webserver.qa</span>
+  <span class="s">&#39;web*dev*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">webserver.dev</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/webserver/prod.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">webserver_role</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">prod</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/webserver/qa.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">webserver_role</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">qa</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">/srv/pillar/webserver/dev.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">webserver_role</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">dev</span>
+</pre></div>
+</div>
+<p>And finally, the SLS to deploy the website:</p>
+<p><code class="docutils literal"><span class="pre">/srv/salt/prod/webserver/foobarcom.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% if pillar.get(&#39;webserver_role&#39;, &#39;&#39;) %}
+/var/www/foobarcom:
+  file.recurse:
+    - source: salt://webserver/src/foobarcom
+    - env: {{ pillar[&#39;webserver_role&#39;] }}
+    - user: www
+    - group: www
+    - dir_mode: 755
+    - file_mode: 644
+{% endif %}
+</pre></div>
+</div>
+<p>Given the above SLS, the source for the website should initially be placed in
+<code class="docutils literal"><span class="pre">/srv/salt/dev/webserver/src/foobarcom</span></code>.</p>
+<p>First, let's deploy to dev. Given the configuration in the top file, this can
+be done using <a class="reference internal" href="../../ref/modules/all/salt.modules.state.html#salt.modules.state.highstate" title="salt.modules.state.highstate"><code class="xref py py-mod docutils literal"><span class="pre">state.highstate</span></code></a>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt --pillar <span class="s1">&#39;webserver_role:dev&#39;</span> state.highstate
+</pre></div>
+</div>
+<p>However, in the event that it is not desirable to apply all states configured
+in the top file (which could be likely in more complex setups), it is possible
+to apply just the states for the <code class="docutils literal"><span class="pre">foobarcom</span></code> website, using <a class="reference internal" href="../../ref/modules/all/salt.modules.state.html#salt.modules.state.sls" title="salt.modules.state.sls"><code class="xref py py-mod docutils literal"><span class="pre">state.sls</span></code></a>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt --pillar <span class="s1">&#39;webserver_role:dev&#39;</span> state.sls webserver.foobarcom
+</pre></div>
+</div>
+<p>Once the site has been tested in dev, then the files can be moved from
+<code class="docutils literal"><span class="pre">/srv/salt/dev/webserver/src/foobarcom</span></code> to
+<code class="docutils literal"><span class="pre">/srv/salt/qa/webserver/src/foobarcom</span></code>, and deployed using the following:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt --pillar <span class="s1">&#39;webserver_role:qa&#39;</span> state.sls webserver.foobarcom
+</pre></div>
+</div>
+<p>Finally, once the site has been tested in qa, then the files can be moved from
+<code class="docutils literal"><span class="pre">/srv/salt/qa/webserver/src/foobarcom</span></code> to
+<code class="docutils literal"><span class="pre">/srv/salt/prod/webserver/src/foobarcom</span></code>, and deployed using the following:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt --pillar <span class="s1">&#39;webserver_role:prod&#39;</span> state.sls webserver.foobarcom
+</pre></div>
+</div>
+<p>Thanks to Salt's fileserver inheritance, even though the files have been moved
+to within <code class="docutils literal"><span class="pre">/srv/salt/prod</span></code>, they are still available from the same
+<code class="docutils literal"><span class="pre">salt://</span></code> URI in both the qa and dev environments.</p>
+</div>
+<div class="section" id="continue-learning">
+<h2>Continue Learning<a class="headerlink" href="#continue-learning" title="永久链接至标题">¶</a></h2>
+<p>The best way to continue learning about Salt States is to read through the
+<a class="reference internal" href="../../ref/states/index.html"><em>reference documentation</em></a> and to look through examples
+of existing state trees. Many pre-configured state trees
+can be found on GitHub in the <a class="reference external" href="https://github.com/saltstack-formulas">saltstack-formulas</a> collection of repositories.</p>
+<p>If you have any questions, suggestions, or just want to chat with other people
+who are using Salt, we have a very <span class="xref std std-ref">active community</span>
+and we'd love to hear from you.</p>
+<p>In addition, by continuing to <a class="reference internal" href="states_pt5.html"><em>part 5</em></a>, you can learn about
+the powerful orchestration of which Salt is capable.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="states_pt3.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="States tutorial, part 3 - Templating, Includes, Extends" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../../ref/states/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="State System Reference" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../states/index.html">Configuration Management</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="starting_states.html">我们如何使用Salt States？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="states_pt1.html">States教程，第1部分 - 基础用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="states_pt2.html">States tutorial, part 2 - More Complex States, Requisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="states_pt3.html">States tutorial, part 3 - Templating, Includes, Extends</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">States tutorial, part 4</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#salt-fileserver-path-inheritance">Salt fileserver path inheritance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#environment-configuration">Environment configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#practical-example">Practical Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#continue-learning">Continue Learning</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/states/index.html">State System Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

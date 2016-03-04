@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Using Salt Cloud with the Event Reactor</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt云端" href="index.html">
+        <link rel="next" title="Salt Proxy Minion" href="../proxyminion/index.html">
+        <link rel="prev" title="Feature Matrix" href="features.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="features.html" title="Feature Matrix">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../proxyminion/index.html" title="Salt Proxy Minion">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="using-salt-cloud-with-the-event-reactor">
+<h1>Using Salt Cloud with the Event Reactor<a class="headerlink" href="#using-salt-cloud-with-the-event-reactor" title="永久链接至标题">¶</a></h1>
+<p>One of the most powerful features of the Salt framework is the Event Reactor.
+As the Reactor was in development, Salt Cloud was regularly updated to take
+advantage of the Reactor upon completion. As such, various aspects of both the
+creation and destruction of instances with Salt Cloud fire events to the Salt
+Master, which can be used by the Event Reactor.</p>
+<div class="section" id="event-structure">
+<h2>Event Structure<a class="headerlink" href="#event-structure" title="永久链接至标题">¶</a></h2>
+<p>As of this writing, all events in Salt Cloud have a tag, which includes the ID
+of the instance being managed, and a payload which describes the task that is
+currently being handled. A Salt Cloud tag looks like:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">salt/cloud/&lt;minion_id&gt;/&lt;task&gt;</span>
+</pre></div>
+</div>
+<p>For instance, the first event fired when creating an instance named <code class="docutils literal"><span class="pre">web1</span></code>
+would look like:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">salt/cloud/web1/creating</span>
+</pre></div>
+</div>
+<p>Assuming this instance is using the <code class="docutils literal"><span class="pre">ec2-centos</span></code> profile, which is in turn
+using the <code class="docutils literal"><span class="pre">ec2-config</span></code> provider, the payload for this tag would look like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;web1&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;profile&#39;</span><span class="p">:</span> <span class="s1">&#39;ec2-centos&#39;</span><span class="p">,</span>
+ <span class="s1">&#39;provider&#39;</span><span class="p">:</span> <span class="s1">&#39;ec2-config:ec2&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="available-events">
+<h2>Available Events<a class="headerlink" href="#available-events" title="永久链接至标题">¶</a></h2>
+<p>When an instance is created in Salt Cloud, whether by map, profile, or directly
+through an API, a minimum of five events are normally fired. More may be
+available, depending upon the cloud provider being used. Some of the common
+events are described below.</p>
+<div class="section" id="salt-cloud-minion-id-creating">
+<h3>salt/cloud/&lt;minion_id&gt;/creating<a class="headerlink" href="#salt-cloud-minion-id-creating" title="永久链接至标题">¶</a></h3>
+<p>This event states simply that the process to create an instance has begun. At
+this point in time, no actual work has begun. The payload for this event
+includes:</p>
+<p>name
+profile
+provider</p>
+</div>
+<div class="section" id="salt-cloud-minion-id-requesting">
+<h3>salt/cloud/&lt;minion_id&gt;/requesting<a class="headerlink" href="#salt-cloud-minion-id-requesting" title="永久链接至标题">¶</a></h3>
+<p>Salt Cloud is about to make a request to the cloud provider to create an
+instance. At this point, all of the variables required to make the request have
+been gathered, and the payload of the event will reflect those variables which
+do not normally pose a security risk. What is returned here is dependent upon
+the cloud provider. Some common variables are:</p>
+<p>name
+image
+size
+location</p>
+</div>
+<div class="section" id="salt-cloud-minion-id-querying">
+<h3>salt/cloud/&lt;minion_id&gt;/querying<a class="headerlink" href="#salt-cloud-minion-id-querying" title="永久链接至标题">¶</a></h3>
+<p>The instance has been successfully requested, but the necessary information to
+log into the instance (such as IP address) is not yet available. This event
+marks the beginning of the process to wait for this information.</p>
+<p>The payload for this event normally only includes the <code class="docutils literal"><span class="pre">instance_id</span></code>.</p>
+</div>
+<div class="section" id="salt-cloud-minion-id-waiting-for-ssh">
+<h3>salt/cloud/&lt;minion_id&gt;/waiting_for_ssh<a class="headerlink" href="#salt-cloud-minion-id-waiting-for-ssh" title="永久链接至标题">¶</a></h3>
+<p>The information required to log into the instance has been retrieved, but the
+instance is not necessarily ready to be accessed. Following this event, Salt
+Cloud will wait for the IP address to respond to a ping, then wait for the
+specified port (usually 22) to respond to a connection, and on Linux systems,
+for SSH to become available. Salt Cloud will attempt to issue the <code class="docutils literal"><span class="pre">date</span></code>
+command on the remote system, as a means to check for availability. If no
+<code class="docutils literal"><span class="pre">ssh_username</span></code> has been specified, a list of usernames (starting with
+<code class="docutils literal"><span class="pre">root</span></code>) will be attempted. If one or more usernames was configured for
+<code class="docutils literal"><span class="pre">ssh_username</span></code>, they will be added to the beginning of the list, in order.</p>
+<p>The payload for this event normally only includes the <code class="docutils literal"><span class="pre">ip_address</span></code>.</p>
+</div>
+<div class="section" id="salt-cloud-minion-id-deploying">
+<h3>salt/cloud/&lt;minion_id&gt;/deploying<a class="headerlink" href="#salt-cloud-minion-id-deploying" title="永久链接至标题">¶</a></h3>
+<p>The necessary port has been detected as available, and now Salt Cloud can log
+into the instance, upload any files used for deployment, and run the deploy
+script. Once the script has completed, Salt Cloud will log back into the
+instance and remove any remaining files.</p>
+<p>A number of variables are used to deploy instances, and the majority of these
+will be available in the payload. Any keys, passwords or other sensitive data
+will be scraped from the payload. Most of the variables returned will be
+related to the profile or provider config, and any default values that could
+have been changed in the profile or provider, but weren't.</p>
+</div>
+<div class="section" id="salt-cloud-minion-id-created">
+<h3>salt/cloud/&lt;minion_id&gt;/created<a class="headerlink" href="#salt-cloud-minion-id-created" title="永久链接至标题">¶</a></h3>
+<p>The deploy sequence has completed, and the instance is now available, Salted,
+and ready for use. This event is the final task for Salt Cloud, before returning
+instance information to the user and exiting.</p>
+<p>The payload for this event contains little more than the initial <code class="docutils literal"><span class="pre">creating</span></code>
+event. This event is required in all cloud providers.</p>
+</div>
+</div>
+<div class="section" id="configuring-the-event-reactor">
+<h2>Configuring the Event Reactor<a class="headerlink" href="#configuring-the-event-reactor" title="永久链接至标题">¶</a></h2>
+<p>The Event Reactor is built into the Salt Master process, and as such is
+configured via the master configuration file. Normally this will be a YAML
+file located at <code class="docutils literal"><span class="pre">/etc/salt/master</span></code>. Additionally, master configuration items
+can be stored, in YAML format, inside the <code class="docutils literal"><span class="pre">/etc/salt/master.d/</span></code> directory.</p>
+<p>These configuration items may be stored in either location; however, they may
+only be stored in one location. For organizational and security purposes, it
+may be best to create a single configuration file, which contains only Event
+Reactor configuration, at <code class="docutils literal"><span class="pre">/etc/salt/master.d/reactor</span></code>.</p>
+<p>The Event Reactor uses a top-level configuration item called <code class="docutils literal"><span class="pre">reactor</span></code>. This
+block contains a list of tags to be watched for, each of which also includes a
+list of <code class="docutils literal"><span class="pre">sls</span></code> files. For instance:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">reactor</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="s">&#39;salt/minion/*/start&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="s">&#39;/srv/reactor/custom-reactor.sls&#39;</span>
+  <span class="p p-Indicator">-</span> <span class="s">&#39;salt/cloud/*/created&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="s">&#39;/srv/reactor/cloud-alert.sls&#39;</span>
+  <span class="p p-Indicator">-</span> <span class="s">&#39;salt/cloud/*/destroyed&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="s">&#39;/srv/reactor/cloud-destroy-alert.sls&#39;</span>
+</pre></div>
+</div>
+<p>The above configuration configures reactors for three different tags: one which
+is fired when a minion process has started and is available to receive commands,
+one which is fired when a cloud instance has been created, and one which is
+fired when a cloud instance is destroyed.</p>
+<p>Note that each tag contains a wildcard (<code class="docutils literal"><span class="pre">*</span></code>) in it. For each of these tags,
+this will normally refer to a <code class="docutils literal"><span class="pre">minion_id</span></code>. This is not required of event tags,
+but is very common.</p>
+</div>
+<div class="section" id="reactor-sls-files">
+<h2>Reactor SLS Files<a class="headerlink" href="#reactor-sls-files" title="永久链接至标题">¶</a></h2>
+<p>Reactor <code class="docutils literal"><span class="pre">sls</span></code> files should be placed in the <code class="docutils literal"><span class="pre">/srv/reactor/</span></code> directory for
+consistency between environments, but this is not currently enforced by Salt.</p>
+<p>Reactor <code class="docutils literal"><span class="pre">sls</span></code> files follow a similar format to other <code class="docutils literal"><span class="pre">sls</span></code> files in
+Salt. By default they are written in YAML and can be templated using Jinja, but
+since they are processed through Salt's rendering system, any available
+renderer (JSON, Mako, Cheetah, etc.) can be used.</p>
+<p>As with other <code class="docutils literal"><span class="pre">sls</span></code> files, each stanza will start with a declaration ID,
+followed by the function to run, and then any arguments for that function. For
+example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># /srv/reactor/cloud-alert.sls</span>
+<span class="l l-Scalar l-Scalar-Plain">new_instance_alert</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.pagerduty.create_event</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">tgt</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">alertserver</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">kwarg</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">description</span><span class="p p-Indicator">:</span> <span class="s">&quot;New</span><span class="nv"> </span><span class="s">instance:</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">data[&#39;name&#39;]</span><span class="nv"> </span><span class="s">}}&quot;</span>
+        <span class="l l-Scalar l-Scalar-Plain">details</span><span class="p p-Indicator">:</span> <span class="s">&quot;New</span><span class="nv"> </span><span class="s">cloud</span><span class="nv"> </span><span class="s">instance</span><span class="nv"> </span><span class="s">created</span><span class="nv"> </span><span class="s">on</span><span class="nv"> </span><span class="s">{{</span><span class="nv"> </span><span class="s">data[&#39;provider&#39;]</span><span class="nv"> </span><span class="s">}}&quot;</span>
+        <span class="l l-Scalar l-Scalar-Plain">service_key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1626dead5ecafe46231e968eb1be29c4</span>
+        <span class="l l-Scalar l-Scalar-Plain">profile</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-pagerduty-account</span>
+</pre></div>
+</div>
+<p>When the Event Reactor receives an event notifying it that a new instance has
+been created, this <code class="docutils literal"><span class="pre">sls</span></code> will create a new incident in PagerDuty, using the
+configured PagerDuty account.</p>
+<p>The declaration ID in this example is <code class="docutils literal"><span class="pre">new_instance_alert</span></code>. The function
+called is <code class="docutils literal"><span class="pre">cmd.pagerduty.create_event</span></code>. The <code class="docutils literal"><span class="pre">cmd</span></code> portion of this function
+specifies that an execution module and function will be called, in this case,
+the <code class="docutils literal"><span class="pre">pagerduty.create_event</span></code> function.</p>
+<p>Because an execution module is specified, a target (<code class="docutils literal"><span class="pre">tgt</span></code>) must be specified
+on which to call the function. In this case, a minion called <code class="docutils literal"><span class="pre">alertserver</span></code>
+has been used. Any arguments passed through to the function are declared in the
+<code class="docutils literal"><span class="pre">kwarg</span></code> block.</p>
+</div>
+<div class="section" id="example-reactor-based-highstate">
+<h2>Example: Reactor-Based Highstate<a class="headerlink" href="#example-reactor-based-highstate" title="永久链接至标题">¶</a></h2>
+<p>When Salt Cloud creates an instance, by default it will install the Salt Minion
+onto the instance, along with any specified minion configuration, and
+automatically accept that minion's keys on the master. One of the configuration
+options that can be specified is <code class="docutils literal"><span class="pre">startup_states</span></code>, which is commonly set to
+<code class="docutils literal"><span class="pre">highstate</span></code>. This will tell the minion to immediately apply a highstate, as
+soon as it is able to do so.</p>
+<p>This can present a problem with some system images on some cloud hosts. For
+instance, Salt Cloud can be configured to log in as either the <code class="docutils literal"><span class="pre">root</span></code> user, or
+a user with <code class="docutils literal"><span class="pre">sudo</span></code> access. While some hosts commonly use images that
+lock out remote <code class="docutils literal"><span class="pre">root</span></code> access and require a user with <code class="docutils literal"><span class="pre">sudo</span></code> privileges to
+log in (notably EC2, with their <code class="docutils literal"><span class="pre">ec2-user</span></code> login), most cloud hosts fall
+back to <code class="docutils literal"><span class="pre">root</span></code> as the default login on all images, including for operating
+systems (such as Ubuntu) which normally disallow remote <code class="docutils literal"><span class="pre">root</span></code> login.</p>
+<p>For users of these operating systems, it is understandable that a highstate
+would include configuration to block remote <code class="docutils literal"><span class="pre">root</span></code> logins again. However,
+Salt Cloud may not have finished cleaning up its deployment files by the time
+the minion process has started, and kicked off a highstate run. Users have
+reported errors from Salt Cloud getting locked out while trying to clean up
+after itself.</p>
+<p>The goal of a startup state may be achieved using the Event Reactor. Because a
+minion fires an event when it is able to receive commands, this event can
+effectively be used inside the reactor system instead. The following will point
+the reactor system to the right <code class="docutils literal"><span class="pre">sls</span></code> file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">reactor</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="s">&#39;salt/cloud/*/created&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="s">&#39;/srv/reactor/startup_highstate.sls&#39;</span>
+</pre></div>
+</div>
+<p>And the following <code class="docutils literal"><span class="pre">sls</span></code> file will start a highstate run on the target minion:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># /srv/reactor/startup_highstate.sls</span>
+<span class="l l-Scalar l-Scalar-Plain">reactor_highstate</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.state.highstate</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">tgt</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{{</span> <span class="nv">data</span><span class="p p-Indicator">[</span><span class="s">&#39;name&#39;</span><span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+</pre></div>
+</div>
+<p>Because this event will not be fired until Salt Cloud has cleaned up after
+itself, the highstate run will not step on Salt Cloud's toes. And because every
+file on the minion is configurable, including <code class="docutils literal"><span class="pre">/etc/salt/minion</span></code>, the
+<code class="docutils literal"><span class="pre">startup_states</span></code> can still be configured for future minion restarts, if
+desired.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="features.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Feature Matrix" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../proxyminion/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt Proxy Minion" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt云端</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">入门指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud">Using Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#core-configuration">Cloud核心配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#windows-configuration">Windows Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#cloud-provider-specifics">Cloud Provider Specifics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#miscellaneous-options">Miscellaneous Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#troubleshooting-steps">Troubleshooting Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#extending-salt-cloud">Extending Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud-from-salt">Using Salt Cloud from Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#feature-comparison">Feature Comparison</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#tutorials">Tutorials</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="">Using Salt Cloud with the Event Reactor</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#event-structure">Event Structure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#available-events">Available Events</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#salt-cloud-minion-id-creating">salt/cloud/&lt;minion_id&gt;/creating</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#salt-cloud-minion-id-requesting">salt/cloud/&lt;minion_id&gt;/requesting</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#salt-cloud-minion-id-querying">salt/cloud/&lt;minion_id&gt;/querying</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#salt-cloud-minion-id-waiting-for-ssh">salt/cloud/&lt;minion_id&gt;/waiting_for_ssh</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#salt-cloud-minion-id-deploying">salt/cloud/&lt;minion_id&gt;/deploying</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#salt-cloud-minion-id-created">salt/cloud/&lt;minion_id&gt;/created</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#configuring-the-event-reactor">Configuring the Event Reactor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reactor-sls-files">Reactor SLS Files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#example-reactor-based-highstate">Example: Reactor-Based Highstate</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

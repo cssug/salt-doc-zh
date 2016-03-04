@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Compound matchers</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Targeting Minions" href="index.html">
+        <link rel="next" title="节点组" href="nodegroups.html">
+        <link rel="prev" title="Subnet/IP Address Matching" href="ipcidr.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="ipcidr.html" title="Subnet/IP Address Matching">上一页</a>
+            
+        </li>
+        <li>
+            <a href="nodegroups.html" title="节点组">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="compound-matchers">
+<span id="targeting-compound"></span><h1>Compound matchers<a class="headerlink" href="#compound-matchers" title="永久链接至标题">¶</a></h1>
+<p>Compound matchers allow very granular minion targeting using any of Salt's
+matchers. The default matcher is a <a class="reference external" href="http://docs.python.org/2/library/fnmatch.html#module-fnmatch" title="(在 Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">glob</span></code></a> match, just as
+with CLI and <a class="reference internal" href="../../glossary.html#term-top-file"><span class="xref std std-term">top file</span></a> matching. To match using anything other than a
+glob, prefix the match string with the appropriate letter from the table below,
+followed by an <code class="docutils literal"><span class="pre">&#64;</span></code> sign.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="5%" />
+<col width="15%" />
+<col width="47%" />
+<col width="34%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Letter</th>
+<th class="head">Match Type</th>
+<th class="head"><p class="first last">例如：</p>
+</th>
+<th class="head"><a class="reference internal" href="#target-alt-delimiters"><span>Alt Delimiter?</span></a></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>G</td>
+<td>Grains glob</td>
+<td><code class="docutils literal"><span class="pre">G&#64;os:Ubuntu</span></code></td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>E</td>
+<td>PCRE Minion ID</td>
+<td><code class="docutils literal"><span class="pre">E&#64;web\d+\.(dev|qa|prod)\.loc</span></code></td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>P</td>
+<td>Grains PCRE</td>
+<td><code class="docutils literal"><span class="pre">P&#64;os:(RedHat|Fedora|CentOS)</span></code></td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>L</td>
+<td>List of minions</td>
+<td><code class="docutils literal"><span class="pre">L&#64;minion1.example.com,minion3.domain.com</span> <span class="pre">or</span> <span class="pre">bl*.domain.com</span></code></td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>I</td>
+<td>Pillar glob</td>
+<td><code class="docutils literal"><span class="pre">I&#64;pdata:foobar</span></code></td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>J</td>
+<td>Pillar PCRE</td>
+<td><code class="docutils literal"><span class="pre">J&#64;pdata:^(foo|bar)$</span></code></td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>S</td>
+<td>Subnet/IP address</td>
+<td><code class="docutils literal"><span class="pre">S&#64;192.168.1.0/24</span></code> or <code class="docutils literal"><span class="pre">S&#64;192.168.1.100</span></code></td>
+<td>No</td>
+</tr>
+<tr class="row-odd"><td>R</td>
+<td>Range cluster</td>
+<td><code class="docutils literal"><span class="pre">R&#64;%foo.bar</span></code></td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<p>Matchers can be joined using boolean <code class="docutils literal"><span class="pre">and</span></code>, <code class="docutils literal"><span class="pre">or</span></code>, and <code class="docutils literal"><span class="pre">not</span></code> operators.</p>
+<p>For example, the following string matches all Debian minions with a hostname
+that begins with <code class="docutils literal"><span class="pre">webserv</span></code>, as well as any minions that have a hostname which
+matches the <a class="reference external" href="http://docs.python.org/2/library/re.html#module-re" title="(在 Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">regular</span> <span class="pre">expression</span></code></a> <code class="docutils literal"><span class="pre">web-dc1-srv.*</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt -C <span class="s1">&#39;webserv* and G@os:Debian or E@web-dc1-srv.*&#39;</span> test.ping
+</pre></div>
+</div>
+<p>That same example expressed in a <a class="reference internal" href="../../glossary.html#term-top-file"><span class="xref std std-term">top file</span></a> looks like the following:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;webserv*</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">G@os:Debian</span><span class="nv"> </span><span class="s">or</span><span class="nv"> </span><span class="s">E@web-dc1-srv.*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">compound</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">webserver</span>
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Excluding a minion based on its ID is also possible:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt -C <span class="s1">&#39;not web-dc1-srv&#39;</span> test.ping
+</pre></div>
+</div>
+<p>Versions prior to 2015.8.0 a leading <code class="docutils literal"><span class="pre">not</span></code> was not supported in compound
+matches. Instead, something like the following was required:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt -C <span class="s1">&#39;* and not G@kernel:Darwin&#39;</span> test.ping
+</pre></div>
+</div>
+<p>Excluding a minion based on its ID was also possible:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt -C <span class="s1">&#39;* and not web-dc1-srv&#39;</span> test.ping
+</pre></div>
+</div>
+<div class="section" id="precedence-matching">
+<h2>Precedence Matching<a class="headerlink" href="#precedence-matching" title="永久链接至标题">¶</a></h2>
+<p>Matchers can be grouped together with parentheses to explicitly declare precedence amongst groups.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt -C <span class="s1">&#39;( ms-1 or G@id:ms-3 ) and G@id:ms-3&#39;</span> test.ping
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Be certain to note that spaces are required between the parentheses and targets. Failing to obey this
+rule may result in incorrect targeting!</p>
+</div>
+</div>
+<div class="section" id="alternate-delimiters">
+<span id="target-alt-delimiters"></span><h2>Alternate Delimiters<a class="headerlink" href="#alternate-delimiters" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Matchers that target based on a key value pair use a colon (<code class="docutils literal"><span class="pre">:</span></code>) as
+a delimiter. Matchers with a <code class="docutils literal"><span class="pre">Yes</span></code> in the <code class="docutils literal"><span class="pre">Alt</span> <span class="pre">Delimiters</span></code> column
+in the previous table support specifying an alternate delimiter character.</p>
+<p>This is done by specifying an alternate delimiter character between the leading
+matcher character and the <code class="docutils literal"><span class="pre">&#64;</span></code> pattern separator character. This avoids
+incorrect interpretation of the pattern in the case that <code class="docutils literal"><span class="pre">:</span></code> is part of the
+grain or pillar data structure traversal.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt -C <span class="s1">&#39;J|@foo|bar|^foo:bar$ or J!@gitrepo!https://github.com:example/project.git&#39;</span> test.ping
+</pre></div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="ipcidr.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Subnet/IP Address Matching" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="nodegroups.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="节点组" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../using_salt.html">Using Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../grains/index.html">Grains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pillar/index.html">在Pillar中存储静态数据</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Targeting Minions</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#targeting-with-grains">Targeting with Grains</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#targeting-with-executions">Targeting with Executions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#compound-targeting">Compound Targeting</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#node-group-targeting">Node Group Targeting</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="globbing.html">Matching the <code class="docutils literal"><span class="pre">minion</span> <span class="pre">id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="grains.html">Targeting using Grains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pillar.html">Targeting using Pillar</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ipcidr.html">Subnet/IP Address Matching</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="">Compound matchers</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#precedence-matching">Precedence Matching</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#alternate-delimiters">Alternate Delimiters</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="nodegroups.html">节点组</a></li>
+<li class="toctree-l4"><a class="reference internal" href="batch.html">Batch Size</a></li>
+<li class="toctree-l4"><a class="reference internal" href="range.html">SECO Range</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../mine/index.html">Salt Mine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/runners/index.html">Runners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../engines/index.html">Salt Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../yaml/index.html">了解YAML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../troubleshooting/index.html">解决问题</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../faq.html">常见问题</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../best_practices.html">Salt Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

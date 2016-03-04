@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Getting Started With Rackspace</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt云端" href="index.html">
+        <link rel="next" title="Getting Started With Saltify" href="saltify.html">
+        <link rel="prev" title="Getting Started With Proxmox" href="proxmox.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="proxmox.html" title="Getting Started With Proxmox">上一页</a>
+            
+        </li>
+        <li>
+            <a href="saltify.html" title="Getting Started With Saltify">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="getting-started-with-rackspace">
+<h1>Getting Started With Rackspace<a class="headerlink" href="#getting-started-with-rackspace" title="永久链接至标题">¶</a></h1>
+<p>Rackspace is a major public cloud platform which may be configured using either
+the <cite>rackspace</cite> or the <cite>openstack</cite> driver, depending on your needs.</p>
+<p>Please note that the <cite>rackspace</cite> driver is intended only for 1st gen instances,
+aka, &quot;the old cloud&quot; at Rackspace. It is required for 1st gen instances, but
+will <em>not</em> work with OpenStack-based instances. Unless you explicitly have a
+reason to use it, it is highly recommended that you use the <cite>openstack</cite> driver
+instead.</p>
+<div class="section" id="dependencies">
+<h2>依赖<a class="headerlink" href="#dependencies" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>Libcloud &gt;= 0.13.2</li>
+</ul>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="永久链接至标题">¶</a></h2>
+<dl class="docutils">
+<dt>To use the <cite>openstack</cite> driver (recommended), set up the cloud configuration at</dt>
+<dd><code class="docutils literal"><span class="pre">/etc/salt/cloud.providers</span></code> or
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/rackspace.conf</span></code>:</dd>
+</dl>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-rackspace-config</span><span class="p p-Indicator">:</span>
+  <span class="c1"># Set the location of the salt-master</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">saltmaster.example.com</span>
+
+  <span class="c1"># Configure Rackspace using the OpenStack plugin</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">identity_url</span><span class="p p-Indicator">:</span> <span class="s">&#39;https://identity.api.rackspacecloud.com/v2.0/tokens&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">compute_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">cloudServersOpenStack</span>
+  <span class="l l-Scalar l-Scalar-Plain">protocol</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ipv4</span>
+
+  <span class="c1"># Set the compute region:</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">compute_region</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">DFW</span>
+
+  <span class="c1"># Configure Rackspace authentication credentials</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myname</span>
+  <span class="l l-Scalar l-Scalar-Plain">tenant</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">123456</span>
+  <span class="l l-Scalar l-Scalar-Plain">apikey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>To use the <cite>rackspace</cite> driver, set up the cloud configuration at</dt>
+<dd><code class="docutils literal"><span class="pre">/etc/salt/cloud.providers</span></code> or
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/rackspace.conf</span></code>:</dd>
+</dl>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-rackspace-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">rackspace</span>
+  <span class="c1"># The Rackspace login user</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">fred</span>
+  <span class="c1"># The Rackspace user&#39;s apikey</span>
+  <span class="l l-Scalar l-Scalar-Plain">apikey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">901d3f579h23c8v73q9</span>
+</pre></div>
+</div>
+<p>The settings that follow are for using Rackspace with the <cite>openstack</cite> driver,
+and will not work with the <cite>rackspace</cite> driver.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<div class="versionchanged">
+<p><span class="versionmodified">在 2015.8.0 版更改.</span></p>
+</div>
+<p class="last">The <code class="docutils literal"><span class="pre">provider</span></code> parameter in cloud provider definitions was renamed to <code class="docutils literal"><span class="pre">driver</span></code>. This
+change was made to avoid confusion with the <code class="docutils literal"><span class="pre">provider</span></code> parameter that is used in cloud profile
+definitions. Cloud provider definitions now use <code class="docutils literal"><span class="pre">driver</span></code> to refer to the Salt cloud module that
+provides the underlying functionality to connect to a cloud host, while cloud profiles continue
+to use <code class="docutils literal"><span class="pre">provider</span></code> to refer to provider configurations that you define.</p>
+</div>
+</div>
+<div class="section" id="compute-region">
+<h2>Compute Region<a class="headerlink" href="#compute-region" title="永久链接至标题">¶</a></h2>
+<p>Rackspace currently has six compute regions which may be used:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>DFW -&gt; Dallas/Forth Worth
+ORD -&gt; Chicago
+SYD -&gt; Sydney
+LON -&gt; London
+IAD -&gt; Northern Virginia
+HKG -&gt; Hong Kong
+</pre></div>
+</div>
+<p>Note: Currently the LON region is only available with a UK account, and UK accounts cannot access other regions</p>
+</div>
+<div class="section" id="authentication">
+<h2>Authentication<a class="headerlink" href="#authentication" title="永久链接至标题">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">user</span></code> is the same user as is used to log into the Rackspace Control
+Panel. The <code class="docutils literal"><span class="pre">tenant</span></code> and <code class="docutils literal"><span class="pre">apikey</span></code> can be found in the API Keys area of the
+Control Panel. The <code class="docutils literal"><span class="pre">apikey</span></code> will be labeled as API Key (and may need to be
+generated), and <code class="docutils literal"><span class="pre">tenant</span></code> will be labeled as Cloud Account Number.</p>
+<p>An initial profile can be configured in <code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles</span></code> or
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles.d/rackspace.conf</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">openstack_512</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-rackspace-config</span>
+    <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">512 MB Standard</span>
+    <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Ubuntu 12.04 LTS (Precise Pangolin)</span>
+</pre></div>
+</div>
+<p>To instantiate a machine based on this profile:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-cloud -p openstack_512 myinstance</span>
+</pre></div>
+</div>
+<p>This will create a virtual machine at Rackspace with the name <code class="docutils literal"><span class="pre">myinstance</span></code>.
+This operation may take several minutes to complete, depending on the current
+load at the Rackspace data center.</p>
+<p>Once the instance has been created with salt-minion installed, connectivity to
+it can be verified with Salt:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt myinstance test.ping</span>
+</pre></div>
+</div>
+<div class="section" id="rackconnect-environments">
+<h3>RackConnect Environments<a class="headerlink" href="#rackconnect-environments" title="永久链接至标题">¶</a></h3>
+<p>Rackspace offers a hybrid hosting configuration option called RackConnect that
+allows you to use a physical firewall appliance with your cloud servers. When
+this service is in use the public_ip assigned by nova will be replaced by a NAT
+ip on the firewall. For salt-cloud to work properly it must use the newly
+assigned &quot;access ip&quot; instead of the Nova assigned public ip. You can enable that
+capability by adding this to your profiles:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">openstack_512</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-openstack-config</span>
+    <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">512 MB Standard</span>
+    <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Ubuntu 12.04 LTS (Precise Pangolin)</span>
+    <span class="l l-Scalar l-Scalar-Plain">rackconnect</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="managed-cloud-environments">
+<h3>Managed Cloud Environments<a class="headerlink" href="#managed-cloud-environments" title="永久链接至标题">¶</a></h3>
+<p>Rackspace offers a managed service level of hosting. As part of the managed
+service level you have the ability to choose from base of lamp installations on
+cloud server images.  The post build process for both the base and the lamp
+installations used Chef to install things such as the cloud monitoring agent and
+the cloud backup agent. It also takes care of installing the lamp stack if
+selected. In order to prevent the post installation process from stomping over
+the bootstrapping you can add the below to your profiles.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">openstack_512</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-rackspace-config</span>
+    <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">512 MB Standard</span>
+    <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Ubuntu 12.04 LTS (Precise Pangolin)</span>
+    <span class="l l-Scalar l-Scalar-Plain">managedcloud</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="first-and-next-generation-images">
+<h3>First and Next Generation Images<a class="headerlink" href="#first-and-next-generation-images" title="永久链接至标题">¶</a></h3>
+<p>Rackspace provides two sets of virtual machine images, <em>first</em>, and <em>next</em>
+generation. As of <code class="docutils literal"><span class="pre">0.8.9</span></code> salt-cloud will default to using the <em>next</em>
+generation images. To force the use of first generation images, on the profile
+configuration please add:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">FreeBSD-9.0-512</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-rackspace-config</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">512 MB Standard</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">FreeBSD 9.0</span>
+  <span class="l l-Scalar l-Scalar-Plain">force_first_gen</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="private-subnets">
+<h3>Private Subnets<a class="headerlink" href="#private-subnets" title="永久链接至标题">¶</a></h3>
+<p>By default salt-cloud will not add Rackspace private networks to new servers. To enable
+a private network to a server instantiated by salt cloud, add the following section
+to the provider file (typically <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/rackspace.conf</span></code>)</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">networks</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">fixed</span><span class="p p-Indicator">:</span>
+    <span class="c1"># This is the private network</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">private-network-id</span>
+    <span class="c1"># This is Rackspace&#39;s &quot;PublicNet&quot;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">00000000-0000-0000-0000-000000000000</span>
+    <span class="c1"># This is Rackspace&#39;s &quot;ServiceNet&quot;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">11111111-1111-1111-1111-111111111111</span>
+</pre></div>
+</div>
+<p>To get the Rackspace private network ID, go to Networking, Networks and hover over the private network name.</p>
+<p>The order of the networks in the above code block does not map to the order of the
+ethernet devices on newly created servers.   Public IP will always be first ( eth0 )
+followed by servicenet ( eth1 ) and then private networks.</p>
+<p>Enabling the private network per above gives the option of using the private subnet for
+all master-minion communication, including the bootstrap install of salt-minion.  To
+enable the minion to use the private subnet, update the master: line in the minion:
+section of the providers file.  To configure the master to only listen on the private
+subnet IP, update the interface: line in the /etc/salt/master file to be the private
+subnet IP of the salt master.</p>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="proxmox.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started With Proxmox" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="saltify.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started With Saltify" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt云端</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">入门指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud">Using Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#core-configuration">Cloud核心配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#windows-configuration">Windows Configuration</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#cloud-provider-specifics">Cloud Provider Specifics</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aliyun.html">    Getting Started With Aliyun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html">    Getting Started With Azure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="digitalocean.html">    Getting Started With DigitalOcean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html">    Getting Started With EC2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gogrid.html">    Getting Started With GoGrid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html">    Getting Started With Google Compute Engine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hpcloud.html">    Getting Started With HP Cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="joyent.html">    Getting Started With Joyent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lxc.html">    Getting Started With LXC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linode.html">    Getting Started With Linode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="opennebula.html">    Getting Started With OpenNebula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="openstack.html">    Getting Started With OpenStack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parallels.html">    Getting Started With Parallels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="profitbricks.html">    Getting Started With Profitbricks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="proxmox.html">    Getting Started With Proxmox</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">    Getting Started With Rackspace</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dependencies">依赖</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#compute-region">Compute Region</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#authentication">Authentication</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#rackconnect-environments">RackConnect Environments</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#managed-cloud-environments">Managed Cloud Environments</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#first-and-next-generation-images">First and Next Generation Images</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#private-subnets">Private Subnets</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="saltify.html">    Getting Started With Saltify</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scaleway.html">    Getting Started With Scaleway</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html">    Getting Started With SoftLayer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vexxhost.html">    Getting Started With Vexxhost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="virtualbox.html">    Getting Started With Virtualbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vmware.html">    Getting Started With VMware</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vsphere.html">    Getting Started With vSphere</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#miscellaneous-options">Miscellaneous Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#troubleshooting-steps">Troubleshooting Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#extending-salt-cloud">Extending Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud-from-salt">Using Salt Cloud from Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#feature-comparison">Feature Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorials">Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

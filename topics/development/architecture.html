@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Overview</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt开发" href="index.html">
+        <link rel="next" title="Contributing" href="contributing.html">
+        <link rel="prev" title="Salt开发" href="index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="index.html" title="Salt开发">上一页</a>
+            
+        </li>
+        <li>
+            <a href="contributing.html" title="Contributing">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="overview">
+<span id="salt-architecture"></span><h1>Overview<a class="headerlink" href="#overview" title="永久链接至标题">¶</a></h1>
+<p>In its most typical use, Salt is a software application in which clients,
+called &quot;minions&quot; can be commanded and controlled from a central command server
+called a &quot;master&quot;.</p>
+<p>Commands are normally issued to the minions (via the master) by calling a
+client script simply called, 'salt'.</p>
+<p>Salt features a pluggable transport system to issue commands from a master to
+minions. The default transport is ZeroMQ.</p>
+</div>
+<div class="section" id="salt-client">
+<h1>Salt Client<a class="headerlink" href="#salt-client" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id1">
+<h2>Overview<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>The salt client is run on the same machine as the Salt Master and communicates
+with the salt-master to issue commands and to receive the results and display
+them to the user.</p>
+<p>The primary abstraction for the salt client is called 'LocalClient'.</p>
+<p>When LocalClient wants to publish a command to minions, it connects to the
+master by issuing a request to the master's ReqServer (TCP: 4506)</p>
+<p>The LocalClient system listens to responses for its requests by listening to
+the master event bus publisher (master_event_pub.ipc).</p>
+</div>
+</div>
+<div class="section" id="salt-master">
+<h1>Salt Master<a class="headerlink" href="#salt-master" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id2">
+<h2>Overview<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<p>The salt-master daemon runs on the designated Salt master and performs
+functions such as authenticating minions, sending, and receiving requests
+from connected minions and sending and receiving requests and replies to the
+'salt' CLI.</p>
+</div>
+<div class="section" id="moving-pieces">
+<h2>Moving Pieces<a class="headerlink" href="#moving-pieces" title="永久链接至标题">¶</a></h2>
+<p>When a Salt master starts up, a number of processes are started, all of which
+are called 'salt-master' in a process-list but have various role categories.</p>
+<p>Among those categories are:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Publisher</li>
+<li>EventPublisher</li>
+<li>MWorker</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="publisher">
+<h2>Publisher<a class="headerlink" href="#publisher" title="永久链接至标题">¶</a></h2>
+<p>The Publisher process is responsible for sending commands over the designated
+transport to connected minions. The Publisher is bound to the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li>TCP: port 4505</li>
+<li>IPC: publish_pull.ipc</li>
+</ul>
+</div></blockquote>
+<p>Each salt minion establishes a connection to the master Publisher.</p>
+</div>
+<div class="section" id="eventpublisher">
+<h2>EventPublisher<a class="headerlink" href="#eventpublisher" title="永久链接至标题">¶</a></h2>
+<p>The EventPublisher publishes events onto the event bus. It is bound to the
+following:</p>
+<blockquote>
+<div><ul class="simple">
+<li>IPC: master_event_pull.ipc</li>
+<li>IPC: master_event_pub.ipc</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="mworker">
+<h2>MWorker<a class="headerlink" href="#mworker" title="永久链接至标题">¶</a></h2>
+<p>Worker processes manage the back-end operations for the Salt Master.</p>
+<p>The number of workers is equivalent to the number of 'worker_threads'
+specified in the master configuration and is always at least one.</p>
+<p>Workers are bound to the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li>IPC: workers.ipc</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="reqserver">
+<h2>ReqServer<a class="headerlink" href="#reqserver" title="永久链接至标题">¶</a></h2>
+<p>The Salt request server takes requests and distributes them to available MWorker
+processes for processing. It also receives replies back from minions.</p>
+<dl class="docutils">
+<dt>The ReqServer is bound to the following:</dt>
+<dd><ul class="first last simple">
+<li>TCP: 4506</li>
+<li>IPC: workers.ipc</li>
+</ul>
+</dd>
+</dl>
+<p>Each salt minion establishes a connection to the master ReqServer.</p>
+</div>
+<div class="section" id="job-flow">
+<h2>Job Flow<a class="headerlink" href="#job-flow" title="永久链接至标题">¶</a></h2>
+<p>The Salt master works by always publishing commands to all connected minions
+and the minions decide if the command is meant for them by checking themselves
+against the command target.</p>
+<p>The typical lifecycle of a salt job from the perspective of the master
+might be as follows:</p>
+<ol class="arabic simple">
+<li>A command is issued on the CLI. For example, 'salt my_minion test.ping'.</li>
+</ol>
+<p>2) The 'salt' command uses LocalClient to generate a request to the salt master
+by connecting to the ReqServer on <a class="reference external" href="TCP:4506">TCP:4506</a> and issuing the job.</p>
+<p>3) The salt-master ReqServer sees the request and passes it to an available
+MWorker over workers.ipc.</p>
+<p>4) A worker picks up the request and handles it. First, it checks to ensure
+that the requested user has permissions to issue the command. Then, it sends
+the publish command to all connected minions. For the curious, this happens
+in ClearFuncs.publish().</p>
+<p>5) The worker announces on the master event bus that it is about to publish
+a job to connected minions. This happens by placing the event on the master
+event bus (master_event_pull.ipc) where the EventPublisher picks it up and
+distributes it to all connected event listeners on master_event_pub.ipc.</p>
+<p>6) The message to the minions is encrypted and sent to the Publisher via IPC
+on publish_pull.ipc.</p>
+<p>7) Connected minions have a TCP session established with the Publisher on TCP
+port 4505 where they await commands. When the Publisher receives the job over
+publish_pull, it sends the jobs across the wire to the minions for processing.</p>
+<p>8) After the minions receive the request, they decrypt it and perform any
+requested work, if they determine that they are targeted to do so.</p>
+<p>9) When the minion is ready to respond, it publishes the result of its job back
+to the master by sending the encrypted result back to the master on TCP 4506
+where it is again picked up by the ReqServer and forwarded to an available
+MWorker for processing. (Again, this happens by passing this message across
+workers.ipc to an available worker.)</p>
+<p>10) When the MWorker receives the job it decrypts it and fires an event onto
+the master event bus (master_event_pull.ipc). (Again for the curious, this
+happens in AESFuncs._return().</p>
+<p>11) The EventPublisher sees this event and re-publishes it on the bus to all
+connected listeners of the master event bus (on master_event_pub.ipc). This
+is where the LocalClient has been waiting, listening to the event bus for
+minion replies. It gathers the job and stores the result.</p>
+<p>12) When all targeted minions have replied or the timeout has been exceeded,
+the salt client displays the results of the job to the user on the CLI.</p>
+</div>
+</div>
+<div class="section" id="salt-minion">
+<h1>Salt Minion<a class="headerlink" href="#salt-minion" title="永久链接至标题">¶</a></h1>
+<div class="section" id="id3">
+<h2>Overview<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>The salt-minion is a single process that sits on machines to be managed by
+Salt. It can either operate as a stand-alone daemon which accepts commands
+locally via 'salt-call' or it can connect back to a master and receive commands
+remotely.</p>
+<p>When starting up, salt minions connect _back_ to a master defined in the minion
+config file. The connect to two ports on the master:</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt>TCP: 4505</dt>
+<dd><p class="first last">This is the connection to the master Publisher. It is on this port that
+the minion receives jobs from the master.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>TCP: 4506</dt>
+<dd><p class="first last">This is the connection to the master ReqServer. It is on this port that
+the minion sends job results back to the master.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="event-system">
+<h2>Event系统<a class="headerlink" href="#event-system" title="永久链接至标题">¶</a></h2>
+<p>Similar to the master, a salt-minion has its own event system that operates
+over IPC by default. The minion event system operates on a push/pull system
+with IPC files at minion_event_&lt;unique_id&gt;_pub.ipc and
+minion_event_&lt;unique_id&gt;_pull.ipc.</p>
+<p>The astute reader might ask why have an event bus at all with a single-process
+daemon. The answer is that the salt-minion may fork other processes as required
+to do the work without blocking the main salt-minion process and this
+necessitates a mechanism by which those processes can communicate with each
+other. Secondarily, this provides a bus by which any user with sufficient
+permissions can read or write to the bus as a common interface with the salt
+minion.</p>
+</div>
+<div class="section" id="id4">
+<h2>Job Flow<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h2>
+<p>When a salt minion starts up, it attempts to connect to the Publisher and the
+ReqServer on the salt master. It then attempts to authenticate and once the
+minion has successfully authenticated, it simply listens for jobs.</p>
+<p>Jobs normally come either come from the 'salt-call' script run by a local user
+on the salt minion or they can come directly from a master.</p>
+</div>
+<div class="section" id="master-job-flow">
+<h2>Master Job Flow<a class="headerlink" href="#master-job-flow" title="永久链接至标题">¶</a></h2>
+<p>1) A master publishes a job that is received by a minion as outlined by the
+master's job flow above.</p>
+<p>2) The minion is polling its receive socket that's connected to the master
+Publisher (TCP 4505 on master). When it detects an incoming message, it picks it
+up from the socket and decrypts it.</p>
+<p>3) A new minion process or thread is created and provided with the contents of the
+decrypted message. The _thread_return() method is provided with the contents of
+the received message.</p>
+<p>4) The new minion thread is created. The _thread_return() function starts up
+and actually calls out to the requested function contained in the job.</p>
+<ol class="arabic simple" start="5">
+<li>The requested function runs and returns a result. [Still in thread.]</li>
+</ol>
+<p>6) The result of the function that's run is encrypted and returned to the
+master's ReqServer (TCP 4506 on master). [Still in thread.]</p>
+<p>7) Thread exits. Because the main thread was only blocked for the time that it
+took to initialize the worker thread, many other requests could have been
+received and processed during this time.</p>
+</div>
+</div>
+<div class="section" id="a-note-on-clearfuncs-vs-aesfuncs">
+<h1>A Note on ClearFuncs vs. AESFuncs<a class="headerlink" href="#a-note-on-clearfuncs-vs-aesfuncs" title="永久链接至标题">¶</a></h1>
+<p>A common source of confusion is determining when messages are passed in the
+clear and when they are passed using encryption. There are two rules governing
+this behaviour:</p>
+<p>1) ClearFuncs is used for intra-master communication and during the initial
+authentication handshake between a minion and master during the key exhange.</p>
+<ol class="arabic simple" start="2">
+<li>AESFuncs is used everywhere else.</li>
+</ol>
+</div>
+
+
+                            </div>
+                            <a href="index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt开发" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="contributing.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Contributing" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt开发</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#salt-client">Salt Client</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#salt-master">Salt Master</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#moving-pieces">Moving Pieces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#publisher">Publisher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#eventpublisher">EventPublisher</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mworker">MWorker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reqserver">ReqServer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#job-flow">Job Flow</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#salt-minion">Salt Minion</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#event-system">Event系统</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Job Flow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#master-job-flow">Master Job Flow</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#a-note-on-clearfuncs-vs-aesfuncs">A Note on ClearFuncs vs. AESFuncs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deprecations.html">代码弃用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dunder_dictionaries.html">Dunder Dictionaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_pillars.html">External Pillars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hacking.html">Installing Salt for development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="labels.html">GitHub Labels and Milestones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="logging.html">内部日志</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modular_systems.html">模块化系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="package_providers.html">Package Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reporting_bugs.html">Reporting Bugs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salt_projects.html">Community Projects That Use Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="topology.html">Salt Topology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="translating.html">翻译文档</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html">Developing Salt Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html">Running The Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html#automated-test-runs">Automated Test Runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tests/index.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raet/index.html">raet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="git/index.html">SaltStack Git Policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conventions/index.html">Salt Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/internals/index.html">Salt code and internals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../projects/index.html">Salt Based Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/writing_tests.html">编写Salt测试</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

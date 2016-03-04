@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>我们如何使用Salt States？</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Configuration Management" href="../states/index.html">
+        <link rel="next" title="States教程，第1部分 - 基础用法" href="states_pt1.html">
+        <link rel="prev" title="Configuration Management" href="../states/index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../states/index.html" title="Configuration Management">上一页</a>
+            
+        </li>
+        <li>
+            <a href="states_pt1.html" title="States教程，第1部分 - 基础用法">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="how-do-i-use-salt-states">
+<h1>我们如何使用Salt States？<a class="headerlink" href="#how-do-i-use-salt-states" title="永久链接至标题">¶</a></h1>
+<p>简单，简单，简单</p>
+<p>很多最强大、最有用的工程解决方案都是基于简单原则建立起来的。Salt States 也竭尽全力做到那样：K.I.S.S.(Keep It Stupidly Simple 简单到愚蠢)</p>
+<p>Salt 状态系统的核心是SLS，或者叫**S**a<strong>L</strong>t <strong>S</strong>tate 文件。SLS表示系统将会是什么样的一种状态，而且是以一种很简单的格式来包含这些数据。这经常也被叫做配置管理。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">这只是使用states的入门, 要深入的话请接下来阅读 pillar <a class="reference internal" href="pillar.html"><em>Pillar</em></a>.</p>
+</div>
+<div class="section" id="it-is-all-just-data">
+<h2>所有都是数据<a class="headerlink" href="#it-is-all-just-data" title="永久链接至标题">¶</a></h2>
+<p>在深入研究细节之前，细节将有助于理解SLS文件只是蒙上面纱的数据结构。虽然明白SLS只是一种数据结构不是理解和使用Salt States的关键，但这对巩固知识是非常有用效的。</p>
+<p>因此，SLS文件实际上只是一些： <a class="reference external" href="http://docs.python.org/2/library/stdtypes.html#typesmapping" title="(在 Python v2.7)"><span class="xref std std-ref">词典dictionaries</span></a>, <a class="reference external" href="http://docs.python.org/2/library/stdtypes.html#typesseq" title="(在 Python v2.7)"><span class="xref std std-ref">列表lists</span></a>, <a class="reference external" href="http://docs.python.org/2/library/stdtypes.html#typesseq" title="(在 Python v2.7)"><span class="xref std std-ref">字符串</span></a>, and <a class="reference external" href="http://docs.python.org/2/library/stdtypes.html#typesnumeric" title="(在 Python v2.7)"><span class="xref std std-ref">数字</span></a>.通过使用这些方法，使得Salt更加灵活. 多写state 文件，将更加明白需要写什么。 其结果就是系统更加容易理解，即使系统管理员和开发人员的需求不断增加。</p>
+</div>
+<div class="section" id="the-top-file">
+<h2>顶级配置文件<a class="headerlink" href="#the-top-file" title="永久链接至标题">¶</a></h2>
+<p>以下部分的示例SLS 文件可以用一个叫做:strong:<cite>top.sls`的文件存在主机上。 这个文件进行了深入的描述： :doc:`这里&lt;/ref/states/top&gt;</cite>.</p>
+</div>
+<div class="section" id="default-data-yaml">
+<h2>默认数据格式 - YAML<a class="headerlink" href="#default-data-yaml" title="永久链接至标题">¶</a></h2>
+<p>缺省情况Salt把SLS数据表现为可用的最简单的系列化格式中的一种  - <a class="reference external" href="http://yaml.org/spec/1.1/">YAML</a>。</p>
+<p>一个典型的SLS 文件常常看起来像这样的YAML：</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>那些演示使用了一些通用服务和包名，不同的发行版常使用不同的包名和服务名。例如在Red Hat系统上 <cite>apache`要被替换为`httpd</cite>。Salt使用初始化脚步，系统进程名称，upstart名等名称都要基于平台的底层服务管理。在平台执行service.get_all salt 功能获取可用的服务名列表。</p>
+<p class="last">如何让States在多个发行版上同时工作的信息在后面指南里有。</p>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">apache</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">apache</span>
+</pre></div>
+</div>
+<p>这个SLS数据将保证apache包被安装了而且apache服务是处于运行状态。组件可以以一种简单的方式来解释。</p>
+<p>第一行是这一组数据的ID，被叫做ID 声明。这个ID设置了需要被维护的东西的名字。</p>
+<p>The second and third lines contain the state module function to be run, in the
+format <code class="docutils literal"><span class="pre">&lt;state_module&gt;.&lt;function&gt;</span></code>. The <code class="docutils literal"><span class="pre">pkg.installed</span></code> state module
+function ensures that a software package is installed via the system's native
+package manager. The <code class="docutils literal"><span class="pre">service.running</span></code> state module function ensures that a
+given system daemon is running.</p>
+<p>Finally, on line five, is the word <code class="docutils literal"><span class="pre">require</span></code>. This is called a Requisite
+Statement, and it makes sure that the Apache service is only started after
+a successful installation of the apache package.</p>
+</div>
+<div class="section" id="adding-configs-and-users">
+<h2>增加配置和用户<a class="headerlink" href="#adding-configs-and-users" title="永久链接至标题">¶</a></h2>
+<p>当建立一个类似Apache web服务器这样的服务时，许多组件需要被添加。Apache 的配置文件肯定要被管理起来，而且需要设置特定的用户和用户组。</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">apache</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">watch</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">apache</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/httpd/conf/httpd.conf</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">apache</span>
+  <span class="l l-Scalar l-Scalar-Plain">user.present</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">uid</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">87</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">gid</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">87</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">home</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/var/www/html</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">shell</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/bin/nologin</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">apache</span>
+  <span class="l l-Scalar l-Scalar-Plain">group.present</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">gid</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">87</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">apache</span>
+
+<span class="l l-Scalar l-Scalar-Plain">/etc/httpd/conf/httpd.conf</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://apache/httpd.conf</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">644</span>
+</pre></div>
+</div>
+<p>这个SLS数据在第一个例子的基础上扩展了很多，而且他包含了一个配置文件，一个用户，一个用户组和一个需求声明: <code class="docutils literal"><span class="pre">watch</span></code>.</p>
+<p>增加更多的状态也很容易，自从在Apache ID下建立了新用户和用户组状态，用户和组将成为Apache的用户和组。<a href="#id1"><span class="problematic" id="id2">``</span></a>require``声明将保证是在创建用户组后再创建用户，用户组又是在Apache包安装后才创建。</p>
+<p>紧接着，处于服务中中的“require”语句会被更改为“watch”，而且现在是监测的是3个state而不是1个。“watch”语句的功能和“require”相同。在运行“watch”之前先要确保有其他的state在运行，但是“watch”会添加额外的组件。“watch”语句会对它所监控的所有state的任何改变运行监测功能。所以如果安装包被更新了，组态文件夹更改了用户名更改了，然后state监测服务就会运行，这个服务仅仅只是重启它自身的的服务。但在组态文件夹被更改的情况下将会激发被更改的各个项目各自的重启。</p>
+</div>
+<div class="section" id="moving-beyond-a-single-sls">
+<h2>超越单个SLS<a class="headerlink" href="#moving-beyond-a-single-sls" title="永久链接至标题">¶</a></h2>
+<p>当以一种可扩展的方式建立Salt States时，需要用到多个SLS文件。上面的例子是在单一的SLS文件中，不过可以用两个或多个文件组合成一个状态树State Tree。上面的例子也引用了一个有点奇怪的来源-<code class="docutils literal"><span class="pre">salt://apache/httpd.conf</span></code>。被引用的文件也必须是可用的。</p>
+<p>这些SLS文件放在Salt master上一个目录中，一个SLS就是一个文件，而且被下载到minion也还是文件。</p>
+<p>Apache的例子将像这样表现在Salt 文件服务器根路径下:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>apache/init.sls
+apache/httpd.conf
+</pre></div>
+</div>
+<p>所以httpd.conf是apache 目录下的一个文件，而且是被直接引用的</p>
+<div class="admonition-do-not-use-dots-in-sls-file-names-or-their-directories admonition">
+<p class="first admonition-title">Do not use dots in SLS file names or their directories</p>
+<p>The initial implementation of <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-state_top"><code class="xref std std-conf_master docutils literal"><span class="pre">top.sls</span></code></a> and
+<a class="reference internal" href="../../ref/states/highstate.html#include-declaration"><span>Include declaration</span></a> followed the python import model where a slash
+is represented as a period.  This means that a SLS file with a period in
+the name ( besides the suffix period) can not be referenced.  For example,
+webserver_1.0.sls is not referenceable because webserver_1.0 would refer
+to the directory/file webserver_1/0.sls</p>
+<p class="last">The same applies for any subdirecortories, this is especially 'tricky' when
+git repos are created.  Another command that typically can't render it's
+output is <code class="docutils literal"><span class="pre">`state.show_sls`</span></code> of a file in a path that contains a dot.</p>
+</div>
+<p>但是当使用超过单独一个SLS文件时，更多的组件可以被添加到工具箱中。看看这个SSH的例子:</p>
+<p><code class="docutils literal"><span class="pre">ssh/init.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">openssh-client</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span>
+
+<span class="l l-Scalar l-Scalar-Plain">/etc/ssh/ssh_config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">644</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://ssh/ssh_config</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">openssh-client</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">ssh/server.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">include</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ssh</span>
+
+<span class="l l-Scalar l-Scalar-Plain">openssh-server</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span>
+
+<span class="l l-Scalar l-Scalar-Plain">sshd</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">openssh-client</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">openssh-server</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/ssh/banner</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/ssh/sshd_config</span>
+
+<span class="l l-Scalar l-Scalar-Plain">/etc/ssh/sshd_config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">644</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://ssh/sshd_config</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">openssh-server</span>
+
+<span class="l l-Scalar l-Scalar-Plain">/etc/ssh/banner</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">managed</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">644</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://ssh/banner</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">openssh-server</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">注意我们有两种差不多的方法表示一个文件是被Salt管理的。在上面的`/etc/ssh/sshd_config` 状态部分，我们用`file.managed`状态声明，而在 <cite>/etc/ssh/banner</cite> 状态部分，我们使用,`file`状态声明，然后加一个`managed`属性给那个状态声明。两种方式都产生一个结果；第一种方式 -- 使用 <cite>file.managed</cite>-- 只不过是一个快捷方式。</p>
+</div>
+<p>现在我们的State状态树看起来像这样:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>apache/init.sls
+apache/httpd.conf
+ssh/init.sls
+ssh/server.sls
+ssh/banner
+ssh/ssh_config
+ssh/sshd_config
+</pre></div>
+</div>
+<p>这个例子介绍了``include``声明。include声明包含另一个SLS文件，以便看到的那些组件可以被请求到，监控到或者很快看到效果 -  extended。</p>
+<p>Include声明允许stated被交叉连接。当SLS文件有一个include声明 ，它会像字面量一样包含被include的SLS文件的内容。</p>
+<p>注意有些SLS文件被叫做init.sls，而有些不是。关于这个的更多信息可以在这里找到 <a class="reference internal" href="states_pt1.html#sls-file-namespace"><span>States Tutorial</span></a>.</p>
+</div>
+<div class="section" id="extending-included-sls-data">
+<h2>扩展包含的SLS数据<a class="headerlink" href="#extending-included-sls-data" title="永久链接至标题">¶</a></h2>
+<p>有时候SLS数据需要被扩展。有可能apache服务需要监控更多的资源，在不同的环境下需要放置为不同的文件。</p>
+<p>在这些例子中，第一个增加了一个定制的banner给ssh，第二个增加了更多的观察器给apache，为了包含mod_python</p>
+<p><code class="docutils literal"><span class="pre">ssh/custom-server.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">include</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ssh.server</span>
+
+<span class="l l-Scalar l-Scalar-Plain">extend</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">/etc/ssh/banner</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://ssh/custom-banner</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">python/mod_python.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">include</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">apache</span>
+
+<span class="l l-Scalar l-Scalar-Plain">extend</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">apache</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">service</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">watch</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mod_python</span>
+
+<span class="l l-Scalar l-Scalar-Plain">mod_python</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">custom-server.sls</span></code> file uses the extend statement to overwrite where the
+banner is being downloaded from, and therefore changing what file is being used
+to configure the banner.</p>
+<p>在新的mod_python SLS中，mod_python包已经被添加了，但是更重要的apache 服务还是被通过观察mod_python 包的方式扩展进来。</p>
+<div class="admonition-using-extend-with-require-or-watch admonition">
+<p class="first admonition-title">对比扩展和`required`or <cite>watch</cite></p>
+<p class="last"><code class="docutils literal"><span class="pre">extend</span></code> 语句的工作方式有别于``require``或者``watch``，它只是附加而不是替换必要的组件。</p>
+</div>
+</div>
+<div class="section" id="understanding-the-render-system">
+<h2>理解渲染系统<a class="headerlink" href="#understanding-the-render-system" title="永久链接至标题">¶</a></h2>
+<p>SLS数据是非常简单的(数据)，他不是必须用YAML表示。Salt默认用YAML格式是因为它非常直接，而且容易学习和使用。不过只要有一个渲染器，SLS文件可以从任何你能想象到的媒介中渲染出来。</p>
+<p>默认的渲染系统是``yaml_jinja``渲染器。<a href="#id1"><span class="problematic" id="id2">``</span></a>yaml_jinja``渲染器第一个传递模板给递`Jinja2`_ templating 系统，然后给YAML 分析器。这样的好处是在创建SLS文件的时候，整个编程结构都是有用的。</p>
+<p>其他渲染器是 <code class="docutils literal"><span class="pre">yaml_mako</span></code> 和``yaml_wempy``，他们各自使用`Mako`_ 或`Wempy`_ 模板系统表示而不是jinja模板系统，更加值得注意的是，纯Python或``py``, <code class="docutils literal"><span class="pre">pydsl</span></code> &amp; <code class="docutils literal"><span class="pre">pyobjects</span></code> 渲染器。<a href="#id1"><span class="problematic" id="id2">``</span></a>py``渲染器允许SLS文件用纯Python来写，允许在准备SLS数据时最大程度的灵活和强大，且 <a class="reference internal" href="../../ref/renderers/all/salt.renderers.pydsl.html"><em>pydsl</em></a> 渲染器提供了一个灵活、领域特定语言来以Python编写SLS数据; 而且 <a class="reference internal" href="../../ref/renderers/all/salt.renderers.pyobjects.html"><em>pyobjects</em></a> 渲染器给你一个`&quot;Pythonic&quot;<a href="#id3"><span class="problematic" id="id4">`</span></a>_ 接口，用来建立状态数据。</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">上述模板引擎不只是在SLS文件中有用。他们同样可以用在:mod:<cite>file.managed &lt;salt.states.file.managed&gt;</cite> 状态，进行更加动态、灵活的文件管理。使用模板管理文件的例子在这里可以找到:doc:<cite>file states &lt;/ref/states/all/salt.states.file&gt;</cite>，以及 the <a class="reference internal" href="#jinja-example-moosefs"><span>MooseFS example</span></a> 的下面。</p>
+</div>
+<div class="section" id="getting-to-know-the-default-yaml-jinja">
+<h3>了解默认值- yaml_jinja<a class="headerlink" href="#getting-to-know-the-default-yaml-jinja" title="永久链接至标题">¶</a></h3>
+<p>默认渲染器- <code class="docutils literal"><span class="pre">yaml_jinja</span></code>，允许使用jinja模板系统。Jinja模板系统的引导可以再这里找到: <a class="reference external" href="http://jinja.pocoo.org/docs">http://jinja.pocoo.org/docs</a></p>
+<p>渲染器工作时有一些有用的数据会传递。在基于渲染器模板引擎，三个关键组件是有用的，<code class="docutils literal"><span class="pre">salt</span></code>, <code class="docutils literal"><span class="pre">grains</span></code>, and <code class="docutils literal"><span class="pre">pillar</span></code>。<a href="#id1"><span class="problematic" id="id2">``</span></a>salt``对象允许模板调用任何Salt函数，<a href="#id3"><span class="problematic" id="id4">``</span></a>grains``允许模板内存钱Grains数据。一些例子如下：</p>
+<p><code class="docutils literal"><span class="pre">apache/init.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>apache:
+  pkg.installed:
+    {% if grains[&#39;os&#39;] == &#39;RedHat&#39;%}
+    - name: httpd
+    {% endif %}
+  service.running:
+    {% if grains[&#39;os&#39;] == &#39;RedHat&#39;%}
+    - name: httpd
+    {% endif %}
+    - watch:
+      - pkg: apache
+      - file: /etc/httpd/conf/httpd.conf
+      - user: apache
+  user.present:
+    - uid: 87
+    - gid: 87
+    - home: /var/www/html
+    - shell: /bin/nologin
+    - require:
+      - group: apache
+  group.present:
+    - gid: 87
+    - require:
+      - pkg: apache
+
+/etc/httpd/conf/httpd.conf:
+  file.managed:
+    - source: salt://apache/httpd.conf
+    - user: root
+    - group: root
+    - mode: 644
+</pre></div>
+</div>
+<p>这是个简单例子。如果``os`` grain states指明操作系统是Red Hat，Apache包和服务的名称需要是httpd。</p>
+<p id="jinja-example-moosefs">一个更加激进的使用Jinja的方法可以在这里找到，在模块中建立一个MooseFS分布式文件系统的Chunkserver：</p>
+<p><code class="docutils literal"><span class="pre">moosefs/chunk.sls:</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>include:
+  - moosefs
+
+{% for mnt in salt[&#39;cmd.run&#39;](&#39;ls /dev/data/moose*&#39;).split() %}
+/mnt/moose{{ mnt[-1] }}:
+  mount.mounted:
+    - device: {{ mnt }}
+    - fstype: xfs
+    - mkmnt: True
+  file.directory:
+    - user: mfs
+    - group: mfs
+    - require:
+      - user: mfs
+      - group: mfs
+{% endfor %}
+
+/etc/mfshdd.cfg:
+  file.managed:
+    - source: salt://moosefs/mfshdd.cfg
+    - user: root
+    - group: root
+    - mode: 644
+    - template: jinja
+    - require:
+      - pkg: mfs-chunkserver
+
+/etc/mfschunkserver.cfg:
+  file.managed:
+    - source: salt://moosefs/mfschunkserver.cfg
+    - user: root
+    - group: root
+    - mode: 644
+    - template: jinja
+    - require:
+      - pkg: mfs-chunkserver
+
+mfs-chunkserver:
+  pkg.installed: []
+mfschunkserver:
+  service.running:
+    - require:
+{% for mnt in salt[&#39;cmd.run&#39;](&#39;ls /dev/data/moose*&#39;) %}
+      - mount: /mnt/moose{{ mnt[-1] }}
+      - file: /mnt/moose{{ mnt[-1] }}
+{% endfor %}
+      - file: /etc/mfschunkserver.cfg
+      - file: /etc/mfshdd.cfg
+      - file: /var/lib/mfs
+</pre></div>
+</div>
+<p>例子显示更多Jinja的可用的能力，多循环用来动态检测硬盘可用、而且已经被挂载，而且 <code class="docutils literal"><span class="pre">salt</span></code> 对象被多次使用来调用shell命令收集数据。</p>
+</div>
+<div class="section" id="introducing-the-python-pydsl-and-the-pyobjects-renderers">
+<h3>Introducing the Python, PyDSL, and the Pyobjects Renderers<a class="headerlink" href="#introducing-the-python-pydsl-and-the-pyobjects-renderers" title="永久链接至标题">¶</a></h3>
+<p>有时候使用默认的渲染器没有足够的逻辑能力来执行所需的任务。这种情况下可以使用Python渲染器。通常多数SLS文件或使用YAML渲染器，不过SLS文件可以使另一个渲染器可以很容易地添加到树中。</p>
+<p>这个例子展示了一个非常基础的Python SLS文件：</p>
+<p><code class="docutils literal"><span class="pre">python/django.sls:</span></code></p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="ch">#!py</span>
+
+<span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Install the django package</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;include&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;python&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;django&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;pkg&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;installed&#39;</span><span class="p">]}}</span>
+</pre></div>
+</div>
+<p>这是个简单的例子，第一行是SLS组织行，告诉Salt不要用默认的渲染器，而是使用``py``渲染器。然后运行定义的功能，运行功能返回值必须是Salt友好的数据结构或从这里了解更多一个Salt:doc:<cite>HighState data structure&lt;/ref/states/highstate&gt;</cite>.</p>
+<p>作为一种选择，使用 :doc:<a href="#id1"><span class="problematic" id="id2">`</span></a>pydsl&lt;/ref/renderers/all/salt.renderers.pydsl&gt;`渲染器，上面的例子可以被更加简洁地写为：</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="ch">#!pydsl</span>
+
+<span class="n">include</span><span class="p">(</span><span class="s1">&#39;python&#39;</span><span class="p">,</span> <span class="n">delayed</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">state</span><span class="p">(</span><span class="s1">&#39;django&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">pkg</span><span class="o">.</span><span class="n">installed</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>文档:doc:<cite>pyobjects&lt;/ref/renderers/all/salt.renderers.pyobjects&gt;</cite> 渲染器提供了一个 <a href="#id1"><span class="problematic" id="id2">`</span></a>&quot;Pythonic&quot;<a href="#id3"><span class="problematic" id="id4">`</span></a>_对象，它是建立状态数据的基础方法。上面的例子可以被写为：</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="ch">#!pyobjects</span>
+
+<span class="n">include</span><span class="p">(</span><span class="s1">&#39;python&#39;</span><span class="p">)</span>
+<span class="n">Pkg</span><span class="o">.</span><span class="n">installed</span><span class="p">(</span><span class="s2">&quot;django&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>These Python examples would look like this if they were written in YAML:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">include</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">python</span>
+
+<span class="l l-Scalar l-Scalar-Plain">django</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span>
+</pre></div>
+</div>
+<p>例子显然的表明：1、使用YAML渲染器是明智的选择，2、获得更加猛烈的能力需要使用纯Python SLS。</p>
+</div>
+<div class="section" id="running-and-debugging-salt-states">
+<h3>运行和调试salt 状态。<a class="headerlink" href="#running-and-debugging-salt-states" title="永久链接至标题">¶</a></h3>
+<p>一旦SLS内部规则准备妥当，他们将被测试以确保能工作正常。为了调用哪些规则，在命令行简单执行 <code class="docutils literal"><span class="pre">salt</span> <span class="pre">'*'</span> <span class="pre">state.highstate</span></code> 就可以了。如果仅仅收到以 <code class="docutils literal"><span class="pre">:</span></code> 结束的主机名,但是没有返回值，有可能是一个或多个SLS文件有问题。在minion上，使用 <code class="docutils literal"><span class="pre">salt-call</span></code> 命令: <code class="docutils literal"><span class="pre">salt-call</span> <span class="pre">state.highstate</span> <span class="pre">-l</span> <span class="pre">debug</span></code> 测试错误输出。这可以帮助解决问题。minion也可以以前台调试模式启动: <code class="docutils literal"><span class="pre">salt-minion</span> <span class="pre">-l</span> <span class="pre">debug</span></code>。</p>
+</div>
+</div>
+<div class="section" id="next-reading">
+<h2>接下来阅读<a class="headerlink" href="#next-reading" title="永久链接至标题">¶</a></h2>
+<p>理解states的同时，接下来的推荐是熟悉 Salt's pillar 接口:</p>
+<blockquote>
+<div><p><a class="reference internal" href="pillar.html"><em>Pillar 演练</em></a></p>
+</div></blockquote>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../states/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Configuration Management" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="states_pt1.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="States教程，第1部分 - 基础用法" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../states/index.html">Configuration Management</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">我们如何使用Salt States？</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#it-is-all-just-data">所有都是数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-top-file">顶级配置文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#default-data-yaml">默认数据格式 - YAML</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adding-configs-and-users">增加配置和用户</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#moving-beyond-a-single-sls">超越单个SLS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#extending-included-sls-data">扩展包含的SLS数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#understanding-the-render-system">理解渲染系统</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#getting-to-know-the-default-yaml-jinja">了解默认值- yaml_jinja</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#introducing-the-python-pydsl-and-the-pyobjects-renderers">Introducing the Python, PyDSL, and the Pyobjects Renderers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-and-debugging-salt-states">运行和调试salt 状态。</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#next-reading">接下来阅读</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="states_pt1.html">States教程，第1部分 - 基础用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="states_pt2.html">States tutorial, part 2 - More Complex States, Requisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="states_pt3.html">States tutorial, part 3 - Templating, Includes, Extends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="states_pt4.html">States tutorial, part 4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/states/index.html">State System Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

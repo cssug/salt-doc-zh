@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Getting Started With SoftLayer</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt云端" href="index.html">
+        <link rel="next" title="Getting Started with VEXXHOST" href="vexxhost.html">
+        <link rel="prev" title="Getting Started With Scaleway" href="scaleway.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="scaleway.html" title="Getting Started With Scaleway">上一页</a>
+            
+        </li>
+        <li>
+            <a href="vexxhost.html" title="Getting Started with VEXXHOST">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="getting-started-with-softlayer">
+<h1>Getting Started With SoftLayer<a class="headerlink" href="#getting-started-with-softlayer" title="永久链接至标题">¶</a></h1>
+<p>SoftLayer is a public cloud host, and baremetal hardware hosting service.</p>
+<div class="section" id="dependencies">
+<h2>依赖<a class="headerlink" href="#dependencies" title="永久链接至标题">¶</a></h2>
+<p>The SoftLayer driver for Salt Cloud requires the softlayer package, which is
+available at PyPI:</p>
+<p><a class="reference external" href="https://pypi.python.org/pypi/SoftLayer">https://pypi.python.org/pypi/SoftLayer</a></p>
+<p>This package can be installed using <code class="docutils literal"><span class="pre">pip</span></code> or <code class="docutils literal"><span class="pre">easy_install</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># pip install softlayer</span>
+<span class="c1"># easy_install softlayer</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="永久链接至标题">¶</a></h2>
+<p>Set up the cloud config at <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples are for /etc/salt/cloud.providers</span>
+
+  <span class="l l-Scalar l-Scalar-Plain">my-softlayer</span><span class="p p-Indicator">:</span>
+    <span class="c1"># Set up the location of the salt master</span>
+    <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">saltmaster.example.com</span>
+
+    <span class="c1"># Set the SoftLayer access credentials (see below)</span>
+    <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">MYUSER1138</span>
+    <span class="l l-Scalar l-Scalar-Plain">apikey</span><span class="p p-Indicator">:</span> <span class="s">&#39;e3b68aa711e6deadc62d5b76355674beef7cc3116062ddbacafe5f7e465bfdc9&#39;</span>
+
+    <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">softlayer</span>
+
+
+  <span class="l l-Scalar l-Scalar-Plain">my-softlayer-hw</span><span class="p p-Indicator">:</span>
+    <span class="c1"># Set up the location of the salt master</span>
+    <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">saltmaster.example.com</span>
+
+    <span class="c1"># Set the SoftLayer access credentials (see below)</span>
+    <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">MYUSER1138</span>
+    <span class="l l-Scalar l-Scalar-Plain">apikey</span><span class="p p-Indicator">:</span> <span class="s">&#39;e3b68aa711e6deadc62d5b76355674beef7cc3116062ddbacafe5f7e465bfdc9&#39;</span>
+
+    <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">softlayer_hw</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<div class="versionchanged">
+<p><span class="versionmodified">在 2015.8.0 版更改.</span></p>
+</div>
+<p class="last">The <code class="docutils literal"><span class="pre">provider</span></code> parameter in cloud provider definitions was renamed to <code class="docutils literal"><span class="pre">driver</span></code>. This
+change was made to avoid confusion with the <code class="docutils literal"><span class="pre">provider</span></code> parameter that is used in cloud profile
+definitions. Cloud provider definitions now use <code class="docutils literal"><span class="pre">driver</span></code> to refer to the Salt cloud module that
+provides the underlying functionality to connect to a cloud host, while cloud profiles continue
+to use <code class="docutils literal"><span class="pre">provider</span></code> to refer to provider configurations that you define.</p>
+</div>
+</div>
+<div class="section" id="access-credentials">
+<h2>Access Credentials<a class="headerlink" href="#access-credentials" title="永久链接至标题">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">user</span></code> setting is the same user as is used to log into the SoftLayer
+Administration area. The <code class="docutils literal"><span class="pre">apikey</span></code> setting is found inside the Admin area after
+logging in:</p>
+<ul class="simple">
+<li>Hover over the <code class="docutils literal"><span class="pre">Account</span></code> menu item.</li>
+<li>Click the <code class="docutils literal"><span class="pre">Users</span></code> link.</li>
+<li>Find the <code class="docutils literal"><span class="pre">API</span> <span class="pre">Key</span></code> column and click <code class="docutils literal"><span class="pre">View</span></code>.</li>
+</ul>
+</div>
+<div class="section" id="profiles">
+<h2>Profiles<a class="headerlink" href="#profiles" title="永久链接至标题">¶</a></h2>
+<div class="section" id="cloud-profiles">
+<h3>Cloud Profiles<a class="headerlink" href="#cloud-profiles" title="永久链接至标题">¶</a></h3>
+<p>Set up an initial profile at <code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base_softlayer_ubuntu</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-softlayer</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">UBUNTU_LATEST</span>
+  <span class="l l-Scalar l-Scalar-Plain">cpu_number</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+  <span class="l l-Scalar l-Scalar-Plain">ram</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1024</span>
+  <span class="l l-Scalar l-Scalar-Plain">disk_size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">100</span>
+  <span class="l l-Scalar l-Scalar-Plain">local_disk</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+  <span class="l l-Scalar l-Scalar-Plain">hourly_billing</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+  <span class="l l-Scalar l-Scalar-Plain">domain</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">example.com</span>
+  <span class="l l-Scalar l-Scalar-Plain">location</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">sjc01</span>
+  <span class="c1"># Optional</span>
+  <span class="l l-Scalar l-Scalar-Plain">max_net_speed</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1000</span>
+  <span class="l l-Scalar l-Scalar-Plain">private_vlan</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">396</span>
+  <span class="l l-Scalar l-Scalar-Plain">private_network</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+  <span class="l l-Scalar l-Scalar-Plain">private_ssh</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+  <span class="c1"># May be used _instead_of_ image</span>
+  <span class="l l-Scalar l-Scalar-Plain">global_identifier</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">320d8be5-46c0-dead-cafe-13e3c51</span>
+</pre></div>
+</div>
+<p>Most of the above items are required; optional items are specified below.</p>
+<div class="section" id="image">
+<h4>image<a class="headerlink" href="#image" title="永久链接至标题">¶</a></h4>
+<p>Images to build an instance can be found using the <code class="docutils literal"><span class="pre">--list-images</span></code> option:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-cloud --list-images my-softlayer</span>
+</pre></div>
+</div>
+<p>The setting used will be labeled as <code class="docutils literal"><span class="pre">template</span></code>.</p>
+</div>
+<div class="section" id="cpu-number">
+<h4>cpu_number<a class="headerlink" href="#cpu-number" title="永久链接至标题">¶</a></h4>
+<p>This is the number of CPU cores that will be used for this instance. This
+number may be dependent upon the image that is used. For instance:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">Red Hat Enterprise Linux 6 - Minimal Install (64 bit) (1 - 4 Core)</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">----------</span>
+    <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">Red Hat Enterprise Linux 6 - Minimal Install (64 bit) (1 - 4 Core)</span>
+    <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">REDHAT_6_64</span>
+<span class="l l-Scalar l-Scalar-Plain">Red Hat Enterprise Linux 6 - Minimal Install (64 bit) (5 - 100 Core)</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">----------</span>
+    <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">Red Hat Enterprise Linux 6 - Minimal Install (64 bit) (5 - 100 Core)</span>
+    <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">REDHAT_6_64</span>
+</pre></div>
+</div>
+<p>Note that the template (meaning, the <cite>image</cite> option) for both of these is the
+same, but the names suggests how many CPU cores are supported.</p>
+</div>
+<div class="section" id="ram">
+<h4>ram<a class="headerlink" href="#ram" title="永久链接至标题">¶</a></h4>
+<p>This is the amount of memory, in megabytes, that will be allocated to this
+instance.</p>
+</div>
+<div class="section" id="disk-size">
+<h4>disk_size<a class="headerlink" href="#disk-size" title="永久链接至标题">¶</a></h4>
+<p>The amount of disk space that will be allocated to this image, in gigabytes.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base_softlayer_ubuntu</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">disk_size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">100</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="using-multiple-disks">
+<h3>Using Multiple Disks<a class="headerlink" href="#using-multiple-disks" title="永久链接至标题">¶</a></h3>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.1 新版功能.</span></p>
+</div>
+<p>SoftLayer allows up to 5 disks to be specified for a virtual machine upon
+creation. Multiple disks can be specified either as a list or a comma-delimited
+string. The first <code class="docutils literal"><span class="pre">disk_size</span></code> specified in the string or list will be the first
+disk size assigned to the VM.</p>
+<p>List Example:
+.. code-block:: yaml</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>base_softlayer_ubuntu:</dt>
+<dd>disk_size: ['100', '20', '20']</dd>
+</dl>
+</div></blockquote>
+<p>String Example:
+.. code-block:: yaml</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>base_softlayer_ubuntu:</dt>
+<dd>disk_size: '100, 20, 20'</dd>
+</dl>
+</div></blockquote>
+<div class="section" id="local-disk">
+<h4>local_disk<a class="headerlink" href="#local-disk" title="永久链接至标题">¶</a></h4>
+<p>When true the disks for the computing instance will be provisioned on the host
+which it runs, otherwise SAN disks will be provisioned.</p>
+</div>
+<div class="section" id="hourly-billing">
+<h4>hourly_billing<a class="headerlink" href="#hourly-billing" title="永久链接至标题">¶</a></h4>
+<p>When true the computing instance will be billed on hourly usage, otherwise it
+will be billed on a monthly basis.</p>
+</div>
+<div class="section" id="domain">
+<h4>domain<a class="headerlink" href="#domain" title="永久链接至标题">¶</a></h4>
+<p>The domain name that will be used in the FQDN (Fully Qualified Domain Name) for
+this instance. The <cite>domain</cite> setting will be used in conjunction with the
+instance name to form the FQDN.</p>
+</div>
+<div class="section" id="use-fqdn">
+<h4>use_fqdn<a class="headerlink" href="#use-fqdn" title="永久链接至标题">¶</a></h4>
+<p>If set to True, the Minion will be identified by the FQDN (Fully Qualified Domain
+Name) which is a result of combining the <code class="docutils literal"><span class="pre">domain</span></code> configuration value and the
+Minion name specified either via the CLI or a map file rather than only using the
+short host name, or Minion ID. Default is False.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2016.3.0 新版功能.</span></p>
+</div>
+<p>For example, if the value of <code class="docutils literal"><span class="pre">domain</span></code> is <code class="docutils literal"><span class="pre">example.com</span></code> and a new VM was created
+via the CLI with <code class="docutils literal"><span class="pre">salt-cloud</span> <span class="pre">-p</span> <span class="pre">base_softlayer_ubuntu</span> <span class="pre">my-vm</span></code>, the resulting
+Minion ID would be <code class="docutils literal"><span class="pre">my-vm.example.com</span></code>.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">When enabling the <code class="docutils literal"><span class="pre">use_fqdn</span></code> setting, the Minion ID will be the FQDN and will
+interact with salt commands with the FQDN instead of the short hostname. However,
+due to the way the SoftLayer API is constructed, some Salt Cloud functions such
+as listing nodes or destroying VMs will only list the short hostname of the VM
+instead of the FQDN.</p>
+</div>
+<p>Example output displaying the SoftLayer hostname quirk mentioned in the note above
+(note the Minion ID is <code class="docutils literal"><span class="pre">my-vm.example.com</span></code>, but the VM to be destroyed is listed
+with its short hostname, <code class="docutils literal"><span class="pre">my-vm</span></code>):</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-key -L</span>
+Accepted Keys:
+my-vm.example.com
+Denied Keys:
+Unaccepted Keys:
+Rejected Keys:
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># salt my-vm.example.com test.ping</span>
+my-vm.example.com:
+    True
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># salt-cloud -d my-vm.example.com</span>
+<span class="o">[</span>INFO    <span class="o">]</span> salt-cloud starting
+<span class="o">[</span>INFO    <span class="o">]</span> POST https://api.softlayer.com/xmlrpc/v3.1/SoftLayer_Account
+The following virtual machines are <span class="nb">set</span> to be destroyed:
+  softlayer-config:
+    softlayer:
+      my-vm
+
+Proceed? <span class="o">[</span>N/y<span class="o">]</span> y
+... proceeding
+<span class="o">[</span>INFO    <span class="o">]</span> Destroying in non-parallel mode.
+<span class="o">[</span>INFO    <span class="o">]</span> POST https://api.softlayer.com/xmlrpc/v3.1/SoftLayer_Account
+<span class="o">[</span>INFO    <span class="o">]</span> POST https://api.softlayer.com/xmlrpc/v3.1/SoftLayer_Virtual_Guest
+softlayer-config:
+    ----------
+    softlayer:
+        ----------
+        my-vm:
+            True
+</pre></div>
+</div>
+</div>
+<div class="section" id="location">
+<h4>location<a class="headerlink" href="#location" title="永久链接至标题">¶</a></h4>
+<p>Images to build an instance can be found using the <cite>--list-locations</cite> option:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-cloud --list-location my-softlayer</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="max-net-speed">
+<h4>max_net_speed<a class="headerlink" href="#max-net-speed" title="永久链接至标题">¶</a></h4>
+<p>Specifies the connection speed for the instance's network components. This
+setting is optional. By default, this is set to 10.</p>
+</div>
+<div class="section" id="post-uri">
+<h4>post_uri<a class="headerlink" href="#post-uri" title="永久链接至标题">¶</a></h4>
+<p>Specifies the uri location of the script to be downloaded and run after the instance
+is provisioned.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.1 新版功能.</span></p>
+</div>
+<p>Example:
+.. code-block:: yaml</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>base_softlayer_ubuntu:</dt>
+<dd>post_uri: '<a class="reference external" href="https://SOMESERVERIP:8000/myscript.sh">https://SOMESERVERIP:8000/myscript.sh</a>'</dd>
+</dl>
+</div></blockquote>
+</div>
+<div class="section" id="public-vlan">
+<h4>public_vlan<a class="headerlink" href="#public-vlan" title="永久链接至标题">¶</a></h4>
+<p>If it is necessary for an instance to be created within a specific frontend
+VLAN, the ID for that VLAN can be specified in either the provider or profile
+configuration.</p>
+<p>This ID can be queried using the <cite>list_vlans</cite> function, as described below. This
+setting is optional.</p>
+</div>
+<div class="section" id="private-vlan">
+<h4>private_vlan<a class="headerlink" href="#private-vlan" title="永久链接至标题">¶</a></h4>
+<p>If it is necessary for an instance to be created within a specific backend VLAN,
+the ID for that VLAN can be specified in either the provider or profile
+configuration.</p>
+<p>This ID can be queried using the <cite>list_vlans</cite> function, as described below. This
+setting is optional.</p>
+</div>
+<div class="section" id="private-network">
+<h4>private_network<a class="headerlink" href="#private-network" title="永久链接至标题">¶</a></h4>
+<p>If a server is to only be used internally, meaning it does not have a public
+VLAN associated with it, this value would be set to True. This setting is
+optional. The default is False.</p>
+</div>
+<div class="section" id="private-ssh">
+<h4>private_ssh<a class="headerlink" href="#private-ssh" title="永久链接至标题">¶</a></h4>
+<p>Whether to run the deploy script on the server using the public IP address
+or the private IP address. If set to True, Salt Cloud will attempt to SSH into
+the new server using the private IP address. The default is False. This
+settiong is optional.</p>
+</div>
+<div class="section" id="global-identifier">
+<h4>global_identifier<a class="headerlink" href="#global-identifier" title="永久链接至标题">¶</a></h4>
+<p>When creating an instance using a custom template, this option is set to the
+corresponding value obtained using the <cite>list_custom_images</cite> function. This
+option will not be used if an <cite>image</cite> is set, and if an <cite>image</cite> is not set, it
+is required.</p>
+<p>The profile can be realized now with a salt command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-cloud -p base_softlayer_ubuntu myserver</span>
+</pre></div>
+</div>
+<p>Using the above configuration, this will create <cite>myserver.example.com</cite>.</p>
+<p>Once the instance has been created with salt-minion installed, connectivity to
+it can be verified with Salt:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt &#39;myserver.example.com&#39; test.ping</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id1">
+<h3>Cloud Profiles<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h3>
+<p>Set up an initial profile at <code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base_softlayer_hw_centos</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-softlayer-hw</span>
+  <span class="c1"># CentOS 6.0 - Minimal Install (64 bit)</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">13963</span>
+  <span class="c1"># 2 x 2.0 GHz Core Bare Metal Instance - 2 GB Ram</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1921</span>
+  <span class="c1"># 500GB SATA II</span>
+  <span class="l l-Scalar l-Scalar-Plain">hdd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1267</span>
+  <span class="c1"># San Jose 01</span>
+  <span class="l l-Scalar l-Scalar-Plain">location</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">168642</span>
+  <span class="l l-Scalar l-Scalar-Plain">domain</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">example.com</span>
+  <span class="c1"># Optional</span>
+  <span class="l l-Scalar l-Scalar-Plain">vlan</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">396</span>
+  <span class="l l-Scalar l-Scalar-Plain">port_speed</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">273</span>
+  <span class="l l-Scalar l-Scalar-Plain">banwidth</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">248</span>
+</pre></div>
+</div>
+<p>Most of the above items are required; optional items are specified below.</p>
+<div class="section" id="id2">
+<h4>image<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h4>
+<p>Images to build an instance can be found using the <cite>--list-images</cite> option:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-cloud --list-images my-softlayer-hw</span>
+</pre></div>
+</div>
+<p>A list of <cite>id`s and names will be provided. The `name</cite> will describe the
+operating system and architecture. The <cite>id</cite> will be the setting to be used in
+the profile.</p>
+</div>
+<div class="section" id="size">
+<h4>size<a class="headerlink" href="#size" title="永久链接至标题">¶</a></h4>
+<p>Sizes to build an instance can be found using the <cite>--list-sizes</cite> option:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-cloud --list-sizes my-softlayer-hw</span>
+</pre></div>
+</div>
+<p>A list of <cite>id`s and names will be provided. The `name</cite> will describe the speed
+and quantity of CPU cores, and the amount of memory that the hardware will
+contain. The <cite>id</cite> will be the setting to be used in the profile.</p>
+</div>
+<div class="section" id="hdd">
+<h4>hdd<a class="headerlink" href="#hdd" title="永久链接至标题">¶</a></h4>
+<p>There is currently only one size of hard disk drive (HDD) that is available for
+hardware instances on SoftLayer:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">1267</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">500GB SATA II</span>
+</pre></div>
+</div>
+<p>The <cite>hdd</cite> setting in the profile should be 1267. Other sizes may be
+added in the future.</p>
+</div>
+<div class="section" id="id3">
+<h4>location<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h4>
+<p>Locations to build an instance can be found using the <cite>--list-images</cite> option:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-cloud --list-locations my-softlayer-hw</span>
+</pre></div>
+</div>
+<p>A list of IDs and names will be provided. The <cite>location</cite> will describe the
+location in human terms. The <cite>id</cite> will be the setting to be used in the profile.</p>
+</div>
+<div class="section" id="id4">
+<h4>domain<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h4>
+<p>The domain name that will be used in the FQDN (Fully Qualified Domain Name) for
+this instance. The <cite>domain</cite> setting will be used in conjunction with the
+instance name to form the FQDN.</p>
+</div>
+<div class="section" id="vlan">
+<h4>vlan<a class="headerlink" href="#vlan" title="永久链接至标题">¶</a></h4>
+<p>If it is necessary for an instance to be created within a specific VLAN, the ID
+for that VLAN can be specified in either the provider or profile configuration.</p>
+<p>This ID can be queried using the <cite>list_vlans</cite> function, as described below.</p>
+</div>
+<div class="section" id="port-speed">
+<h4>port_speed<a class="headerlink" href="#port-speed" title="永久链接至标题">¶</a></h4>
+<p>Specifies the speed for the instance's network port. This setting refers to an
+ID within the SoftLayer API, which sets the port speed. This setting is
+optional. The default is 273, or, 100 Mbps Public &amp; Private Networks. The
+following settings are available:</p>
+<ul class="simple">
+<li>273: 100 Mbps Public &amp; Private Networks</li>
+<li>274: 1 Gbps Public &amp; Private Networks</li>
+<li>21509: 10 Mbps Dual Public &amp; Private Networks (up to 20 Mbps)</li>
+<li>21513: 100 Mbps Dual Public &amp; Private Networks (up to 200 Mbps)</li>
+<li>2314: 1 Gbps Dual Public &amp; Private Networks (up to 2 Gbps)</li>
+<li>272: 10 Mbps Public &amp; Private Networks</li>
+</ul>
+</div>
+<div class="section" id="bandwidth">
+<h4>bandwidth<a class="headerlink" href="#bandwidth" title="永久链接至标题">¶</a></h4>
+<p>Specifies the network bandwidth available for the instance. This setting refers
+to an ID within the SoftLayer API, which sets the bandwidth. This setting is
+optional. The default is 248, or, 5000 GB Bandwidth. The following settings are
+available:</p>
+<ul class="simple">
+<li>248: 5000 GB Bandwidth</li>
+<li>129: 6000 GB Bandwidth</li>
+<li>130: 8000 GB Bandwidth</li>
+<li>131: 10000 GB Bandwidth</li>
+<li>36: Unlimited Bandwidth (10 Mbps Uplink)</li>
+<li>125: Unlimited Bandwidth (100 Mbps Uplink)</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="actions">
+<h2>Actions<a class="headerlink" href="#actions" title="永久链接至标题">¶</a></h2>
+<p>The following actions are currently supported by the SoftLayer Salt Cloud
+driver.</p>
+<div class="section" id="show-instance">
+<h3>show_instance<a class="headerlink" href="#show-instance" title="永久链接至标题">¶</a></h3>
+<p>This action is a thin wrapper around <cite>--full-query</cite>, which displays details on a
+single instance only. In an environment with several machines, this will save a
+user from having to sort through all instance data, just to examine a single
+instance.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ salt-cloud -a show_instance myinstance
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="永久链接至标题">¶</a></h2>
+<p>The following functions are currently supported by the SoftLayer Salt Cloud
+driver.</p>
+<div class="section" id="list-vlans">
+<h3>list_vlans<a class="headerlink" href="#list-vlans" title="永久链接至标题">¶</a></h3>
+<p>This function lists all VLANs associated with the account, and all known data
+from the SoftLayer API concerning those VLANs.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ salt-cloud -f list_vlans my-softlayer
+$ salt-cloud -f list_vlans my-softlayer-hw
+</pre></div>
+</div>
+<p>The <cite>id</cite> returned in this list is necessary for the <cite>vlan</cite> option when creating
+an instance.</p>
+</div>
+<div class="section" id="list-custom-images">
+<h3>list_custom_images<a class="headerlink" href="#list-custom-images" title="永久链接至标题">¶</a></h3>
+<p>This function lists any custom templates associated with the account, that can
+be used to create a new instance.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ salt-cloud -f list_custom_images my-softlayer
+</pre></div>
+</div>
+<p>The <cite>globalIdentifier</cite> returned in this list is necessary for the
+<cite>global_identifier</cite> option when creating an image using a custom template.</p>
+</div>
+</div>
+<div class="section" id="optional-products-for-softlayer-hw">
+<h2>Optional Products for SoftLayer HW<a class="headerlink" href="#optional-products-for-softlayer-hw" title="永久链接至标题">¶</a></h2>
+<p>The softlayer_hw driver supports the ability to add optional products, which
+are supported by SoftLayer's API. These products each have an ID associated with
+them, that can be passed into Salt Cloud with the <cite>optional_products</cite> option:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">softlayer_hw_test</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-softlayer-hw</span>
+  <span class="c1"># CentOS 6.0 - Minimal Install (64 bit)</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">13963</span>
+  <span class="c1"># 2 x 2.0 GHz Core Bare Metal Instance - 2 GB Ram</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1921</span>
+  <span class="c1"># 500GB SATA II</span>
+  <span class="l l-Scalar l-Scalar-Plain">hdd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1267</span>
+  <span class="c1"># San Jose 01</span>
+  <span class="l l-Scalar l-Scalar-Plain">location</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">168642</span>
+  <span class="l l-Scalar l-Scalar-Plain">domain</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">example.com</span>
+  <span class="l l-Scalar l-Scalar-Plain">optional_products</span><span class="p p-Indicator">:</span>
+    <span class="c1"># MySQL for Linux</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">id</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">28</span>
+    <span class="c1"># Business Continuance Insurance</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">id</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">104</span>
+</pre></div>
+</div>
+<p>These values can be manually obtained by looking at the source of an order page
+on the SoftLayer web interface. For convenience, many of these values are listed
+here:</p>
+<div class="section" id="public-secondary-ip-addresses">
+<h3>Public Secondary IP Addresses<a class="headerlink" href="#public-secondary-ip-addresses" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>22: 4 Public IP Addresses</li>
+<li>23: 8 Public IP Addresses</li>
+</ul>
+</div>
+<div class="section" id="primary-ipv6-addresses">
+<h3>Primary IPv6 Addresses<a class="headerlink" href="#primary-ipv6-addresses" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>17129: 1 IPv6 Address</li>
+</ul>
+</div>
+<div class="section" id="public-static-ipv6-addresses">
+<h3>Public Static IPv6 Addresses<a class="headerlink" href="#public-static-ipv6-addresses" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>1481: /64 Block Static Public IPv6 Addresses</li>
+</ul>
+</div>
+<div class="section" id="os-specific-addon">
+<h3>OS-Specific Addon<a class="headerlink" href="#os-specific-addon" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>17139: XenServer Advanced for XenServer 6.x</li>
+<li>17141: XenServer Enterprise for XenServer 6.x</li>
+<li>2334: XenServer Advanced for XenServer 5.6</li>
+<li>2335: XenServer Enterprise for XenServer 5.6</li>
+<li>13915: Microsoft WebMatrix</li>
+<li>21276: VMware vCenter 5.1 Standard</li>
+</ul>
+</div>
+<div class="section" id="control-panel-software">
+<h3>Control Panel Software<a class="headerlink" href="#control-panel-software" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>121: cPanel/WHM with Fantastico and RVskin</li>
+<li>20778: Parallels Plesk Panel 11 (Linux) 100 Domain w/ Power Pack</li>
+<li>20786: Parallels Plesk Panel 11 (Windows) 100 Domain w/ Power Pack</li>
+<li>20787: Parallels Plesk Panel 11 (Linux) Unlimited Domain w/ Power Pack</li>
+<li>20792: Parallels Plesk Panel 11 (Windows) Unlimited Domain w/ Power Pack</li>
+<li>2340: Parallels Plesk Panel 10 (Linux) 100 Domain w/ Power Pack</li>
+<li>2339: Parallels Plesk Panel 10 (Linux) Unlimited Domain w/ Power Pack</li>
+<li>13704: Parallels Plesk Panel 10 (Windows) Unlimited Domain w/ Power Pack</li>
+</ul>
+</div>
+<div class="section" id="database-software">
+<h3>Database Software<a class="headerlink" href="#database-software" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>29: MySQL 5.0 for Windows</li>
+<li>28: MySQL for Linux</li>
+<li>21501: Riak 1.x</li>
+<li>20893: MongoDB</li>
+<li>30: Microsoft SQL Server 2005 Express</li>
+<li>92: Microsoft SQL Server 2005 Workgroup</li>
+<li>90: Microsoft SQL Server 2005 Standard</li>
+<li>94: Microsoft SQL Server 2005 Enterprise</li>
+<li>1330: Microsoft SQL Server 2008 Express</li>
+<li>1340: Microsoft SQL Server 2008 Web</li>
+<li>1337: Microsoft SQL Server 2008 Workgroup</li>
+<li>1334: Microsoft SQL Server 2008 Standard</li>
+<li>1331: Microsoft SQL Server 2008 Enterprise</li>
+<li>2179: Microsoft SQL Server 2008 Express R2</li>
+<li>2173: Microsoft SQL Server 2008 Web R2</li>
+<li>2183: Microsoft SQL Server 2008 Workgroup R2</li>
+<li>2180: Microsoft SQL Server 2008 Standard R2</li>
+<li>2176: Microsoft SQL Server 2008 Enterprise R2</li>
+</ul>
+</div>
+<div class="section" id="anti-virus-spyware-protection">
+<h3>Anti-Virus &amp; Spyware Protection<a class="headerlink" href="#anti-virus-spyware-protection" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>594: McAfee VirusScan Anti-Virus - Windows</li>
+<li>414: McAfee Total Protection - Windows</li>
+</ul>
+</div>
+<div class="section" id="insurance">
+<h3>Insurance<a class="headerlink" href="#insurance" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>104: Business Continuance Insurance</li>
+</ul>
+</div>
+<div class="section" id="monitoring">
+<h3>Monitoring<a class="headerlink" href="#monitoring" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>55: Host Ping</li>
+<li>56: Host Ping and TCP Service Monitoring</li>
+</ul>
+</div>
+<div class="section" id="notification">
+<h3>Notification<a class="headerlink" href="#notification" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>57: Email and Ticket</li>
+</ul>
+</div>
+<div class="section" id="advanced-monitoring">
+<h3>Advanced Monitoring<a class="headerlink" href="#advanced-monitoring" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>2302: Monitoring Package - Basic</li>
+<li>2303: Monitoring Package - Advanced</li>
+<li>2304: Monitoring Package - Premium Application</li>
+</ul>
+</div>
+<div class="section" id="response">
+<h3>Response<a class="headerlink" href="#response" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>58: Automated Notification</li>
+<li>59: Automated Reboot from Monitoring</li>
+<li>60: 24x7x365 NOC Monitoring, Notification, and Response</li>
+</ul>
+</div>
+<div class="section" id="intrusion-detection-protection">
+<h3>Intrusion Detection &amp; Protection<a class="headerlink" href="#intrusion-detection-protection" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>413: McAfee Host Intrusion Protection w/Reporting</li>
+</ul>
+</div>
+<div class="section" id="hardware-software-firewalls">
+<h3>Hardware &amp; Software Firewalls<a class="headerlink" href="#hardware-software-firewalls" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li>411: APF Software Firewall for Linux</li>
+<li>894: Microsoft Windows Firewall</li>
+<li>410: 10Mbps Hardware Firewall</li>
+<li>409: 100Mbps Hardware Firewall</li>
+<li>408: 1000Mbps Hardware Firewall</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="scaleway.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started With Scaleway" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="vexxhost.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started with VEXXHOST" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt云端</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">入门指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud">Using Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#core-configuration">Cloud核心配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#windows-configuration">Windows Configuration</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#cloud-provider-specifics">Cloud Provider Specifics</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aliyun.html">    Getting Started With Aliyun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html">    Getting Started With Azure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="digitalocean.html">    Getting Started With DigitalOcean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html">    Getting Started With EC2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gogrid.html">    Getting Started With GoGrid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html">    Getting Started With Google Compute Engine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hpcloud.html">    Getting Started With HP Cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="joyent.html">    Getting Started With Joyent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lxc.html">    Getting Started With LXC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linode.html">    Getting Started With Linode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="opennebula.html">    Getting Started With OpenNebula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="openstack.html">    Getting Started With OpenStack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parallels.html">    Getting Started With Parallels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="profitbricks.html">    Getting Started With Profitbricks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="proxmox.html">    Getting Started With Proxmox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rackspace.html">    Getting Started With Rackspace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="saltify.html">    Getting Started With Saltify</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scaleway.html">    Getting Started With Scaleway</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">    Getting Started With SoftLayer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dependencies">依赖</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#access-credentials">Access Credentials</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#profiles">Profiles</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#cloud-profiles">Cloud Profiles</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#image">image</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#cpu-number">cpu_number</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#ram">ram</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#disk-size">disk_size</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#using-multiple-disks">Using Multiple Disks</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#local-disk">local_disk</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#hourly-billing">hourly_billing</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#domain">domain</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#use-fqdn">use_fqdn</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#location">location</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#max-net-speed">max_net_speed</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#post-uri">post_uri</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#public-vlan">public_vlan</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#private-vlan">private_vlan</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#private-network">private_network</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#private-ssh">private_ssh</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#global-identifier">global_identifier</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#id1">Cloud Profiles</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#id2">image</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#size">size</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#hdd">hdd</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id3">location</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id4">domain</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#vlan">vlan</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#port-speed">port_speed</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#bandwidth">bandwidth</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#actions">Actions</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#show-instance">show_instance</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">Functions</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#list-vlans">list_vlans</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#list-custom-images">list_custom_images</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#optional-products-for-softlayer-hw">Optional Products for SoftLayer HW</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#public-secondary-ip-addresses">Public Secondary IP Addresses</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#primary-ipv6-addresses">Primary IPv6 Addresses</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#public-static-ipv6-addresses">Public Static IPv6 Addresses</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#os-specific-addon">OS-Specific Addon</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#control-panel-software">Control Panel Software</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#database-software">Database Software</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#anti-virus-spyware-protection">Anti-Virus &amp; Spyware Protection</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#insurance">Insurance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#monitoring">Monitoring</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#notification">Notification</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#advanced-monitoring">Advanced Monitoring</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#response">Response</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#intrusion-detection-protection">Intrusion Detection &amp; Protection</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#hardware-software-firewalls">Hardware &amp; Software Firewalls</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="vexxhost.html">    Getting Started With Vexxhost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="virtualbox.html">    Getting Started With Virtualbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vmware.html">    Getting Started With VMware</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vsphere.html">    Getting Started With vSphere</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#miscellaneous-options">Miscellaneous Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#troubleshooting-steps">Troubleshooting Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#extending-salt-cloud">Extending Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud-from-salt">Using Salt Cloud from Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#feature-comparison">Feature Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorials">Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

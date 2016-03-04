@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.states.cmd</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+        <link rel="up" title="所有内置的state模块列表" href="index.html">
+        <link rel="next" title="salt.states.composer" href="salt.states.composer.html">
+        <link rel="prev" title="salt.states.cloud" href="salt.states.cloud.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="salt.states.cloud.html" title="salt.states.cloud">上一页</a>
+            
+        </li>
+        <li>
+            <a href="salt.states.composer.html" title="salt.states.composer">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.states.cmd">
+<span id="salt-states-cmd"></span><h1>salt.states.cmd<a class="headerlink" href="#module-salt.states.cmd" title="永久链接至标题">¶</a></h1>
+<div class="section" id="execution-of-arbitrary-commands">
+<h2>执行任意的命令<a class="headerlink" href="#execution-of-arbitrary-commands" title="永久链接至标题">¶</a></h2>
+<p>cmd state模块管理可执行命令的执行过程，这个state可以告诉命令运行在哪些环境下。</p>
+<p>一个简单的例子来执行一个命令：</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># Store the current date in a file</span>
+<span class="l l-Scalar l-Scalar-Plain">date &gt; /tmp/salt-run</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.run</span>
+</pre></div>
+</div>
+<p>只运行在另一条命令失败的时候，这种情况下可以在没有磁盘空间时截断syslog：</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>&gt; /var/log/messages:
+  cmd.run:
+    - unless: echo &#39;foo&#39; &gt; /tmp/.test &amp;&amp; rm -f /tmp/.test
+</pre></div>
+</div>
+<p>Only run if the file specified by <code class="docutils literal"><span class="pre">creates</span></code> does not exist, in this case
+touch /tmp/foo if it does not exist.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">touch /tmp/foo</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">creates</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/foo</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The <code class="docutils literal"><span class="pre">creates</span></code> option was added to version 2014.7.0</p>
+</div>
+<p>Salt determines whether the <code class="docutils literal"><span class="pre">cmd</span></code> state is successfully enforced based on the exit
+code returned by the command. If the command returns a zero exit code, then salt
+determines that the state was successfully enforced. If the script returns a non-zero
+exit code, then salt determines that it failed to successfully enforce the state.
+If a command returns a non-zero exit code but you wish to treat this as a success,
+then you must place the command in a script and explicitly set the exit code of
+the script to zero.</p>
+<p>Please note that the success or failure of the state is not affected by whether a state
+change occurred nor the stateful argument.</p>
+<p>When executing a command or script, the state (i.e., changed or not)
+of the command is unknown to Salt's state system. Therefore, by default, the
+<code class="docutils literal"><span class="pre">cmd</span></code> state assumes that any command execution results in a changed state.</p>
+<p>这意味着如果一个``cmd`` state被另一个state监控的时候，那么这个监控state将总会执行，因为``cmd`` state中的该状态变成了`changed`。</p>
+<div class="section" id="using-the-stateful-argument">
+<span id="stateful-argument"></span><h3>Using the &quot;Stateful&quot; Argument<a class="headerlink" href="#using-the-stateful-argument" title="永久链接至标题">¶</a></h3>
+<p>在这个模板中的很多state功能现在可以允许一个``stateful``参数。如果``sateful``指定为true，那么这将假定命令或脚本将会决定自己的状态，并且遵循一个以下简单描述的协议回传。</p>
+<ol class="arabic">
+<li><p class="first">:strong:<a href="#id1"><span class="problematic" id="id2">`</span></a>如果该命令的stdout没有内容的话，就假设未发生改变。<a href="#id3"><span class="problematic" id="id4">`</span></a>否则，stdout必须是在JSON中，或者`最后`非空行必须是一个被空白符分割键值对key=value字符串(<a href="#id5"><span class="problematic" id="id6">``</span></a>=``两边都不能有空白符)。</p>
+</li>
+<li><p class="first">:strong:<a href="#id1"><span class="problematic" id="id2">`</span></a>如果它是JSON那么它必须是一个JSON对象(例如{})。<a href="#id3"><span class="problematic" id="id4">`</span></a>如果它是键值对key-value那么可以加上引号包含空格。(使用Python的shlex模块解析key=value字符串)</p>
+<p>两个特殊的键或属性是默认输出的:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>changed: bool (i.e., &#39;yes&#39;, &#39;no&#39;, &#39;true&#39;, &#39;false&#39;, case-insensitive)
+comment: str  (i.e., any string)
+</pre></div>
+</div>
+<p>所以，只有是否``changed``是``Then``时才假定命令执行已经改变了state，并且其他键值或属性输出将会作为变化的一部分。</p>
+</li>
+<li><p class="first"><strong>如果有注释，那么它将会作为state的注释使用。</strong></p>
+<p>Here's an example of how one might write a shell script for use with a
+stateful command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="c1">#</span>
+<span class="nb">echo</span> <span class="s2">&quot;Working hard...&quot;</span>
+
+<span class="c1"># writing the state line</span>
+<span class="nb">echo</span>  <span class="c1"># an empty line here so the next line will be the last.</span>
+<span class="nb">echo</span> <span class="s2">&quot;changed=yes comment=&#39;something has changed&#39; whatever=123&quot;</span>
+</pre></div>
+</div>
+<p>And an example SLS file using this module:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">Run myscript</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/path/to/myscript</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cwd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">stateful</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+
+<span class="l l-Scalar l-Scalar-Plain">Run only if myscript changed something</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">echo hello</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cwd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">onchanges</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cmd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Run myscript</span>
+</pre></div>
+</div>
+<p>Note that if the second <code class="docutils literal"><span class="pre">cmd.run</span></code> state also specifies <code class="docutils literal"><span class="pre">stateful:</span> <span class="pre">True</span></code> it can
+then be watched by some other states as well.</p>
+</li>
+<li><p class="first"><strong>The stateful argument can optionally include a test_name parameter.</strong></p>
+<p>This is used to specify a command to run in test mode.  This command should
+return stateful data for changes that would be made by the command in the
+name parameter.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2015.2.0 新版功能.</span></p>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">Run myscript</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/path/to/myscript</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cwd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">stateful</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">test_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/path/to/myscript test</span>
+
+<span class="l l-Scalar l-Scalar-Plain">Run masterscript</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.script</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">masterscript</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://path/to/masterscript</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cwd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">stateful</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">test_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">masterscript test</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<div class="section" id="should-i-use-cmd-run-or-cmd-wait">
+<h3>Should I use <a class="reference internal" href="#salt.states.cmd.run" title="salt.states.cmd.run"><code class="xref py py-mod docutils literal"><span class="pre">cmd.run</span></code></a> or <a class="reference internal" href="#salt.states.cmd.wait" title="salt.states.cmd.wait"><code class="xref py py-mod docutils literal"><span class="pre">cmd.wait</span></code></a>?<a class="headerlink" href="#should-i-use-cmd-run-or-cmd-wait" title="永久链接至标题">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Use <code class="docutils literal"><span class="pre">cmd.run</span></code> together with <code class="xref py py-mod docutils literal"><span class="pre">onchanges</span></code>
+instead of <code class="docutils literal"><span class="pre">cmd.wait</span></code>.</p>
+</div>
+<p>这两个states经常会搞混。重点是记住:mod:<cite>cmd.run &lt;salt.states.cmd.run&gt;</cite> states 在包含它的SLS文件中每次都执行。如果更合理的需求是只是在一些其他state改变的时候才运行，那么  <code class="xref py py-mod docutils literal"><span class="pre">cmd.wait</span></code> 其他states，并且当监控的state改变时才执行。范例:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/usr/local/bin/postinstall.sh</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.wait</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">watch</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mycustompkg</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://utils/scripts/postinstall.sh</span>
+
+<span class="l l-Scalar l-Scalar-Plain">mycustompkg</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/usr/local/bin/postinstall.sh</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">cmd.wait</span></code> itself does not do anything; all functionality is inside its <code class="docutils literal"><span class="pre">mod_watch</span></code>
+function, which is called by <code class="docutils literal"><span class="pre">watch</span></code> on changes.</p>
+<p><code class="docutils literal"><span class="pre">cmd.wait</span></code> will be deprecated in future due to the confusion it causes. The
+preferred format is using the <a class="reference internal" href="../requisites.html"><em>onchanges Requisite</em></a>, which
+works on <code class="docutils literal"><span class="pre">cmd.run</span></code> as well as on any other state. The example would then look as follows:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/usr/local/bin/postinstall.sh</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">onchanges</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mycustompkg</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://utils/scripts/postinstall.sh</span>
+
+<span class="l l-Scalar l-Scalar-Plain">mycustompkg</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/usr/local/bin/postinstall.sh</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="how-do-i-create-an-environment-from-a-pillar-map">
+<h3>How do I create an environment from a pillar map?<a class="headerlink" href="#how-do-i-create-an-environment-from-a-pillar-map" title="永久链接至标题">¶</a></h3>
+<p>The map that comes from a pillar can be directly consumed by the env option!
+To use it, one may pass it like this. Example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">printenv</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">env</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{{</span> <span class="nv">salt</span><span class="p p-Indicator">[</span><span class="s">&#39;pillar.get&#39;</span><span class="p p-Indicator">]</span><span class="nv">(&#39;example</span><span class="p p-Indicator">:</span><span class="nv">key&#39;</span><span class="p p-Indicator">,</span> <span class="p p-Indicator">{}</span><span class="nv">)</span> <span class="p p-Indicator">}}</span>
+</pre></div>
+</div>
+<dl class="function">
+<dt id="salt.states.cmd.call">
+<code class="descclassname">salt.states.cmd.</code><code class="descname">call</code><span class="sig-paren">(</span><em>name</em>, <em>func</em>, <em>args=()</em>, <em>kws=None</em>, <em>onlyif=None</em>, <em>unless=None</em>, <em>creates=None</em>, <em>output_loglevel='debug'</em>, <em>use_vt=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.cmd.call" title="永久链接至目标">¶</a></dt>
+<dd><p>在state声明中调用预定义的Python带参函数。这个功能主要是用于:mod:<cite>salt.renderers.pydsl</cite> renderer。</p>
+<p>The interpretation of <code class="docutils literal"><span class="pre">onlyif</span></code> and <code class="docutils literal"><span class="pre">unless</span></code> arguments are identical to
+those of <a class="reference internal" href="#salt.states.cmd.run" title="salt.states.cmd.run"><code class="xref py py-mod docutils literal"><span class="pre">cmd.run</span></code></a>, and all other
+arguments(<code class="docutils literal"><span class="pre">cwd</span></code>, <code class="docutils literal"><span class="pre">runas</span></code>, ...) allowed by <a class="reference internal" href="#salt.states.cmd.run" title="salt.states.cmd.run"><code class="xref py py-mod docutils literal"><span class="pre">cmd.run</span></code></a> are allowed here, except that their effects apply
+only to the commands specified in <cite>onlyif</cite> and <cite>unless</cite> rather than to the
+function to be invoked.</p>
+<p>In addition, the <code class="docutils literal"><span class="pre">stateful</span></code> argument has no effects here.</p>
+<p>调用的函数返回值将会像如下方式解读。</p>
+<p>如果是字典，那么将会传递到state系统，预计其有一个被其他salt state功能返回的通用结构。</p>
+<p>Otherwise, the return value (denoted as <code class="docutils literal"><span class="pre">result</span></code> in the code below) is
+expected to be a JSON serializable object, and this dictionary is returned:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span>
+    <span class="s1">&#39;changes&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;retval&#39;</span><span class="p">:</span> <span class="n">result</span><span class="p">},</span>
+    <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="bp">True</span> <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="nb">bool</span><span class="p">(</span><span class="n">result</span><span class="p">),</span>
+    <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="n">result</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">string_types</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.cmd.mod_run_check">
+<code class="descclassname">salt.states.cmd.</code><code class="descname">mod_run_check</code><span class="sig-paren">(</span><em>cmd_kwargs</em>, <em>onlyif</em>, <em>unless</em>, <em>group</em>, <em>creates</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.cmd.mod_run_check" title="永久链接至目标">¶</a></dt>
+<dd><p>Execute the onlyif and unless logic.
+Return a result dict if:
+* group is not available
+* onlyif failed (onlyif != 0)
+* unless succeeded (unless == 0)
+else return True</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.cmd.mod_watch">
+<code class="descclassname">salt.states.cmd.</code><code class="descname">mod_watch</code><span class="sig-paren">(</span><em>name</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.cmd.mod_watch" title="永久链接至目标">¶</a></dt>
+<dd><p>基于一个监控请求执行的cmd功能</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.cmd.run">
+<code class="descclassname">salt.states.cmd.</code><code class="descname">run</code><span class="sig-paren">(</span><em>name</em>, <em>onlyif=None</em>, <em>unless=None</em>, <em>creates=None</em>, <em>cwd=None</em>, <em>user=None</em>, <em>group=None</em>, <em>shell=None</em>, <em>env=None</em>, <em>stateful=False</em>, <em>umask=None</em>, <em>output_loglevel='debug'</em>, <em>quiet=False</em>, <em>timeout=None</em>, <em>ignore_timeout=False</em>, <em>use_vt=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.cmd.run" title="永久链接至目标">¶</a></dt>
+<dd><p>Run a command if certain circumstances are met.  Use <code class="docutils literal"><span class="pre">cmd.wait</span></code> if you
+want to use the <code class="docutils literal"><span class="pre">watch</span></code> requisite.</p>
+<dl class="docutils">
+<dt>name</dt>
+<dd><p class="first last">要执行的命令，记住该命令将会在salt-minion的路径和权限下执行。</p>
+</dd>
+<dt>onlyif</dt>
+<dd><p class="first last">一个用于检查的命令，仅当``onlyif``选项指向的命令返回true时才执行name定义的命令</p>
+</dd>
+<dt>unless</dt>
+<dd><p class="first last">用于检查的命令，仅当``unless``选项指向的命令返回false时才执行name指向的命令</p>
+</dd>
+<dt>cwd</dt>
+<dd><p class="first last">执行命令时的当前工作目录，默认是/root</p>
+</dd>
+<dt>user</dt>
+<dd><p class="first last">以指定用户身份运行命令</p>
+</dd>
+<dt>group</dt>
+<dd><p class="first last">以指定用户组身份运行命令</p>
+</dd>
+<dt>shell</dt>
+<dd><p class="first last">用于执行命令的shell，默认shell grain</p>
+</dd>
+<dt>env</dt>
+<dd><p class="first">A list of environment variables to be set prior to execution.
+Example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">script-foo</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">env</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">BATCH</span><span class="p p-Indicator">:</span> <span class="s">&#39;yes&#39;</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">The above illustrates a common PyYAML pitfall, that <strong>yes</strong>,
+<strong>no</strong>, <strong>on</strong>, <strong>off</strong>, <strong>true</strong>, and <strong>false</strong> are all loaded as
+boolean <code class="docutils literal"><span class="pre">True</span></code> and <code class="docutils literal"><span class="pre">False</span></code> values, and must be enclosed in
+quotes to be used as strings. More info on this (and other) PyYAML
+idiosyncrasies can be found <a class="reference internal" href="../../../topics/troubleshooting/yaml_idiosyncrasies.html"><em>here</em></a>.</p>
+</div>
+<p>Variables as values are not evaluated. So $PATH in the following
+example is a literal '$PATH':</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">script-bar</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">env</span><span class="p p-Indicator">:</span> <span class="s">&quot;PATH=/some/path:$PATH&quot;</span>
+</pre></div>
+</div>
+<p>One can still use the existing $PATH by using a bit of Jinja:</p>
+<div class="last highlight-yaml"><div class="highlight"><pre><span></span>{% set current_path = salt[&#39;environ.get&#39;](&#39;PATH&#39;, &#39;/bin:/usr/bin&#39;) %}
+
+mycommand:
+  cmd.run:
+    - name: ls -l /
+    - env:
+      - PATH: {{ [current_path, &#39;/my/special/bin&#39;]|join(&#39;:&#39;) }}
+</pre></div>
+</div>
+</dd>
+<dt>stateful</dt>
+<dd>The command being executed is expected to return data about executing
+a state. For more information, see the <a class="reference internal" href="#stateful-argument"><span>Using the &quot;Stateful&quot; Argument</span></a> section.</dd>
+<dt>umask</dt>
+<dd><p class="first last">当命令运行时使用的umask(八进制数)。</p>
+</dd>
+<dt>output_loglevel</dt>
+<dd>Control the loglevel at which the output from the command is logged.
+Note that the command being run will still be logged (loglevel: DEBUG)
+regardless, unless <code class="docutils literal"><span class="pre">quiet</span></code> is used for this value.</dd>
+<dt>quiet</dt>
+<dd>The command will be executed quietly, meaning no log entries of the
+actual command or its return data. This is deprecated as of the
+<strong>2014.1.0</strong> release, and is being replaced with
+<code class="docutils literal"><span class="pre">output_loglevel:</span> <span class="pre">quiet</span></code>.</dd>
+<dt>timeout</dt>
+<dd><p class="first last">如果命令在超时秒数到达时还未终止，发送子进程信号sigterm，并且如果sigterm被忽略，就接着发送sigkill</p>
+</dd>
+<dt>ignore_timeout</dt>
+<dd><p class="first">Ignore the timeout of commands, which is useful for running nohup
+processes.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+</dd>
+<dt>creates</dt>
+<dd><p class="first">Only run if the file specified by <code class="docutils literal"><span class="pre">creates</span></code> does not exist.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+</dd>
+<dt>use_vt</dt>
+<dd>Use VT utils (saltstack) to stream the command output more
+interactively to the console and the logs.
+This is experimental.</dd>
+</dl>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>cmd.run supports the usage of <code class="docutils literal"><span class="pre">reload_modules</span></code>. This functionality
+allows you to force Salt to reload all modules. You should only use
+<code class="docutils literal"><span class="pre">reload_modules</span></code> if your cmd.run does some sort of installation
+(such as <code class="docutils literal"><span class="pre">pip</span></code>), if you do not reload the modules future items in
+your state which rely on the software being installed will fail.</p>
+<div class="last highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">getpip</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/usr/bin/python /usr/local/sbin/get-pip.py</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">unless</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">which pip</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">python</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/usr/local/sbin/get-pip.py</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">reload_modules</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.cmd.script">
+<code class="descclassname">salt.states.cmd.</code><code class="descname">script</code><span class="sig-paren">(</span><em>name</em>, <em>source=None</em>, <em>template=None</em>, <em>onlyif=None</em>, <em>unless=None</em>, <em>creates=None</em>, <em>cwd=None</em>, <em>user=None</em>, <em>group=None</em>, <em>shell=None</em>, <em>env=None</em>, <em>stateful=False</em>, <em>umask=None</em>, <em>timeout=None</em>, <em>use_vt=False</em>, <em>output_loglevel='debug'</em>, <em>defaults=None</em>, <em>context=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.cmd.script" title="永久链接至目标">¶</a></dt>
+<dd><p>Download a script and execute it with specified arguments.</p>
+<dl class="docutils">
+<dt>source</dt>
+<dd>The location of the script to download. If the file is located on the
+master in the directory named spam, and is called eggs, the source
+string is salt://spam/eggs</dd>
+<dt>template</dt>
+<dd>If this setting is applied then the named templating engine will be
+used to render the downloaded file. Currently jinja, mako, and wempy
+are supported</dd>
+<dt>name</dt>
+<dd>Either &quot;cmd arg1 arg2 arg3...&quot; (cmd is not used) or a source
+&quot;salt://...&quot;.</dd>
+<dt>onlyif</dt>
+<dd>Run the named command only if the command passed to the <code class="docutils literal"><span class="pre">onlyif</span></code>
+option returns true</dd>
+<dt>unless</dt>
+<dd>Run the named command only if the command passed to the <code class="docutils literal"><span class="pre">unless</span></code>
+option returns false</dd>
+<dt>cwd</dt>
+<dd><p class="first last">执行命令时的当前工作目录，默认是/root</p>
+</dd>
+<dt>user</dt>
+<dd>The name of the user to run the command as</dd>
+<dt>group</dt>
+<dd><p class="first last">以指定用户组身份运行命令</p>
+</dd>
+<dt>shell</dt>
+<dd>The shell to use for execution. The default is set in grains['shell']</dd>
+<dt>env</dt>
+<dd><p class="first">A list of environment variables to be set prior to execution.
+Example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">salt://scripts/foo.sh</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.script</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">env</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">BATCH</span><span class="p p-Indicator">:</span> <span class="s">&#39;yes&#39;</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">The above illustrates a common PyYAML pitfall, that <strong>yes</strong>,
+<strong>no</strong>, <strong>on</strong>, <strong>off</strong>, <strong>true</strong>, and <strong>false</strong> are all loaded as
+boolean <code class="docutils literal"><span class="pre">True</span></code> and <code class="docutils literal"><span class="pre">False</span></code> values, and must be enclosed in
+quotes to be used as strings. More info on this (and other) PyYAML
+idiosyncrasies can be found <a class="reference internal" href="../../../topics/troubleshooting/yaml_idiosyncrasies.html"><em>here</em></a>.</p>
+</div>
+<p>Variables as values are not evaluated. So $PATH in the following
+example is a literal '$PATH':</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">salt://scripts/bar.sh</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.script</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">env</span><span class="p p-Indicator">:</span> <span class="s">&quot;PATH=/some/path:$PATH&quot;</span>
+</pre></div>
+</div>
+<p>One can still use the existing $PATH by using a bit of Jinja:</p>
+<div class="last highlight-yaml"><div class="highlight"><pre><span></span>{% set current_path = salt[&#39;environ.get&#39;](&#39;PATH&#39;, &#39;/bin:/usr/bin&#39;) %}
+
+mycommand:
+  cmd.run:
+    - name: ls -l /
+    - env:
+      - PATH: {{ [current_path, &#39;/my/special/bin&#39;]|join(&#39;:&#39;) }}
+</pre></div>
+</div>
+</dd>
+<dt>umask</dt>
+<dd><p class="first last">当命令运行时使用的umask(八进制数)。</p>
+</dd>
+<dt>stateful</dt>
+<dd>The command being executed is expected to return data about executing
+a state. For more information, see the <a class="reference internal" href="#stateful-argument"><span>Using the &quot;Stateful&quot; Argument</span></a> section.</dd>
+<dt>timeout</dt>
+<dd><p class="first last">如果命令在超时秒数到达时还未终止，发送子进程信号sigterm，并且如果sigterm被忽略，就接着发送sigkill</p>
+</dd>
+<dt>args</dt>
+<dd>String of command line args to pass to the script.  Only used if no
+args are specified as part of the <cite>name</cite> argument. To pass a string
+containing spaces in YAML, you will need to doubly-quote it:  &quot;arg1
+'arg two' arg3&quot;</dd>
+<dt>creates</dt>
+<dd><p class="first">Only run if the file specified by <code class="docutils literal"><span class="pre">creates</span></code> does not exist.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+</dd>
+<dt>use_vt</dt>
+<dd>Use VT utils (saltstack) to stream the command output more
+interactively to the console and the logs.
+This is experimental.</dd>
+<dt>context</dt>
+<dd><div class="first versionadded">
+<p><span class="versionmodified">2016.3.0 新版功能.</span></p>
+</div>
+<p class="last">Overrides default context variables passed to the template.</p>
+</dd>
+<dt>defaults</dt>
+<dd><div class="first versionadded">
+<p><span class="versionmodified">2016.3.0 新版功能.</span></p>
+</div>
+<p class="last">Default context passed to the template.</p>
+</dd>
+<dt>output_loglevel</dt>
+<dd>Control the loglevel at which the output from the command is logged.
+Note that the command being run will still be logged (loglevel: DEBUG)
+regardless, unless <code class="docutils literal"><span class="pre">quiet</span></code> is used for this value.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.cmd.wait">
+<code class="descclassname">salt.states.cmd.</code><code class="descname">wait</code><span class="sig-paren">(</span><em>name</em>, <em>onlyif=None</em>, <em>unless=None</em>, <em>creates=None</em>, <em>cwd=None</em>, <em>user=None</em>, <em>group=None</em>, <em>shell=None</em>, <em>env=()</em>, <em>stateful=False</em>, <em>umask=None</em>, <em>output_loglevel='debug'</em>, <em>use_vt=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.cmd.wait" title="永久链接至目标">¶</a></dt>
+<dd><p>Run the given command only if the watch statement calls it.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Use <a class="reference internal" href="#salt.states.cmd.run" title="salt.states.cmd.run"><code class="xref py py-mod docutils literal"><span class="pre">cmd.run</span></code></a> with <code class="xref py py-mod docutils literal"><span class="pre">onchange</span></code> instead.</p>
+</div>
+<dl class="docutils">
+<dt>name</dt>
+<dd><p class="first last">要执行的命令，记住该命令将会在salt-minion的路径和权限下执行。</p>
+</dd>
+<dt>onlyif</dt>
+<dd><p class="first last">一个用于检查的命令，仅当``onlyif``选项指向的命令返回true时才执行name定义的命令</p>
+</dd>
+<dt>unless</dt>
+<dd><p class="first last">用于检查的命令，仅当``unless``选项指向的命令返回false时才执行name指向的命令</p>
+</dd>
+<dt>cwd</dt>
+<dd><p class="first last">执行命令时的当前工作目录，默认是/root</p>
+</dd>
+<dt>user</dt>
+<dd><p class="first last">以指定用户身份运行命令</p>
+</dd>
+<dt>group</dt>
+<dd><p class="first last">以指定用户组身份运行命令</p>
+</dd>
+<dt>shell</dt>
+<dd>The shell to use for execution, defaults to /bin/sh</dd>
+<dt>env</dt>
+<dd><p class="first">A list of environment variables to be set prior to execution.
+Example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">script-foo</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.wait</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">env</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">BATCH</span><span class="p p-Indicator">:</span> <span class="s">&#39;yes&#39;</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">The above illustrates a common PyYAML pitfall, that <strong>yes</strong>,
+<strong>no</strong>, <strong>on</strong>, <strong>off</strong>, <strong>true</strong>, and <strong>false</strong> are all loaded as
+boolean <code class="docutils literal"><span class="pre">True</span></code> and <code class="docutils literal"><span class="pre">False</span></code> values, and must be enclosed in
+quotes to be used as strings. More info on this (and other) PyYAML
+idiosyncrasies can be found <a class="reference internal" href="../../../topics/troubleshooting/yaml_idiosyncrasies.html"><em>here</em></a>.</p>
+</div>
+<p>Variables as values are not evaluated. So $PATH in the following
+example is a literal '$PATH':</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">script-bar</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.wait</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">env</span><span class="p p-Indicator">:</span> <span class="s">&quot;PATH=/some/path:$PATH&quot;</span>
+</pre></div>
+</div>
+<p>One can still use the existing $PATH by using a bit of Jinja:</p>
+<div class="last highlight-yaml"><div class="highlight"><pre><span></span>{% set current_path = salt[&#39;environ.get&#39;](&#39;PATH&#39;, &#39;/bin:/usr/bin&#39;) %}
+
+mycommand:
+  cmd.run:
+    - name: ls -l /
+    - env:
+      - PATH: {{ [current_path, &#39;/my/special/bin&#39;]|join(&#39;:&#39;) }}
+</pre></div>
+</div>
+</dd>
+<dt>umask</dt>
+<dd><p class="first last">当命令运行时使用的umask(八进制数)。</p>
+</dd>
+<dt>stateful</dt>
+<dd>The command being executed is expected to return data about executing
+a state. For more information, see the <a class="reference internal" href="#stateful-argument"><span>Using the &quot;Stateful&quot; Argument</span></a> section.</dd>
+<dt>creates</dt>
+<dd><p class="first">Only run if the file specified by <code class="docutils literal"><span class="pre">creates</span></code> does not exist.</p>
+<div class="last versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+</dd>
+<dt>output_loglevel</dt>
+<dd>Control the loglevel at which the output from the command is logged.
+Note that the command being run will still be logged (loglevel: DEBUG)
+regardless, unless <code class="docutils literal"><span class="pre">quiet</span></code> is used for this value.</dd>
+<dt>use_vt</dt>
+<dd>Use VT utils (saltstack) to stream the command output more
+interactively to the console and the logs.
+This is experimental.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.states.cmd.wait_call">
+<code class="descclassname">salt.states.cmd.</code><code class="descname">wait_call</code><span class="sig-paren">(</span><em>name</em>, <em>func</em>, <em>args=()</em>, <em>kws=None</em>, <em>onlyif=None</em>, <em>unless=None</em>, <em>creates=None</em>, <em>stateful=False</em>, <em>use_vt=False</em>, <em>output_loglevel='debug'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.cmd.wait_call" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="salt.states.cmd.wait_script">
+<code class="descclassname">salt.states.cmd.</code><code class="descname">wait_script</code><span class="sig-paren">(</span><em>name</em>, <em>source=None</em>, <em>template=None</em>, <em>onlyif=None</em>, <em>unless=None</em>, <em>cwd=None</em>, <em>user=None</em>, <em>group=None</em>, <em>shell=None</em>, <em>env=None</em>, <em>stateful=False</em>, <em>umask=None</em>, <em>use_vt=False</em>, <em>output_loglevel='debug'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.states.cmd.wait_script" title="永久链接至目标">¶</a></dt>
+<dd><p>Download a script from a remote source and execute it only if a watch
+statement calls it.</p>
+<dl class="docutils">
+<dt>source</dt>
+<dd>The source script being downloaded to the minion, this source script is
+hosted on the salt master server.  If the file is located on the master
+in the directory named spam, and is called eggs, the source string is
+salt://spam/eggs</dd>
+<dt>template</dt>
+<dd>If this setting is applied then the named templating engine will be
+used to render the downloaded file, currently jinja, mako, and wempy
+are supported</dd>
+<dt>name</dt>
+<dd><p class="first last">要执行的命令，记住该命令将会在salt-minion的路径和权限下执行。</p>
+</dd>
+<dt>onlyif</dt>
+<dd><p class="first last">一个用于检查的命令，仅当``onlyif``选项指向的命令返回true时才执行name定义的命令</p>
+</dd>
+<dt>unless</dt>
+<dd><p class="first last">用于检查的命令，仅当``unless``选项指向的命令返回false时才执行name指向的命令</p>
+</dd>
+<dt>cwd</dt>
+<dd><p class="first last">执行命令时的当前工作目录，默认是/root</p>
+</dd>
+<dt>user</dt>
+<dd><p class="first last">以指定用户身份运行命令</p>
+</dd>
+<dt>group</dt>
+<dd><p class="first last">以指定用户组身份运行命令</p>
+</dd>
+<dt>shell</dt>
+<dd><p class="first last">用于执行命令的shell，默认shell grain</p>
+</dd>
+<dt>env</dt>
+<dd><p class="first">A list of environment variables to be set prior to execution.
+Example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">salt://scripts/foo.sh</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.wait_script</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">env</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">BATCH</span><span class="p p-Indicator">:</span> <span class="s">&#39;yes&#39;</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">The above illustrates a common PyYAML pitfall, that <strong>yes</strong>,
+<strong>no</strong>, <strong>on</strong>, <strong>off</strong>, <strong>true</strong>, and <strong>false</strong> are all loaded as
+boolean <code class="docutils literal"><span class="pre">True</span></code> and <code class="docutils literal"><span class="pre">False</span></code> values, and must be enclosed in
+quotes to be used as strings. More info on this (and other) PyYAML
+idiosyncrasies can be found <a class="reference internal" href="../../../topics/troubleshooting/yaml_idiosyncrasies.html"><em>here</em></a>.</p>
+</div>
+<p>Variables as values are not evaluated. So $PATH in the following
+example is a literal '$PATH':</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">salt://scripts/bar.sh</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.wait_script</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">env</span><span class="p p-Indicator">:</span> <span class="s">&quot;PATH=/some/path:$PATH&quot;</span>
+</pre></div>
+</div>
+<p>One can still use the existing $PATH by using a bit of Jinja:</p>
+<div class="last highlight-yaml"><div class="highlight"><pre><span></span>{% set current_path = salt[&#39;environ.get&#39;](&#39;PATH&#39;, &#39;/bin:/usr/bin&#39;) %}
+
+mycommand:
+  cmd.run:
+    - name: ls -l /
+    - env:
+      - PATH: {{ [current_path, &#39;/my/special/bin&#39;]|join(&#39;:&#39;) }}
+</pre></div>
+</div>
+</dd>
+<dt>umask</dt>
+<dd><p class="first last">当命令运行时使用的umask(八进制数)。</p>
+</dd>
+<dt>stateful</dt>
+<dd>The command being executed is expected to return data about executing
+a state. For more information, see the <a class="reference internal" href="#stateful-argument"><span>Using the &quot;Stateful&quot; Argument</span></a> section.</dd>
+<dt>use_vt</dt>
+<dd><blockquote class="first">
+<div>Use VT utils (saltstack) to stream the command output more
+interactively to the console and the logs.
+This is experimental.</div></blockquote>
+<dl class="last docutils">
+<dt>output_loglevel</dt>
+<dd>Control the loglevel at which the output from the command is logged.
+Note that the command being run will still be logged (loglevel: DEBUG)
+regardless, unless <code class="docutils literal"><span class="pre">quiet</span></code> is used for this value.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="salt.states.cloud.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.states.cloud" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="salt.states.composer.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.states.composer" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Salt Module Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../auth/all/index.html">内建身份认证模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../beacons/all/index.html">Full list of builtin beacon modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../engines/all/index.html">Full list of builtin engine modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../file_server/all/index.html">文件服务内置模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../grains/all/index.html">Full list of builtin grains modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/all/index.html">Full list of builtin execution modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../netapi/all/index.html">Full list of netapi modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../output/all/index.html">完整的内置输出模块的列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../pillar/all/index.html">Full list of builtin pillar modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../proxy/all/index.html">Full list of builtin proxy modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../queues/all/index.html">Full list of builtin queues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../renderers/all/index.html">Full list of builtin renderer modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../returners/all/index.html">所有内置的返回接收器模块列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../roster/all/index.html">Full list of builtin roster modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../runners/all/index.html">Full list of runner modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sdb/all/index.html">Full list of builtin sdb modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../serializers/all/index.html">Full list of builtin serializers</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">所有内置的state模块列表</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="salt.states.alias.html">salt.states.alias</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.alternatives.html">salt.states.alternatives</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.apache.html">salt.states.apache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.apache_conf.html">salt.states.apache_conf module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.apache_module.html">salt.states.apache_module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.apache_site.html">salt.states.apache_site module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.aptpkg.html">salt.states.aptpkg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.archive.html">salt.states.archive</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.artifactory.html">salt.states.artifactory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.at.html">salt.states.at</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.augeas.html">salt.states.augeas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.aws_sqs.html">salt.states.aws_sqs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.beacon.html">salt.states.beacon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.bigip.html">salt.states.bigip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.blockdev.html">salt.states.blockdev</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_asg.html">salt.states.boto_asg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_cfn.html">salt.states.boto_cfn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_cloudtrail.html">salt.states.boto_cloudtrail module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_cloudwatch_alarm.html">salt.states.boto_cloudwatch_alarm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_datapipeline.html">salt.states.boto_datapipeline module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_dynamodb.html">salt.states.boto_dynamodb</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_ec2.html">salt.states.boto_ec2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_elasticache.html">salt.states.boto_elasticache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_elb.html">salt.states.boto_elb</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_iam.html">salt.states.boto_iam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_iam_role.html">salt.states.boto_iam_role</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_iot.html">salt.states.boto_iot module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_kms.html">salt.states.boto_kms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_lc.html">salt.states.boto_lc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_rds.html">salt.states.boto_rds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_route53.html">salt.states.boto_route53</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_secgroup.html">salt.states.boto_secgroup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_sns.html">salt.states.boto_sns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_sqs.html">salt.states.boto_sqs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.boto_vpc.html">salt.states.boto_vpc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.bower.html">salt.states.bower</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.cabal.html">salt.states.cabal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.chef.html">salt.states.chef</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.chocolatey.html">salt.states.chocolatey module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.chronos_job.html">salt.states.chronos_job module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.cloud.html">salt.states.cloud</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">salt.states.cmd</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#execution-of-arbitrary-commands">执行任意的命令</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#using-the-stateful-argument">Using the &quot;Stateful&quot; Argument</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#should-i-use-cmd-run-or-cmd-wait">Should I use <code class="docutils literal"><span class="pre">cmd.run</span></code> or <code class="docutils literal"><span class="pre">cmd.wait</span></code>?</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#how-do-i-create-an-environment-from-a-pillar-map">How do I create an environment from a pillar map?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.composer.html">salt.states.composer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.cron.html">Salt states 的cron 类型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.cyg.html">salt.states.cyg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ddns.html">salt.states.ddns</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.debconfmod.html">salt.states.debconfmod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.dellchassis.html">salt.states.dellchassis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.disk.html">salt.states.disk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.dockerio.html">salt.states.dockerio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.dockerng.html">salt.states.dockerng</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.drac.html">salt.states.drac</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.elasticsearch_index.html">salt.states.elasticsearch_index</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.elasticsearch_index_template.html">salt.states.elasticsearch_index_template</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.environ.html">salt.states.environ</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.eselect.html">salt.states.eselect</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.etcd_mod.html">salt.states.etcd_mod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.esxi.html">salt.states.esxi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.event.html">salt.states.event</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.file.html">salt.states.file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.firewall.html">salt.states.firewall module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.firewalld.html">salt.states.firewalld</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.gem.html">salt.states.gem</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.git.html">salt.states.git</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.github.html">salt.states.github module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.glance.html">salt.states.glance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.glusterfs.html">salt.states.glusterfs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.gnomedesktop.html">salt.states.gnomedesktop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.gpg.html">salt.states.gpg module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.grafana.html">salt.states.grafana</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.grafana_dashboard.html">salt.states.grafana_dashboard module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.grafana_datasource.html">salt.states.grafana_datasource module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.grains.html">salt.states.grains</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.group.html">salt.states.group</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.hg.html">salt.states.hg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.hipchat.html">salt.states.hipchat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.host.html">salt.states.host</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.htpasswd.html">salt.states.htpasswd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.http.html">salt.states.http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ifttt.html">salt.states.ifttt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.incron.html">salt.states.incron</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.influxdb_database.html">salt.states.influxdb_database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.influxdb_user.html">salt.states.influxdb_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.infoblox.html">salt.states.infoblox module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ini_manage.html">salt.states.ini_manage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ipmi.html">salt.states.ipmi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ipset.html">salt.states.ipset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.iptables.html">salt.states.iptables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.jboss7.html">salt.states.jboss7</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.jenkins.html">salt.states.jenkins module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.keyboard.html">salt.states.keyboard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.keystone.html">salt.states.keystone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.kmod.html">salt.states.kmod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.layman.html">salt.states.layman</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ldap.html">salt.states.ldap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.linux_acl.html">salt.states.linux_acl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.locale.html">salt.states.locale</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.lvm.html">salt.states.lvm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.lvs_server.html">salt.states.lvs_server</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.lvs_service.html">salt.states.lvs_service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.lxc.html">salt.states.lxc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.makeconf.html">salt.states.makeconf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.marathon_app.html">salt.states.marathon_app module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mdadm.html">salt.states.mdadm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.memcached.html">salt.states.memcached</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.modjk.html">salt.states.modjk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.modjk_worker.html">salt.states.modjk_worker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.module.html">salt.states.module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mongodb_database.html">salt.states.mongodb_database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mongodb_user.html">salt.states.mongodb_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.monit.html">salt.states.monit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mount.html">salt.states.mount</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mysql_database.html">salt.states.mysql_database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mysql_grants.html">salt.states.mysql_grants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mysql_query.html">salt.states.mysql_query</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.mysql_user.html">salt.states.mysql_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.network.html">salt.states.network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.nftables.html">salt.states.nftables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.npm.html">salt.states.npm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ntp.html">salt.states.ntp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.openstack_config.html">salt.states.openstack_config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.openvswitch_bridge.html">salt.states.openvswitch_bridge module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.openvswitch_port.html">salt.states.openvswitch_port module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pagerduty.html">salt.states.pagerduty</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pagerduty_escalation_policy.html">salt.states.pagerduty_escalation_policy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pagerduty_schedule.html">salt.states.pagerduty_schedule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pagerduty_service.html">salt.states.pagerduty_service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pagerduty_user.html">salt.states.pagerduty_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pecl.html">salt.states.pecl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pip_state.html">salt.states.pip_state</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pkg.html">salt.states.pkg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pkgbuild.html">salt.states.pkgbuild</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pkgng.html">salt.states.pkgng</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pkgrepo.html">salt.states.pkgrepo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.portage_config.html">salt.states.portage_config</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ports.html">salt.states.ports</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_cluster.html">salt.states.postgres_cluster module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_database.html">salt.states.postgres_database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_extension.html">salt.states.postgres_extension</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_group.html">salt.states.postgres_group</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_initdb.html">salt.states.postgres_initdb</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_language.html">salt.states.postgres_language</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_privileges.html">salt.states.postgres_privileges</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_schema.html">salt.states.postgres_schema</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_tablespace.html">salt.states.postgres_tablespace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.postgres_user.html">salt.states.postgres_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.powerpath.html">salt.states.powerpath</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.process.html">salt.states.process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pushover.html">salt.states.pushover</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pyenv.html">salt.states.pyenv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.pyrax_queues.html">salt.states.pyrax_queues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.quota.html">salt.states.quota</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rabbitmq_cluster.html">salt.states.rabbitmq_cluster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rabbitmq_plugin.html">salt.states.rabbitmq_plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rabbitmq_policy.html">salt.states.rabbitmq_policy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rabbitmq_user.html">salt.states.rabbitmq_user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rabbitmq_vhost.html">salt.states.rabbitmq_vhost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rbenv.html">salt.states.rbenv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rdp.html">salt.states.rdp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.redismod.html">salt.states.redismod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.reg.html">salt.states.reg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rsync.html">salt.states.rsync</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.rvm.html">salt.states.rvm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.salt_proxy.html">salt.states.salt_proxy module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.saltmod.html">salt.states.saltmod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.schedule.html">salt.states.schedule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.selinux.html">salt.states.selinux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.serverdensity_device.html">salt.states.serverdensity_device</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.service.html">salt.states.service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.slack.html">salt.states.slack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.smartos.html">salt.states.smartos</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.smtp.html">salt.states.smtp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.splunk.html">salt.states.splunk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.splunk_search.html">salt.states.splunk_search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.sqlite3.html">salt.states.sqlite3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ssh_auth.html">salt.states.ssh_auth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.ssh_known_hosts.html">salt.states.ssh_known_hosts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.stateconf.html">salt.states.stateconf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.status.html">salt.states.status</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.stormpath_account.html">salt.states.stormpath_account</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.supervisord.html">salt.states.supervisord</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.svn.html">salt.states.svn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.sysctl.html">salt.states.sysctl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.syslog_ng.html">salt.states.syslog_ng</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.sysrc.html">salt.states.sysrc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.telemetry_alert.html">salt.states.telemetry_alert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.test.html">salt.states.test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.timezone.html">salt.states.timezone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.tls.html">salt.states.tls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.tomcat.html">salt.states.tomcat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.trafficserver.html">salt.states.trafficserver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.tuned.html">salt.states.tuned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.uptime.html">salt.states.uptime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.user.html">salt.states.user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.vbox_guest.html">salt.states.vbox_guest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.victorops.html">salt.states.victorops</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.virt.html">salt.states.virt module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.virtualenv_mod.html">salt.states.virtualenv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_dacl.html">salt.states.win_dacl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_dns_client.html">salt.states.win_dns_client</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_firewall.html">防火墙文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_network.html">salt.states.win_network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_path.html">salt.states.win_path</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_powercfg.html">salt.states.win_powercfg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_servermanager.html">salt.states.win_servermanager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_system.html">salt.states.win_system</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.win_update.html">salt.states.win_update</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.winrepo.html">salt.states.winrepo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.x509.html">salt.states.x509</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.xmpp.html">salt.states.xmpp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zabbix_host.html">salt.states.zabbix_host module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zabbix_hostgroup.html">salt.states.zabbix_hostgroup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zabbix_user.html">salt.states.zabbix_user module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zabbix_usergroup.html">salt.states.zabbix_usergroup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zcbuildout.html">salt.states.zcbuildout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zenoss.html">salt.states.zenoss</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zk_concurrency.html">salt.states.zk_concurrency</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zfs.html">salt.states.zfs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.states.zpool.html">salt.states.zpool</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../tops/all/index.html">master内置顶级模块的全部列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../wheel/all/index.html">Full list of builtin wheel modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Requisites and Other Global State Arguments</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="State System Reference" href="index.html">
+        <link rel="next" title="Startup States" href="startup.html">
+        <link rel="prev" title="State Providers" href="providers.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="providers.html" title="State Providers">上一页</a>
+            
+        </li>
+        <li>
+            <a href="startup.html" title="Startup States">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="requisites-and-other-global-state-arguments">
+<span id="requisites"></span><h1>Requisites and Other Global State Arguments<a class="headerlink" href="#requisites-and-other-global-state-arguments" title="永久链接至标题">¶</a></h1>
+<div class="section" id="fire-event-notifications">
+<span id="requisites-fire-event"></span><h2>Fire Event Notifications<a class="headerlink" href="#fire-event-notifications" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>The <cite>fire_event</cite> option in a state will cause the minion to send an event to
+the Salt Master upon completion of that individual state.</p>
+<p>The following example will cause the minion to send an event to the Salt Master
+with a tag of <cite>salt/state_result/20150505121517276431/dasalt/nano</cite> and the
+result of the state will be the data field of the event. Notice that the <cite>name</cite>
+of the state gets added to the tag.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">nano_stuff</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">nano</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">fire_event</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>In the following example instead of setting <cite>fire_event</cite> to <cite>True</cite>,
+<cite>fire_event</cite> is set to an arbitrary string, which will cause the event to be
+sent with this tag:
+<cite>salt/state_result/20150505121725642845/dasalt/custom/tag/nano/finished</cite></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">nano_stuff</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">nano</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">fire_event</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">custom/tag/nano/finished</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id1">
+<h2>Requisites<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>The Salt requisite system is used to create relationships between states. The
+core idea being that, when one state is dependent somehow on another, that
+inter-dependency can be easily defined. These dependencies are expressed by
+declaring the relationships using state names and ID's or names.  The
+generalized form of a requisite target is <code class="docutils literal"><span class="pre">&lt;state</span> <span class="pre">name&gt;</span> <span class="pre">:</span> <span class="pre">&lt;ID</span> <span class="pre">or</span> <span class="pre">name&gt;</span></code>.
+The specific form is defined as a <a class="reference internal" href="highstate.html#requisite-reference"><span>Requisite Reference</span></a></p>
+<p>Requisites come in two types: Direct requisites (such as <code class="docutils literal"><span class="pre">require</span></code>),
+and requisite_ins (such as <code class="docutils literal"><span class="pre">require_in</span></code>). The relationships are
+directional: a direct requisite requires something from another state.
+However, a requisite_in inserts a requisite into the targeted state pointing to
+the targeting state. The following example demonstrates a direct requisite:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">vim</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+
+<span class="l l-Scalar l-Scalar-Plain">/etc/vimrc</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://edit/vimrc</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">vim</span>
+</pre></div>
+</div>
+<p>In the example above, the file <code class="docutils literal"><span class="pre">/etc/vimrc</span></code> depends on the vim package.</p>
+<p>Requisite_in statements are the opposite. Instead of saying &quot;I depend on
+something&quot;, requisite_ins say &quot;Someone depends on me&quot;:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">vim</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require_in</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/vimrc</span>
+
+<span class="l l-Scalar l-Scalar-Plain">/etc/vimrc</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://edit/vimrc</span>
+</pre></div>
+</div>
+<p>So here, with a requisite_in, the same thing is accomplished as in the first
+example, but the other way around. The vim package is saying &quot;/etc/vimrc depends
+on me&quot;. This will result in a <code class="docutils literal"><span class="pre">require</span></code> being inserted into the
+<code class="docutils literal"><span class="pre">/etc/vimrc</span></code> state which targets the <code class="docutils literal"><span class="pre">vim</span></code> state.</p>
+<p>In the end, a single dependency map is created and everything is executed in a
+finite and predictable order.</p>
+<div class="section" id="requisite-matching">
+<h3>Requisite matching<a class="headerlink" href="#requisite-matching" title="永久链接至标题">¶</a></h3>
+<p>Requisites need two pieces of information for matching: The state module name –
+e.g. <code class="docutils literal"><span class="pre">pkg</span></code> –, and the identifier – e.g. vim –, which can be either the ID (the
+first line in the stanza) or the <code class="docutils literal"><span class="pre">-</span> <span class="pre">name</span></code> parameter.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">vim</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="omitting-state-module-in-requisites">
+<h3>Omitting state module in requisites<a class="headerlink" href="#omitting-state-module-in-requisites" title="永久链接至标题">¶</a></h3>
+<div class="versionadded">
+<p><span class="versionmodified">2016.3.0 新版功能.</span></p>
+</div>
+<p>In version 2016.3.0, the state module name was made optional. If the state module
+is omitted, all states matching the ID will be required, regardless of which
+module they are using.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">vim</span>
+</pre></div>
+</div>
+<div class="section" id="state-target-matching">
+<h4>State target matching<a class="headerlink" href="#state-target-matching" title="永久链接至标题">¶</a></h4>
+<p>In order to understand how state targets are matched, it is helpful to know
+<span class="xref std std-ref">how the state compiler is working</span>. Consider the following
+example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">Deploy server package</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/usr/local/share/myapp.tar.xz</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://myapp.tar.xz</span>
+
+<span class="l l-Scalar l-Scalar-Plain">Extract server package</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">archive.extracted</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/usr/local/share/myapp</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/usr/local/share/myapp.tar.xz</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">archive_format</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">tar</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">onchanges</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Deploy server package</span>
+</pre></div>
+</div>
+<p>The first formula is converted to a dictionary which looks as follows (represented
+as YAML, some properties omitted for simplicity) as <cite>High Data</cite>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">Deploy server package</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">managed</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/usr/local/share/myapp.tar.xz</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://myapp.tar.xz</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">file.managed</span></code> format used in the formula is essentially syntactic sugar:
+at the end, the target is <code class="docutils literal"><span class="pre">file</span></code>, which is used in the <code class="docutils literal"><span class="pre">Extract</span> <span class="pre">server</span> <span class="pre">package</span></code>
+state above.</p>
+</div>
+<div class="section" id="identifier-matching">
+<h4>Identifier matching<a class="headerlink" href="#identifier-matching" title="永久链接至标题">¶</a></h4>
+<p>Requisites match on both the ID Declaration and the <code class="docutils literal"><span class="pre">name</span></code> parameter.
+This means that, in the &quot;Deploy server package&quot; example above, a <code class="docutils literal"><span class="pre">require</span></code>
+requisite would match with with <code class="docutils literal"><span class="pre">Deploy</span> <span class="pre">server</span> <span class="pre">package</span></code> <em>or</em> <code class="docutils literal"><span class="pre">/usr/local/share/myapp.tar.xz</span></code>,
+so either of the following versions for &quot;Extract server package&quot; works:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># (Archive arguments omitted for simplicity)</span>
+
+<span class="c1"># Match by ID declaration</span>
+<span class="l l-Scalar l-Scalar-Plain">Extract server package</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">archive.extracted</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">onchanges</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Deploy server package</span>
+
+<span class="c1"># Match by name parameter</span>
+<span class="l l-Scalar l-Scalar-Plain">Extract server package</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">archive.extracted</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">onchanges</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/usr/local/share/myapp.tar.xz</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="direct-requisite-and-requisite-in-types">
+<h3>Direct Requisite and Requisite_in types<a class="headerlink" href="#direct-requisite-and-requisite-in-types" title="永久链接至标题">¶</a></h3>
+<p>There are several direct requisite statements that can be used in Salt:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">require</span></code></li>
+<li><code class="docutils literal"><span class="pre">watch</span></code></li>
+<li><code class="docutils literal"><span class="pre">prereq</span></code></li>
+<li><code class="docutils literal"><span class="pre">use</span></code></li>
+<li><code class="docutils literal"><span class="pre">onchanges</span></code></li>
+<li><code class="docutils literal"><span class="pre">onfail</span></code></li>
+</ul>
+<p>Each direct requisite also has a corresponding requisite_in:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">require_in</span></code></li>
+<li><code class="docutils literal"><span class="pre">watch_in</span></code></li>
+<li><code class="docutils literal"><span class="pre">prereq_in</span></code></li>
+<li><code class="docutils literal"><span class="pre">use_in</span></code></li>
+<li><code class="docutils literal"><span class="pre">onchanges_in</span></code></li>
+<li><code class="docutils literal"><span class="pre">onfail_in</span></code></li>
+</ul>
+<p>All of the requisites define specific relationships and always work with the
+dependency logic defined above.</p>
+<div class="section" id="require">
+<span id="requisites-require"></span><h4>require<a class="headerlink" href="#require" title="永久链接至标题">¶</a></h4>
+<p>The use of <code class="docutils literal"><span class="pre">require</span></code> demands that the dependent state executes before the
+depending state. The state containing the <code class="docutils literal"><span class="pre">require</span></code> requisite is defined as the
+depending state. The state specified in the <code class="docutils literal"><span class="pre">require</span></code> statement is defined as the
+dependent state. If the dependent state's execution succeeds, the depending state
+will then execute. If the dependent state's execution fails, the depending state
+will not execute. In the first example above, the file <code class="docutils literal"><span class="pre">/etc/vimrc</span></code> will only
+execute after the vim package is installed successfully.</p>
+</div>
+<div class="section" id="require-an-entire-sls-file">
+<h4>Require an entire sls file<a class="headerlink" href="#require-an-entire-sls-file" title="永久链接至标题">¶</a></h4>
+<p>As of Salt 0.16.0, it is possible to require an entire sls file. Do this first by
+including the sls file and then setting a state to <code class="docutils literal"><span class="pre">require</span></code> the included sls file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">include</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">foo</span>
+
+<span class="l l-Scalar l-Scalar-Plain">bar</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">sls</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">foo</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="watch">
+<span id="requisites-watch"></span><h4>watch<a class="headerlink" href="#watch" title="永久链接至标题">¶</a></h4>
+<p><code class="docutils literal"><span class="pre">watch</span></code> statements are used to add additional behavior when there are changes
+in other states.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">If a state should only execute when another state has changes, and
+otherwise do nothing, the new <code class="docutils literal"><span class="pre">onchanges</span></code> requisite should be used
+instead of <code class="docutils literal"><span class="pre">watch</span></code>. <code class="docutils literal"><span class="pre">watch</span></code> is designed to add <em>additional</em> behavior
+when there are changes, but otherwise the state executes normally.</p>
+</div>
+<p>The state containing the <code class="docutils literal"><span class="pre">watch</span></code> requisite is defined as the watching
+state. The state specified in the <code class="docutils literal"><span class="pre">watch</span></code> statement is defined as the watched
+state. When the watched state executes, it will return a dictionary containing
+a key named &quot;changes&quot;. Here are two examples of state return dictionaries,
+shown in json for clarity:</p>
+<div class="highlight-json"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;file_|-/tmp/foo_|-/tmp/foo_|-directory&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;comment&quot;</span><span class="p">:</span> <span class="s2">&quot;Directory /tmp/foo updated&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;__run_num__&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nt">&quot;changes&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;user&quot;</span><span class="p">:</span> <span class="s2">&quot;bar&quot;</span>
+            <span class="p">},</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;/tmp/foo&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;result&quot;</span><span class="p">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="p">{</span>
+    <span class="nt">&quot;local&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nt">&quot;pkgrepo_|-salt-minion_|-salt-minion_|-managed&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;comment&quot;</span><span class="p">:</span> <span class="s2">&quot;Package repo &#39;salt-minion&#39; already configured&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;__run_num__&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="nt">&quot;changes&quot;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;salt-minion&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;result&quot;</span><span class="p">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>If the &quot;result&quot; of the watched state is <code class="docutils literal"><span class="pre">True</span></code>, the watching state <em>will
+execute normally</em>, and if it is <code class="docutils literal"><span class="pre">False</span></code>, the watching state will never run.
+This part of <code class="docutils literal"><span class="pre">watch</span></code> mirrors the functionality of the <code class="docutils literal"><span class="pre">require</span></code> requisite.</p>
+<p>If the &quot;result&quot; of the watched state is <code class="docutils literal"><span class="pre">True</span></code> <em>and</em> the &quot;changes&quot;
+key contains a populated dictionary (changes occurred in the watched state),
+then the <code class="docutils literal"><span class="pre">watch</span></code> requisite can add additional behavior. This additional
+behavior is defined by the <code class="docutils literal"><span class="pre">mod_watch</span></code> function within the watching state
+module. If the <code class="docutils literal"><span class="pre">mod_watch</span></code> function exists in the watching state module, it
+will be called <em>in addition to</em> the normal watching state. The return data
+from the <code class="docutils literal"><span class="pre">mod_watch</span></code> function is what will be returned to the master in this
+case; the return data from the main watching function is discarded.</p>
+<p>If the &quot;changes&quot; key contains an empty dictionary, the <code class="docutils literal"><span class="pre">watch</span></code> requisite acts
+exactly like the <code class="docutils literal"><span class="pre">require</span></code> requisite (the watching state will execute if
+&quot;result&quot; is <code class="docutils literal"><span class="pre">True</span></code>, and fail if &quot;result&quot; is <code class="docutils literal"><span class="pre">False</span></code> in the watched state).</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Not all state modules contain <code class="docutils literal"><span class="pre">mod_watch</span></code>. If <code class="docutils literal"><span class="pre">mod_watch</span></code> is absent
+from the watching state module, the <code class="docutils literal"><span class="pre">watch</span></code> requisite behaves exactly
+like a <code class="docutils literal"><span class="pre">require</span></code> requisite.</p>
+</div>
+<p>A good example of using <code class="docutils literal"><span class="pre">watch</span></code> is with a <a class="reference internal" href="all/salt.states.service.html#salt.states.service.running" title="salt.states.service.running"><code class="xref py py-mod docutils literal"><span class="pre">service.running</span></code></a> state. When a service watches a state, then
+the service is reloaded/restarted when the watched state changes, in addition
+to Salt ensuring that the service is running.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ntpd</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">watch</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/ntp.conf</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/ntp.conf</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://ntp/files/ntp.conf</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="prereq">
+<span id="requisites-prereq"></span><h4>prereq<a class="headerlink" href="#prereq" title="永久链接至标题">¶</a></h4>
+<div class="versionadded">
+<p><span class="versionmodified">0.16.0 新版功能.</span></p>
+</div>
+<p><code class="docutils literal"><span class="pre">prereq</span></code> allows for actions to be taken based on the expected results of
+a state that has not yet been executed. The state containing the <code class="docutils literal"><span class="pre">prereq</span></code>
+requisite is defined as the pre-requiring state. The state specified in the
+<code class="docutils literal"><span class="pre">prereq</span></code> statement is defined as the pre-required state.</p>
+<p>When a <code class="docutils literal"><span class="pre">prereq</span></code> requisite is evaluated, the pre-required state reports if it
+expects to have any changes. It does this by running the pre-required single
+state as a test-run by enabling <code class="docutils literal"><span class="pre">test=True</span></code>. This test-run will return a
+dictionary containing a key named &quot;changes&quot;. (See the <code class="docutils literal"><span class="pre">watch</span></code> section above
+for examples of &quot;changes&quot; dictionaries.)</p>
+<p>If the &quot;changes&quot; key contains a populated dictionary, it means that the
+pre-required state expects changes to occur when the state is actually
+executed, as opposed to the test-run. The pre-requiring state will now
+actually run. If the pre-requiring state executes successfully, the
+pre-required state will then execute. If the pre-requiring state fails, the
+pre-required state will not execute.</p>
+<p>If the &quot;changes&quot; key contains an empty dictionary, this means that changes are
+not expected by the pre-required state. Neither the pre-required state nor the
+pre-requiring state will run.</p>
+<p>The best way to define how <code class="docutils literal"><span class="pre">prereq</span></code> operates is displayed in the following
+practical example: When a service should be shut down because underlying code
+is going to change, the service should be off-line while the update occurs. In
+this example, <code class="docutils literal"><span class="pre">graceful-down</span></code> is the pre-requiring state and <code class="docutils literal"><span class="pre">site-code</span></code>
+is the pre-required state.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">graceful-down</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">service apache graceful</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">prereq</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">site-code</span>
+
+<span class="l l-Scalar l-Scalar-Plain">site-code</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.recurse</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/opt/site_code</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://site/code</span>
+</pre></div>
+</div>
+<p>In this case the apache server will only be shutdown if the site-code state
+expects to deploy fresh code via the file.recurse call. The site-code
+deployment will only be executed if the graceful-down run completes
+successfully.</p>
+</div>
+<div class="section" id="onfail">
+<h4>onfail<a class="headerlink" href="#onfail" title="永久链接至标题">¶</a></h4>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<p>The <code class="docutils literal"><span class="pre">onfail</span></code> requisite allows for reactions to happen strictly as a response
+to the failure of another state. This can be used in a number of ways, such as
+executing a second attempt to set up a service or begin to execute a separate
+thread of states because of a failure.</p>
+<p>The <code class="docutils literal"><span class="pre">onfail</span></code> requisite is applied in the same way as <code class="docutils literal"><span class="pre">require</span></code> as <code class="docutils literal"><span class="pre">watch</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">primary_mount</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">mount.mounted</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/mnt/share</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">device</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10.0.0.45:/share</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">fstype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">nfs</span>
+
+<span class="l l-Scalar l-Scalar-Plain">backup_mount</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">mount.mounted</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/mnt/share</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">device</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">192.168.40.34:/share</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">fstype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">nfs</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">onfail</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mount</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">primary_mount</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Beginning in the <code class="docutils literal"><span class="pre">Carbon</span></code> release of Salt, <code class="docutils literal"><span class="pre">onfail</span></code> uses OR logic for
+multiple listed <code class="docutils literal"><span class="pre">onfail</span></code> requisites. Prior to the <code class="docutils literal"><span class="pre">Carbon</span></code> release,
+<code class="docutils literal"><span class="pre">onfail</span></code> used AND logic. See <a class="reference external" href="https://github.com/saltstack/salt/issues/22370">Issue #22370</a> for more information.</p>
+</div>
+</div>
+<div class="section" id="onchanges">
+<h4>onchanges<a class="headerlink" href="#onchanges" title="永久链接至标题">¶</a></h4>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<p>The <code class="docutils literal"><span class="pre">onchanges</span></code> requisite makes a state only apply if the required states
+generate changes, and if the watched state's &quot;result&quot; is <code class="docutils literal"><span class="pre">True</span></code>. This can be
+a useful way to execute a post hook after changing aspects of a system.</p>
+<p>If a state has multiple <code class="docutils literal"><span class="pre">onchanges</span></code> requisites then the state will trigger
+if any of the watched states changes.</p>
+</div>
+<div class="section" id="use">
+<h4>use<a class="headerlink" href="#use" title="永久链接至标题">¶</a></h4>
+<p>The <code class="docutils literal"><span class="pre">use</span></code> requisite is used to inherit the arguments passed in another
+id declaration. This is useful when many files need to have the same defaults.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/foo.conf</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://foo.conf</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">jinja</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mkdirs</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">apache</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">apache</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">755</span>
+
+<span class="l l-Scalar l-Scalar-Plain">/etc/bar.conf</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://bar.conf</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">use</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/foo.conf</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">use</span></code> statement was developed primarily for the networking states but
+can be used on any states in Salt. This makes sense for the networking state
+because it can define a long list of options that need to be applied to
+multiple network interfaces.</p>
+<p>The <code class="docutils literal"><span class="pre">use</span></code> statement does not inherit the requisites arguments of the
+targeted state. This means also a chain of <code class="docutils literal"><span class="pre">use</span></code> requisites would not
+inherit inherited options.</p>
+</div>
+<div class="section" id="the-in-versions-of-requisites">
+<span id="requisites-watch-in"></span><span id="requisites-require-in"></span><h4>The _in versions of requisites<a class="headerlink" href="#the-in-versions-of-requisites" title="永久链接至标题">¶</a></h4>
+<p>All of the requisites also have corresponding requisite_in versions, which do
+the reverse of their normal counterparts. The examples below all use
+<code class="docutils literal"><span class="pre">require_in</span></code> as the example, but note that all of the <code class="docutils literal"><span class="pre">_in</span></code> requisites work
+the same way: They result in a normal requisite in the targeted state, which
+targets the state which has defines the requisite_in. Thus, a <code class="docutils literal"><span class="pre">require_in</span></code>
+causes the target state to <code class="docutils literal"><span class="pre">require</span></code> the targeting state. Similarly, a
+<code class="docutils literal"><span class="pre">watch_in</span></code> causes the target state to <code class="docutils literal"><span class="pre">watch</span></code> the targeting state. This
+pattern continues for the rest of the requisites.</p>
+<p>If a state declaration needs to be required by another state declaration then
+<code class="docutils literal"><span class="pre">require_in</span></code> can accommodate it. Therefore, these two sls files would be the
+same in the end:</p>
+<p>Using <code class="docutils literal"><span class="pre">require</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">httpd</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">httpd</span>
+</pre></div>
+</div>
+<p>Using <code class="docutils literal"><span class="pre">require_in</span></code></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">httpd</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require_in</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">service</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">httpd</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">require_in</span></code> statement is particularly useful when assigning a require
+in a separate sls file. For instance it may be common for httpd to require
+components used to set up PHP or mod_python, but the HTTP state does not need
+to be aware of the additional components that require it when it is set up:</p>
+<p>http.sls</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">httpd</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">httpd</span>
+</pre></div>
+</div>
+<p>php.sls</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">include</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">http</span>
+
+<span class="l l-Scalar l-Scalar-Plain">php</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require_in</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">service</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">httpd</span>
+</pre></div>
+</div>
+<p>mod_python.sls</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">include</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">http</span>
+
+<span class="l l-Scalar l-Scalar-Plain">mod_python</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require_in</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">service</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">httpd</span>
+</pre></div>
+</div>
+<p>Now the httpd server will only start if php or mod_python are first verified to
+be installed. Thus allowing for a requisite to be defined &quot;after the fact&quot;.</p>
+</div>
+</div>
+</div>
+<div class="section" id="altering-states">
+<h2>Altering States<a class="headerlink" href="#altering-states" title="永久链接至标题">¶</a></h2>
+<p>The state altering system is used to make sure that states are evaluated exactly
+as the user expects. It can be used to double check that a state preformed
+exactly how it was expected to, or to make 100% sure that a state only runs
+under certain conditions. The use of unless or onlyif options help make states
+even more stateful. The <code class="docutils literal"><span class="pre">check_cmd</span></code> option helps ensure that the result of a
+state is evaluated correctly.</p>
+<div class="section" id="reload">
+<h3>Reload<a class="headerlink" href="#reload" title="永久链接至标题">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">reload_modules</span></code> is a boolean option that forces salt to reload its modules
+after a state finishes. See <a class="reference internal" href="index.html#reloading-modules"><span>Reloading Modules</span></a>.</p>
+</div>
+<div class="section" id="unless">
+<h3>Unless<a class="headerlink" href="#unless" title="永久链接至标题">¶</a></h3>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<p>The <code class="docutils literal"><span class="pre">unless</span></code> requisite specifies that a state should only run when any of
+the specified commands return <code class="docutils literal"><span class="pre">False</span></code>. The <code class="docutils literal"><span class="pre">unless</span></code> requisite operates
+as NAND and is useful in giving more granular control over when a state should
+execute.</p>
+<p><strong>NOTE</strong>: Under the hood <code class="docutils literal"><span class="pre">unless</span></code> calls <code class="docutils literal"><span class="pre">cmd.retcode</span></code> with
+<code class="docutils literal"><span class="pre">python_shell=True</span></code>. This means the commands referenced by <code class="docutils literal"><span class="pre">unless</span></code> will be
+parsed by a shell, so beware of side-effects as this shell will be run with the
+same privileges as the salt-minion. Also be aware that the boolean value is
+determined by the shell's concept of <code class="docutils literal"><span class="pre">True</span></code> and <code class="docutils literal"><span class="pre">False</span></code>, rather than Python's
+concept of <code class="docutils literal"><span class="pre">True</span></code> and <code class="docutils literal"><span class="pre">False</span></code>.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">vim</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">unless</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">rpm -q vim-enhanced</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ls /usr/bin/vim</span>
+</pre></div>
+</div>
+<p>In the example above, the state will only run if either the vim-enhanced
+package is not installed (returns <code class="docutils literal"><span class="pre">False</span></code>) or if /usr/bin/vim does not
+exist (returns <code class="docutils literal"><span class="pre">False</span></code>). The state will run if both commands return
+<code class="docutils literal"><span class="pre">False</span></code>.</p>
+<p>However, the state will not run if both commands return <code class="docutils literal"><span class="pre">True</span></code>.</p>
+<p>Unless checks are resolved for each name to which they are associated.</p>
+<p>For example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">deploy_app</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">names</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">first_deploy_cmd</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">second_deploy_cmd</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">unless</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ls /usr/bin/vim</span>
+</pre></div>
+</div>
+<p>In the above case, <code class="docutils literal"><span class="pre">some_check</span></code> will be run prior to _each_ name -- once for
+<code class="docutils literal"><span class="pre">first_deploy_cmd</span></code> and a second time for <code class="docutils literal"><span class="pre">second_deploy_cmd</span></code>.</p>
+</div>
+<div class="section" id="onlyif">
+<h3>Onlyif<a class="headerlink" href="#onlyif" title="永久链接至标题">¶</a></h3>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<p>The <code class="docutils literal"><span class="pre">onlyif</span></code> requisite specifies that if each command listed in <code class="docutils literal"><span class="pre">onlyif</span></code>
+returns <code class="docutils literal"><span class="pre">True</span></code>, then the state is run. If any of the specified commands
+return <code class="docutils literal"><span class="pre">False</span></code>, the state will not run.</p>
+<p><strong>NOTE</strong>: Under the hood <code class="docutils literal"><span class="pre">onlyif</span></code> calls <code class="docutils literal"><span class="pre">cmd.retcode</span></code> with
+<code class="docutils literal"><span class="pre">python_shell=True</span></code>. This means the commands referenced by <code class="docutils literal"><span class="pre">onlyif</span></code> will be
+parsed by a shell, so beware of side-effects as this shell will be run with the
+same privileges as the salt-minion. Also be aware that the boolean value is
+determined by the shell's concept of <code class="docutils literal"><span class="pre">True</span></code> and <code class="docutils literal"><span class="pre">False</span></code>, rather than Python's
+concept of <code class="docutils literal"><span class="pre">True</span></code> and <code class="docutils literal"><span class="pre">False</span></code>.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">stop-volume</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">module.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">glusterfs.stop_volume</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">m_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">work</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">onlyif</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">gluster volume status work</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">order</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+
+<span class="l l-Scalar l-Scalar-Plain">remove-volume</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">module.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">glusterfs.delete</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">m_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">work</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">onlyif</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">gluster volume info work</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">watch</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cmd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">stop-volume</span>
+</pre></div>
+</div>
+<p>The above example ensures that the stop_volume and delete modules only run
+if the gluster commands return a 0 ret value.</p>
+</div>
+<div class="section" id="listen-listen-in">
+<h3>Listen/Listen_in<a class="headerlink" href="#listen-listen-in" title="永久链接至标题">¶</a></h3>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<p>listen and its counterpart listen_in trigger mod_wait functions for states,
+when those states succeed and result in changes, similar to how watch its
+counterpart watch_in. Unlike watch and watch_in, listen, and listen_in will
+not modify the order of states and can be used to ensure your states are
+executed in the order they are defined. All listen/listen_in actions will occur
+at the end of a state run, after all states have completed.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">restart-apache2</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">apache2</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">listen</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/apache2/apache2.conf</span>
+
+<span class="l l-Scalar l-Scalar-Plain">configure-apache2</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/apache2/apache2.conf</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://apache2/apache2.conf</span>
+</pre></div>
+</div>
+<p>This example will cause apache2 to be restarted when the apache2.conf file is
+changed, but the apache2 restart will happen at the end of the state run.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">restart-apache2</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">apache2</span>
+
+<span class="l l-Scalar l-Scalar-Plain">configure-apache2</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/apache2/apache2.conf</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://apache2/apache2.conf</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">listen_in</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">service</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">apache2</span>
+</pre></div>
+</div>
+<p>This example does the same as the above example, but puts the state argument
+on the file resource, rather than the service resource.</p>
+</div>
+<div class="section" id="check-cmd">
+<h3>check_cmd<a class="headerlink" href="#check-cmd" title="永久链接至标题">¶</a></h3>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<p>Check Command is used for determining that a state did or did not run as
+expected.</p>
+<p><strong>NOTE</strong>: Under the hood <code class="docutils literal"><span class="pre">check_cmd</span></code> calls <code class="docutils literal"><span class="pre">cmd.retcode</span></code> with
+<code class="docutils literal"><span class="pre">python_shell=True</span></code>. This means the commands referenced by unless will be
+parsed by a shell, so beware of side-effects as this shell will be run with the
+same privileges as the salt-minion.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">comment-repo</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.replace</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/yum.repos.d/fedora.repo</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pattern</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">^enabled=0</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">repl</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">enabled=1</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">check_cmd</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="kt">!</span> <span class="l l-Scalar l-Scalar-Plain">grep &#39;enabled=0&#39; /etc/yum.repos.d/fedora.repo</span>
+</pre></div>
+</div>
+<p>This will attempt to do a replace on all <code class="docutils literal"><span class="pre">enabled=0</span></code> in the .repo file, and
+replace them with <code class="docutils literal"><span class="pre">enabled=1</span></code>. The <code class="docutils literal"><span class="pre">check_cmd</span></code> is just a bash command. It
+will do a grep for <code class="docutils literal"><span class="pre">enabled=0</span></code> in the file, and if it finds any, it will
+return a 0, which will be inverted by the leading <code class="docutils literal"><span class="pre">!</span></code>, causing <code class="docutils literal"><span class="pre">check_cmd</span></code>
+to set the state as failed. If it returns a 1, meaning it didn't find any
+<code class="docutils literal"><span class="pre">enabled=0</span></code>, it will be inverted by the leading <code class="docutils literal"><span class="pre">!</span></code>, returning a 0, and
+declaring the function succeeded.</p>
+<p><strong>NOTE</strong>: This requisite <code class="docutils literal"><span class="pre">check_cmd</span></code> functions differently than the <code class="docutils literal"><span class="pre">check_cmd</span></code>
+of the <code class="docutils literal"><span class="pre">file.managed</span></code> state.</p>
+</div>
+<div class="section" id="overriding-checks">
+<h3>Overriding Checks<a class="headerlink" href="#overriding-checks" title="永久链接至标题">¶</a></h3>
+<p>There are two commands used for the above checks.</p>
+<p><code class="docutils literal"><span class="pre">mod_run_check</span></code> is used to check for <code class="docutils literal"><span class="pre">onlyif</span></code> and <code class="docutils literal"><span class="pre">unless</span></code>. If the goal is to
+override the global check for these to variables, include a <code class="docutils literal"><span class="pre">mod_run_check</span></code> in the
+salt/states/ file.</p>
+<p><code class="docutils literal"><span class="pre">mod_run_check_cmd</span></code> is used to check for the check_cmd options. To override
+this one, include a <code class="docutils literal"><span class="pre">mod_run_check_cmd</span></code> in the states file for the state.</p>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="providers.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="State Providers" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="startup.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Startup States" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../topics/states/index.html">Configuration Management</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/starting_states.html">我们如何使用Salt States？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt1.html">States教程，第1部分 - 基础用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt2.html">States tutorial, part 2 - More Complex States, Requisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt3.html">States tutorial, part 3 - Templating, Includes, Extends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt4.html">States tutorial, part 4</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">State System Reference</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aggregate.html">Mod Aggregate State Runtime Modifications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="altering_states.html">Altering States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="backup_mode.html">File State Backups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compiler_ordering.html">Understanding State Compiler Ordering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extend.html">Extending External SLS Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="failhard.html">Failhard Global Option</a></li>
+<li class="toctree-l3"><a class="reference internal" href="global_state_arguments.html">Global State Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="highstate.html">Highstate data structure definitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="include.html">Include and Exclude</a></li>
+<li class="toctree-l3"><a class="reference internal" href="layers.html">State System Layers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="master_side.html">The Orchestrate Runner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ordering.html">Ordering States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="providers.html">State Providers</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Requisites and Other Global State Arguments</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fire-event-notifications">Fire Event Notifications</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Requisites</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#requisite-matching">Requisite matching</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#omitting-state-module-in-requisites">Omitting state module in requisites</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#state-target-matching">State target matching</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#identifier-matching">Identifier matching</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#direct-requisite-and-requisite-in-types">Direct Requisite and Requisite_in types</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#require">require</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#require-an-entire-sls-file">Require an entire sls file</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#watch">watch</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#prereq">prereq</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#onfail">onfail</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#onchanges">onchanges</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#use">use</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#the-in-versions-of-requisites">The _in versions of requisites</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#altering-states">Altering States</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#reload">Reload</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#unless">Unless</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#onlyif">Onlyif</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#listen-listen-in">Listen/Listen_in</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#check-cmd">check_cmd</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#overriding-checks">Overriding Checks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="startup.html">Startup States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html">State Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="top.html">顶级配置文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vars.html">SLS Template Variable Reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="writing.html">State Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#state-management">State Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#understanding-the-salt-state-system-components">理解Salt状态系统组件</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt 0.16.0 Release Notes</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Release Notes" href="index.html">
+        <link rel="next" title="Salt 0.16.1 Release Notes" href="0.16.1.html">
+        <link rel="prev" title="Salt 0.15.3 Release Notes" href="0.15.3.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="0.15.3.html" title="Salt 0.15.3 Release Notes">上一页</a>
+            
+        </li>
+        <li>
+            <a href="0.16.1.html" title="Salt 0.16.1 Release Notes">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="salt-0-16-0-release-notes">
+<h1>Salt 0.16.0 Release Notes<a class="headerlink" href="#salt-0-16-0-release-notes" title="永久链接至标题">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">release:</th><td class="field-body">2013-07-01</td>
+</tr>
+</tbody>
+</table>
+<p>The 0.16.0 release is an exciting one, with new features in master redundancy,
+and a new, powerful requisite.</p>
+<div class="section" id="major-features">
+<h2>主要特性<a class="headerlink" href="#major-features" title="永久链接至标题">¶</a></h2>
+<div class="section" id="multi-master">
+<h3>Multi-Master<a class="headerlink" href="#multi-master" title="永久链接至标题">¶</a></h3>
+<p>This new capability allows for a minion to be actively connected to multiple
+salt masters at the same time. This allows for multiple masters to send out commands
+to minions and for minions to automatically reconnect to masters that have gone
+down. A tutorial is available to help get started here:</p>
+<p><a class="reference internal" href="../tutorials/multimaster.html"><em>Multi Master Tutorial</em></a></p>
+</div>
+<div class="section" id="prereq-the-new-requisite">
+<h3>Prereq, the New Requisite<a class="headerlink" href="#prereq-the-new-requisite" title="永久链接至标题">¶</a></h3>
+<p>The new <cite>prereq</cite> requisite is very powerful! It allows for states to execute
+based on a state that is expected to make changes in the future. This allows
+for a change on the system to be preempted by another execution. A good example
+is needing to shut down a service before modifying files associated with it,
+allowing, for instance, a webserver to be shut down allowing a load balancer to
+stop sending requests while server side code is updated. In this case, the
+prereq will only run if changes are expected to happen in the prerequired
+state, and the prerequired state will always run after the prereq state and
+only if the prereq state succeeds.</p>
+</div>
+<div class="section" id="peer-system-improvements">
+<h3>Peer System Improvements<a class="headerlink" href="#peer-system-improvements" title="永久链接至标题">¶</a></h3>
+<p>The peer system has been revamped to make it more reliable, faster, and like
+the rest of Salt, async. The peer calls when an updated minion and master are
+used together will be much faster!</p>
+</div>
+<div class="section" id="relative-includes">
+<h3>Relative Includes<a class="headerlink" href="#relative-includes" title="永久链接至标题">¶</a></h3>
+<p>The ability to include an sls relative to the defined sls has been added, the
+new syntax id documented here:</p>
+<p><a class="reference internal" href="../../ref/states/include.html"><em>Includes</em></a></p>
+</div>
+<div class="section" id="more-state-output-options">
+<h3>More State Output Options<a class="headerlink" href="#more-state-output-options" title="永久链接至标题">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">state_output</span></code> option in the past only supported <cite>full</cite> and <cite>terse</cite>,
+0.16.0 add the <cite>mixed</cite> and <cite>changes</cite> modes further refining how states are sent
+to users' eyes.</p>
+</div>
+<div class="section" id="improved-windows-support">
+<h3>Improved Windows Support<a class="headerlink" href="#improved-windows-support" title="永久链接至标题">¶</a></h3>
+<p>Support for Salt on Windows continues to improve. Software management on
+Windows has become more seamless with Linux/UNIX/BSD software management.
+Installed software is now recognized by the short names defined in the
+<a class="reference internal" href="../windows/windows-package-manager.html"><em>repository SLS</em></a>. This makes it
+possible to run <code class="docutils literal"><span class="pre">salt</span> <span class="pre">'*'</span> <span class="pre">pkg.version</span> <span class="pre">firefox</span></code> and get back results from
+Windows and non-Windows minions alike.</p>
+<p>When templating files on Windows, Salt will now correctly use Windows
+appropriate line endings. This makes it much easier to edit and consume files
+on Windows.</p>
+<p>When using the cmd state the <code class="docutils literal"><span class="pre">shell</span></code> option now allows for specifying
+Windows Powershell as an alternate shell to execute cmd.run and cmd.script.
+This opens up Salt to all the power of Windows Powershell and its advanced
+Windows management capabilities.</p>
+<p>Several fixes and optimizations were added for the Windows networking modules,
+especially when working with IPv6.</p>
+<p>A system module was added that makes it easy to restart and shutdown Windows
+minions.</p>
+<p>The Salt Minion will now look for its config file in <code class="docutils literal"><span class="pre">c:\salt\conf</span></code> by
+default. This means that it's no longer necessary to specify the <code class="docutils literal"><span class="pre">-c</span></code> option
+to specify the location of the config file when starting the Salt Minion on
+Windows in a terminal.</p>
+</div>
+<div class="section" id="multiple-targets-for-pkg-removed-pkg-purged-states">
+<h3>Multiple Targets for pkg.removed, pkg.purged States<a class="headerlink" href="#multiple-targets-for-pkg-removed-pkg-purged-states" title="永久链接至标题">¶</a></h3>
+<p>Both <a class="reference internal" href="../../ref/states/all/salt.states.pkg.html#salt.states.pkg.removed" title="salt.states.pkg.removed"><code class="xref py py-mod docutils literal"><span class="pre">pkg.removed</span></code></a> and <a class="reference internal" href="../../ref/states/all/salt.states.pkg.html#salt.states.pkg.purged" title="salt.states.pkg.purged"><code class="xref py py-mod docutils literal"><span class="pre">pkg.purged</span></code></a> now support the <code class="docutils literal"><span class="pre">pkgs</span></code> argument, which allow for
+multiple packages to be targeted in a single state. This, as in
+<a class="reference internal" href="../../ref/states/all/salt.states.pkg.html#salt.states.pkg.installed" title="salt.states.pkg.installed"><code class="xref py py-mod docutils literal"><span class="pre">pkg.installed</span></code></a>, helps speed up these
+states by reducing the number of times that the package management tools (apt,
+yum, etc.) need to be run.</p>
+</div>
+<div class="section" id="random-times-in-cron-states">
+<h3>Random Times in Cron States<a class="headerlink" href="#random-times-in-cron-states" title="永久链接至标题">¶</a></h3>
+<p>The temporal parameters in <a class="reference internal" href="../../ref/states/all/salt.states.cron.html#salt.states.cron.present" title="salt.states.cron.present"><code class="xref py py-mod docutils literal"><span class="pre">cron.present</span></code></a>
+states (minute, hour, etc.) can now be randomized by using <code class="docutils literal"><span class="pre">random</span></code> instead
+of a specific value. For example, by using the <code class="docutils literal"><span class="pre">random</span></code> keyword in the
+<code class="docutils literal"><span class="pre">minute</span></code> parameter of a cron state, the same cron job can be pushed to
+hundreds or thousands of hosts, and they would each use a randomly-generated
+minute. This can be helpful when the cron job accesses a network resource, and
+it is not desirable for all hosts to run the job concurrently.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/path/to/cron/script</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cron.present</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">minute</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">random</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">hour</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">2</span>
+</pre></div>
+</div>
+<p>Since Salt assumes a value of <code class="docutils literal"><span class="pre">*</span></code> for unspecified temporal parameters, adding
+a parameter to the state and setting it to <code class="docutils literal"><span class="pre">random</span></code> will change that value
+from <code class="docutils literal"><span class="pre">*</span></code> to a randomized numeric value. However, if that field in the cron
+entry on the minion already contains a numeric value, then using the <code class="docutils literal"><span class="pre">random</span></code>
+keyword will not modify it.</p>
+</div>
+<div class="section" id="confirmation-prompt-on-key-acceptance">
+<h3>Confirmation Prompt on Key Acceptance<a class="headerlink" href="#confirmation-prompt-on-key-acceptance" title="永久链接至标题">¶</a></h3>
+<p>When accepting new keys with <code class="docutils literal"><span class="pre">salt-key</span> <span class="pre">-a</span> <span class="pre">minion-id</span></code> or <code class="docutils literal"><span class="pre">salt-key</span> <span class="pre">-A</span></code>,
+there is now a prompt that will show the affected keys and ask for confirmation
+before proceeding. This prompt can be bypassed using the <code class="docutils literal"><span class="pre">-y</span></code> or <code class="docutils literal"><span class="pre">--yes</span></code>
+command line argument, as with other <code class="docutils literal"><span class="pre">salt-key</span></code> commands.</p>
+</div>
+<div class="section" id="support-for-setting-password-hashes-on-bsd-minions">
+<h3>Support for Setting Password Hashes on BSD Minions<a class="headerlink" href="#support-for-setting-password-hashes-on-bsd-minions" title="永久链接至标题">¶</a></h3>
+<p>FreeBSD, NetBSD, and OpenBSD all now support setting passwords in
+<a class="reference internal" href="../../ref/states/all/salt.states.user.html#salt.states.user.present" title="salt.states.user.present"><code class="xref py py-mod docutils literal"><span class="pre">user.present</span></code></a> states.</p>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="0.15.3.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt 0.15.3 Release Notes" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="0.16.1.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt 0.16.1 Release Notes" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Release Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#latest-branch-release">Latest Branch Release</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#previous-releases">Previous Releases</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="2016.3.0.html">Salt 2016.3.0 Release Notes - Codename Boron</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.8.html">Salt 2015.8.8 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.7.html">Salt 2015.8.7 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.5.html">Salt 2015.8.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.4.html">Salt 2015.8.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.3.html">Salt 2015.8.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.2.html">Salt 2015.8.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.1.html">Salt 2015.8.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.0.html">Salt 2015.8.0 Release Notes - Codename Beryllium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.10.html">Salt 2015.5.10 Release Notes (In Progress)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.9.html">Salt 2015.5.9 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.8.html">Salt 2015.5.8 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.7.html">Salt 2015.5.7 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.6.html">Salt 2015.5.6 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.5.html">Salt 2015.5.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.4.html">Salt 2015.5.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.3.html">Salt 2015.5.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.2.html">Salt 2015.5.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.1.html">Salt 2015.5.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.0.html">Salt 2015.5.0 Release Notes - Codename Lithium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.6.html">Salt 2014.7.6 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.5.html">Salt 2014.7.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.4.html">Salt 2014.7.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.3.html">Salt 2014.7.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.2.html">Salt 2014.7.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.1.html">Salt 2014.7.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.0.html">Salt 2014.7.0 Release Notes - Codename Helium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.13.html">Salt 2014.1.13 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.12.html">Salt 2014.1.12 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.11.html">Salt 2014.1.11 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.10.html">Salt 2014.1.10 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.9.html">Salt 2014.1.9 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.8.html">Salt 2014.1.8 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.7.html">Salt 2014.1.7 发行注记</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.6.html">Salt 2014.1.6 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.5.html">Salt 2014.1.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.4.html">Salt 2014.1.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.3.html">Salt 2014.1.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.2.html">Salt 2014.1.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.1.html">Salt 2014.1.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.0.html">Salt 2014.1.0 Release Notes - Codename Hydrogen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.5.html">Salt 0.17.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.4.html">Salt 0.17.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.3.html">Salt 0.17.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.2.html">Salt 0.17.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.1.html">Salt 0.17.1发行注记</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.0.html">Salt 0.17.0发行注记</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.4.html">Salt 0.16.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.3.html">Salt 0.16.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.2.html">Salt 0.16.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.1.html">Salt 0.16.1 Release Notes</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Salt 0.16.0 Release Notes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#major-features">主要特性</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#multi-master">Multi-Master</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#prereq-the-new-requisite">Prereq, the New Requisite</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#peer-system-improvements">Peer System Improvements</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#relative-includes">Relative Includes</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#more-state-output-options">More State Output Options</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#improved-windows-support">Improved Windows Support</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#multiple-targets-for-pkg-removed-pkg-purged-states">Multiple Targets for pkg.removed, pkg.purged States</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#random-times-in-cron-states">Random Times in Cron States</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#confirmation-prompt-on-key-acceptance">Confirmation Prompt on Key Acceptance</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#support-for-setting-password-hashes-on-bsd-minions">Support for Setting Password Hashes on BSD Minions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="0.15.3.html">Salt 0.15.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.15.2.html">Salt 0.15.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.15.1.html">Salt 0.15.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.15.0.html">Salt 0.15.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.14.1.html">Salt 0.14.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.14.0.html">Salt 0.14.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.13.3.html">Salt 0.13.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.13.2.html">Salt 0.13.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.13.1.html">Salt 0.13.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.13.0.html">Salt 0.13.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.12.1.html">Salt 0.12.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.12.0.html">Salt 0.12.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.11.1.html">Salt 0.11.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.11.0.html">Salt 0.11.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.5.html">Salt 0.10.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.4.html">Salt 0.10.4发行注记</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.3.html">Salt 0.10.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.2.html">Salt 0.10.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.1.html">Salt 0.10.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.0.html">Salt 0.10.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.9.html">Salt 0.9.9 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.8.html">Salt 0.9.8 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.7.html">Salt 0.9.7 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.6.html">Salt 0.9.6 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.5.html">Salt 0.9.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.4.html">Salt 0.9.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.3.html">Salt 0.9.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.2.html">Salt 0.9.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.1.html">Salt 0.9.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.0.html">Salt 0.9.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.8.9.html">Salt 0.8.9 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.8.8.html">Salt 0.8.8 release notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.8.7.html">Salt 0.8.7 release notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.8.0.html">Salt 0.8.0 release notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.7.0.html">Salt 0.7.0 release notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.6.0.html">Salt 0.6.0 release notes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

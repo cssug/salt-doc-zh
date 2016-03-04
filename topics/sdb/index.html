@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Storing Data in Other Databases</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Configuring Salt" href="../configuration/index.html">
+        <link rel="next" title="以非特权用户身份运行Salt Master/Minion" href="../../ref/configuration/nonroot.html">
+        <link rel="prev" title="SPM Development Guide" href="../spm/dev.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../spm/dev.html" title="SPM Development Guide">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../../ref/configuration/nonroot.html" title="以非特权用户身份运行Salt Master/Minion">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="storing-data-in-other-databases">
+<span id="sdb"></span><h1>Storing Data in Other Databases<a class="headerlink" href="#storing-data-in-other-databases" title="永久链接至标题">¶</a></h1>
+<p>The SDB interface is designed to store and retrieve data that, unlike pillars
+and grains, is not necessarily minion-specific. The initial design goal was to
+allow passwords to be stored in a secure database, such as one managed by the
+keyring package, rather than as plain-text files. However, as a generic database
+interface, it could conceptually be used for a number of other purposes.</p>
+<p>SDB was added to Salt in version 2014.7.0. SDB is currently experimental, and
+should probably not be used in production.</p>
+<div class="section" id="sdb-configuration">
+<h2>SDB Configuration<a class="headerlink" href="#sdb-configuration" title="永久链接至标题">¶</a></h2>
+<p>In order to use the SDB interface, a configuration profile must be set up in
+either the master or minion configuration file. The configuration stanza
+includes the name/ID that the profile will be referred to as, a <code class="docutils literal"><span class="pre">driver</span></code>
+setting, and any other arguments that are necessary for the SDB module that will
+be used. For instance, a profile called <code class="docutils literal"><span class="pre">mykeyring</span></code>, which uses the
+<code class="docutils literal"><span class="pre">system</span></code> service in the <code class="docutils literal"><span class="pre">keyring</span></code> module would look like:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">mykeyring</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">keyring</span>
+  <span class="l l-Scalar l-Scalar-Plain">service</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">system</span>
+</pre></div>
+</div>
+<p>It is recommended to keep the name of the profile simple, as it is used in the
+SDB URI as well.</p>
+</div>
+<div class="section" id="sdb-uris">
+<h2>SDB URIs<a class="headerlink" href="#sdb-uris" title="永久链接至标题">¶</a></h2>
+<p>SDB is designed to make small database queries (hence the name, SDB) using a
+compact URL. This allows users to reference a database value quickly inside
+a number of Salt configuration areas, without a lot of overhead. The basic
+format of an SDB URI is:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">sdb://&lt;profile&gt;/&lt;args&gt;</span>
+</pre></div>
+</div>
+<p>The profile refers to the configuration profile defined in either the master or
+the minion configuration file. The args are specific to the module referred to
+in the profile, but will typically only need to refer to the key of a
+key/value pair inside the database. This is because the profile itself should
+define as many other parameters as possible.</p>
+<p>For example, a profile might be set up to reference credentials for a specific
+OpenStack account. The profile might look like:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">kevinopenstack</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">keyring</span>
+  <span class="l l-Scalar l-Scalar-Plain">service</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt.cloud.openstack.kevin</span>
+</pre></div>
+</div>
+<p>And the URI used to reference the password might look like:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">sdb://kevinopenstack/password</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="getting-and-setting-sdb-values">
+<h2>Getting and Setting SDB Values<a class="headerlink" href="#getting-and-setting-sdb-values" title="永久链接至标题">¶</a></h2>
+<p>Once an SDB driver is configured, you can use the <code class="docutils literal"><span class="pre">sdb</span></code> execution module to
+set and get values from it. There are two functions that will appear in any
+SDB module: <code class="docutils literal"><span class="pre">set</span></code> and <code class="docutils literal"><span class="pre">get</span></code>.</p>
+<p>Getting a value requires only the SDB URI to be specified. To retreive a value
+from the <code class="docutils literal"><span class="pre">kevinopenstack</span></code> profile above, you would use:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-call sdb.get sdb://kevinopenstack/password
+</pre></div>
+</div>
+<p>Some drivers use slightly more complex URIs. For instance, the <code class="docutils literal"><span class="pre">vault</span></code> driver
+requires the full path to where the key is stored, followed by a question mark,
+followed by the key to be retrieved.  If you were using a profile called
+<code class="docutils literal"><span class="pre">myvault</span></code>, you would use a URI that looks like:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-call sdb.get <span class="s1">&#39;sdb://myvault/secret/salt?saltstack&#39;</span>
+</pre></div>
+</div>
+<p>Setting a value uses the same URI as would be used to retrieve it, followed
+by the value as another argument. For the above <code class="docutils literal"><span class="pre">myvault</span></code> URI, you would set
+a new value using a command like:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-call sdb.set <span class="s1">&#39;sdb://myvault/secret/salt?saltstack&#39;</span> <span class="s1">&#39;super awesome&#39;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">sdb.get</span></code> and <code class="docutils literal"><span class="pre">sdb.set</span></code> functions are also available in the runner
+system:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run sdb.get <span class="s1">&#39;sdb://myvault/secret/salt?saltstack&#39;</span>
+salt-run sdb.set <span class="s1">&#39;sdb://myvault/secret/salt?saltstack&#39;</span> <span class="s1">&#39;super awesome&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-sdb-uris-in-files">
+<h2>Using SDB URIs in Files<a class="headerlink" href="#using-sdb-uris-in-files" title="永久链接至标题">¶</a></h2>
+<p>SDB URIs can be used in both configuration files, and files that are processed
+by the renderer system (jinja, mako, etc.). In a configuration file (such as
+<code class="docutils literal"><span class="pre">/etc/salt/master</span></code>, <code class="docutils literal"><span class="pre">/etc/salt/minion</span></code>, <code class="docutils literal"><span class="pre">/etc/salt/cloud</span></code>, etc.), make an
+entry as usual, and set the value to the SDB URI. For instance:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">mykey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">sdb://myetcd/mykey</span>
+</pre></div>
+</div>
+<p>To retrieve this value using a module, the module in question must use the
+<code class="docutils literal"><span class="pre">config.get</span></code> function to retrive configuration values. This would look
+something like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">mykey</span> <span class="o">=</span> <span class="n">__salt__</span><span class="p">[</span><span class="s1">&#39;config.get&#39;</span><span class="p">](</span><span class="s1">&#39;mykey&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Templating renderers use a similar construct. To get the <code class="docutils literal"><span class="pre">mykey</span></code> value from
+above in Jinja, you would use:</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="cp">{{</span> <span class="nv">salt</span><span class="o">[</span><span class="s1">&#39;config.get&#39;</span><span class="o">](</span><span class="s1">&#39;mykey&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+</div>
+<p>When retrieving data from configuration files using <code class="docutils literal"><span class="pre">config.get</span></code>, the SDB
+URI need only appear in the configuration file itself.</p>
+<p>If you would like to retrieve a key directly from SDB, you would call the
+<code class="docutils literal"><span class="pre">sdb.get</span></code> function directly, using the SDB URI. For instance, in Jinja:</p>
+<div class="highlight-jinja"><div class="highlight"><pre><span></span><span class="cp">{{</span> <span class="nv">salt</span><span class="o">[</span><span class="s1">&#39;sdb.get&#39;</span><span class="o">](</span><span class="s1">&#39;sdb://myetcd/mykey&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+</div>
+<p>When writing Salt modules, it is not recommended to call <code class="docutils literal"><span class="pre">sdb.get</span></code> directly,
+as it requires the user to provide vaules in SDB, using a specific URI. Use
+<code class="docutils literal"><span class="pre">config.get</span></code> instead.</p>
+</div>
+<div class="section" id="writing-sdb-modules">
+<h2>Writing SDB Modules<a class="headerlink" href="#writing-sdb-modules" title="永久链接至标题">¶</a></h2>
+<p>There is currently one function that MUST exist in any SDB module (<code class="docutils literal"><span class="pre">get()</span></code>)
+and one that SHOULD exist (<code class="docutils literal"><span class="pre">set_()</span></code>). If using a (<code class="docutils literal"><span class="pre">set_()</span></code>) function, a
+<code class="docutils literal"><span class="pre">__func_alias__</span></code> dictionary MUST be declared in the module as well:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">__func_alias__</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;set_&#39;</span><span class="p">:</span> <span class="s1">&#39;set&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This is because <code class="docutils literal"><span class="pre">set</span></code> is a Python built-in, and therefore functions should not
+be created which are called <code class="docutils literal"><span class="pre">set()</span></code>. The <code class="docutils literal"><span class="pre">__func_alias__</span></code> functionality is
+provided via Salt's loader interfaces, and allows legally-named functions to be
+referred to using names that would otherwise be unwise to use.</p>
+<p>The <code class="docutils literal"><span class="pre">get()</span></code> function is required, as it will be called via functions in other
+areas of the code which make use of the <code class="docutils literal"><span class="pre">sdb://</span></code> URI. For example, the
+<code class="docutils literal"><span class="pre">config.get</span></code> function in the <code class="docutils literal"><span class="pre">config</span></code> execution module uses this function.</p>
+<p>The <code class="docutils literal"><span class="pre">set_()</span></code> function may be provided, but is not required, as some sources
+may be read-only, or may be otherwise unwise to access via a URI (for instance,
+because of SQL injection attacks).</p>
+<p>A simple example of an SDB module is <code class="docutils literal"><span class="pre">salt/sdb/keyring_db.py</span></code>, as it provides
+basic examples of most, if not all, of the types of functionality that are
+available not only for SDB modules, but for Salt modules in general.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../spm/dev.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="SPM Development Guide" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../../ref/configuration/nonroot.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="以非特权用户身份运行Salt Master/Minion" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/master.html">配置Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/minion.html">配置Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/examples.html">Configuration file examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../blackout/index.html">Minion Blackout Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../eauth/access_control.html">Access Control System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs/index.html">Job Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs/job_cache.html">Managing the Job Cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs/external_cache.html">Storing Job Results in an External System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/logging/index.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/file_server/index.html">Salt文件服务器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/gitfs.html">Git Fileserver Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/minionfs.html">MinionFS Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spm/index.html">Salt Package Manager</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Storing Data in Other Databases</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#sdb-configuration">SDB Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sdb-uris">SDB URIs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#getting-and-setting-sdb-values">Getting and Setting SDB Values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-sdb-uris-in-files">Using SDB URIs in Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#writing-sdb-modules">Writing SDB Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/nonroot.html">以非特权用户身份运行Salt Master/Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/cron.html">使用cron运行Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hardening.html">Hardening Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../security/index.html">Security disclosure policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transports/index.html">Salt Transport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../master_tops/index.html">Master Tops系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/returners/index.html">返回器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/renderers/index.html">Renderers渲染器</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

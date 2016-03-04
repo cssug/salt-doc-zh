@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt Cloud 0.7.0 Release Notes</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="salt-cloud-0-7-0-release-notes">
+<h1>Salt Cloud 0.7.0 Release Notes<a class="headerlink" href="#salt-cloud-0-7-0-release-notes" title="永久链接至标题">¶</a></h1>
+<p>Salt Cloud marches forward with the 0.7.0 release. As is customary for Salt
+Stack projects the 0.7.0 release is intended to be much more robust and
+deliver a more complete core feature set. Salt Cloud 0.7.0 is just that.</p>
+<p>With new tools to help look into what is available on cloud providers,
+new additions to make cloud management more stateful and the addition of
+more supported cloud platforms 0.7.0 has greatly enhanced the capabilities
+of the overall Salt platform.</p>
+<div class="section" id="documentation">
+<h2>文档<a class="headerlink" href="#documentation" title="永久链接至标题">¶</a></h2>
+<p>The documentation for Salt Cloud can be found on Read the Docs:
+<a class="reference external" href="http://salt-cloud.readthedocs.org">http://salt-cloud.readthedocs.org</a></p>
+</div>
+<div class="section" id="download">
+<h2>下载<a class="headerlink" href="#download" title="永久链接至标题">¶</a></h2>
+<p>Salt Cloud can be downloaded and install via pypi or github:</p>
+<p><a class="reference external" href="https://pypi.python.org/packages/source/s/salt-cloud/salt-cloud-0.7.0.tar.gz">https://pypi.python.org/packages/source/s/salt-cloud/salt-cloud-0.7.0.tar.gz</a></p>
+<p><a class="reference external" href="https://cloud.github.com/downloads/saltstack/salt-cloud/salt-cloud-0.7.0.tar.gz">https://cloud.github.com/downloads/saltstack/salt-cloud/salt-cloud-0.7.0.tar.gz</a></p>
+<p>Some packages have been made available for salt-cloud and more on on their
+way. Packages for Arch, and FreeBSD are being made available thanks to the
+work of Christer Edwards, and packages for RHEL and Fedora are being created
+by Clint Savage. Package availability will be announced on the salt mailing list.</p>
+</div>
+<div class="section" id="new-cloud-provider-support">
+<h2>New Cloud Provider Support<a class="headerlink" href="#new-cloud-provider-support" title="永久链接至标题">¶</a></h2>
+<p>The following cloud providers are now supported:</p>
+<dl class="docutils">
+<dt>Amazon AWS</dt>
+<dd><a class="reference external" href="http://aws.amazon.com/ec2/">http://aws.amazon.com/ec2/</a></dd>
+<dt>Rackspace Cloud</dt>
+<dd><a class="reference external" href="http://www.rackspace.com/cloud/">http://www.rackspace.com/cloud/</a></dd>
+<dt>Linode</dt>
+<dd><a class="reference external" href="https://www.linode.com/">https://www.linode.com/</a></dd>
+<dt>Joyent</dt>
+<dd><a class="reference external" href="http://www.joyent.com/">http://www.joyent.com/</a></dd>
+<dt>GoGrid</dt>
+<dd><a class="reference external" href="http://www.gogrid.com/">http://www.gogrid.com/</a></dd>
+</dl>
+</div>
+<div class="section" id="list-available-resources">
+<h2>List Available Resources<a class="headerlink" href="#list-available-resources" title="永久链接至标题">¶</a></h2>
+<p>Setting up Salt Cloud requires knowledge of the available sizes and images on
+cloud providers. Listing the available images and sizes can now be done with
+the salt-cloud command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="o">[</span>root@saltmaster<span class="o">]</span><span class="c1"># salt-cloud --list-sizes linode</span>
+linode
+  Linode 1024
+    bandwidth: 400
+    disk: 40960
+    id: 3
+    name: Linode 1024
+    ram: 1024
+    uuid: 56e6f495190cb2ed1a343f7159ad447cf27d906d
+  Linode 12GB
+    bandwidth: 2000
+    disk: 491520
+    id: 8
+    name: Linode 12GB
+    ram: 12288
+    uuid: 3d1731ebefdbcb4c283957b43d45f89a01f67c5f
+  Linode 1536
+    bandwidth: 600
+    disk: 61440
+    id: 4
+    name: Linode 1536
+    ram: 1536
+    uuid: f0f28628cc70c5f2656aa3f313588d8509ee3787
+  Linode 16GB
+    bandwidth: 2000
+    disk: 655360
+    id: 9
+    name: Linode 16GB
+    ram: 16384
+    uuid: 208cc3c0a60c4eab6ed6861344fef0311c13ffd2
+  Linode 2048
+    bandwidth: 800
+    disk: 81920
+    id: 5
+    name: Linode 2048
+    ram: 2048
+    uuid: 0c9ee69dc7ef7a4cdce71963f8d18e76c61dd57f
+  Linode 20GB
+    bandwidth: 2000
+    disk: 819200
+    id: 10
+    name: Linode 20GB
+    ram: 20480
+    uuid: e0a7b61e3830a120eec94459c9fc34ef7c9e0e36
+  Linode 4GB
+    bandwidth: 1600
+    disk: 163840
+    id: 6
+    name: Linode 4GB
+    ram: 4096
+    uuid: 09585e0f1d4ef4aad486cfa3d53f9d8960f575e7
+  Linode 512
+    bandwidth: 200
+    disk: 20480
+    id: 1
+    name: Linode 512
+    ram: 512
+    uuid: 3497f7def3d6081e6f65ac6e577296bc6b810c05
+  Linode 768
+    bandwidth: 300
+    disk: 30720
+    id: 2
+    name: Linode 768
+    ram: 768
+    uuid: da9f0dbc144aaa234aa5d555426863c8068a8c70
+  Linode 8GB
+    bandwidth: 2000
+    disk: 327680
+    id: 7
+    name: Linode 8GB
+    ram: 8192
+    uuid: e08f8a57551297b9310545430c67667f59120606
+</pre></div>
+</div>
+</div>
+<div class="section" id="destroy">
+<h2>Destroy!<a class="headerlink" href="#destroy" title="永久链接至标题">¶</a></h2>
+<p>Salt Cloud can now destroy cloud vms as easily as it can create them. The new
+<code class="docutils literal"><span class="pre">--destroy</span></code> option can be passed to end the life of a vm:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ salt-cloud -d web1
+</pre></div>
+</div>
+<p>The map operation can now also destroy vms, the new <code class="docutils literal"><span class="pre">hard</span></code> option can be
+passed which makes vm maps much more stateful. With the <code class="docutils literal"><span class="pre">hard</span></code> option the
+vm maps are viewed as the absolute source of information for the state of
+cloud resources, and any vm that is not specified in the map file will be
+destroyed:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="o">[</span>root@saltmaster<span class="o">]</span><span class="c1"># salt-cloud -m /etc/salt/cloud.map -H</span>
+The following virtual machines are <span class="nb">set</span> to be created:
+  web1
+  riak4
+The following virtual machines are <span class="nb">set</span> to be destroyed:
+  app7
+  devtest4
+
+Proceed? <span class="o">[</span>N/y<span class="o">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

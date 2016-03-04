@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Integration Tests</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+        <link rel="up" title="Running The Tests" href="index.html">
+        <link rel="next" title="Writing Unit Tests" href="unit.html">
+        <link rel="prev" title="Running The Tests" href="index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="index.html" title="Running The Tests">上一页</a>
+            
+        </li>
+        <li>
+            <a href="unit.html" title="Writing Unit Tests">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="integration-tests">
+<h1>Integration Tests<a class="headerlink" href="#integration-tests" title="永久链接至标题">¶</a></h1>
+<p>The Salt integration tests come with a number of classes and methods which
+allow for components to be easily tested. These classes are generally inherited
+from and provide specific methods for hooking into the running integration test
+environment created by the integration tests.</p>
+<p>It is noteworthy that since integration tests validate against a running
+environment that they are generally the preferred means to write tests.</p>
+<p>The integration system is all located under <code class="docutils literal"><span class="pre">tests/integration</span></code> in the Salt
+source tree. Each directory within <code class="docutils literal"><span class="pre">tests/integration</span></code> corresponds to a
+directory in Salt's tree structure. For example, the integration tests for the
+<code class="docutils literal"><span class="pre">test.py</span></code> Salt module that is located in <code class="docutils literal"><span class="pre">salt/modules</span></code> should also be
+named <code class="docutils literal"><span class="pre">test.py</span></code> and reside in <code class="docutils literal"><span class="pre">tests/integration/modules</span></code>.</p>
+<div class="section" id="adding-new-directories">
+<h2>Adding New Directories<a class="headerlink" href="#adding-new-directories" title="永久链接至标题">¶</a></h2>
+<p>If the corresponding Salt directory does not exist within
+<code class="docutils literal"><span class="pre">tests/integration</span></code>, the new directory must be created along with the
+appropriate test file to maintain Salt's testing directory structure.</p>
+<p>In order for Salt's test suite to recognize tests within the newly
+created directory, options to run the new integration tests must be added to
+<code class="docutils literal"><span class="pre">tests/runtests.py</span></code>. Examples of the necessary options that must be added
+can be found here: <a class="reference external" href="https://github.com/saltstack/salt/blob/develop/tests/runtests.py">https://github.com/saltstack/salt/blob/develop/tests/runtests.py</a>. The functions that need to be
+edited are <code class="docutils literal"><span class="pre">setup_additional_options</span></code>, <code class="docutils literal"><span class="pre">validate_options</span></code>, and
+<code class="docutils literal"><span class="pre">run_integration_tests</span></code>.</p>
+</div>
+<div class="section" id="integration-classes">
+<h2>Integration Classes<a class="headerlink" href="#integration-classes" title="永久链接至标题">¶</a></h2>
+<p>The integration classes are located in <code class="docutils literal"><span class="pre">tests/integration/__init__.py</span></code> and
+can be extended therein. There are three classes available to extend:</p>
+<div class="section" id="modulecase">
+<h3>ModuleCase<a class="headerlink" href="#modulecase" title="永久链接至标题">¶</a></h3>
+<p>Used to define executions run via the master to minions and to call
+single modules and states.</p>
+<p>The available methods are as follows:</p>
+<dl class="docutils">
+<dt>run_function:</dt>
+<dd>Run a single salt function and condition the return down to match the
+behavior of the raw function call. This will run the command and only
+return the results from a single minion to verify.</dd>
+<dt>state_result:</dt>
+<dd>Return the result data from a single state return</dd>
+<dt>run_state:</dt>
+<dd>Run the state.single command and return the state return structure</dd>
+</dl>
+</div>
+<div class="section" id="syndiccase">
+<h3>SyndicCase<a class="headerlink" href="#syndiccase" title="永久链接至标题">¶</a></h3>
+<p>Used to execute remote commands via a syndic, only used to verify the
+capabilities of the Syndic.</p>
+<p>The available methods are as follows:</p>
+<dl class="docutils">
+<dt>run_function:</dt>
+<dd>Run a single salt function and condition the return down to match the
+behavior of the raw function call. This will run the command and only
+return the results from a single minion to verify.</dd>
+</dl>
+</div>
+<div class="section" id="shellcase">
+<h3>ShellCase<a class="headerlink" href="#shellcase" title="永久链接至标题">¶</a></h3>
+<p>Shell out to the scripts which ship with Salt.</p>
+<p>The available methods are as follows:</p>
+<dl class="docutils">
+<dt>run_script:</dt>
+<dd>Execute a salt script with the given argument string</dd>
+<dt>run_salt:</dt>
+<dd>Execute the salt command, pass in the argument string as it would be
+passed on the command line.</dd>
+<dt>run_run:</dt>
+<dd>Execute the salt-run command, pass in the argument string as it would be
+passed on the command line.</dd>
+<dt>run_run_plus:</dt>
+<dd>Execute Salt run and the salt run function and return the data from
+each in a dict</dd>
+<dt>run_key:</dt>
+<dd>Execute the salt-key command, pass in the argument string as it would be
+passed on the command line.</dd>
+<dt>run_cp:</dt>
+<dd>Execute salt-cp, pass in the argument string as it would be
+passed on the command line.</dd>
+<dt>run_call:</dt>
+<dd>Execute salt-call, pass in the argument string as it would be
+passed on the command line.</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="永久链接至标题">¶</a></h2>
+<div class="section" id="module-example-via-modulecase-class">
+<h3>Module Example via ModuleCase Class<a class="headerlink" href="#module-example-via-modulecase-class" title="永久链接至标题">¶</a></h3>
+<p>Import the integration module, this module is already added to the python path
+by the test execution. Inherit from the <code class="docutils literal"><span class="pre">integration.ModuleCase</span></code> class.</p>
+<p>Now the workhorse method <code class="docutils literal"><span class="pre">run_function</span></code> can be used to test a module:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">integration</span>
+
+
+<span class="k">class</span> <span class="nc">TestModuleTest</span><span class="p">(</span><span class="n">integration</span><span class="o">.</span><span class="n">ModuleCase</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Validate the test module</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">test_ping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        test.ping</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_function</span><span class="p">(</span><span class="s1">&#39;test.ping&#39;</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">test_echo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        test.echo</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_function</span><span class="p">(</span><span class="s1">&#39;test.echo&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]),</span> <span class="s1">&#39;text&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="shell-example-via-shellcase">
+<h3>Shell Example via ShellCase<a class="headerlink" href="#shell-example-via-shellcase" title="永久链接至标题">¶</a></h3>
+<p>Validating the shell commands can be done via shell tests:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+
+<span class="kn">import</span> <span class="nn">integration</span>
+
+<span class="k">class</span> <span class="nc">KeyTest</span><span class="p">(</span><span class="n">integration</span><span class="o">.</span><span class="n">ShellCase</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Test salt-key script</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_call_binary_</span> <span class="o">=</span> <span class="s1">&#39;salt-key&#39;</span>
+
+    <span class="k">def</span> <span class="nf">test_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        test salt-key -L</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_key</span><span class="p">(</span><span class="s1">&#39;-L&#39;</span><span class="p">)</span>
+        <span class="n">expect</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="s1">&#39;Unaccepted Keys:&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;Accepted Keys:&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;minion&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;sub_minion&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;Rejected:&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">expect</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This example verifies that the <code class="docutils literal"><span class="pre">salt-key</span></code> command executes and returns as
+expected by making use of the <code class="docutils literal"><span class="pre">run_key</span></code> method.</p>
+</div>
+</div>
+<div class="section" id="integration-test-files">
+<h2>Integration Test Files<a class="headerlink" href="#integration-test-files" title="永久链接至标题">¶</a></h2>
+<p>Since using Salt largely involves configuring states, editing files, and changing
+system data, the integration test suite contains a directory named <code class="docutils literal"><span class="pre">files</span></code> to
+aid in testing functions that require files. Various Salt integration tests use
+these example files to test against instead of altering system files and data.</p>
+<p>Each directory within <code class="docutils literal"><span class="pre">tests/integration/files</span></code> contain files that accomplish
+different tasks, based on the needs of the integration tests using those files.
+For example, <code class="docutils literal"><span class="pre">tests/integration/files/ssh</span></code> is used to bootstrap the test runner
+for salt-ssh testing, while <code class="docutils literal"><span class="pre">tests/integration/files/pillar</span></code> contains files
+storing data needed to test various pillar functions.</p>
+<p>The <code class="docutils literal"><span class="pre">tests/integration/files</span></code> directory also includes an integration state tree.
+The integration state tree can be found at <code class="docutils literal"><span class="pre">tests/integration/files/file/base</span></code>.</p>
+<p>The following example demonstrates how integration files can be used with ModuleCase
+to test states:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">integration</span>
+
+<span class="n">HFILE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">integration</span><span class="o">.</span><span class="n">TMP</span><span class="p">,</span> <span class="s1">&#39;hosts&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">HostTest</span><span class="p">(</span><span class="n">integration</span><span class="o">.</span><span class="n">ModuleCase</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Validate the host state</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">integration</span><span class="o">.</span><span class="n">FILES</span><span class="p">,</span> <span class="s1">&#39;hosts&#39;</span><span class="p">),</span> <span class="n">HFILE</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">HostTest</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">HFILE</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">HFILE</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">HostTest</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">tearDown</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">test_present</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        host.present</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;spam.bacon&#39;</span>
+        <span class="n">ip</span> <span class="o">=</span> <span class="s1">&#39;10.10.10.10&#39;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_state</span><span class="p">(</span><span class="s1">&#39;host.present&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">ip</span><span class="o">=</span><span class="n">ip</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_result</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">HFILE</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp_</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">fp_</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s1">&#39;{0}</span><span class="se">\t\t</span><span class="s1">{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span> <span class="n">output</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To access the integration files, a variable named <code class="docutils literal"><span class="pre">integration.FILES</span></code>
+points to the <code class="docutils literal"><span class="pre">tests/integration/files</span></code> directory. This is where the referenced
+<code class="docutils literal"><span class="pre">host.present</span></code> sls file resides.</p>
+<p>In addition to the static files in the integration state tree, the location
+<code class="docutils literal"><span class="pre">integration.TMP</span></code> can also be used to store temporary files that the test system
+will clean up when the execution finishes.</p>
+</div>
+<div class="section" id="destructive-vs-non-destructive-tests">
+<h2>Destructive vs Non-Destructive Tests<a class="headerlink" href="#destructive-vs-non-destructive-tests" title="永久链接至标题">¶</a></h2>
+<p>Since Salt is used to change the settings and behavior of systems, one testing
+approach is to run tests that make actual changes to the underlying system. This
+is where the concept of destructive integration tests comes into play. Tests can
+be written to alter the system they are running on. This capability is what fills
+in the gap needed to properly test aspects of system management like package
+installation.</p>
+<p>Any test that changes the underlying system in any way, such as creating or
+deleting users, installing packages, or changing permissions should include the
+<code class="docutils literal"><span class="pre">&#64;destructive</span></code> decorator to signal system changes and should be written with
+care. System changes executed within a destructive test should also be restored
+once the related tests have completed. For example, if a new user is created to
+test a module, the same user should be removed after the test is completed to
+maintain system integrity.</p>
+<p>To write a destructive test, import, and use the destructiveTest decorator for
+the test method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">integration</span>
+<span class="kn">from</span> <span class="nn">salttesting.helpers</span> <span class="kn">import</span> <span class="n">destructiveTest</span>
+
+<span class="k">class</span> <span class="nc">DestructiveExampleModuleTest</span><span class="p">(</span><span class="n">integration</span><span class="o">.</span><span class="n">ModuleCase</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Demonstrate a destructive test</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="nd">@destructiveTest</span>
+    <span class="nd">@skipIf</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">geteuid</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;you must be root to run this test&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">test_user_not_present</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This is a DESTRUCTIVE TEST it creates a new user on the minion.</span>
+<span class="sd">        And then destroys that user.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_state</span><span class="p">(</span><span class="s1">&#39;user.present&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;salt_test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertSaltTrueReturn</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_state</span><span class="p">(</span><span class="s1">&#39;user.absent&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;salt_test&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertSaltTrueReturn</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cloud-provider-tests">
+<h2>Cloud Provider Tests<a class="headerlink" href="#cloud-provider-tests" title="永久链接至标题">¶</a></h2>
+<p>Cloud provider integration tests are used to assess <a class="reference internal" href="../../cloud/index.html#salt-cloud"><span>Salt-Cloud</span></a>'s
+ability to create and destroy cloud instances for various supported cloud providers.
+Cloud provider tests inherit from the ShellCase Integration Class.</p>
+<p>Any new cloud provider test files should be added to the <code class="docutils literal"><span class="pre">tests/integration/cloud/providers/</span></code>
+directory. Each cloud provider test file also requires a sample cloud profile and cloud
+provider configuration file in the integration test file directory located at
+<code class="docutils literal"><span class="pre">tests/integration/files/conf/cloud.*.d/</span></code>.</p>
+<p>The following is an example of the default profile configuration file for Digital
+Ocean, located at: <code class="docutils literal"><span class="pre">tests/integration/files/conf/cloud.profiles.d/digital_ocean.conf</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">digitalocean-test</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">digitalocean-config</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Ubuntu 14.04 x64</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">512MB</span>
+</pre></div>
+</div>
+<p>Each cloud provider requires different configuration credentials. Therefore, sensitive
+information such as API keys or passwords should be omitted from the cloud provider
+configuration file and replaced with an empty string. The necessary credentials can
+be provided by the user by editing the provider configuration file before running the
+tests.</p>
+<p>The following is an example of the default provider configuration file for Digital
+Ocean, located at: <code class="docutils literal"><span class="pre">tests/integration/files/conf/cloud.providers.d/digital_ocean.conf</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">digitalocean-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">digital_ocean</span>
+  <span class="l l-Scalar l-Scalar-Plain">client_key</span><span class="p p-Indicator">:</span> <span class="s">&#39;&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">api_key</span><span class="p p-Indicator">:</span> <span class="s">&#39;&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">location</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">New York 1</span>
+</pre></div>
+</div>
+<p>In addition to providing the necessary cloud profile and provider files in the integration
+test suite file structure, appropriate checks for if the configuration files exist and
+contain valid information are also required in the test class's <code class="docutils literal"><span class="pre">setUp</span></code> function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LinodeTest</span><span class="p">(</span><span class="n">integration</span><span class="o">.</span><span class="n">ShellCase</span><span class="p">):</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Integration tests for the Linode cloud provider in Salt-Cloud</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Sets up the test requirements</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">LinodeTest</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+
+    <span class="c1"># check if appropriate cloud provider and profile files are present</span>
+    <span class="n">profile_str</span> <span class="o">=</span> <span class="s1">&#39;linode-config:&#39;</span>
+    <span class="n">provider</span> <span class="o">=</span> <span class="s1">&#39;linode&#39;</span>
+    <span class="n">providers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_cloud</span><span class="p">(</span><span class="s1">&#39;--list-providers&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">profile_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">providers</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skipTest</span><span class="p">(</span>
+            <span class="s1">&#39;Configuration file for {0} was not found. Check {0}.conf files &#39;</span>
+            <span class="s1">&#39;in tests/integration/files/conf/cloud.*.d/ to run these tests.&#39;</span>
+            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">provider</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="c1"># check if apikey and password are present</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">integration</span><span class="o">.</span><span class="n">FILES</span><span class="p">,</span>
+                        <span class="s1">&#39;conf&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;cloud.providers.d&#39;</span><span class="p">,</span>
+                        <span class="n">provider</span> <span class="o">+</span> <span class="s1">&#39;.conf&#39;</span><span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">cloud_providers_config</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">api</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;linode-config&#39;</span><span class="p">][</span><span class="s1">&#39;linode&#39;</span><span class="p">][</span><span class="s1">&#39;apikey&#39;</span><span class="p">]</span>
+    <span class="n">password</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;linode-config&#39;</span><span class="p">][</span><span class="s1">&#39;linode&#39;</span><span class="p">][</span><span class="s1">&#39;password&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">api</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span> <span class="ow">or</span> <span class="n">password</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skipTest</span><span class="p">(</span>
+            <span class="s1">&#39;An api key and password must be provided to run these tests. Check &#39;</span>
+            <span class="s1">&#39;tests/integration/files/conf/cloud.providers.d/{0}.conf&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">provider</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p>Repeatedly creating and destroying instances on cloud providers can be costly.
+Therefore, cloud provider tests are off by default and do not run automatically. To
+run the cloud provider tests, the <code class="docutils literal"><span class="pre">--cloud-provider-tests</span></code> flag must be provided:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>./tests/runtests.py --cloud-provider-tests
+</pre></div>
+</div>
+<p>Since cloud provider tests do not run automatically, all provider tests must be
+preceded with the <code class="docutils literal"><span class="pre">&#64;expensiveTest</span></code> decorator. The expensive test decorator is
+necessary because it signals to the test suite that the
+<code class="docutils literal"><span class="pre">--cloud-provider-tests</span></code> flag is required to run the cloud provider tests.</p>
+<p>To write a cloud provider test, import, and use the expensiveTest decorator for
+the test function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">salttesting.helpers</span> <span class="kn">import</span> <span class="n">expensiveTest</span>
+
+<span class="nd">@expensiveTest</span>
+<span class="k">def</span> <span class="nf">test_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Test creating an instance on Linode</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;linode-testing&#39;</span>
+
+    <span class="c1"># create the instance</span>
+    <span class="n">instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_cloud</span><span class="p">(</span><span class="s1">&#39;-p linode-test {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+    <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;        {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="c1"># check if instance with salt installed returned as expected</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">instance</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_cloud</span><span class="p">(</span><span class="s1">&#39;-d {0} --assume-yes&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">raise</span>
+
+    <span class="c1"># delete the instance</span>
+    <span class="n">delete</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_cloud</span><span class="p">(</span><span class="s1">&#39;-d {0} --assume-yes&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+    <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;            True&#39;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">delete</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+        <span class="k">raise</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Running The Tests" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="unit.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Writing Unit Tests" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../windows/index.html">Windows</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Salt开发</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#salt-client">Salt Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#salt-master">Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#salt-minion">Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#a-note-on-clearfuncs-vs-aesfuncs">A Note on ClearFuncs vs. AESFuncs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deprecations.html">代码弃用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dunder_dictionaries.html">Dunder Dictionaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../external_pillars.html">External Pillars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hacking.html">Installing Salt for development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../labels.html">GitHub Labels and Milestones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logging.html">内部日志</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modular_systems.html">模块化系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package_providers.html">Package Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reporting_bugs.html">Reporting Bugs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../salt_projects.html">Community Projects That Use Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../topology.html">Salt Topology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../translating.html">翻译文档</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html">Developing Salt Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html">Running The Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#automated-test-runs">Automated Test Runs</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#writing-tests">Writing Tests</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#naming-conventions">Naming Conventions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#integration-tests">Integration Tests</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#unit-tests">Unit Tests</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="">Integration Tests</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#adding-new-directories">Adding New Directories</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#integration-classes">Integration Classes</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#modulecase">ModuleCase</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#syndiccase">SyndicCase</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#shellcase">ShellCase</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#examples">Examples</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#module-example-via-modulecase-class">Module Example via ModuleCase Class</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#shell-example-via-shellcase">Shell Example via ShellCase</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#integration-test-files">Integration Test Files</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#destructive-vs-non-destructive-tests">Destructive vs Non-Destructive Tests</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#cloud-provider-tests">Cloud Provider Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="unit.html">Writing Unit Tests</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../raet/index.html">raet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../git/index.html">SaltStack Git Policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../conventions/index.html">Salt Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ref/internals/index.html">Salt code and internals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../projects/index.html">Salt Based Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/writing_tests.html">编写Salt测试</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

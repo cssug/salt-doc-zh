@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt 介绍</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../_static/css/core.min.css">
+        <link rel="stylesheet" href="../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../index.html">
+        <link rel="up" title="SaltStack" href="../index.html">
+        <link rel="next" title="Salt in 10 Minutes" href="tutorials/walkthrough.html">
+        <link rel="prev" title="SaltStack" href="../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../index.html" title="SaltStack">上一页</a>
+            
+        </li>
+        <li>
+            <a href="tutorials/walkthrough.html" title="Salt in 10 Minutes">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="introduction-to-salt">
+<h1>Salt 介绍<a class="headerlink" href="#introduction-to-salt" title="永久链接至标题">¶</a></h1>
+<p class="rubric">我们不是在谈论 NaCI。</p>
+<div class="section" id="the-30-second-summary">
+<h2>30秒的概要<a class="headerlink" href="#the-30-second-summary" title="永久链接至标题">¶</a></h2>
+<p>Salt 是：</p>
+<ul class="simple">
+<li><p class="first">一个配置管理系统，能够维护预定义状态的远程节点(比如，确保指定的报被安装，指定的服务在运行)</p>
+</li>
+<li><p class="first">一个分布式远程执行系统，用来在远程节点（可以是单个节点，也可以是任意规则挑选出来的节点）上执行命令和查询数据</p>
+</li>
+</ul>
+<p>开发其的目的是为远程执行提供最好的解决方案，并使远程执行变得更好，更快，更</p>
+</div>
+<div class="section" id="simplicity">
+<h2>简单<a class="headerlink" href="#simplicity" title="永久链接至标题">¶</a></h2>
+<p>既要考虑大规模部署，又要考虑小规模系统，提供适应多种场合的应用让人沮丧，但Salt非常容易设置和维护，而不用考虑项目的大小。从数量可观的本地网络系统，到跨数据中心的互联网部署，Salt设计为在任意数量的server下都可工作。salt的拓扑使用简单的server/client模式，需求的功能内建在一组daemon中。salt在几乎不改动配置的情况下就可以工作，也可以调整从而满足特定的需求。</p>
+</div>
+<div class="section" id="parallel-execution">
+<h2>并行执行<a class="headerlink" href="#parallel-execution" title="永久链接至标题">¶</a></h2>
+<p>Salt的核心功能</p>
+<ul class="simple">
+<li><p class="first">使命令发送到远程系统是并行的而不是串行的</p>
+</li>
+<li><p class="first">使用安全加密的协议</p>
+</li>
+<li><p class="first">使用最小最快的网络载荷</p>
+</li>
+<li><p class="first">提供简单的编程接口</p>
+</li>
+</ul>
+<p>Salt同样引入了更加细致化的领域控制系统来远程执行，使得系统成为目标不止可以通过主机名，还可以通过系统属性。</p>
+</div>
+<div class="section" id="builds-on-proven-technology">
+<h2>Builds on proven technology<a class="headerlink" href="#builds-on-proven-technology" title="永久链接至标题">¶</a></h2>
+<p>Salt运用大量的技术和技巧。网络层使用卓越的`ZeroMQ`_ 网络类库构建，所以Salt的守护端包含了可行的和透明的AMQ代理。Salt使用公钥和master守护端认证，然后使用更快的AES`_ 负载通信加密; 身份认证和加密对salt是不可或缺的。Salt通过`msgpack`_建立通信，使得速度更快并且网络流量少。</p>
+</div>
+<div class="section" id="python-client-interface">
+<h2>Python客户端接口<a class="headerlink" href="#python-client-interface" title="永久链接至标题">¶</a></h2>
+<p>为了允许简单的扩展，Salt执行程序可以写为纯Python模块。数据从Salt执行过程中收集到可以发送回master服务端，或者发送到任何任意程序。Salt可以从一个简单的Python API调用，或者从命令行被调用，所以Salt可以用来执行一次性命令，也可以作为一个更大的应用程序的一个组成部分。</p>
+</div>
+<div class="section" id="fast-flexible-scalable">
+<h2>快速，灵活，易扩展<a class="headerlink" href="#fast-flexible-scalable" title="永久链接至标题">¶</a></h2>
+<p>结果是能够在1台或多台目标机器上快速执行命令的系统。Salt运行快速，安装简单，高度可定制；Salt用相同的远程执行架构满足管理不同数量服务器的需求。Salt基础设施可以集成最好的远程执行工具，增强了Salt的能力及用途，得到功能丰富实用可以适用于任何网络的系统。</p>
+</div>
+<div class="section" id="open">
+<h2>开放<a class="headerlink" href="#open" title="永久链接至标题">¶</a></h2>
+<p>Salt是在`Apache 2.0 协议`_下开发，可以被用来开发开放和私有项目。请将你的扩展提交回Salt项目使我们可以共同让Salt茁壮成长。请随意播撒Salt在你的系统上，享受美味芬芳。</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="SaltStack" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="tutorials/walkthrough.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt in 10 Minutes" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">SaltStack</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">Salt 介绍</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#the-30-second-summary">30秒的概要</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simplicity">简单</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parallel-execution">并行执行</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#builds-on-proven-technology">Builds on proven technology</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#python-client-interface">Python客户端接口</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fast-flexible-scalable">快速，灵活，易扩展</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#open">开放</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#id1">Get Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#install-salt">Install Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#demo-environments">Demo Environments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#example-formulas">Example Formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#mailing-list">Mailing List</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#irc">IRC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#follow-on-github">Follow on GitHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#hack-the-source">Hack the Source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../_static/js/core.min.js"></script>
+
+    <script src="../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

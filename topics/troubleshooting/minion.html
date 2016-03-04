@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Troubleshooting the Salt Minion</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="解决问题" href="index.html">
+        <link rel="next" title="YAML Idiosyncrasies" href="yaml_idiosyncrasies.html">
+        <link rel="prev" title="Troubleshooting the Salt Master" href="master.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="master.html" title="Troubleshooting the Salt Master">上一页</a>
+            
+        </li>
+        <li>
+            <a href="yaml_idiosyncrasies.html" title="YAML Idiosyncrasies">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="troubleshooting-the-salt-minion">
+<h1>Troubleshooting the Salt Minion<a class="headerlink" href="#troubleshooting-the-salt-minion" title="永久链接至标题">¶</a></h1>
+<div class="section" id="running-in-the-foreground">
+<h2>Running in the Foreground<a class="headerlink" href="#running-in-the-foreground" title="永久链接至标题">¶</a></h2>
+<p>A great deal of information is available via the debug logging system, if you
+are having issues with minions connecting or not starting run the minion in
+the foreground:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-minion -l debug</span>
+</pre></div>
+</div>
+<p>Anyone wanting to run Salt daemons via a process supervisor such as <a class="reference external" href="http://mmonit.com/monit/">monit</a>,
+<a class="reference external" href="http://smarden.org/runit/">runit</a>, or <a class="reference external" href="http://supervisord.org/">supervisord</a>, should omit the <code class="docutils literal"><span class="pre">-d</span></code> argument to the daemons and
+run them in the foreground.</p>
+</div>
+<div class="section" id="what-ports-does-the-minion-need-open">
+<h2>What Ports does the Minion Need Open?<a class="headerlink" href="#what-ports-does-the-minion-need-open" title="永久链接至标题">¶</a></h2>
+<p>No ports need to be opened on the minion, as it makes outbound connections to
+the master. If you've put both your Salt master and minion in debug mode and
+don't see an acknowledgment that your minion has connected, it could very well
+be a firewall interfering with the connection. See our <a class="reference internal" href="../tutorials/firewall.html"><em>firewall
+configuration</em></a> page for help opening the firewall
+on various platforms.</p>
+<p>If you have netcat installed, you can check port connectivity from the minion
+with the <code class="docutils literal"><span class="pre">nc</span></code> command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ nc -v -z salt.master.ip.addr 4505
+Connection to salt.master.ip.addr <span class="m">4505</span> port <span class="o">[</span>tcp/unknown<span class="o">]</span> succeeded!
+$ nc -v -z salt.master.ip.addr 4506
+Connection to salt.master.ip.addr <span class="m">4506</span> port <span class="o">[</span>tcp/unknown<span class="o">]</span> succeeded!
+</pre></div>
+</div>
+<p>The <a class="reference external" href="http://nmap.org/">Nmap</a> utility can also be used to check if these ports are open:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># nmap -sS -q -p 4505-4506 salt.master.ip.addr</span>
+
+Starting Nmap 6.40 <span class="o">(</span> http://nmap.org <span class="o">)</span> at 2013-12-29 19:44 CST
+Nmap scan report <span class="k">for</span> salt.master.ip.addr <span class="o">(</span>10.0.0.10<span class="o">)</span>
+Host is up <span class="o">(</span>0.0026s latency<span class="o">)</span>.
+PORT     STATE  SERVICE
+4505/tcp open   unknown
+4506/tcp open   unknown
+MAC Address: 00:11:22:AA:BB:CC <span class="o">(</span>Intel<span class="o">)</span>
+
+Nmap <span class="k">done</span>: <span class="m">1</span> IP address <span class="o">(</span><span class="m">1</span> host up<span class="o">)</span> scanned in 1.64 seconds
+</pre></div>
+</div>
+<p>If you've opened the correct TCP ports and still aren't seeing connections,
+check that no additional access control system such as <a class="reference external" href="https://en.wikipedia.org/wiki/Security-Enhanced_Linux">SELinux</a> or
+<a class="reference external" href="http://wiki.apparmor.net/index.php/Main_Page">AppArmor</a> is blocking Salt.</p>
+</div>
+<div class="section" id="using-salt-call">
+<span id="troubleshooting-minion-salt-call"></span><h2>Using salt-call<a class="headerlink" href="#using-salt-call" title="永久链接至标题">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">salt-call</span></code> command was originally developed for aiding in the development
+of new Salt modules. Since then, many applications have been developed for
+running any Salt module locally on a minion. These range from the original
+intent of salt-call, development assistance, to gathering more verbose output
+from calls like <a class="reference internal" href="../../ref/modules/all/salt.modules.state.html#salt.modules.state.highstate" title="salt.modules.state.highstate"><code class="xref py py-mod docutils literal"><span class="pre">state.highstate</span></code></a>.</p>
+<p>When initially creating your state tree, it is generally recommended to invoke
+<a class="reference internal" href="../../ref/modules/all/salt.modules.state.html#salt.modules.state.highstate" title="salt.modules.state.highstate"><code class="xref py py-mod docutils literal"><span class="pre">state.highstate</span></code></a> from the minion with
+<code class="docutils literal"><span class="pre">salt-call</span></code>. This displays far more information about the highstate execution
+than calling it remotely. For even more verbosity, increase the loglevel with
+the same argument as <code class="docutils literal"><span class="pre">salt-minion</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-call -l debug state.highstate</span>
+</pre></div>
+</div>
+<p>The main difference between using <code class="docutils literal"><span class="pre">salt</span></code> and using <code class="docutils literal"><span class="pre">salt-call</span></code> is that
+<code class="docutils literal"><span class="pre">salt-call</span></code> is run from the minion, and it only runs the selected function on
+that minion. By contrast, <code class="docutils literal"><span class="pre">salt</span></code> is run from the master, and requires you to
+specify the minions on which to run the command using salt's <a class="reference internal" href="../targeting/index.html"><em>targeting
+system</em></a>.</p>
+</div>
+<div class="section" id="live-python-debug-output">
+<h2>Live Python Debug Output<a class="headerlink" href="#live-python-debug-output" title="永久链接至标题">¶</a></h2>
+<p>If the minion seems to be unresponsive, a SIGUSR1 can be passed to the process
+to display what piece of code is executing. This debug information can be
+invaluable in tracking down bugs.</p>
+<p>To pass a SIGUSR1 to the minion, first make sure the minion is running in the
+foreground. Stop the service if it is running as a daemon, and start it in the
+foreground like so:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-minion -l debug</span>
+</pre></div>
+</div>
+<p>Then pass the signal to the minion when it seems to be unresponsive:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># killall -SIGUSR1 salt-minion</span>
+</pre></div>
+</div>
+<p>When filing an issue or sending questions to the mailing list for a problem
+with an unresponsive daemon, be sure to include this information if possible.</p>
+</div>
+<div class="section" id="multiprocessing-in-execution-modules">
+<h2>Multiprocessing in Execution Modules<a class="headerlink" href="#multiprocessing-in-execution-modules" title="永久链接至标题">¶</a></h2>
+<p>As is outlined in github issue #6300, Salt cannot use python's multiprocessing
+pipes and queues from execution modules. Multiprocessing from the execution
+modules is perfectly viable, it is just necessary to use Salt's event system
+to communicate back with the process.</p>
+<p>The reason for this difficulty is that python attempts to pickle all objects in
+memory when communicating, and it cannot pickle function objects. Since the
+Salt loader system creates and manages function objects this causes the pickle
+operation to fail.</p>
+</div>
+<div class="section" id="salt-minion-doesn-t-return-anything-while-running-jobs-locally">
+<h2>Salt Minion Doesn't Return Anything While Running Jobs Locally<a class="headerlink" href="#salt-minion-doesn-t-return-anything-while-running-jobs-locally" title="永久链接至标题">¶</a></h2>
+<p>When a command being run via Salt takes a very long time to return
+(package installations, certain scripts, etc.) the minion may drop you back
+to the shell. In most situations the job is still running but Salt has
+exceeded the set timeout before returning. Querying the job queue will
+provide the data of the job but is inconvenient. This can be resolved by
+either manually using the <code class="docutils literal"><span class="pre">-t</span></code> option to set a longer timeout when running
+commands (by default it is 5 seconds) or by modifying the minion
+configuration file: <code class="docutils literal"><span class="pre">/etc/salt/minion</span></code> and setting the <code class="docutils literal"><span class="pre">timeout</span></code> value to
+change the default timeout for all commands, and then restarting the
+salt-minion service.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Modifying the minion timeout value is not required when running commands
+from a Salt Master. It is only required when running commands locally on
+the minion.</p>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="master.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Troubleshooting the Salt Master" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="yaml_idiosyncrasies.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="YAML Idiosyncrasies" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../using_salt.html">Using Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../grains/index.html">Grains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pillar/index.html">在Pillar中存储静态数据</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../targeting/index.html">Targeting Minions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mine/index.html">Salt Mine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/runners/index.html">Runners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../engines/index.html">Salt Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../yaml/index.html">了解YAML</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">解决问题</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#troubleshooting-the-salt-master">Troubleshooting the Salt Master</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#troubleshooting-the-salt-minion">Troubleshooting the Salt Minion</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="">Troubleshooting the Salt Minion</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#running-in-the-foreground">Running in the Foreground</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#what-ports-does-the-minion-need-open">What Ports does the Minion Need Open?</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#using-salt-call">Using salt-call</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#live-python-debug-output">Live Python Debug Output</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#multiprocessing-in-execution-modules">Multiprocessing in Execution Modules</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#salt-minion-doesn-t-return-anything-while-running-jobs-locally">Salt Minion Doesn't Return Anything While Running Jobs Locally</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#running-in-the-foreground">Running in the Foreground</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#what-ports-do-the-master-and-minion-need-open">What Ports do the Master and Minion Need Open?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#using-salt-call">Using salt-call</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#too-many-open-files">Too many open files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#salt-master-stops-responding">Salt Master Stops Responding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#salt-and-selinux">Salt and SELinux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#red-hat-enterprise-linux-5">Red Hat Enterprise Linux 5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#common-yaml-gotchas">Common YAML Gotchas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#live-python-debug-output">Live Python Debug Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#salt-0-16-x-minions-cannot-communicate-with-a-0-17-x-master">Salt 0.16.x minions cannot communicate with a 0.17.x master</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#debugging-the-master-and-minion">Debugging the Master and Minion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../faq.html">常见问题</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../best_practices.html">Salt Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

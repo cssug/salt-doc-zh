@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>HTTP Modules</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="netapi modules" href="../netapi/index.html">
+        <link rel="next" title="Writing netapi modules" href="../netapi/writing.html">
+        <link rel="prev" title="netapi modules" href="../netapi/index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../netapi/index.html" title="netapi modules">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../netapi/writing.html" title="Writing netapi modules">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="http-modules">
+<h1>HTTP Modules<a class="headerlink" href="#http-modules" title="永久链接至标题">¶</a></h1>
+<p>This tutorial demonstrates using the various HTTP modules available in Salt.
+These modules wrap the Python <code class="docutils literal"><span class="pre">tornado</span></code>, <code class="docutils literal"><span class="pre">urllib2</span></code>, and <code class="docutils literal"><span class="pre">requests</span></code>
+libraries, extending them in a manner that is more consistent with Salt
+workflows.</p>
+<div class="section" id="the-salt-utils-http-library">
+<h2>The <code class="docutils literal"><span class="pre">salt.utils.http</span></code> Library<a class="headerlink" href="#the-salt-utils-http-library" title="永久链接至标题">¶</a></h2>
+<p>This library forms the core of the HTTP modules. Since it is designed to be used
+from the minion as an execution module, in addition to the master as a runner,
+it was abstracted into this multi-use library. This library can also be imported
+by 3rd-party programs wishing to take advantage of its extended functionality.</p>
+<p>Core functionality of the execution, state, and runner modules is derived from
+this library, so common usages between them are described here. Documentation
+specific to each module is described below.</p>
+<p>This library can be imported with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">salt.utils.http</span>
+</pre></div>
+</div>
+<div class="section" id="configuring-libraries">
+<h3>Configuring Libraries<a class="headerlink" href="#configuring-libraries" title="永久链接至标题">¶</a></h3>
+<p>This library can make use of either <code class="docutils literal"><span class="pre">tornado</span></code>, which is required by Salt,
+<code class="docutils literal"><span class="pre">urllib2</span></code>, which ships with Python, or <code class="docutils literal"><span class="pre">requests</span></code>, which can be installed
+separately. By default, <code class="docutils literal"><span class="pre">tornado</span></code> will be used. In order to switch to
+<code class="docutils literal"><span class="pre">urllib2</span></code>, set the following variable:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">backend</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">urllib2</span>
+</pre></div>
+</div>
+<p>In order to switch to <code class="docutils literal"><span class="pre">requests</span></code>, set the following variable:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">backend</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">requests</span>
+</pre></div>
+</div>
+<p>This can be set in the master or minion configuration file, or passed as an
+option directly to any <code class="docutils literal"><span class="pre">http.query()</span></code> functions.</p>
+</div>
+<div class="section" id="salt-utils-http-query">
+<h3><code class="docutils literal"><span class="pre">salt.utils.http.query()</span></code><a class="headerlink" href="#salt-utils-http-query" title="永久链接至标题">¶</a></h3>
+<p>This function forms a basic query, but with some add-ons not present in the
+<code class="docutils literal"><span class="pre">tornado</span></code>, <code class="docutils literal"><span class="pre">urllib2</span></code>, and <code class="docutils literal"><span class="pre">requests</span></code> libraries. Not all functionality
+currently available in these libraries has been added, but can be in future
+iterations.</p>
+<p>A basic query can be performed by calling this function with no more than a
+single URL:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;http://example.com&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By default the query will be performed with a <code class="docutils literal"><span class="pre">GET</span></code> method. The method can
+be overridden with the <code class="docutils literal"><span class="pre">method</span></code> argument:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s1">&#39;http://example.com/delete/url&#39;</span><span class="p">,</span> <span class="s1">&#39;DELETE&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When using the <code class="docutils literal"><span class="pre">POST</span></code> method (and others, such as <code class="docutils literal"><span class="pre">PUT</span></code>), extra data is usually
+sent as well. This data can be sent directly, in whatever format is
+required by the remote server (XML, JSON, plain text, etc).</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s1">&#39;http://example.com/delete/url&#39;</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">mydict</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Bear in mind that this data must be sent pre-formatted; this function will not
+format it for you. However, a templated file stored on the local system may be
+passed through, along with variables to populate it with. To pass through only
+the file (untemplated):</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s1">&#39;http://example.com/post/url&#39;</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+    <span class="n">data_file</span><span class="o">=</span><span class="s1">&#39;/srv/salt/somefile.xml&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>To pass through a file that contains jinja + yaml templating (the default):</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s1">&#39;http://example.com/post/url&#39;</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+    <span class="n">data_file</span><span class="o">=</span><span class="s1">&#39;/srv/salt/somefile.jinja&#39;</span><span class="p">,</span>
+    <span class="n">data_render</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">template_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;key1&#39;</span><span class="p">:</span> <span class="s1">&#39;value1&#39;</span><span class="p">,</span> <span class="s1">&#39;key2&#39;</span><span class="p">:</span> <span class="s1">&#39;value2&#39;</span><span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>To pass through a file that contains mako templating:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s1">&#39;http://example.com/post/url&#39;</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+    <span class="n">data_file</span><span class="o">=</span><span class="s1">&#39;/srv/salt/somefile.mako&#39;</span><span class="p">,</span>
+    <span class="n">data_render</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">data_renderer</span><span class="o">=</span><span class="s1">&#39;mako&#39;</span><span class="p">,</span>
+    <span class="n">template_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;key1&#39;</span><span class="p">:</span> <span class="s1">&#39;value1&#39;</span><span class="p">,</span> <span class="s1">&#39;key2&#39;</span><span class="p">:</span> <span class="s1">&#39;value2&#39;</span><span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Because this function uses Salt's own rendering system, any Salt renderer can
+be used. Because Salt's renderer requires <code class="docutils literal"><span class="pre">__opts__</span></code> to be set, an <code class="docutils literal"><span class="pre">opts</span></code>
+dictionary should be passed in. If it is not, then the default <code class="docutils literal"><span class="pre">__opts__</span></code>
+values for the node type (master or minion) will be used. Because this library
+is intended primarily for use by minions, the default node type is <code class="docutils literal"><span class="pre">minion</span></code>.
+However, this can be changed to <code class="docutils literal"><span class="pre">master</span></code> if necessary.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s1">&#39;http://example.com/post/url&#39;</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+    <span class="n">data_file</span><span class="o">=</span><span class="s1">&#39;/srv/salt/somefile.jinja&#39;</span><span class="p">,</span>
+    <span class="n">data_render</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">template_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;key1&#39;</span><span class="p">:</span> <span class="s1">&#39;value1&#39;</span><span class="p">,</span> <span class="s1">&#39;key2&#39;</span><span class="p">:</span> <span class="s1">&#39;value2&#39;</span><span class="p">},</span>
+    <span class="n">opts</span><span class="o">=</span><span class="n">__opts__</span>
+<span class="p">)</span>
+
+<span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s1">&#39;http://example.com/post/url&#39;</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+    <span class="n">data_file</span><span class="o">=</span><span class="s1">&#39;/srv/salt/somefile.jinja&#39;</span><span class="p">,</span>
+    <span class="n">data_render</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">template_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;key1&#39;</span><span class="p">:</span> <span class="s1">&#39;value1&#39;</span><span class="p">,</span> <span class="s1">&#39;key2&#39;</span><span class="p">:</span> <span class="s1">&#39;value2&#39;</span><span class="p">},</span>
+    <span class="n">node</span><span class="o">=</span><span class="s1">&#39;master&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Headers may also be passed through, either as a <code class="docutils literal"><span class="pre">header_list</span></code>, a
+<code class="docutils literal"><span class="pre">header_dict</span></code>, or as a <code class="docutils literal"><span class="pre">header_file</span></code>. As with the <code class="docutils literal"><span class="pre">data_file</span></code>, the
+<code class="docutils literal"><span class="pre">header_file</span></code> may also be templated. Take note that because HTTP headers are
+normally syntactically-correct YAML, they will automatically be imported as an
+a Python dict.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s1">&#39;http://example.com/delete/url&#39;</span><span class="p">,</span>
+    <span class="n">method</span><span class="o">=</span><span class="s1">&#39;POST&#39;</span><span class="p">,</span>
+    <span class="n">header_file</span><span class="o">=</span><span class="s1">&#39;/srv/salt/headers.jinja&#39;</span><span class="p">,</span>
+    <span class="n">header_render</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">header_renderer</span><span class="o">=</span><span class="s1">&#39;jinja&#39;</span><span class="p">,</span>
+    <span class="n">template_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;key1&#39;</span><span class="p">:</span> <span class="s1">&#39;value1&#39;</span><span class="p">,</span> <span class="s1">&#39;key2&#39;</span><span class="p">:</span> <span class="s1">&#39;value2&#39;</span><span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Because much of the data that would be templated between headers and data may be
+the same, the <code class="docutils literal"><span class="pre">template_data</span></code> is the same for both. Correcting possible
+variable name collisions is up to the user.</p>
+<p>The <code class="docutils literal"><span class="pre">query()</span></code> function supports basic HTTP authentication. A username and
+password may be passed in as <code class="docutils literal"><span class="pre">username</span></code> and <code class="docutils literal"><span class="pre">password</span></code>, respectively.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s1">&#39;http://example.com&#39;</span><span class="p">,</span>
+    <span class="n">username</span><span class="o">=</span><span class="s1">&#39;larry&#39;</span><span class="p">,</span>
+    <span class="n">password</span><span class="o">=</span><span class="sb">`5700g3543v4r`</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Cookies are also supported, using Python's built-in <code class="docutils literal"><span class="pre">cookielib</span></code>. However, they
+are turned off by default. To turn cookies on, set <code class="docutils literal"><span class="pre">cookies</span></code> to True.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s1">&#39;http://example.com&#39;</span><span class="p">,</span>
+    <span class="n">cookies</span><span class="o">=</span><span class="bp">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>By default cookies are stored in Salt's cache directory, normally
+<code class="docutils literal"><span class="pre">/var/cache/salt</span></code>, as a file called <code class="docutils literal"><span class="pre">cookies.txt</span></code>. However, this location
+may be changed with the <code class="docutils literal"><span class="pre">cookie_jar</span></code> argument:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s1">&#39;http://example.com&#39;</span><span class="p">,</span>
+    <span class="n">cookies</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">cookie_jar</span><span class="o">=</span><span class="s1">&#39;/path/to/cookie_jar.txt&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>By default, the format of the cookie jar is LWP (aka, lib-www-perl). This
+default was chosen because it is a human-readable text file. If desired, the
+format of the cookie jar can be set to Mozilla:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s1">&#39;http://example.com&#39;</span><span class="p">,</span>
+    <span class="n">cookies</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">cookie_jar</span><span class="o">=</span><span class="s1">&#39;/path/to/cookie_jar.txt&#39;</span><span class="p">,</span>
+    <span class="n">cookie_format</span><span class="o">=</span><span class="s1">&#39;mozilla&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Because Salt commands are normally one-off commands that are piped together,
+this library cannot normally behave as a normal browser, with session cookies
+that persist across multiple HTTP requests. However, the session can be
+persisted in a separate cookie jar. The default filename for this file, inside
+Salt's cache directory, is <code class="docutils literal"><span class="pre">cookies.session.p</span></code>. This can also be changed.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s1">&#39;http://example.com&#39;</span><span class="p">,</span>
+    <span class="n">persist_session</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">session_cookie_jar</span><span class="o">=</span><span class="s1">&#39;/path/to/jar.p&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The format of this file is msgpack, which is consistent with much of the rest
+of Salt's internal structure. Historically, the extension for this file is
+<code class="docutils literal"><span class="pre">.p</span></code>. There are no current plans to make this configurable.</p>
+</div>
+<div class="section" id="return-data">
+<h3>Return Data<a class="headerlink" href="#return-data" title="永久链接至标题">¶</a></h3>
+<p>By default, <code class="docutils literal"><span class="pre">query()</span></code> will attempt to decode the return data. Because it was
+designed to be used with REST interfaces, it will attempt to decode the data
+received from the remote server. First it will check the <code class="docutils literal"><span class="pre">Content-type</span></code> header
+to try and find references to XML. If it does not find any, it will look for
+references to JSON. If it does not find any, it will fall back to plain text,
+which will not be decoded.</p>
+<p>JSON data is translated into a dict using Python's built-in <code class="docutils literal"><span class="pre">json</span></code> library.
+XML is translated using <code class="docutils literal"><span class="pre">salt.utils.xml_util</span></code>, which will use Python's
+built-in XML libraries to attempt to convert the XML into a dict. In order to
+force either JSON or XML decoding, the <code class="docutils literal"><span class="pre">decode_type</span></code> may be set:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s1">&#39;http://example.com&#39;</span><span class="p">,</span>
+    <span class="n">decode_type</span><span class="o">=</span><span class="s1">&#39;xml&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Once translated, the return dict from <code class="docutils literal"><span class="pre">query()</span></code> will include a dict called
+<code class="docutils literal"><span class="pre">dict</span></code>.</p>
+<p>If the data is not to be translated using one of these methods, decoding may be
+turned off.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s1">&#39;http://example.com&#39;</span><span class="p">,</span>
+    <span class="n">decode</span><span class="o">=</span><span class="bp">False</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>If decoding is turned on, and references to JSON or XML cannot be found, then
+this module will default to plain text, and return the undecoded data as
+<code class="docutils literal"><span class="pre">text</span></code> (even if text is set to <code class="docutils literal"><span class="pre">False</span></code>; see below).</p>
+<p>The <code class="docutils literal"><span class="pre">query()</span></code> function can return the HTTP status code, headers, and/or text
+as required. However, each must individually be turned on.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s1">&#39;http://example.com&#39;</span><span class="p">,</span>
+    <span class="n">status</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">headers</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">text</span><span class="o">=</span><span class="bp">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The return from these will be found in the return dict as <code class="docutils literal"><span class="pre">status</span></code>,
+<code class="docutils literal"><span class="pre">headers</span></code> and <code class="docutils literal"><span class="pre">text</span></code>, respectively.</p>
+</div>
+<div class="section" id="writing-return-data-to-files">
+<h3>Writing Return Data to Files<a class="headerlink" href="#writing-return-data-to-files" title="永久链接至标题">¶</a></h3>
+<p>It is possible to write either the return data or headers to files, as soon as
+the response is received from the server, but specifying file locations via the
+<code class="docutils literal"><span class="pre">text_out</span></code> or <code class="docutils literal"><span class="pre">headers_out</span></code> arguments. <code class="docutils literal"><span class="pre">text</span></code> and <code class="docutils literal"><span class="pre">headers</span></code> do not need
+to be returned to the user in order to do this.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s1">&#39;http://example.com&#39;</span><span class="p">,</span>
+    <span class="n">text</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">headers</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">text_out</span><span class="o">=</span><span class="s1">&#39;/path/to/url_download.txt&#39;</span><span class="p">,</span>
+    <span class="n">headers_out</span><span class="o">=</span><span class="s1">&#39;/path/to/headers_download.txt&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ssl-verification">
+<h3>SSL Verification<a class="headerlink" href="#ssl-verification" title="永久链接至标题">¶</a></h3>
+<p>By default, this function will verify SSL certificates. However, for testing or
+debugging purposes, SSL verification can be turned off.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s1">&#39;https://example.com&#39;</span><span class="p">,</span>
+    <span class="n">verify_ssl</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ca-bundles">
+<h3>CA Bundles<a class="headerlink" href="#ca-bundles" title="永久链接至标题">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">requests</span></code> library has its own method of detecting which CA (certificate
+authority) bundle file to use. Usually this is implemented by the packager for
+the specific operating system distribution that you are using. However,
+<code class="docutils literal"><span class="pre">urllib2</span></code> requires a little more work under the hood. By default, Salt will
+try to auto-detect the location of this file. However, if it is not in an
+expected location, or a different path needs to be specified, it may be done so
+using the <code class="docutils literal"><span class="pre">ca_bundle</span></code> variable.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+    <span class="s1">&#39;https://example.com&#39;</span><span class="p">,</span>
+    <span class="n">ca_bundle</span><span class="o">=</span><span class="s1">&#39;/path/to/ca_bundle.pem&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="updating-ca-bundles">
+<h4>Updating CA Bundles<a class="headerlink" href="#updating-ca-bundles" title="永久链接至标题">¶</a></h4>
+<p>The <code class="docutils literal"><span class="pre">update_ca_bundle()</span></code> function can be used to update the bundle file at a
+specified location. If the target location is not specified, then it will
+attempt to auto-detect the location of the bundle file. If the URL to download
+the bundle from does not exist, a bundle will be downloaded from the cURL
+website.</p>
+<p>CAUTION: The <code class="docutils literal"><span class="pre">target</span></code> and the <code class="docutils literal"><span class="pre">source</span></code> should always be specified! Failure
+to specify the <code class="docutils literal"><span class="pre">target</span></code> may result in the file being written to the wrong
+location on the local system. Failure to specify the <code class="docutils literal"><span class="pre">source</span></code> may cause the
+upstream URL to receive excess unnecessary traffic, and may cause a file to be
+download which is hazardous or does not meet the needs of the user.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">update_ca_bundle</span><span class="p">(</span>
+    <span class="n">target</span><span class="o">=</span><span class="s1">&#39;/path/to/ca-bundle.crt&#39;</span><span class="p">,</span>
+    <span class="n">source</span><span class="o">=</span><span class="s1">&#39;https://example.com/path/to/ca-bundle.crt&#39;</span><span class="p">,</span>
+    <span class="n">opts</span><span class="o">=</span><span class="n">__opts__</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">opts</span></code> parameter should also always be specified. If it is, then the
+<code class="docutils literal"><span class="pre">target</span></code> and the <code class="docutils literal"><span class="pre">source</span></code> may be specified in the relevant configuration
+file (master or minion) as <code class="docutils literal"><span class="pre">ca_bundle</span></code> and <code class="docutils literal"><span class="pre">ca_bundle_url</span></code>, respectively.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ca_bundle</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/path/to/ca-bundle.crt</span>
+<span class="l l-Scalar l-Scalar-Plain">ca_bundle_url</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">https://example.com/path/to/ca-bundle.crt</span>
+</pre></div>
+</div>
+<p>If Salt is unable to auto-detect the location of the CA bundle, it will raise
+an error.</p>
+<p>The <code class="docutils literal"><span class="pre">update_ca_bundle()</span></code> function can also be passed a string or a list of
+strings which represent files on the local system, which should be appended (in
+the specified order) to the end of the CA bundle file. This is useful in
+environments where private certs need to be made available, and are not
+otherwise reasonable to add to the bundle file.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">update_ca_bundle</span><span class="p">(</span>
+    <span class="n">opts</span><span class="o">=</span><span class="n">__opts__</span><span class="p">,</span>
+    <span class="n">merge_files</span><span class="o">=</span><span class="p">[</span>
+        <span class="s1">&#39;/etc/ssl/private_cert_1.pem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;/etc/ssl/private_cert_2.pem&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;/etc/ssl/private_cert_3.pem&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="test-mode">
+<h3>Test Mode<a class="headerlink" href="#test-mode" title="永久链接至标题">¶</a></h3>
+<p>This function may be run in test mode. This mode will perform all work up until
+the actual HTTP request. By default, instead of performing the request, an empty
+dict will be returned. Using this function with <code class="docutils literal"><span class="pre">TRACE</span></code> logging turned on will
+reveal the contents of the headers and POST data to be sent.</p>
+<p>Rather than returning an empty dict, an alternate <code class="docutils literal"><span class="pre">test_url</span></code> may be passed in.
+If this is detected, then test mode will replace the <code class="docutils literal"><span class="pre">url</span></code> with the
+<code class="docutils literal"><span class="pre">test_url</span></code>, set <code class="docutils literal"><span class="pre">test</span></code> to <code class="docutils literal"><span class="pre">True</span></code> in the return data, and perform the rest
+of the requested operations as usual. This allows a custom, non-destructive URL
+to be used for testing when necessary.</p>
+</div>
+</div>
+<div class="section" id="execution-module">
+<h2>Execution Module<a class="headerlink" href="#execution-module" title="永久链接至标题">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">http</span></code> execution module is a very thin wrapper around the
+<code class="docutils literal"><span class="pre">salt.utils.http</span></code> library. The <code class="docutils literal"><span class="pre">opts</span></code> can be passed through as well, but if
+they are not specified, the minion defaults will be used as necessary.</p>
+<p>Because passing complete data structures from the command line can be tricky at
+best and dangerous (in terms of execution injection attacks) at worse, the
+<code class="docutils literal"><span class="pre">data_file</span></code>, and <code class="docutils literal"><span class="pre">header_file</span></code> are likely to see more use here.</p>
+<p>All methods for the library are available in the execution module, as kwargs.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt myminion http.query http://example.com/restapi <span class="nv">method</span><span class="o">=</span>POST <span class="se">\</span>
+    <span class="nv">username</span><span class="o">=</span><span class="s1">&#39;larry&#39;</span> <span class="nv">password</span><span class="o">=</span><span class="s1">&#39;5700g3543v4r&#39;</span> <span class="nv">headers</span><span class="o">=</span>True <span class="nv">text</span><span class="o">=</span>True <span class="se">\</span>
+    <span class="nv">status</span><span class="o">=</span>True <span class="nv">decode_type</span><span class="o">=</span>xml <span class="nv">data_render</span><span class="o">=</span>True <span class="se">\</span>
+    <span class="nv">header_file</span><span class="o">=</span>/tmp/headers.txt <span class="nv">data_file</span><span class="o">=</span>/tmp/data.txt <span class="se">\</span>
+    <span class="nv">header_render</span><span class="o">=</span>True <span class="nv">cookies</span><span class="o">=</span>True <span class="nv">persist_session</span><span class="o">=</span>True
+</pre></div>
+</div>
+</div>
+<div class="section" id="runner-module">
+<h2>Runner Module<a class="headerlink" href="#runner-module" title="永久链接至标题">¶</a></h2>
+<p>Like the execution module, the <code class="docutils literal"><span class="pre">http</span></code> runner module is a very thin wrapper
+around the <code class="docutils literal"><span class="pre">salt.utils.http</span></code> library. The only significant difference is that
+because runners execute on the master instead of a minion, a target is not
+required, and default opts will be derived from the master config, rather than
+the minion config.</p>
+<p>All methods for the library are available in the runner module, as kwargs.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run http.query http://example.com/restapi <span class="nv">method</span><span class="o">=</span>POST <span class="se">\</span>
+    <span class="nv">username</span><span class="o">=</span><span class="s1">&#39;larry&#39;</span> <span class="nv">password</span><span class="o">=</span><span class="s1">&#39;5700g3543v4r&#39;</span> <span class="nv">headers</span><span class="o">=</span>True <span class="nv">text</span><span class="o">=</span>True <span class="se">\</span>
+    <span class="nv">status</span><span class="o">=</span>True <span class="nv">decode_type</span><span class="o">=</span>xml <span class="nv">data_render</span><span class="o">=</span>True <span class="se">\</span>
+    <span class="nv">header_file</span><span class="o">=</span>/tmp/headers.txt <span class="nv">data_file</span><span class="o">=</span>/tmp/data.txt <span class="se">\</span>
+    <span class="nv">header_render</span><span class="o">=</span>True <span class="nv">cookies</span><span class="o">=</span>True <span class="nv">persist_session</span><span class="o">=</span>True
+</pre></div>
+</div>
+</div>
+<div class="section" id="state-module">
+<h2>State Module<a class="headerlink" href="#state-module" title="永久链接至标题">¶</a></h2>
+<p>The state module is a wrapper around the runner module, which applies stateful
+logic to a query. All kwargs as listed above are specified as usual in state
+files, but two more kwargs are available to apply stateful logic. A required
+parameter is <code class="docutils literal"><span class="pre">match</span></code>, which specifies a pattern to look for in the return
+text. By default, this will perform a string comparison of looking for the
+value of match in the return text. In Python terms this looks like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">html_text</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+</div>
+<p>If more complex pattern matching is required, a regular expression can be used
+by specifying a <code class="docutils literal"><span class="pre">match_type</span></code>. By default this is set to <code class="docutils literal"><span class="pre">string</span></code>, but it
+can be manually set to <code class="docutils literal"><span class="pre">pcre</span></code> instead. Please note that despite the name, this
+will use Python's <code class="docutils literal"><span class="pre">re.search()</span></code> rather than <code class="docutils literal"><span class="pre">re.match()</span></code>.</p>
+<p>Therefore, the following states are valid:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">http://example.com/restapi</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">http.query</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match</span><span class="p p-Indicator">:</span> <span class="s">&#39;SUCCESS&#39;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">username</span><span class="p p-Indicator">:</span> <span class="s">&#39;larry&#39;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="s">&#39;5700g3543v4r&#39;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">data_render</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">header_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/headers.txt</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">data_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/data.txt</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">header_render</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cookies</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">persist_session</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+
+<span class="l l-Scalar l-Scalar-Plain">http://example.com/restapi</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">http.query</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match_type</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">pcre</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match</span><span class="p p-Indicator">:</span> <span class="s">&#39;(?i)succe[ss|ed]&#39;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">username</span><span class="p p-Indicator">:</span> <span class="s">&#39;larry&#39;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="s">&#39;5700g3543v4r&#39;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">data_render</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">header_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/headers.txt</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">data_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/tmp/data.txt</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">header_render</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">cookies</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">persist_session</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>In addition to, or instead of a match pattern, the status code for a URL can be
+checked. This is done using the <code class="docutils literal"><span class="pre">status</span></code> argument:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">http://example.com/</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">http.query</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">status</span><span class="p p-Indicator">:</span> <span class="s">&#39;200&#39;</span>
+</pre></div>
+</div>
+<p>If both are specified, both will be checked, but if only one is <code class="docutils literal"><span class="pre">True</span></code> and the
+other is <code class="docutils literal"><span class="pre">False</span></code>, then <code class="docutils literal"><span class="pre">False</span></code> will be returned. In this case, the comments
+in the return data will contain information for troubleshooting.</p>
+<p>Because this is a monitoring state, it will return extra data to code that
+expects it. This data will always include <code class="docutils literal"><span class="pre">text</span></code> and <code class="docutils literal"><span class="pre">status</span></code>. Optionally,
+<code class="docutils literal"><span class="pre">headers</span></code> and <code class="docutils literal"><span class="pre">dict</span></code> may also be requested by setting the <code class="docutils literal"><span class="pre">headers</span></code> and
+<code class="docutils literal"><span class="pre">decode</span></code> arguments to True, respectively.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../netapi/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="netapi modules" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../netapi/writing.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Writing netapi modules" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">APIs</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../ref/clients/index.html">Python client API</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../netapi/index.html"><code class="docutils literal"><span class="pre">netapi</span></code> modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../netapi/index.html#introduction-to-netapi-modules">Introduction to netapi modules</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../netapi/index.html#client-interfaces">Client interfaces</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="">HTTP Modules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#the-salt-utils-http-library">The <code class="docutils literal"><span class="pre">salt.utils.http</span></code> Library</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#configuring-libraries">Configuring Libraries</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#salt-utils-http-query"><code class="docutils literal"><span class="pre">salt.utils.http.query()</span></code></a></li>
+<li class="toctree-l6"><a class="reference internal" href="#return-data">Return Data</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#writing-return-data-to-files">Writing Return Data to Files</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#ssl-verification">SSL Verification</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#ca-bundles">CA Bundles</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#updating-ca-bundles">Updating CA Bundles</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="#test-mode">Test Mode</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#execution-module">Execution Module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#runner-module">Runner Module</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#state-module">State Module</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../netapi/writing.html">Writing netapi modules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

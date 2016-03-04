@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Getting Started With Proxmox</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt云端" href="index.html">
+        <link rel="next" title="Getting Started With Rackspace" href="rackspace.html">
+        <link rel="prev" title="Getting Started With ProfitBricks" href="profitbricks.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="profitbricks.html" title="Getting Started With ProfitBricks">上一页</a>
+            
+        </li>
+        <li>
+            <a href="rackspace.html" title="Getting Started With Rackspace">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="getting-started-with-proxmox">
+<h1>Getting Started With Proxmox<a class="headerlink" href="#getting-started-with-proxmox" title="永久链接至标题">¶</a></h1>
+<p>Proxmox Virtual Environment is a complete server virtualization management solution,
+based on KVM virtualization and OpenVZ containers.
+Further information can be found at:</p>
+<p><a class="reference external" href="http://www.proxmox.org/">http://www.proxmox.org/</a></p>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>IPy &gt;= 0.81</li>
+<li>requests &gt;= 2.2.1</li>
+</ul>
+<p>Please note:
+This module allows you to create both OpenVZ and KVM but installing Salt on it will only be
+done when the VM is an OpenVZ container rather than a KVM virtual machine.</p>
+<ul class="simple">
+<li>Set up the cloud configuration at
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.providers</span></code> or
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/proxmox.conf</span></code>:</li>
+</ul>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-proxmox-config</span><span class="p p-Indicator">:</span>
+  <span class="c1"># Set up the location of the salt master</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">saltmaster.example.com</span>
+
+  <span class="c1"># Set the PROXMOX access credentials (see below)</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myuser@pve</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">badpass</span>
+
+  <span class="c1"># Set the access URL for your PROXMOX host</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">url</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">your.proxmox.host</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">proxmox</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<div class="versionchanged">
+<p><span class="versionmodified">在 2015.8.0 版更改.</span></p>
+</div>
+<p class="last">The <code class="docutils literal"><span class="pre">provider</span></code> parameter in cloud provider definitions was renamed to <code class="docutils literal"><span class="pre">driver</span></code>. This
+change was made to avoid confusion with the <code class="docutils literal"><span class="pre">provider</span></code> parameter that is used in cloud profile
+definitions. Cloud provider definitions now use <code class="docutils literal"><span class="pre">driver</span></code> to refer to the Salt cloud module that
+provides the underlying functionality to connect to a cloud host, while cloud profiles continue
+to use <code class="docutils literal"><span class="pre">provider</span></code> to refer to provider configurations that you define.</p>
+</div>
+</div>
+<div class="section" id="access-credentials">
+<h2>Access Credentials<a class="headerlink" href="#access-credentials" title="永久链接至标题">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">user</span></code>, <code class="docutils literal"><span class="pre">password</span></code>, and <code class="docutils literal"><span class="pre">url</span></code> will be provided to you by your cloud
+host. These are all required in order for the PROXMOX driver to work.</p>
+</div>
+<div class="section" id="cloud-profiles">
+<h2>Cloud Profiles<a class="headerlink" href="#cloud-profiles" title="永久链接至标题">¶</a></h2>
+<p>Set up an initial profile at <code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles</span></code> or
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles.d/proxmox.conf</span></code>:</p>
+<ul class="simple">
+<li>Configure a profile to be used:</li>
+</ul>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">proxmox-ubuntu</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-proxmox-config</span>
+    <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">local:vztmpl/ubuntu-12.04-standard_12.04-1_amd64.tar.gz</span>
+    <span class="l l-Scalar l-Scalar-Plain">technology</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">openvz</span>
+
+    <span class="c1"># host needs to be set to the configured name of the proxmox host</span>
+    <span class="c1"># and not the ip address or FQDN of the server</span>
+    <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myvmhost</span>
+    <span class="l l-Scalar l-Scalar-Plain">ip_address</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">192.168.100.155</span>
+    <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">topsecret</span>
+</pre></div>
+</div>
+<p>The profile can be realized now with a salt command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-cloud -p proxmox-ubuntu myubuntu</span>
+</pre></div>
+</div>
+<p>This will create an instance named <code class="docutils literal"><span class="pre">myubuntu</span></code> on the cloud host. The
+minion that is installed on this instance will have a <code class="docutils literal"><span class="pre">hostname</span></code> of <code class="docutils literal"><span class="pre">myubuntu</span></code>.
+If the command was executed on the salt-master, its Salt key will automatically
+be signed on the master.</p>
+<p>Once the instance has been created with salt-minion installed, connectivity to
+it can be verified with Salt:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt myubuntu test.ping</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="required-settings">
+<h2>Required Settings<a class="headerlink" href="#required-settings" title="永久链接至标题">¶</a></h2>
+<p>The following settings are always required for PROXMOX:</p>
+<ul class="simple">
+<li>Using the new cloud configuration format:</li>
+</ul>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-proxmox-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">proxmox</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">saltcloud@pve</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">xyzzy</span>
+  <span class="l l-Scalar l-Scalar-Plain">url</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">your.proxmox.host</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="optional-settings">
+<h2>Optional Settings<a class="headerlink" href="#optional-settings" title="永久链接至标题">¶</a></h2>
+<p>Unlike other cloud providers in Salt Cloud, Proxmox does not utilize a
+<code class="docutils literal"><span class="pre">size</span></code> setting. This is because Proxmox allows the end-user to specify a
+more detailed configuration for their instances, than is allowed by many other
+cloud providers. The following options are available to be used in a profile,
+with their default settings listed.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># Description of the instance.</span>
+<span class="l l-Scalar l-Scalar-Plain">desc</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;instance_name&gt;</span>
+
+<span class="c1"># How many CPU cores, and how fast they are (in MHz)</span>
+<span class="l l-Scalar l-Scalar-Plain">cpus</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="l l-Scalar l-Scalar-Plain">cpuunits</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1000</span>
+
+<span class="c1"># How many megabytes of RAM</span>
+<span class="l l-Scalar l-Scalar-Plain">memory</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">256</span>
+
+<span class="c1"># How much swap space in MB</span>
+<span class="l l-Scalar l-Scalar-Plain">swap</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">256</span>
+
+<span class="c1"># Whether to auto boot the vm after the host reboots</span>
+<span class="l l-Scalar l-Scalar-Plain">onboot</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+
+<span class="c1"># Size of the instance disk (in GiB)</span>
+<span class="l l-Scalar l-Scalar-Plain">disk</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10</span>
+
+<span class="c1"># Host to create this vm on</span>
+<span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myvmhost</span>
+
+<span class="c1"># Nameservers. Defaults to host</span>
+<span class="l l-Scalar l-Scalar-Plain">nameserver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">8.8.8.8 8.8.4.4</span>
+
+<span class="c1"># Username and password</span>
+<span class="l l-Scalar l-Scalar-Plain">ssh_username</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+<span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;value from PROXMOX.password&gt;</span>
+
+<span class="c1"># The name of the image, from ``salt-cloud --list-images proxmox``</span>
+<span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">local:vztmpl/ubuntu-12.04-standard_12.04-1_amd64.tar.gz</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="qemu">
+<h2>QEMU<a class="headerlink" href="#qemu" title="永久链接至标题">¶</a></h2>
+<p>Some functionnalities works differently if you use 'qemu' as technology. In order to create a new VM with qemu, you need to specificy some more information.
+You can also clone a qemu template which already is on your Proxmox server.</p>
+<p>QEMU profile file (for a new VM):</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">proxmox-win7</span><span class="p p-Indicator">:</span>
+  <span class="c1"># Image of the new VM</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">image.iso</span> <span class="c1"># You can get all your available images using &#39;salt-cloud --list-images provider_name&#39; (Ex: &#39;salt-cloud --list-images my-proxmox-config&#39;)</span>
+
+  <span class="c1"># Technology used to create the VM (&#39;qemu&#39; or &#39;openvz&#39;)</span>
+  <span class="l l-Scalar l-Scalar-Plain">technology</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">qemu</span>
+
+  <span class="c1"># Proxmox node name</span>
+  <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">node_name</span>
+
+  <span class="c1"># Proxmox password</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">your_password</span>
+
+  <span class="c1"># Workaround https://github.com/saltstack/salt/issues/27821</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="s">&#39;&#39;</span>
+
+  <span class="c1"># RAM size (MB)</span>
+  <span class="l l-Scalar l-Scalar-Plain">memory</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">2048</span>
+
+  <span class="c1"># OS Type enum (other / wxp / w2k / w2k3 / w2k8 / wvista / win7 / win8 / l24 / l26 / solaris)</span>
+  <span class="l l-Scalar l-Scalar-Plain">ostype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">win7</span>
+
+  <span class="c1"># Hard disk location</span>
+  <span class="l l-Scalar l-Scalar-Plain">sata0</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;location&gt;:&lt;size&gt;, format=&lt;qcow2/vmdk/raw&gt;, size=&lt;size&gt;GB</span> <span class="c1">#Example: local:120,format=qcow2,size=120GB</span>
+
+  <span class="c1">#CD/DVD Drive</span>
+  <span class="l l-Scalar l-Scalar-Plain">ide2</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;content_location&gt;,media=cdrom</span> <span class="c1">#Example: local:iso/name.iso,media=cdrom</span>
+
+  <span class="c1"># Network Device</span>
+  <span class="l l-Scalar l-Scalar-Plain">net0:&lt;model&gt;,bridge=&lt;bridge&gt;</span> <span class="c1">#Example: e1000,bridge=vmbr0</span>
+
+  <span class="c1"># Enable QEMU Guest Agent (0 / 1)</span>
+  <span class="l l-Scalar l-Scalar-Plain">agent</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+
+  <span class="c1"># VM name</span>
+  <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Test</span>
+</pre></div>
+</div>
+<p>More information about these parameters can be found on Proxmox API (<a class="reference external" href="http://pve.proxmox.com/pve2-api-doc/">http://pve.proxmox.com/pve2-api-doc/</a>) under the 'POST' method of nodes/{node}/qemu</p>
+<p>QEMU profile file (for a clone):</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">proxmox-win7</span><span class="p p-Indicator">:</span>
+  <span class="c1"># Enable Clone</span>
+  <span class="l l-Scalar l-Scalar-Plain">clone</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+
+  <span class="c1"># New VM description</span>
+  <span class="l l-Scalar l-Scalar-Plain">clone_description</span><span class="p p-Indicator">:</span> <span class="s">&#39;description&#39;</span>
+
+  <span class="c1"># New VM name</span>
+  <span class="l l-Scalar l-Scalar-Plain">clone_name</span><span class="p p-Indicator">:</span> <span class="s">&#39;name&#39;</span>
+
+  <span class="c1"># New VM format (qcow2 / raw / vmdk)</span>
+  <span class="l l-Scalar l-Scalar-Plain">clone_format</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">qcow2</span>
+
+  <span class="c1"># Full clone (1) or Link clone (0)</span>
+  <span class="l l-Scalar l-Scalar-Plain">clone_full</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">0</span>
+
+  <span class="c1"># VMID of Template to clone</span>
+  <span class="l l-Scalar l-Scalar-Plain">clone_from</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ID</span>
+
+  <span class="c1"># Technology used to create the VM (&#39;qemu&#39; or &#39;openvz&#39;)</span>
+  <span class="l l-Scalar l-Scalar-Plain">technology</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">qemu</span>
+
+  <span class="c1"># Proxmox node name</span>
+  <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">node_name</span>
+
+  <span class="c1"># Proxmox password</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">your_password</span>
+
+  <span class="c1"># Workaround https://github.com/saltstack/salt/issues/27821</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="s">&#39;&#39;</span>
+</pre></div>
+</div>
+<p>More information can be found on Proxmox API under the 'POST' method of /nodes/{node}/qemu/{vmid}/clone</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The Proxmox API offers a lot more options and parameters, which are not yet supported by this salt-cloud 'overlay'. Feel free to add your contribution by forking the github repository and modifying  the following file: salt/salt/cloud/clouds/proxmox.py
+An easy way to support more parameters for VM creation would be to add the names of the optional parameters in the 'create_nodes(<a href="#id1"><span class="problematic" id="id2">vm_</span></a>)' function, under the 'qemu' technology. But it requires you to dig into the code ...</p>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="profitbricks.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started With ProfitBricks" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="rackspace.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started With Rackspace" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt云端</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">入门指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud">Using Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#core-configuration">Cloud核心配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#windows-configuration">Windows Configuration</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#cloud-provider-specifics">Cloud Provider Specifics</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aliyun.html">    Getting Started With Aliyun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html">    Getting Started With Azure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="digitalocean.html">    Getting Started With DigitalOcean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html">    Getting Started With EC2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gogrid.html">    Getting Started With GoGrid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html">    Getting Started With Google Compute Engine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hpcloud.html">    Getting Started With HP Cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="joyent.html">    Getting Started With Joyent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lxc.html">    Getting Started With LXC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linode.html">    Getting Started With Linode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="opennebula.html">    Getting Started With OpenNebula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="openstack.html">    Getting Started With OpenStack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parallels.html">    Getting Started With Parallels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="profitbricks.html">    Getting Started With Profitbricks</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">    Getting Started With Proxmox</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#access-credentials">Access Credentials</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cloud-profiles">Cloud Profiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#required-settings">Required Settings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#optional-settings">Optional Settings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#qemu">QEMU</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rackspace.html">    Getting Started With Rackspace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="saltify.html">    Getting Started With Saltify</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scaleway.html">    Getting Started With Scaleway</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html">    Getting Started With SoftLayer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vexxhost.html">    Getting Started With Vexxhost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="virtualbox.html">    Getting Started With Virtualbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vmware.html">    Getting Started With VMware</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vsphere.html">    Getting Started With vSphere</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#miscellaneous-options">Miscellaneous Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#troubleshooting-steps">Troubleshooting Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#extending-salt-cloud">Extending Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud-from-salt">Using Salt Cloud from Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#feature-comparison">Feature Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorials">Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

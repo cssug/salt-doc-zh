@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Miscellaneous Salt Cloud Options</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt云端" href="index.html">
+        <link rel="next" title="Troubleshooting Salt Cloud" href="troubleshooting.html">
+        <link rel="prev" title="Getting Started With vSphere" href="vsphere.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="vsphere.html" title="Getting Started With vSphere">上一页</a>
+            
+        </li>
+        <li>
+            <a href="troubleshooting.html" title="Troubleshooting Salt Cloud">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="miscellaneous-salt-cloud-options">
+<h1>Miscellaneous Salt Cloud Options<a class="headerlink" href="#miscellaneous-salt-cloud-options" title="永久链接至标题">¶</a></h1>
+<p>This page describes various miscellaneous options available in Salt Cloud</p>
+<div class="section" id="deploy-script-arguments">
+<h2>Deploy Script Arguments<a class="headerlink" href="#deploy-script-arguments" title="永久链接至标题">¶</a></h2>
+<p>Custom deploy scripts are unlikely to need custom arguments to be passed to
+them, but salt-bootstrap has been extended quite a bit, and this may be
+necessary. script_args can be specified in either the profile or the map file,
+to pass arguments to the deploy script:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ec2-amazon</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-ec2-config</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ami-1624987f</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">t1.micro</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_username</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ec2-user</span>
+  <span class="l l-Scalar l-Scalar-Plain">script</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">bootstrap-salt</span>
+  <span class="l l-Scalar l-Scalar-Plain">script_args</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">-c /tmp/</span>
+</pre></div>
+</div>
+<p>This has also been tested to work with pipes, if needed:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>script_args: | head
+</pre></div>
+</div>
+</div>
+<div class="section" id="selecting-the-file-transport">
+<h2>Selecting the File Transport<a class="headerlink" href="#selecting-the-file-transport" title="永久链接至标题">¶</a></h2>
+<p>By default, Salt Cloud uses SFTP to transfer files to Linux hosts. However, if
+SFTP is not available, or specific SCP functionality is needed, Salt Cloud can
+be configured to use SCP instead.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">file_transport</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">sftp</span>
+<span class="l l-Scalar l-Scalar-Plain">file_transport</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">scp</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sync-after-install">
+<h2>Sync After Install<a class="headerlink" href="#sync-after-install" title="永久链接至标题">¶</a></h2>
+<p>Salt allows users to create custom modules, grains, and states which can be
+synchronised to minions to extend Salt with further functionality.</p>
+<p>This option will inform Salt Cloud to synchronise your custom modules, grains,
+states or all these to the minion just after it has been created. For this to
+happen, the following line needs to be added to the main cloud
+configuration file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">sync_after_install</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">all</span>
+</pre></div>
+</div>
+<p>The available options for this setting are:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">modules</span>
+<span class="l l-Scalar l-Scalar-Plain">grains</span>
+<span class="l l-Scalar l-Scalar-Plain">states</span>
+<span class="l l-Scalar l-Scalar-Plain">all</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setting-up-new-salt-masters">
+<h2>Setting Up New Salt Masters<a class="headerlink" href="#setting-up-new-salt-masters" title="永久链接至标题">¶</a></h2>
+<p>It has become increasingly common for users to set up multi-hierarchal
+infrastructures using Salt Cloud. This sometimes involves setting up an
+instance to be a master in addition to a minion. With that in mind, you can
+now lay down master configuration on a machine by specifying master options
+in the profile or map file.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">make_master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>This will cause Salt Cloud to generate master keys for the instance, and tell
+salt-bootstrap to install the salt-master package, in addition to the
+salt-minion package.</p>
+<p>The default master configuration is usually appropriate for most users, and
+will not be changed unless specific master configuration has been added to the
+profile or map:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+  <span class="l l-Scalar l-Scalar-Plain">interface</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0.0.0</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setting-up-a-salt-syndic-with-salt-cloud">
+<h2>Setting Up a Salt Syndic with Salt Cloud<a class="headerlink" href="#setting-up-a-salt-syndic-with-salt-cloud" title="永久链接至标题">¶</a></h2>
+<p>In addition to <a class="reference internal" href="#setting-up-new-salt-masters">setting up new Salt Masters</a>, <span class="xref std std-ref">syndic`s can also be
+provisioned using Salt Cloud. In order to set up a Salt Syndic via Salt Cloud,
+a Salt Master needs to be installed on the new machine and a master configuration
+file needs to be set up using the ``make_master`</span> setting. This setting can be
+defined either in a profile config file or in a map file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">make_master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>To install the Salt Syndic, the only other specification that needs to be
+configured is the <code class="docutils literal"><span class="pre">master_syndic</span></code> key to specify the location of the master
+that the syndic will be reporting to. This modification needs to be placed
+in the <code class="docutils literal"><span class="pre">master</span></code> setting, which can be configured either in the profile,
+provider, or <code class="docutils literal"><span class="pre">/etc/salt/cloud</span></code> config file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">master_syndic</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">123.456.789</span>  <span class="c1"># may be either an IP address or a hostname</span>
+</pre></div>
+</div>
+<p>Many other Salt Syndic configuration settings and specifications can be passed
+through to the new syndic machine via the <code class="docutils literal"><span class="pre">master</span></code> configuration setting.
+See the <a class="reference internal" href="../topology/syndic.html#syndic"><span>Salt Syndic</span></a> documentation for more information.</p>
+</div>
+<div class="section" id="ssh-port">
+<h2>SSH Port<a class="headerlink" href="#ssh-port" title="永久链接至标题">¶</a></h2>
+<p>By default ssh port is set to port 22. If you want to use a custom port in
+provider, profile, or map blocks use ssh_port option.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2015.5.0 新版功能.</span></p>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ssh_port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">2222</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id1">
+<h2>SSH Port<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h2>
+<p>By default ssh port is set to port 22. If you want to use a custom port in
+provider, profile, or map blocks use ssh_port option.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ssh_port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">2222</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="delete-ssh-keys">
+<h2>Delete SSH Keys<a class="headerlink" href="#delete-ssh-keys" title="永久链接至标题">¶</a></h2>
+<p>When Salt Cloud deploys an instance, the SSH pub key for the instance is added
+to the known_hosts file for the user that ran the salt-cloud command. When an
+instance is deployed, a cloud host generally recycles the IP address for
+the instance.  When Salt Cloud attempts to deploy an instance using a recycled
+IP address that has previously been accessed from the same machine, the old key
+in the known_hosts file will cause a conflict.</p>
+<p>In order to mitigate this issue, Salt Cloud can be configured to remove old
+keys from the known_hosts file when destroying the node. In order to do this,
+the following line needs to be added to the main cloud configuration file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">delete_sshkeys</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="keeping-tmp-files">
+<h2>Keeping /tmp/ Files<a class="headerlink" href="#keeping-tmp-files" title="永久链接至标题">¶</a></h2>
+<p>When Salt Cloud deploys an instance, it uploads temporary files to /tmp/ for
+salt-bootstrap to put in place. After the script has run, they are deleted. To
+keep these files around (mostly for debugging purposes), the --keep-tmp option
+can be added:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -p myprofile mymachine --keep-tmp
+</pre></div>
+</div>
+<p>For those wondering why /tmp/ was used instead of /root/, this had to be done
+for images which require the use of sudo, and therefore do not allow remote
+root logins, even for file transfers (which makes /root/ unavailable).</p>
+</div>
+<div class="section" id="hide-output-from-minion-install">
+<h2>Hide Output From Minion Install<a class="headerlink" href="#hide-output-from-minion-install" title="永久链接至标题">¶</a></h2>
+<p>By default Salt Cloud will stream the output from the minion deploy script
+directly to STDOUT. Although this can been very useful, in certain cases you
+may wish to switch this off. The following config option is there to enable or
+disable this output:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">display_ssh_output</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="connection-timeout">
+<h2>Connection Timeout<a class="headerlink" href="#connection-timeout" title="永久链接至标题">¶</a></h2>
+<p>There are several stages when deploying Salt where Salt Cloud needs to wait for
+something to happen. The VM getting it's IP address, the VM's SSH port is
+available, etc.</p>
+<p>If you find that the Salt Cloud defaults are not enough and your deployment
+fails because Salt Cloud did not wait log enough, there are some settings you
+can tweak.</p>
+<div class="admonition-note admonition">
+<p class="first admonition-title">Note</p>
+<p class="last">All settings should be provided in lowercase
+All values should be provided in seconds</p>
+</div>
+<p>You can tweak these settings globally, per cloud provider, or event per profile
+definition.</p>
+<div class="section" id="wait-for-ip-timeout">
+<h3>wait_for_ip_timeout<a class="headerlink" href="#wait-for-ip-timeout" title="永久链接至标题">¶</a></h3>
+<p>The amount of time Salt Cloud should wait for a VM to start and get an IP back
+from the cloud host.
+Default: varies by cloud provider ( between 5 and 25 minutes)</p>
+</div>
+<div class="section" id="wait-for-ip-interval">
+<h3>wait_for_ip_interval<a class="headerlink" href="#wait-for-ip-interval" title="永久链接至标题">¶</a></h3>
+<p>The amount of time Salt Cloud should sleep while querying for the VM's IP.
+Default: varies by cloud provider ( between .5 and 10 seconds)</p>
+</div>
+<div class="section" id="ssh-connect-timeout">
+<h3>ssh_connect_timeout<a class="headerlink" href="#ssh-connect-timeout" title="永久链接至标题">¶</a></h3>
+<p>The amount of time Salt Cloud should wait for a successful SSH connection to
+the VM.
+Default: varies by cloud provider  (between 5 and 15 minutes)</p>
+</div>
+<div class="section" id="wait-for-passwd-timeout">
+<h3>wait_for_passwd_timeout<a class="headerlink" href="#wait-for-passwd-timeout" title="永久链接至标题">¶</a></h3>
+<p>The amount of time until an ssh connection can be established via password or
+ssh key.
+Default: varies by cloud provider (mostly 15 seconds)</p>
+</div>
+<div class="section" id="wait-for-passwd-maxtries">
+<h3>wait_for_passwd_maxtries<a class="headerlink" href="#wait-for-passwd-maxtries" title="永久链接至标题">¶</a></h3>
+<p>The number of attempts to connect to the VM until we abandon.
+Default: 15 attempts</p>
+</div>
+<div class="section" id="wait-for-fun-timeout">
+<h3>wait_for_fun_timeout<a class="headerlink" href="#wait-for-fun-timeout" title="永久链接至标题">¶</a></h3>
+<p>Some cloud drivers check for an available IP or a successful SSH connection
+using a function, namely, SoftLayer, and SoftLayer-HW. So, the amount of time
+Salt Cloud should retry such functions before failing.
+Default: 15 minutes.</p>
+</div>
+<div class="section" id="wait-for-spot-timeout">
+<h3>wait_for_spot_timeout<a class="headerlink" href="#wait-for-spot-timeout" title="永久链接至标题">¶</a></h3>
+<p>The amount of time Salt Cloud should wait before an EC2 Spot instance is
+available. This setting is only available for the EC2 cloud driver.
+Default: 10  minutes</p>
+</div>
+</div>
+<div class="section" id="salt-cloud-cache">
+<h2>Salt Cloud Cache<a class="headerlink" href="#salt-cloud-cache" title="永久链接至标题">¶</a></h2>
+<p>Salt Cloud can maintain a cache of node data, for supported providers. The
+following options manage this functionality.</p>
+<div class="section" id="update-cachedir">
+<h3>update_cachedir<a class="headerlink" href="#update-cachedir" title="永久链接至标题">¶</a></h3>
+<p>On supported cloud providers, whether or not to maintain a cache of nodes
+returned from a --full-query. The data will be stored in <code class="docutils literal"><span class="pre">msgpack</span></code> format
+under <code class="docutils literal"><span class="pre">&lt;SALT_CACHEDIR&gt;/cloud/active/&lt;DRIVER&gt;/&lt;PROVIDER&gt;/&lt;NODE_NAME&gt;.p</span></code>. This
+setting can be True or False.</p>
+</div>
+<div class="section" id="diff-cache-events">
+<h3>diff_cache_events<a class="headerlink" href="#diff-cache-events" title="永久链接至标题">¶</a></h3>
+<p>When the cloud cachedir is being managed, if differences are encountered
+between the data that is returned live from the cloud host and the data in
+the cache, fire events which describe the changes. This setting can be True or
+False.</p>
+<p>Some of these events will contain data which describe a node. Because some of
+the fields returned may contain sensitive data, the <code class="docutils literal"><span class="pre">cache_event_strip_fields</span></code>
+configuration option exists to strip those fields from the event return.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">cache_event_strip_fields</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">password</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">priv_key</span>
+</pre></div>
+</div>
+<p>The following are events that can be fired based on this data.</p>
+<div class="section" id="salt-cloud-minionid-cache-node-new">
+<h4>salt/cloud/minionid/cache_node_new<a class="headerlink" href="#salt-cloud-minionid-cache-node-new" title="永久链接至标题">¶</a></h4>
+<p>A new node was found on the cloud host which was not listed in the cloud
+cachedir. A dict describing the new node will be contained in the event.</p>
+</div>
+<div class="section" id="salt-cloud-minionid-cache-node-missing">
+<h4>salt/cloud/minionid/cache_node_missing<a class="headerlink" href="#salt-cloud-minionid-cache-node-missing" title="永久链接至标题">¶</a></h4>
+<p>A node that was previously listed in the cloud cachedir is no longer available
+on the cloud host.</p>
+</div>
+<div class="section" id="salt-cloud-minionid-cache-node-diff">
+<h4>salt/cloud/minionid/cache_node_diff<a class="headerlink" href="#salt-cloud-minionid-cache-node-diff" title="永久链接至标题">¶</a></h4>
+<p>One or more pieces of data in the cloud cachedir has changed on the cloud
+host. A dict containing both the old and the new data will be contained in
+the event.</p>
+</div>
+</div>
+</div>
+<div class="section" id="ssh-known-hosts">
+<h2>SSH Known Hosts<a class="headerlink" href="#ssh-known-hosts" title="永久链接至标题">¶</a></h2>
+<p>Normally when bootstrapping a VM, salt-cloud will ignore the SSH host key. This
+is because it does not know what the host key is before starting (because it
+doesn't exist yet). If strict host key checking is turned on without the key
+in the <code class="docutils literal"><span class="pre">known_hosts</span></code> file, then the host will never be available, and cannot
+be bootstrapped.</p>
+<p>If a provider is able to determine the host key before trying to bootstrap it,
+that provider's driver can add it to the <code class="docutils literal"><span class="pre">known_hosts</span></code> file, and then turn on
+strict host key checking. This can be set up in the main cloud configuration
+file (normally <code class="docutils literal"><span class="pre">/etc/salt/cloud</span></code>) or in the provider-specific configuration
+file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">known_hosts_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/path/to/.ssh/known_hosts</span>
+</pre></div>
+</div>
+<p>If this is not set, it will default to <code class="docutils literal"><span class="pre">/dev/null</span></code>, and strict host key
+checking will be turned off.</p>
+<p>It is highly recommended that this option is <em>not</em> set, unless the user has
+verified that the provider supports this functionality, and that the image
+being used is capable of providing the necessary information. At this time,
+only the EC2 driver supports this functionality.</p>
+</div>
+<div class="section" id="ssh-agent">
+<h2>SSH Agent<a class="headerlink" href="#ssh-agent" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2015.5.0 新版功能.</span></p>
+</div>
+<p>If the ssh key is not stored on the server salt-cloud is being run on, set
+ssh_agent, and salt-cloud will use the forwarded ssh-agent to authenticate.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ssh_agent</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="file-map-upload">
+<h2>File Map Upload<a class="headerlink" href="#file-map-upload" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<p>The <code class="docutils literal"><span class="pre">file_map</span></code> option allows an arbitrary group of files to be uploaded to the
+target system before running the deploy script. This functionality requires a
+provider uses salt.utils.cloud.bootstrap(), which is currently limited to the ec2,
+gce, openstack and nova drivers.</p>
+<p>The <code class="docutils literal"><span class="pre">file_map</span></code> can be configured globally in <code class="docutils literal"><span class="pre">/etc/salt/cloud</span></code>, or in any cloud
+provider or profile file. For example, to upload an extra package or a custom deploy
+script, a cloud profile using <code class="docutils literal"><span class="pre">file_map</span></code> might look like:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ubuntu14</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ec2-config</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ami-98aa1cf0</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">t1.micro</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_username</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+  <span class="l l-Scalar l-Scalar-Plain">securitygroup</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+  <span class="l l-Scalar l-Scalar-Plain">file_map</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">/local/path/to/custom/script</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/remote/path/to/use/custom/script</span>
+    <span class="l l-Scalar l-Scalar-Plain">/local/path/to/package</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/remote/path/to/store/package</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="vsphere.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started With vSphere" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="troubleshooting.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Troubleshooting Salt Cloud" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt云端</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">入门指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud">Using Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#core-configuration">Cloud核心配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#windows-configuration">Windows Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#cloud-provider-specifics">Cloud Provider Specifics</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#miscellaneous-options">Miscellaneous Options</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="">Miscellaneous</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#deploy-script-arguments">Deploy Script Arguments</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#selecting-the-file-transport">Selecting the File Transport</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sync-after-install">Sync After Install</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#setting-up-new-salt-masters">Setting Up New Salt Masters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#setting-up-a-salt-syndic-with-salt-cloud">Setting Up a Salt Syndic with Salt Cloud</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssh-port">SSH Port</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">SSH Port</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#delete-ssh-keys">Delete SSH Keys</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#keeping-tmp-files">Keeping /tmp/ Files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hide-output-from-minion-install">Hide Output From Minion Install</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#connection-timeout">Connection Timeout</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#wait-for-ip-timeout">wait_for_ip_timeout</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#wait-for-ip-interval">wait_for_ip_interval</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#ssh-connect-timeout">ssh_connect_timeout</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#wait-for-passwd-timeout">wait_for_passwd_timeout</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#wait-for-passwd-maxtries">wait_for_passwd_maxtries</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#wait-for-fun-timeout">wait_for_fun_timeout</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#wait-for-spot-timeout">wait_for_spot_timeout</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#salt-cloud-cache">Salt Cloud Cache</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#update-cachedir">update_cachedir</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#diff-cache-events">diff_cache_events</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#salt-cloud-minionid-cache-node-new">salt/cloud/minionid/cache_node_new</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#salt-cloud-minionid-cache-node-missing">salt/cloud/minionid/cache_node_missing</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#salt-cloud-minionid-cache-node-diff">salt/cloud/minionid/cache_node_diff</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#ssh-known-hosts">SSH Known Hosts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssh-agent">SSH Agent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#file-map-upload">File Map Upload</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#troubleshooting-steps">Troubleshooting Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#extending-salt-cloud">Extending Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud-from-salt">Using Salt Cloud from Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#feature-comparison">Feature Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorials">Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

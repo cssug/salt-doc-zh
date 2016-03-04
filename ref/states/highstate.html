@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Highstate data structure definitions</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="State System Reference" href="index.html">
+        <link rel="next" title="Include and Exclude" href="include.html">
+        <link rel="prev" title="Global State Arguments" href="global_state_arguments.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="global_state_arguments.html" title="Global State Arguments">上一页</a>
+            
+        </li>
+        <li>
+            <a href="include.html" title="Include and Exclude">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="highstate-data-structure-definitions">
+<span id="states-highstate"></span><h1>Highstate data structure definitions<a class="headerlink" href="#highstate-data-structure-definitions" title="永久链接至标题">¶</a></h1>
+<div class="section" id="the-salt-state-tree">
+<h2>The Salt State Tree<a class="headerlink" href="#the-salt-state-tree" title="永久链接至标题">¶</a></h2>
+<p>A state tree is a collection of <code class="docutils literal"><span class="pre">SLS</span></code> files and directories that live under the directory
+specified in <a class="reference internal" href="../configuration/master.html#std:conf_master-file_roots"><code class="xref std std-conf_master docutils literal"><span class="pre">file_roots</span></code></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Directory names or filenames in the state tree cannot contain a period, with the
+exception of the period in the .sls file suffix.</p>
+</div>
+<div class="section" id="top-file">
+<span id="states-highstate-top-file"></span><h3>Top file<a class="headerlink" href="#top-file" title="永久链接至标题">¶</a></h3>
+<p>The main state file that instructs minions what environment and modules to use
+during state execution.</p>
+<p>Configurable via <a class="reference internal" href="../configuration/master.html#std:conf_master-state_top"><code class="xref std std-conf_master docutils literal"><span class="pre">state_top</span></code></a>.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参见</p>
+<p class="last"><a class="reference internal" href="top.html"><em>A detailed description of the top file</em></a></p>
+</div>
+</div>
+<div class="section" id="include-declaration">
+<span id="id1"></span><h3>Include declaration<a class="headerlink" href="#include-declaration" title="永久链接至标题">¶</a></h3>
+<p>Defines a list of <a class="reference internal" href="#module-reference"><span>Module reference</span></a> strings to include in this <code class="docutils literal"><span class="pre">SLS</span></code>.</p>
+<p>Occurs only in the top level of the highstate structure.</p>
+<p>范例:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">include</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">edit.vim</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">http.server</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="module-reference">
+<span id="id2"></span><h3>Module reference<a class="headerlink" href="#module-reference" title="永久链接至标题">¶</a></h3>
+<p>The name of a SLS module defined by a separate SLS file and residing on
+the Salt Master. A module named <code class="docutils literal"><span class="pre">edit.vim</span></code> is a reference to the SLS
+file <code class="docutils literal"><span class="pre">salt://edit/vim.sls</span></code>.</p>
+</div>
+<div class="section" id="id-declaration">
+<span id="id3"></span><h3>ID declaration<a class="headerlink" href="#id-declaration" title="永久链接至标题">¶</a></h3>
+<p>Defines an individual highstate component. Always references a value of a
+dictionary containing keys referencing <a class="reference internal" href="#state-declaration"><span>State declaration</span></a> and
+<a class="reference internal" href="#requisite-declaration"><span>Requisite declaration</span></a>. Can be overridden by a <a class="reference internal" href="#name-declaration"><span>Name declaration</span></a> or
+a <a class="reference internal" href="#names-declaration"><span>Names declaration</span></a>.</p>
+<p>Occurs on the top level or under the <a class="reference internal" href="#extend-declaration"><span>Extend declaration</span></a>.</p>
+<p>Must be unique across entire state tree. If the same ID declaration is
+used twice, only the first one matched will be used. All subsequent
+ID declarations with the same name will be ignored.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>Naming gotchas</p>
+<p class="last">In Salt versions earlier than 0.9.7, ID declarations containing dots would
+result in unpredictable highstate output.</p>
+</div>
+</div>
+<div class="section" id="extend-declaration">
+<span id="id4"></span><h3>Extend declaration<a class="headerlink" href="#extend-declaration" title="永久链接至标题">¶</a></h3>
+<p>Extends a <a class="reference internal" href="#name-declaration"><span>Name declaration</span></a> from an included <code class="docutils literal"><span class="pre">SLS</span> <span class="pre">module</span></code>. The
+keys of the extend declaration always refer to an existing
+<a class="reference internal" href="#id-declaration"><span>ID declaration</span></a> which have been defined in included <code class="docutils literal"><span class="pre">SLS</span> <span class="pre">modules</span></code>.</p>
+<p>Occurs only in the top level and defines a dictionary.</p>
+<p>States cannot be extended more than once in a single state run.</p>
+<p>Extend declarations are useful for adding-to or overriding parts of a
+<a class="reference internal" href="#state-declaration"><span>State declaration</span></a> that is defined in another <code class="docutils literal"><span class="pre">SLS</span></code> file. In the
+following contrived example, the shown <code class="docutils literal"><span class="pre">mywebsite.sls</span></code> file is <code class="docutils literal"><span class="pre">include</span></code>
+-ing and <code class="docutils literal"><span class="pre">extend</span></code> -ing the <code class="docutils literal"><span class="pre">apache.sls</span></code> module in order to add a <code class="docutils literal"><span class="pre">watch</span></code>
+declaration that will restart Apache whenever the Apache configuration file,
+<code class="docutils literal"><span class="pre">mywebsite</span></code> changes.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">include</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">apache</span>
+
+<span class="l l-Scalar l-Scalar-Plain">extend</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">apache</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">service</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">watch</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mywebsite</span>
+
+<span class="l l-Scalar l-Scalar-Plain">mywebsite</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/var/www/mysite</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">参见</p>
+<p>watch_in and require_in</p>
+<p>Sometimes it is more convenient to use the <a class="reference internal" href="requisites.html#requisites-watch-in"><span>watch_in</span></a> or <a class="reference internal" href="requisites.html#requisites-require-in"><span>require_in</span></a> syntax
+instead of extending another <code class="docutils literal"><span class="pre">SLS</span></code> file.</p>
+<p class="last"><a class="reference internal" href="requisites.html"><em>State Requisites</em></a></p>
+</div>
+</div>
+<div class="section" id="state-declaration">
+<span id="id5"></span><h3>State declaration<a class="headerlink" href="#state-declaration" title="永久链接至标题">¶</a></h3>
+<p>A list which contains one string defining the <a class="reference internal" href="#function-declaration"><span>Function declaration</span></a> and
+any number of <a class="reference internal" href="#function-arg-declaration"><span>Function arg declaration</span></a> dictionaries.</p>
+<p>Can, optionally, contain a number of additional components like the
+name override components — <a class="reference internal" href="#name-declaration"><span>name</span></a> and
+<a class="reference internal" href="#names-declaration"><span>names</span></a>. Can also contain <a class="reference internal" href="#requisite-declaration"><span>requisite
+declarations</span></a>.</p>
+<p>Occurs under an <a class="reference internal" href="#id-declaration"><span>ID declaration</span></a>.</p>
+</div>
+<div class="section" id="requisite-declaration">
+<span id="id6"></span><h3>Requisite declaration<a class="headerlink" href="#requisite-declaration" title="永久链接至标题">¶</a></h3>
+<p>A list containing <a class="reference internal" href="#requisite-reference"><span>requisite references</span></a>.</p>
+<p>Used to build the action dependency tree. While Salt states are made to
+execute in a deterministic order, this order is managed by requiring
+and watching other Salt states.</p>
+<p>Occurs as a list component under a <a class="reference internal" href="#state-declaration"><span>State declaration</span></a> or as a
+key under an <a class="reference internal" href="#id-declaration"><span>ID declaration</span></a>.</p>
+</div>
+<div class="section" id="requisite-reference">
+<span id="id7"></span><h3>Requisite reference<a class="headerlink" href="#requisite-reference" title="永久链接至标题">¶</a></h3>
+<p>A single key dictionary. The key is the name of the referenced
+<a class="reference internal" href="#state-declaration"><span>State declaration</span></a> and the value is the ID of the referenced
+<a class="reference internal" href="#id-declaration"><span>ID declaration</span></a>.</p>
+<p>Occurs as a single index in a <a class="reference internal" href="#requisite-declaration"><span>Requisite declaration</span></a> list.</p>
+</div>
+<div class="section" id="function-declaration">
+<span id="id8"></span><h3>Function declaration<a class="headerlink" href="#function-declaration" title="永久链接至标题">¶</a></h3>
+<p>The name of the function to call within the state. A state declaration
+can contain only a single function declaration.</p>
+<p>For example, the following state declaration calls the <a class="reference internal" href="all/salt.states.pkg.html#salt.states.pkg.installed" title="salt.states.pkg.installed"><code class="xref py py-mod docutils literal"><span class="pre">installed</span></code></a> function in the <code class="docutils literal"><span class="pre">pkg</span></code> state module:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">httpd</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+</pre></div>
+</div>
+<p>The function can be declared inline with the state as a shortcut.
+The actual data structure is compiled to this form:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">httpd</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">installed</span>
+</pre></div>
+</div>
+<p>Where the function is a string in the body of the state declaration.
+Technically when the function is declared in dot notation the compiler
+converts it to be a string in the state declaration list. Note that the
+use of the first example more than once in an ID declaration is invalid
+yaml.</p>
+<p>INVALID:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">httpd</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span>
+</pre></div>
+</div>
+<p>When passing a function without arguments and another state declaration
+within a single ID declaration, then the long or &quot;standard&quot; format
+needs to be used since otherwise it does not represent a valid data
+structure.</p>
+<p>VALID:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">httpd</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+</pre></div>
+</div>
+<p>Occurs as the only index in the <a class="reference internal" href="#state-declaration"><span>State declaration</span></a> list.</p>
+</div>
+<div class="section" id="function-arg-declaration">
+<span id="id9"></span><h3>Function arg declaration<a class="headerlink" href="#function-arg-declaration" title="永久链接至标题">¶</a></h3>
+<p>A single key dictionary referencing a Python type which is to be passed
+to the named <a class="reference internal" href="#function-declaration"><span>Function declaration</span></a> as a parameter. The type must
+be the data type expected by the function.</p>
+<p>Occurs under a <a class="reference internal" href="#function-declaration"><span>Function declaration</span></a>.</p>
+<p>For example in the following state declaration <code class="docutils literal"><span class="pre">user</span></code>, <code class="docutils literal"><span class="pre">group</span></code>, and
+<code class="docutils literal"><span class="pre">mode</span></code> are passed as arguments to the <a class="reference internal" href="all/salt.states.file.html#salt.states.file.managed" title="salt.states.file.managed"><code class="xref py py-mod docutils literal"><span class="pre">managed</span></code></a> function in the <code class="docutils literal"><span class="pre">file</span></code> state module:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/http/conf/http.conf</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">644</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="name-declaration">
+<span id="id10"></span><h3>Name declaration<a class="headerlink" href="#name-declaration" title="永久链接至标题">¶</a></h3>
+<p>Overrides the <code class="docutils literal"><span class="pre">name</span></code> argument of a <a class="reference internal" href="#state-declaration"><span>State declaration</span></a>. If
+<code class="docutils literal"><span class="pre">name</span></code> is not specified the <a class="reference internal" href="#id-declaration"><span>ID declaration</span></a> satisfies the
+<code class="docutils literal"><span class="pre">name</span></code> argument.</p>
+<p>The name is always a single key dictionary referencing a string.</p>
+<p>Overriding <code class="docutils literal"><span class="pre">name</span></code> is useful for a variety of scenarios.</p>
+<p>For example, avoiding clashing ID declarations. The following two state
+declarations cannot both have <code class="docutils literal"><span class="pre">/etc/motd</span></code> as the ID declaration:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">motd_perms</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/motd</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">644</span>
+
+<span class="l l-Scalar l-Scalar-Plain">motd_quote</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.append</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/motd</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">text</span><span class="p p-Indicator">:</span> <span class="s">&quot;Of</span><span class="nv"> </span><span class="s">all</span><span class="nv"> </span><span class="s">smells,</span><span class="nv"> </span><span class="s">bread;</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">all</span><span class="nv"> </span><span class="s">tastes,</span><span class="nv"> </span><span class="s">salt.&quot;</span>
+</pre></div>
+</div>
+<p>Another common reason to override <code class="docutils literal"><span class="pre">name</span></code> is if the ID declaration is long and
+needs to be referenced in multiple places. In the example below it is much
+easier to specify <code class="docutils literal"><span class="pre">mywebsite</span></code> than to specify
+<code class="docutils literal"><span class="pre">/etc/apache2/sites-available/mywebsite.com</span></code> multiple times:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">mywebsite</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/apache2/sites-available/mywebsite.com</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://mywebsite.com</span>
+
+<span class="l l-Scalar l-Scalar-Plain">a2ensite mywebsite.com</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">cmd.wait</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">unless</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">test -L /etc/apache2/sites-enabled/mywebsite.com</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">watch</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mywebsite</span>
+
+<span class="l l-Scalar l-Scalar-Plain">apache2</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">watch</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mywebsite</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="names-declaration">
+<span id="id11"></span><h3>Names declaration<a class="headerlink" href="#names-declaration" title="永久链接至标题">¶</a></h3>
+<p>Expands the contents of the containing <a class="reference internal" href="#state-declaration"><span>State declaration</span></a> into
+multiple state declarations, each with its own name.</p>
+<p>For example, given the following state declaration:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">python-pkgs</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">names</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">python-django</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">python-crypto</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">python-yaml</span>
+</pre></div>
+</div>
+<p>Once converted into the lowstate data structure the above state
+declaration will be expanded into the following three state declarations:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">python-django</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span>
+
+<span class="l l-Scalar l-Scalar-Plain">python-crypto</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span>
+
+<span class="l l-Scalar l-Scalar-Plain">python-yaml</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span>
+</pre></div>
+</div>
+<p>Other values can be overridden during the expansion by providing an additional
+dictionary level.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">ius</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkgrepo.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">humanname</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">IUS Community Packages for Enterprise Linux 6 - $basearch</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">gpgcheck</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">baseurl</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">http://mirror.rackspace.com/ius/stable/CentOS/6/$basearch</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">gpgkey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">http://dl.iuscommunity.org/pub/ius/IUS-COMMUNITY-GPG-KEY</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">names</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ius</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ius-devel</span><span class="p p-Indicator">:</span>
+            <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">baseurl</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">http://mirror.rackspace.com/ius/development/CentOS/6/$basearch</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="large-example">
+<span id="states-highstate-example"></span><h2>Large example<a class="headerlink" href="#large-example" title="永久链接至标题">¶</a></h2>
+<p>Here is the layout in yaml using the names of the highdata structure
+components.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">&lt;Include Declaration&gt;</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Module Reference&gt;</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Module Reference&gt;</span>
+
+<span class="l l-Scalar l-Scalar-Plain">&lt;Extend Declaration&gt;</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">&lt;ID Declaration&gt;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">[</span><span class="nv">&lt;overrides&gt;</span><span class="p p-Indicator">]</span>
+
+
+<span class="c1"># standard declaration</span>
+
+<span class="l l-Scalar l-Scalar-Plain">&lt;ID Declaration&gt;</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">&lt;State Module&gt;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Function&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Function Arg&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Function Arg&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Function Arg&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Name&gt;</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Requisite Declaration&gt;</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Requisite Reference&gt;</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Requisite Reference&gt;</span>
+
+
+<span class="c1"># inline function and names</span>
+
+<span class="l l-Scalar l-Scalar-Plain">&lt;ID Declaration&gt;</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">&lt;State Module&gt;.&lt;Function&gt;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Function Arg&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Function Arg&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Function Arg&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Names&gt;</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name&gt;</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name&gt;</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Requisite Declaration&gt;</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Requisite Reference&gt;</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Requisite Reference&gt;</span>
+
+
+<span class="c1"># multiple states for single id</span>
+
+<span class="l l-Scalar l-Scalar-Plain">&lt;ID Declaration&gt;</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">&lt;State Module&gt;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Function&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Function Arg&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Name&gt;</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Requisite Declaration&gt;</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Requisite Reference&gt;</span>
+  <span class="l l-Scalar l-Scalar-Plain">&lt;State Module&gt;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Function&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Function Arg&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Names&gt;</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name&gt;</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name&gt;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Requisite Declaration&gt;</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">&lt;Requisite Reference&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="global_state_arguments.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Global State Arguments" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="include.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Include and Exclude" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../topics/states/index.html">Configuration Management</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/starting_states.html">我们如何使用Salt States？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt1.html">States教程，第1部分 - 基础用法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt2.html">States tutorial, part 2 - More Complex States, Requisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt3.html">States tutorial, part 3 - Templating, Includes, Extends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/states_pt4.html">States tutorial, part 4</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">State System Reference</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aggregate.html">Mod Aggregate State Runtime Modifications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="altering_states.html">Altering States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="backup_mode.html">File State Backups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compiler_ordering.html">Understanding State Compiler Ordering</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extend.html">Extending External SLS Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="failhard.html">Failhard Global Option</a></li>
+<li class="toctree-l3"><a class="reference internal" href="global_state_arguments.html">Global State Arguments</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Highstate data structure definitions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#the-salt-state-tree">The Salt State Tree</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#top-file">Top file</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#include-declaration">Include declaration</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#module-reference">Module reference</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#id-declaration">ID declaration</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#extend-declaration">Extend declaration</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#state-declaration">State declaration</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#requisite-declaration">Requisite declaration</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#requisite-reference">Requisite reference</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#function-declaration">Function declaration</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#function-arg-declaration">Function arg declaration</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#name-declaration">Name declaration</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#names-declaration">Names declaration</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#large-example">Large example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="include.html">Include and Exclude</a></li>
+<li class="toctree-l3"><a class="reference internal" href="layers.html">State System Layers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="master_side.html">The Orchestrate Runner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ordering.html">Ordering States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="providers.html">State Providers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="requisites.html">Requisites and Other Global State Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="startup.html">Startup States</a></li>
+<li class="toctree-l3"><a class="reference internal" href="testing.html">State Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="top.html">顶级配置文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vars.html">SLS Template Variable Reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="writing.html">State Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#state-management">State Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#understanding-the-salt-state-system-components">理解Salt状态系统组件</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

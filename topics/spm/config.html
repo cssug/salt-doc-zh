@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>SPM Configuration</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt Package Manager" href="index.html">
+        <link rel="next" title="FORMULA File" href="spm_formula.html">
+        <link rel="prev" title="Installing SPM Packages" href="master.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="master.html" title="Installing SPM Packages">上一页</a>
+            
+        </li>
+        <li>
+            <a href="spm_formula.html" title="FORMULA File">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="spm-configuration">
+<span id="spm-config"></span><h1>SPM Configuration<a class="headerlink" href="#spm-configuration" title="永久链接至标题">¶</a></h1>
+<p>There are a number of options that are specific to SPM. They may be configured
+in the <code class="docutils literal"><span class="pre">master</span></code> configuration file, or in SPM's own <code class="docutils literal"><span class="pre">spm</span></code> configuration
+file (normally located at <code class="docutils literal"><span class="pre">/etc/salt/spm</span></code>). If configured in both places, the
+<code class="docutils literal"><span class="pre">spm</span></code> file takes precedence. In general, these values will not need to be
+changed from the defaults.</p>
+<div class="section" id="spm-logfile">
+<h2>spm_logfile<a class="headerlink" href="#spm-logfile" title="永久链接至标题">¶</a></h2>
+<p>Default: <code class="docutils literal"><span class="pre">/var/log/salt/spm</span></code></p>
+<p>Where SPM logs messages.</p>
+</div>
+<div class="section" id="spm-repos-config">
+<h2>spm_repos_config<a class="headerlink" href="#spm-repos-config" title="永久链接至标题">¶</a></h2>
+<p>Default: <code class="docutils literal"><span class="pre">/etc/salt/spm.repos</span></code></p>
+<p>SPM repositories are configured with this file. There is also a directory which
+corresponds to it, which ends in <code class="docutils literal"><span class="pre">.d</span></code>. For instance, if the filename is
+<code class="docutils literal"><span class="pre">/etc/salt/spm.repos</span></code>, the directory will be <code class="docutils literal"><span class="pre">/etc/salt/spm.repos.d/</span></code>.</p>
+</div>
+<div class="section" id="spm-cache-dir">
+<h2>spm_cache_dir<a class="headerlink" href="#spm-cache-dir" title="永久链接至标题">¶</a></h2>
+<p>Default: <code class="docutils literal"><span class="pre">/var/cache/salt/spm</span></code></p>
+<p>When SPM updates package repository metadata and downloads packaged, they will
+be placed in this directory. The package database, normally called
+<code class="docutils literal"><span class="pre">packages.db</span></code>, also lives in this directory.</p>
+</div>
+<div class="section" id="spm-db">
+<h2>spm_db<a class="headerlink" href="#spm-db" title="永久链接至标题">¶</a></h2>
+<p>Default: <code class="docutils literal"><span class="pre">/var/cache/salt/spm/packages.db</span></code></p>
+<p>The location and name of the package database. This database stores the names of
+all of the SPM packages installed on the system, the files that belong to them,
+and the metadata for those files.</p>
+</div>
+<div class="section" id="spm-build-dir">
+<h2>spm_build_dir<a class="headerlink" href="#spm-build-dir" title="永久链接至标题">¶</a></h2>
+<p>Default: <code class="docutils literal"><span class="pre">/srv/spm</span></code></p>
+<p>When packages are built, they will be placed in this directory.</p>
+</div>
+<div class="section" id="spm-build-exclude">
+<h2>spm_build_exclude<a class="headerlink" href="#spm-build-exclude" title="永久链接至标题">¶</a></h2>
+<p>Default: <code class="docutils literal"><span class="pre">['.git']</span></code></p>
+<p>When SPM builds a package, it normally adds all files in the formula directory
+to the package. Files listed here will be excluded from that package. This
+option requires a list to be specified.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">spm_build_exclude</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">.git</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">.svn</span>
+</pre></div>
+</div>
+<div class="section" id="types-of-packages">
+<h3>Types of Packages<a class="headerlink" href="#types-of-packages" title="永久链接至标题">¶</a></h3>
+<p>SPM supports different types of formula packages. The function of each package
+is denoted by its name. For instance, packages which end in <code class="docutils literal"><span class="pre">-formula</span></code> are
+considered to be Salt States (the most common type of formula). Packages which
+end in <code class="docutils literal"><span class="pre">-conf</span></code> contain configuration which is to be placed in the
+<code class="docutils literal"><span class="pre">/etc/salt/</span></code> directory. Packages which do not contain one of these names are
+treated as if they have a <code class="docutils literal"><span class="pre">-formula</span></code> name.</p>
+</div>
+</div>
+<div class="section" id="formula">
+<h2>formula<a class="headerlink" href="#formula" title="永久链接至标题">¶</a></h2>
+<p>By default, most files from this type of package live in the <code class="docutils literal"><span class="pre">/srv/spm/salt/</span></code>
+directory. The exception is the <code class="docutils literal"><span class="pre">pillar.example</span></code> file, which will be renamed
+to <code class="docutils literal"><span class="pre">&lt;package_name&gt;.sls</span></code> and placed in the pillar directory (<code class="docutils literal"><span class="pre">/srv/spm/pillar/</span></code>
+by default).</p>
+</div>
+<div class="section" id="reactor">
+<h2>reactor<a class="headerlink" href="#reactor" title="永久链接至标题">¶</a></h2>
+<p>By default, files from this type of package live in the <code class="docutils literal"><span class="pre">/srv/spm/reactor/</span></code>
+directory.</p>
+</div>
+<div class="section" id="conf">
+<h2>conf<a class="headerlink" href="#conf" title="永久链接至标题">¶</a></h2>
+<p>The files in this type of package are configuration files for Salt, which
+normally live in the <code class="docutils literal"><span class="pre">/etc/salt/</span></code> directory. Configuration files for packages
+other than Salt can and should be handled with a Salt State (using a <code class="docutils literal"><span class="pre">formula</span></code>
+type of package).</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="master.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Installing SPM Packages" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="spm_formula.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="FORMULA File" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/master.html">配置Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/minion.html">配置Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/examples.html">Configuration file examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../blackout/index.html">Minion Blackout Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../eauth/access_control.html">Access Control System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs/index.html">Job Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs/job_cache.html">Managing the Job Cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs/external_cache.html">Storing Job Results in an External System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/logging/index.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/file_server/index.html">Salt文件服务器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/gitfs.html">Git Fileserver Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/minionfs.html">MinionFS Backend Walkthrough</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Salt Package Manager</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="packaging.html">Building SPM Packages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repo.html">Distributing SPM Packages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="master.html">Installing SPM Packages</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">SPM Configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#spm-logfile">spm_logfile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#spm-repos-config">spm_repos_config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#spm-cache-dir">spm_cache_dir</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#spm-db">spm_db</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#spm-build-dir">spm_build_dir</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#spm-build-exclude">spm_build_exclude</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#types-of-packages">Types of Packages</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#formula">formula</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reactor">reactor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#conf">conf</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="spm_formula.html">FORMULA File</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dev.html">SPM Development Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sdb/index.html">Storing Data in Other Databases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/nonroot.html">以非特权用户身份运行Salt Master/Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/cron.html">使用cron运行Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hardening.html">Hardening Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../security/index.html">Security disclosure policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transports/index.html">Salt Transport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../master_tops/index.html">Master Tops系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/returners/index.html">返回器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/renderers/index.html">Renderers渲染器</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

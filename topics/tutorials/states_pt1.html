@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>States教程，第1部分 - 基础用法</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Configuration Management" href="../states/index.html">
+        <link rel="next" title="States tutorial, part 2 - More Complex States, Requisites" href="states_pt2.html">
+        <link rel="prev" title="我们如何使用Salt States？" href="starting_states.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="starting_states.html" title="我们如何使用Salt States？">上一页</a>
+            
+        </li>
+        <li>
+            <a href="states_pt2.html" title="States tutorial, part 2 - More Complex States, Requisites">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="states-tutorial-part-1-basic-usage">
+<h1>States教程，第1部分 - 基础用法<a class="headerlink" href="#states-tutorial-part-1-basic-usage" title="永久链接至标题">¶</a></h1>
+<p>本教程的目的是示范如何通过Salt States快速管理一个系统。想了解更过关于state系统，请访问 <a class="reference internal" href="../../ref/states/index.html"><em>states reference</em></a> .</p>
+<p>本教程将带你了解使用Salt在minion上配置运行Apache HTTP服务并确保服务处于运行状态.</p>
+<p><strong>开始之前</strong> 需要确保你已经通过 <code class="xref doc docutils literal"><span class="pre">安装</span></code> 及 <code class="xref doc docutils literal"><span class="pre">配置</span></code> 章节完成了Salt安装.</p>
+<div class="admonition-stuck admonition">
+<p class="first admonition-title">小贴士</p>
+<p class="last">有很多方法可以 <code class="xref doc docutils literal"><span class="pre">从Salt社区获取帮助</span></code> 包括我们的 <a href="#id1"><span class="problematic" id="id2">`邮件列表&lt;https://groups.google.com/forum/#!forum/salt-users&gt;`_</span></a> 及我们的 <a class="reference external" href="http://webchat.freenode.net/?channels=salt">IRC频道</a> #salt.</p>
+</div>
+<div class="section" id="setting-up-the-salt-state-tree">
+<h2>建立Salt State树<a class="headerlink" href="#setting-up-the-salt-state-tree" title="永久链接至标题">¶</a></h2>
+<p>States存储在master上的文本文件中，通过master的文件服务按需传输到minion上.  这些state文件组成了 <span class="xref std std-term">State树</span>.</p>
+<p>在Salt中启动一个中心state系统，需要首先确保已经建立了Salt文件服务. 编辑master配置文件(<a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-file_roots"><code class="xref std std-conf_master docutils literal"><span class="pre">file_roots</span></code></a>) 取消如下行的注释:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">file_roots</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">如果你在FreeBSD上通过ports部署了Salt, <code class="docutils literal"><span class="pre">file_roots</span></code> 默认路径为 <code class="docutils literal"><span class="pre">/usr/local/etc/salt/states</span></code>.</p>
+</div>
+<p>重启Salt master以使更改生效:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pkill salt-master
+salt-master -d
+</pre></div>
+</div>
+</div>
+<div class="section" id="preparing-the-top-file">
+<h2>准备Top文件<a class="headerlink" href="#preparing-the-top-file" title="永久链接至标题">¶</a></h2>
+<p>在master上，之前为未注释的目录下(默认为 <code class="docutils literal"><span class="pre">/srv/salt</span></code>)，创建一个名为 <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-state_top"><code class="xref std std-conf_master docutils literal"><span class="pre">top.sls</span></code></a> 的文件并添加如下内容:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;*&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">webserver</span>
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../../ref/states/top.html#states-top"><span>top file</span></a> is separated into environments (discussed
+later). The default environment is <code class="docutils literal"><span class="pre">base</span></code>. Under the <code class="docutils literal"><span class="pre">base</span></code> environment a
+collection of minion matches is defined; for now simply specify all hosts
+(<code class="docutils literal"><span class="pre">*</span></code>).</p>
+<div class="admonition-targeting-minions admonition" id="targeting-minions">
+<p class="first admonition-title">目标minions</p>
+<p>在salt 中可以使用很多方法来匹配minion, minions 可以使用全名，正则，或则doc:<cite>grains &lt;/topics/targeting/grains&gt;</cite>. . 例如：</p>
+<div class="last highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;os:Fedora&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">match</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">grain</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">webserver</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="create-an-sls-file">
+<h2>创建一个``sls``文件<a class="headerlink" href="#create-an-sls-file" title="永久链接至标题">¶</a></h2>
+<p>In the same directory as the <a class="reference internal" href="../../ref/states/top.html#states-top"><span>top file</span></a>, create a file
+named <code class="docutils literal"><span class="pre">webserver.sls</span></code>, containing the following:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">apache</span><span class="p p-Indicator">:</span>                 <span class="c1"># ID declaration</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span>                  <span class="c1"># state declaration</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">installed</span>         <span class="c1"># function declaration</span>
+</pre></div>
+</div>
+<p>The first line, called the <a class="reference internal" href="../../ref/states/highstate.html#id-declaration"><span>ID declaration</span></a>, is an arbitrary identifier.
+In this case it defines the name of the package to be installed.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The package name for the Apache httpd web server may differ depending on
+OS or distro — for example, on Fedora it is <code class="docutils literal"><span class="pre">httpd</span></code> but on
+Debian/Ubuntu it is <code class="docutils literal"><span class="pre">apache2</span></code>.</p>
+</div>
+<p>The second line, called the <a class="reference internal" href="../../ref/states/highstate.html#state-declaration"><span>State declaration</span></a>, defines which of the Salt
+States we are using. In this example, we are using the <a class="reference internal" href="../../ref/states/all/salt.states.pkg.html#module-salt.states.pkg" title="salt.states.pkg"><code class="xref py py-mod docutils literal"><span class="pre">pkg</span> <span class="pre">state</span></code></a> to ensure that a given package is installed.</p>
+<p>The third line, called the <a class="reference internal" href="../../ref/states/highstate.html#function-declaration"><span>Function declaration</span></a>, defines which function
+in the <a class="reference internal" href="../../ref/states/all/salt.states.pkg.html#module-salt.states.pkg" title="salt.states.pkg"><code class="xref py py-mod docutils literal"><span class="pre">pkg</span> <span class="pre">state</span></code></a> module to call.</p>
+<div class="admonition-renderers admonition">
+<p class="first admonition-title"><strong>Renderers</strong></p>
+<p>States <code class="docutils literal"><span class="pre">sls</span></code> files can be written in many formats. Salt requires only
+a simple data structure and is not concerned with how that data structure
+is built. Templating languages and <a class="reference external" href="http://en.wikipedia.org/wiki/Domain-specific_language">DSLs</a> are a dime-a-dozen and everyone
+has a favorite.</p>
+<p>构建预期的数据结构式Salt <a class="reference internal" href="../../ref/renderers/index.html"><em>renderers</em></a>  的工作，他们非常容易书写。</p>
+<p class="last">在这个教程里面我们将使用jiaja2 的 YAML 模板 作为默认的格式，默认的是可以通过编辑maser 的配置文件里面的:conf_master:<a href="#id1"><span class="problematic" id="id2">`</span></a>renderer`来改变的。</p>
+</div>
+</div>
+<div class="section" id="install-the-package">
+<span id="running-highstate"></span><h2>安装软件包<a class="headerlink" href="#install-the-package" title="永久链接至标题">¶</a></h2>
+<p>下面让我们来运行我们创建的状态， 打开命令窗口在master 上运行上面语句。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>% salt <span class="s1">&#39;*&#39;</span> state.highstate
+</pre></div>
+</div>
+<p>Our master is instructing all targeted minions to run <a class="reference internal" href="../../ref/modules/all/salt.modules.state.html#salt.modules.state.highstate" title="salt.modules.state.highstate"><code class="xref py py-func docutils literal"><span class="pre">state.highstate</span></code></a>. When a minion executes a highstate call it
+will download the <a class="reference internal" href="../../ref/states/top.html#states-top"><span>top file</span></a> and attempt to match the
+expressions. When it does match an expression the modules listed for it will be
+downloaded, compiled, and executed.</p>
+<p>第一次编译Minion 将返回所有的动作的摘要和所有的改变内容。</p>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">If you have created <a class="reference internal" href="../grains/index.html#writing-grains"><span>custom grain modules</span></a>, they will
+not be available in the top file until after the first <a class="reference internal" href="#running-highstate"><span>highstate</span></a>. To make custom grains available on a minion's first
+highstate, it is recommended to use <a class="reference internal" href="../reactor/index.html#minion-start-reactor"><span>this example</span></a> to ensure that the custom grains are synced when
+the minion starts.</p>
+</div>
+<div class="admonition-sls-file-namespace admonition" id="sls-file-namespace">
+<p class="first admonition-title">SLS 文件命名</p>
+<p>Note that in the <a class="reference internal" href="#targeting-minions"><span>example</span></a> above, the SLS file
+<code class="docutils literal"><span class="pre">webserver.sls</span></code> was referred to simply as <code class="docutils literal"><span class="pre">webserver</span></code>. The namespace
+for SLS files when referenced in <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-state_top"><code class="xref std std-conf_master docutils literal"><span class="pre">top.sls</span></code></a> or an <a class="reference internal" href="../../ref/states/highstate.html#include-declaration"><span>Include declaration</span></a>
+follows a few simple rules:</p>
+<ol class="last arabic">
+<li><p class="first"><code class="docutils literal"><span class="pre">.sls</span></code> 这个文件是被放弃的不被允许的 （i.e.  <code class="docutils literal"><span class="pre">webserver.sls</span></code> 来源于 <code class="docutils literal"><span class="pre">webserver</span></code>)</p>
+</li>
+<li><dl class="first docutils">
+<dt>使用子目录来做组织是个很好的选择</dt>
+<dd><ol class="first last loweralpha simple">
+<li>Each subdirectory can be represented with a dot (following the python
+import model) or a slash.  <code class="docutils literal"><span class="pre">webserver/dev.sls</span></code> can also be referred to
+as <code class="docutils literal"><span class="pre">webserver.dev</span></code></li>
+<li>Because slashes can be represented as dots, SLS files can not contain
+dots in the name besides the dot for the SLS suffix.  The SLS file
+webserver_1.0.sls can not be matched, and webserver_1.0 would match
+the directory/file webserver_1/0.sls</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">init.sls</span></code> 在一个子目录里面表示引导文件，也就表示子目录本身， 所以``webserver/init.sls`` 就是表示``webserver``.</p>
+</li>
+<li><p class="first">如果同时存在``webserver.sls`` 和 <code class="docutils literal"><span class="pre">webserver/init.sls</span></code>，则 <code class="docutils literal"><span class="pre">webserver/init.sls</span></code> 被过滤，<code class="docutils literal"><span class="pre">webserver.sls``将被用来表示</span> <span class="pre">``webserver</span></code>.</p>
+</li>
+</ol>
+</div>
+<div class="admonition-troubleshooting-salt admonition">
+<p class="first admonition-title">调试Salt</p>
+<p>如果没有看到预计的输出时，下面的提示可以帮助缩小问题。</p>
+<dl class="docutils">
+<dt>开启日志功能</dt>
+<dd><p class="first">如果你使用``debug``功能，salt可以描述的很详细.</p>
+<div class="last highlight-bash"><div class="highlight"><pre><span></span>salt-minion -l debug
+</pre></div>
+</div>
+</dd>
+<dt>前台运行minion</dt>
+<dd><p class="first">minion 开启的时候不加参数 (<a class="reference internal" href="../../ref/cli/salt-minion.html#cmdoption-salt-minion-d"><code class="xref std std-option docutils literal"><span class="pre">-d</span></code></a>) 可以看到很多minion 开始工作的输出。</p>
+<div class="last highlight-bash"><div class="highlight"><pre><span></span>salt-minion <span class="p">&amp;</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>当运行command:<cite>salt</cite>. 的时候增加默认的超时时间值，例如改变默认的超时时间60s</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt -t 60
+</pre></div>
+</div>
+<p>最好的输出就是让他们结合起来。</p>
+<div class="last highlight-bash"><div class="highlight"><pre><span></span>salt-minion -l debug <span class="p">&amp;</span>          <span class="c1"># On the minion</span>
+salt <span class="s1">&#39;*&#39;</span> state.highstate -t <span class="m">60</span>  <span class="c1"># On the master</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="next-steps">
+<h2>下一章<a class="headerlink" href="#next-steps" title="永久链接至标题">¶</a></h2>
+<p>This tutorial focused on getting a simple Salt States configuration working.
+<a class="reference internal" href="states_pt2.html"><em>Part 2</em></a> will build on this example to cover more advanced
+<code class="docutils literal"><span class="pre">sls</span></code> syntax and will explore more of the states that ship with Salt.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="starting_states.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="我们如何使用Salt States？" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="states_pt2.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="States tutorial, part 2 - More Complex States, Requisites" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../states/index.html">Configuration Management</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="starting_states.html">我们如何使用Salt States？</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">States教程，第1部分 - 基础用法</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#setting-up-the-salt-state-tree">建立Salt State树</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preparing-the-top-file">准备Top文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-an-sls-file">创建一个``sls``文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#install-the-package">安装软件包</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#next-steps">下一章</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="states_pt2.html">States tutorial, part 2 - More Complex States, Requisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="states_pt3.html">States tutorial, part 3 - Templating, Includes, Extends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="states_pt4.html">States tutorial, part 4</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/states/index.html">State System Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

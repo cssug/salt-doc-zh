@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt文件服务器</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Configuring Salt" href="../../topics/configuration/index.html">
+        <link rel="next" title="File Server Backends" href="backends.html">
+        <link rel="prev" title="Logging" href="../configuration/logging/index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../configuration/logging/index.html" title="Logging">上一页</a>
+            
+        </li>
+        <li>
+            <a href="backends.html" title="File Server Backends">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="salt-file-server">
+<span id="file-server"></span><h1>Salt文件服务器<a class="headerlink" href="#salt-file-server" title="永久链接至标题">¶</a></h1>
+<p>Salt内置一个简单的文件服务器用于分发文件给Salt minions. 文件服务器是一个构建于Salt master的无状态的ZeroMQ服务器。</p>
+<p>Salt文件服务器的主要意图是使用在Salt state系统中展示文件的。这样看来，Salt文件服务器可以用于任何master到minions的通用文件传输。</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="backends.html">File Server Backends</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="backends.html#enabling-a-fileserver-backend">Enabling a Fileserver Backend</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backends.html#using-multiple-backends">Using Multiple Backends</a></li>
+<li class="toctree-l2"><a class="reference internal" href="backends.html#environments">环境变量</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dynamic-modules.html">Dynamic Module Distribution</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dynamic-modules.html#sync-via-states">Sync Via States</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic-modules.html#sync-via-the-saltutil-module">Sync Via the saltutil Module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="file_roots.html">File Server Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="file_roots.html#environments">环境变量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file_roots.html#directory-overlay">Directory Overlay</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file_roots.html#local-file-server">Local File Server</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="the-cp-module">
+<h2>cp模块<a class="headerlink" href="#the-cp-module" title="永久链接至标题">¶</a></h2>
+<p>The cp module is the home of minion side file server operations. The cp module
+is used by the Salt state system, salt-cp, and can be used to distribute files
+presented by the Salt file server.</p>
+<div class="section" id="escaping-special-characters">
+<h3>Escaping Special Characters<a class="headerlink" href="#escaping-special-characters" title="永久链接至标题">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">salt://</span></code> url format can potentially contain a query string, for example
+<code class="docutils literal"><span class="pre">salt://dir/file.txt?saltenv=base</span></code>. You can prevent the fileclient/fileserver from
+interpreting <code class="docutils literal"><span class="pre">?</span></code> as the initial token of a query string by referencing the file
+with <code class="docutils literal"><span class="pre">salt://|</span></code> rather than <code class="docutils literal"><span class="pre">salt://</span></code>.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/marathon/conf/?checkpoint</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file.managed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://|hw/config/?checkpoint</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">makedirs</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="environments">
+<h3>环境变量<a class="headerlink" href="#environments" title="永久链接至标题">¶</a></h3>
+<p>Since the file server is made to work with the Salt state system, it supports
+environments. The environments are defined in the master config file and
+when referencing an environment the file specified will be based on the root
+directory of the environment.</p>
+</div>
+<div class="section" id="get-file">
+<h3>get_file<a class="headerlink" href="#get-file" title="永久链接至标题">¶</a></h3>
+<p>cp.get_file功能可以用于minion从master下载一个文件，该语法像这样：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt &#39;*&#39; cp.get_file salt://vimrc /etc/vimrc</span>
+</pre></div>
+</div>
+<p>该指令将会通知所有Salt minions下载vimrc文件并且拷贝到/etc/vimrc</p>
+<p>模板渲染功能可以同时在源和目标文件启用，命名像这样：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt &#39;*&#39; cp.get_file &quot;salt://{{grains.os}}/vimrc&quot; /etc/vimrc template=jinja</span>
+</pre></div>
+</div>
+<p>该范例将会通知所有Salt minions下载vimrc从同名目录名下载，作为他们的OS grain并且拷贝到/etc/vimrc</p>
+<p>For larger files, the cp.get_file module also supports gzip compression.
+Because gzip is CPU-intensive, this should only be used in
+scenarios where the compression ratio is very high (e.g. pretty-printed JSON
+or YAML files).</p>
+<p>To use compression, use the <code class="docutils literal"><span class="pre">gzip</span></code> named argument. Valid values are integers
+from 1 to 9, where 1 is the lightest compression and 9 the heaviest. In other
+words, 1 uses the least CPU on the master (and minion), while 9 uses the most.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt &#39;*&#39; cp.get_file salt://vimrc /etc/vimrc gzip=5</span>
+</pre></div>
+</div>
+<p>Finally, note that by default cp.get_file does <em>not</em> create new destination
+directories if they do not exist.  To change this, use the <code class="docutils literal"><span class="pre">makedirs</span></code>
+argument:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt &#39;*&#39; cp.get_file salt://vimrc /etc/vim/vimrc makedirs=True</span>
+</pre></div>
+</div>
+<p>In this example, /etc/vim/ would be created if it didn't already exist.</p>
+</div>
+<div class="section" id="get-dir">
+<h3>get_dir<a class="headerlink" href="#get-dir" title="永久链接至标题">¶</a></h3>
+<p>The cp.get_dir function can be used on the minion to download an entire
+directory from the master.  The syntax is very similar to get_file:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt &#39;*&#39; cp.get_dir salt://etc/apache2 /etc</span>
+</pre></div>
+</div>
+<p>cp.get_dir supports template rendering and gzip compression arguments just like
+get_file:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt &#39;*&#39; cp.get_dir salt://etc/{{pillar.webserver}} /etc gzip=5 template=jinja</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="file-server-client-api">
+<h2>File Server Client API<a class="headerlink" href="#file-server-client-api" title="永久链接至标题">¶</a></h2>
+<p>A client API is available which allows for modules and applications to be
+written which make use of the Salt file server.</p>
+<p>The file server uses the same authentication and encryption used by the rest
+of the Salt system for network communication.</p>
+<div class="section" id="fileclient-class">
+<h3>FileClient Class<a class="headerlink" href="#fileclient-class" title="永久链接至标题">¶</a></h3>
+<p>The FileClient class is used to set up the communication from the minion to
+the master. When creating a FileClient object the minion configuration needs
+to be passed in. When using the FileClient from within a minion module the
+built in <code class="docutils literal"><span class="pre">__opts__</span></code> data can be passed:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">salt.minion</span>
+
+<span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="n">saltenv</span><span class="o">=</span><span class="s1">&#39;base&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Used to get a single file from the Salt master</span>
+
+<span class="sd">    CLI Example:</span>
+<span class="sd">    salt &#39;*&#39; cp.get_file salt://vimrc /etc/vimrc</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Create the FileClient object</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">minion</span><span class="o">.</span><span class="n">FileClient</span><span class="p">(</span><span class="n">__opts__</span><span class="p">)</span>
+    <span class="c1"># Call get_file</span>
+    <span class="k">return</span> <span class="n">client</span><span class="o">.</span><span class="n">get_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="n">saltenv</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Using the FileClient class outside of a minion module where the <code class="docutils literal"><span class="pre">__opts__</span></code>
+data is not available, it needs to be generated:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">salt.minion</span>
+<span class="kn">import</span> <span class="nn">salt.config</span>
+
+<span class="k">def</span> <span class="nf">get_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="n">saltenv</span><span class="o">=</span><span class="s1">&#39;base&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Used to get a single file from the Salt master</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Get the configuration data</span>
+    <span class="n">opts</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">minion_config</span><span class="p">(</span><span class="s1">&#39;/etc/salt/minion&#39;</span><span class="p">)</span>
+    <span class="c1"># Create the FileClient object</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">minion</span><span class="o">.</span><span class="n">FileClient</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span>
+    <span class="c1"># Call get_file</span>
+    <span class="k">return</span> <span class="n">client</span><span class="o">.</span><span class="n">get_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="n">saltenv</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../configuration/logging/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Logging" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="backends.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="File Server Backends" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../topics/configuration/index.html">Configuring Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../configuration/master.html">配置Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/minion.html">配置Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/examples.html">Configuration file examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/blackout/index.html">Minion Blackout Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/eauth/access_control.html">Access Control System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/jobs/index.html">Job Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/jobs/job_cache.html">Managing the Job Cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/jobs/external_cache.html">Storing Job Results in an External System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/logging/index.html">Logging</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Salt文件服务器</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="backends.html">File Server Backends</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dynamic-modules.html">Dynamic Module Distribution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="file_roots.html">File Server Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-cp-module">cp模块</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#escaping-special-characters">Escaping Special Characters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#environments">环境变量</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get-file">get_file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get-dir">get_dir</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#file-server-client-api">File Server Client API</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fileclient-class">FileClient Class</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/gitfs.html">Git Fileserver Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/minionfs.html">MinionFS Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/spm/index.html">Salt Package Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/sdb/index.html">Storing Data in Other Databases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/nonroot.html">以非特权用户身份运行Salt Master/Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/cron.html">使用cron运行Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/hardening.html">Hardening Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../security/index.html">Security disclosure policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/transports/index.html">Salt Transport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/master_tops/index.html">Master Tops系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../returners/index.html">返回器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../renderers/index.html">Renderers渲染器</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>YAML Idiosyncrasies</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="解决问题" href="index.html">
+        <link rel="next" title="常见问题" href="../../faq.html">
+        <link rel="prev" title="Troubleshooting the Salt Minion" href="minion.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="minion.html" title="Troubleshooting the Salt Minion">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../../faq.html" title="常见问题">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="yaml-idiosyncrasies">
+<h1>YAML Idiosyncrasies<a class="headerlink" href="#yaml-idiosyncrasies" title="永久链接至标题">¶</a></h1>
+<p>One of Salt's strengths, the use of existing serialization systems for
+representing SLS data, can also backfire. <a class="reference external" href="http://yaml.org/spec/1.1/">YAML</a> is a general purpose system
+and there are a number of things that would seem to make sense in an sls
+file that cause YAML issues. It is wise to be aware of these issues. While
+reports or running into them are generally rare they can still crop up at
+unexpected times.</p>
+<div class="section" id="spaces-vs-tabs">
+<h2>Spaces vs Tabs<a class="headerlink" href="#spaces-vs-tabs" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="http://yaml.org/spec/1.1/#id871998">YAML uses spaces</a>, period. Do not use tabs in your SLS files! If strange
+errors are coming up in rendering SLS files, make sure to check that
+no tabs have crept in! In Vim, after enabling search highlighting
+with: <code class="docutils literal"><span class="pre">:set</span> <span class="pre">hlsearch</span></code>,  you can check with the following key sequence in
+normal mode(you can hit <cite>ESC</cite> twice to be sure): <code class="docutils literal"><span class="pre">/</span></code>, <cite>Ctrl-v</cite>, <cite>Tab</cite>, then
+hit <cite>Enter</cite>. Also, you can convert tabs to 2 spaces by these commands in Vim:
+<code class="docutils literal"><span class="pre">:set</span> <span class="pre">tabstop=2</span> <span class="pre">expandtab</span></code> and then <code class="docutils literal"><span class="pre">:retab</span></code>.</p>
+</div>
+<div class="section" id="indentation">
+<h2>Indentation<a class="headerlink" href="#indentation" title="永久链接至标题">¶</a></h2>
+<p>The suggested syntax for YAML files is to use 2 spaces for indentation,
+but YAML will follow whatever indentation system that the individual file
+uses. Indentation of two spaces works very well for SLS files given the
+fact that the data is uniform and not deeply nested.</p>
+<div class="section" id="nested-dictionaries">
+<span id="nested-dict-indentation"></span><h3>Nested Dictionaries<a class="headerlink" href="#nested-dictionaries" title="永久链接至标题">¶</a></h3>
+<p>When <a class="reference external" href="http://docs.python.org/2/library/stdtypes.html#typesmapping" title="(在 Python v2.7)"><span class="xref std std-ref">dicts</span></a> are nested within other data
+structures (particularly lists), the indentation logic sometimes changes.
+Examples of where this might happen include <code class="docutils literal"><span class="pre">context</span></code> and <code class="docutils literal"><span class="pre">default</span></code> options
+from the <a class="reference internal" href="../../ref/states/all/salt.states.file.html"><em>file.managed</em></a> state:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/http/conf/http.conf</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">managed</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://apache/http.conf</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">644</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">jinja</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">context</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">custom_var</span><span class="p p-Indicator">:</span> <span class="s">&quot;override&quot;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">defaults</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">custom_var</span><span class="p p-Indicator">:</span> <span class="s">&quot;default</span><span class="nv"> </span><span class="s">value&quot;</span>
+        <span class="l l-Scalar l-Scalar-Plain">other_var</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">123</span>
+</pre></div>
+</div>
+<p>Notice that while the indentation is two spaces per level, for the values under
+the <code class="docutils literal"><span class="pre">context</span></code> and <code class="docutils literal"><span class="pre">defaults</span></code> options there is a four-space indent. If only
+two spaces are used to indent, then those keys will be considered part of the
+same dictionary that contains the <code class="docutils literal"><span class="pre">context</span></code> key, and so the data will not be
+loaded correctly. If using a double indent is not desirable, then a
+deeply-nested dict can be declared with curly braces:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/http/conf/http.conf</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">managed</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://apache/http.conf</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">644</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">template</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">jinja</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">context</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{</span>
+      <span class="nv">custom_var</span><span class="p p-Indicator">:</span> <span class="s">&quot;override&quot;</span> <span class="p p-Indicator">}</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">defaults</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{</span>
+      <span class="nv">custom_var</span><span class="p p-Indicator">:</span> <span class="s">&quot;default</span><span class="nv"> </span><span class="s">value&quot;</span><span class="p p-Indicator">,</span>
+      <span class="nv">other_var</span><span class="p p-Indicator">:</span> <span class="nv">123</span> <span class="p p-Indicator">}</span>
+</pre></div>
+</div>
+<p>Here is a more concrete example of how YAML actually handles these
+indentations, using the Python interpreter on the command line:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">yaml</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;mystate:</span>
+<span class="gp">... </span><span class="s1">  file.managed:</span>
+<span class="gp">... </span><span class="s1">    - context:</span>
+<span class="gp">... </span><span class="s1">        some: var&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="go">{&#39;mystate&#39;: {&#39;file.managed&#39;: [{&#39;context&#39;: {&#39;some&#39;: &#39;var&#39;}}]}}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;mystate:</span>
+<span class="gp">... </span><span class="s1">  file.managed:</span>
+<span class="gp">... </span><span class="s1">    - context:</span>
+<span class="gp">... </span><span class="s1">      some: var&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="go">{&#39;mystate&#39;: {&#39;file.managed&#39;: [{&#39;some&#39;: &#39;var&#39;, &#39;context&#39;: None}]}}</span>
+</pre></div>
+</div>
+<p>Note that in the second example, <code class="docutils literal"><span class="pre">some</span></code> is added as another key in the same
+dictionary, whereas in the first example, it's the start of a new dictionary.
+That's the distinction. <code class="docutils literal"><span class="pre">context</span></code> is a common example because it is a keyword
+arg for many functions, and should contain a dictionary.</p>
+</div>
+</div>
+<div class="section" id="true-false-yes-no-on-off">
+<h2>True/False, Yes/No, On/Off<a class="headerlink" href="#true-false-yes-no-on-off" title="永久链接至标题">¶</a></h2>
+<p>PyYAML will load these values as boolean <code class="docutils literal"><span class="pre">True</span></code> or <code class="docutils literal"><span class="pre">False</span></code>. Un-capitalized
+versions will also be loaded as booleans (<code class="docutils literal"><span class="pre">true</span></code>, <code class="docutils literal"><span class="pre">false</span></code>, <code class="docutils literal"><span class="pre">yes</span></code>, <code class="docutils literal"><span class="pre">no</span></code>,
+<code class="docutils literal"><span class="pre">on</span></code>, and <code class="docutils literal"><span class="pre">off</span></code>). This can be especially problematic when constructing
+Pillar data. Make sure that your Pillars which need to use the string versions
+of these values are enclosed in quotes.  Pillars will be parsed twice by salt,
+so you'll need to wrap your values in multiple quotes, for example '&quot;false&quot;'.</p>
+</div>
+<div class="section" id="integers-are-parsed-as-integers">
+<h2>Integers are Parsed as Integers<a class="headerlink" href="#integers-are-parsed-as-integers" title="永久链接至标题">¶</a></h2>
+<p>NOTE: This has been fixed in salt 0.10.0, as of this release passing an
+integer that is preceded by a 0 will be correctly parsed</p>
+<p>When passing <code class="xref py py-func docutils literal"><span class="pre">integers</span></code> into an SLS file, they are
+passed as integers. This means that if a state accepts a string value
+and an integer is passed, that an integer will be sent. The solution here
+is to send the integer as a string.</p>
+<p>This is best explained when setting the mode for a file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/vimrc</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">managed</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://edit/vimrc</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">644</span>
+</pre></div>
+</div>
+<p>Salt manages this well, since the mode is passed as 644, but if the mode is
+zero padded as 0644, then it is read by YAML as an integer and evaluated as
+an octal value, 0644 becomes 420. Therefore, if the file mode is
+preceded by a 0 then it needs to be passed as a string:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/vimrc</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">file</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">managed</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">source</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://edit/vimrc</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="s">&#39;0644&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="yaml-does-not-like-double-short-decs">
+<h2>YAML does not like &quot;Double Short Decs&quot;<a class="headerlink" href="#yaml-does-not-like-double-short-decs" title="永久链接至标题">¶</a></h2>
+<p>If I can find a way to make YAML accept &quot;Double Short Decs&quot; then I will, since
+I think that double short decs would be awesome. So what is a &quot;Double Short
+Dec&quot;? It is when you declare a multiple short decs in one ID. Here is a
+standard short dec, it works great:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">vim</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span>
+</pre></div>
+</div>
+<p>The short dec means that there are no arguments to pass, so it is not required
+to add any arguments, and it can save space.</p>
+<p>YAML though, gets upset when declaring multiple short decs, for the record...</p>
+<p>THIS DOES NOT WORK:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">vim</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span>
+  <span class="l l-Scalar l-Scalar-Plain">user.present</span>
+</pre></div>
+</div>
+<p>Similarly declaring a short dec in the same ID dec as a standard dec does not
+work either...</p>
+<p>ALSO DOES NOT WORK:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">fred</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">user.present</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_auth.present</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">AAAAB3NzaC...</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">fred</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">enc</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ssh-dss</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">fred</span>
+</pre></div>
+</div>
+<p>The correct way is to define them like this:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">vim</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+  <span class="l l-Scalar l-Scalar-Plain">user.present</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+
+<span class="l l-Scalar l-Scalar-Plain">fred</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">user.present</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[]</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_auth.present</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">AAAAB3NzaC...</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">fred</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">enc</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ssh-dss</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">fred</span>
+</pre></div>
+</div>
+<p>Alternatively,  they can be defined the &quot;old way&quot;,  or with multiple
+&quot;full decs&quot;:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">vim</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">installed</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
+
+<span class="l l-Scalar l-Scalar-Plain">fred</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_auth</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">AAAAB3NzaC...</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">fred</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">enc</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ssh-dss</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">require</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">fred</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="yaml-support-only-plain-ascii">
+<h2>YAML support only plain ASCII<a class="headerlink" href="#yaml-support-only-plain-ascii" title="永久链接至标题">¶</a></h2>
+<p>According to YAML specification, only ASCII characters can be used.</p>
+<p>Within double-quotes, special characters may be represented with C-style
+escape sequences starting with a backslash ( \ ).</p>
+<p>Examples:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">micro</span><span class="p p-Indicator">:</span> <span class="s">&quot;</span><span class="se">\u00b5</span><span class="s">&quot;</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">copyright</span><span class="p p-Indicator">:</span> <span class="s">&quot;</span><span class="se">\u00A9</span><span class="s">&quot;</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">A</span><span class="p p-Indicator">:</span> <span class="s">&quot;</span><span class="se">\x41</span><span class="s">&quot;</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">alpha</span><span class="p p-Indicator">:</span> <span class="s">&quot;</span><span class="se">\u0251</span><span class="s">&quot;</span>
+<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">Alef</span><span class="p p-Indicator">:</span> <span class="s">&quot;</span><span class="se">\u05d0</span><span class="s">&quot;</span>
+</pre></div>
+</div>
+<p>List of usable <a class="reference external" href="http://en.wikipedia.org/wiki/List_of_Unicode_characters">Unicode characters</a>  will help you to identify correct numbers.</p>
+<p>Python can also be used to discover the Unicode number for a character:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="nb">repr</span><span class="p">(</span><span class="s2">u&quot;Text with wrong characters i need to figure out&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This shell command can find wrong characters in your SLS files:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>find . -name <span class="s1">&#39;*.sls&#39;</span>  -exec  grep --color<span class="o">=</span><span class="s1">&#39;auto&#39;</span> -P -n <span class="s1">&#39;[^\x00-\x7F]&#39;</span> <span class="se">\{</span><span class="o">}</span> <span class="se">\;</span>
+</pre></div>
+</div>
+<p>Alternatively you can toggle the <cite>yaml_utf8</cite> setting in your master configuration
+file. This is still an experimental setting but it should manage the right
+encoding conversion in salt after yaml states compilations.</p>
+</div>
+<div class="section" id="underscores-stripped-in-integer-definitions">
+<h2>Underscores stripped in Integer Definitions<a class="headerlink" href="#underscores-stripped-in-integer-definitions" title="永久链接至标题">¶</a></h2>
+<p>If a definition only includes numbers and underscores, it is parsed by YAML as
+an integer and all underscores are stripped.  To ensure the object becomes a
+string, it should be surrounded by quotes.  <a class="reference external" href="http://stackoverflow.com/questions/2723321/snakeyaml-how-to-disable-underscore-stripping-when-parsing">More information here</a>.</p>
+<p>Here's an example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">yaml</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="s1">&#39;2013_05_10&#39;</span><span class="p">)</span>
+<span class="go">20130510</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="s1">&#39;&quot;2013_05_10&quot;&#39;</span><span class="p">)</span>
+<span class="go">&#39;2013_05_10&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="automatic-datetime-conversion">
+<h2>Automatic <code class="docutils literal"><span class="pre">datetime</span></code> conversion<a class="headerlink" href="#automatic-datetime-conversion" title="永久链接至标题">¶</a></h2>
+<p>If there is a value in a YAML file formatted <code class="docutils literal"><span class="pre">2014-01-20</span> <span class="pre">14:23:23</span></code> or
+similar, YAML will automatically convert this to a Python <code class="docutils literal"><span class="pre">datetime</span></code> object.
+These objects are not msgpack serializable, and so may break core salt
+functionality.  If values such as these are needed in a salt YAML file
+(specifically a configuration file), they should be formatted with surrounding
+strings to force YAML to serialize them as strings:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">yaml</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="s1">&#39;2014-01-20 14:23:23&#39;</span><span class="p">)</span>
+<span class="go">datetime.datetime(2014, 1, 20, 14, 23, 23)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="s1">&#39;&quot;2014-01-20 14:23:23&quot;&#39;</span><span class="p">)</span>
+<span class="go">&#39;2014-01-20 14:23:23&#39;</span>
+</pre></div>
+</div>
+<p>Additionally, numbers formatted like <code class="docutils literal"><span class="pre">XXXX-XX-XX</span></code> will also be converted (or
+YAML will attempt to convert them, and error out if it doesn't think the date
+is a real one).  Thus, for example, if a minion were to have an ID of
+<code class="docutils literal"><span class="pre">4017-16-20</span></code> the minion would not start because YAML would complain that the
+date was out of range.  The workaround is the same, surround the offending
+string with quotes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">yaml</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="s1">&#39;4017-16-20&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+  File <span class="nb">&quot;/usr/local/lib/python2.7/site-packages/yaml/__init__.py&quot;</span>, line <span class="m">93</span>, in <span class="n">safe_load</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">SafeLoader</span><span class="p">)</span>
+  File <span class="nb">&quot;/usr/local/lib/python2.7/site-packages/yaml/__init__.py&quot;</span>, line <span class="m">71</span>, in <span class="n">load</span>
+    <span class="k">return</span> <span class="n">loader</span><span class="o">.</span><span class="n">get_single_data</span><span class="p">()</span>
+  File <span class="nb">&quot;/usr/local/lib/python2.7/site-packages/yaml/constructor.py&quot;</span>, line <span class="m">39</span>, in <span class="n">get_single_data</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">construct_document</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+  File <span class="nb">&quot;/usr/local/lib/python2.7/site-packages/yaml/constructor.py&quot;</span>, line <span class="m">43</span>, in <span class="n">construct_document</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">construct_object</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+  File <span class="nb">&quot;/usr/local/lib/python2.7/site-packages/yaml/constructor.py&quot;</span>, line <span class="m">88</span>, in <span class="n">construct_object</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">constructor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+  File <span class="nb">&quot;/usr/local/lib/python2.7/site-packages/yaml/constructor.py&quot;</span>, line <span class="m">312</span>, in <span class="n">construct_yaml_timestamp</span>
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">)</span>
+<span class="gr">ValueError</span>: <span class="n">month must be in 1..12</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="s1">&#39;&quot;4017-16-20&quot;&#39;</span><span class="p">)</span>
+<span class="go">&#39;4017-16-20&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="minion.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Troubleshooting the Salt Minion" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../../faq.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="常见问题" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../using_salt.html">Using Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../grains/index.html">Grains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pillar/index.html">在Pillar中存储静态数据</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../targeting/index.html">Targeting Minions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mine/index.html">Salt Mine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/runners/index.html">Runners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../engines/index.html">Salt Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../yaml/index.html">了解YAML</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">解决问题</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="index.html#troubleshooting-the-salt-master">Troubleshooting the Salt Master</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#troubleshooting-the-salt-minion">Troubleshooting the Salt Minion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#running-in-the-foreground">Running in the Foreground</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#what-ports-do-the-master-and-minion-need-open">What Ports do the Master and Minion Need Open?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#using-salt-call">Using salt-call</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#too-many-open-files">Too many open files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#salt-master-stops-responding">Salt Master Stops Responding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#salt-and-selinux">Salt and SELinux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#red-hat-enterprise-linux-5">Red Hat Enterprise Linux 5</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#common-yaml-gotchas">Common YAML Gotchas</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="">YAML Idiosyncrasies</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#spaces-vs-tabs">Spaces vs Tabs</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#indentation">Indentation</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#nested-dictionaries">Nested Dictionaries</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#true-false-yes-no-on-off">True/False, Yes/No, On/Off</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#integers-are-parsed-as-integers">Integers are Parsed as Integers</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#yaml-does-not-like-double-short-decs">YAML does not like &quot;Double Short Decs&quot;</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#yaml-support-only-plain-ascii">YAML support only plain ASCII</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#underscores-stripped-in-integer-definitions">Underscores stripped in Integer Definitions</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#automatic-datetime-conversion">Automatic <code class="docutils literal"><span class="pre">datetime</span></code> conversion</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#live-python-debug-output">Live Python Debug Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#salt-0-16-x-minions-cannot-communicate-with-a-0-17-x-master">Salt 0.16.x minions cannot communicate with a 0.17.x master</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#debugging-the-master-and-minion">Debugging the Master and Minion</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../faq.html">常见问题</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../best_practices.html">Salt Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

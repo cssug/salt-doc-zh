@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Multi Master Tutorial</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Architecture" href="../topology/index.html">
+        <link rel="next" title="Multi-Master-PKI Tutorial With Failover" href="multimaster_pki.html">
+        <link rel="prev" title="Using Salt at scale" href="intro_scale.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="intro_scale.html" title="Using Salt at scale">上一页</a>
+            
+        </li>
+        <li>
+            <a href="multimaster_pki.html" title="Multi-Master-PKI Tutorial With Failover">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="multi-master-tutorial">
+<h1>Multi Master Tutorial<a class="headerlink" href="#multi-master-tutorial" title="永久链接至标题">¶</a></h1>
+<p>As of Salt 0.16.0, the ability to connect minions to multiple masters has been
+made available. The multi-master system allows for redundancy of Salt
+masters and facilitates multiple points of communication out to minions. When
+using a multi-master setup, all masters are running hot, and any active master
+can be used to send commands out to the minions.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">If you need failover capabilities with multiple masters, there is also a
+MultiMaster-PKI setup available, that uses a different topology
+<a class="reference external" href="http://docs.saltstack.com/en/latest/topics/tutorials/multimaster_pki.html">MultiMaster-PKI with Failover Tutorial</a></p>
+</div>
+<p>In 0.16.0, the masters do not share any information, keys need to be accepted
+on both masters, and shared files need to be shared manually or use tools like
+the git fileserver backend to ensure that the <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-file_roots"><code class="xref std std-conf_master docutils literal"><span class="pre">file_roots</span></code></a> are
+kept consistent.</p>
+<div class="section" id="summary-of-steps">
+<h2>Summary of Steps<a class="headerlink" href="#summary-of-steps" title="永久链接至标题">¶</a></h2>
+<ol class="arabic simple">
+<li>Create a redundant master server</li>
+<li>Copy primary master key to redundant master</li>
+<li>Start redundant master</li>
+<li>Configure minions to connect to redundant master</li>
+<li>Restart minions</li>
+<li>Accept keys on redundant master</li>
+</ol>
+</div>
+<div class="section" id="prepping-a-redundant-master">
+<h2>Prepping a Redundant Master<a class="headerlink" href="#prepping-a-redundant-master" title="永久链接至标题">¶</a></h2>
+<p>The first task is to prepare the redundant master. If the redundant master is
+already running, stop it. There is only one requirement when preparing a
+redundant master, which is that masters share the same private key. When the
+first master was created, the master's identifying key pair was generated and
+placed in the master's <code class="docutils literal"><span class="pre">pki_dir</span></code>. The default location of the master's key
+pair is <code class="docutils literal"><span class="pre">/etc/salt/pki/master/</span></code>. Take the private key, <code class="docutils literal"><span class="pre">master.pem</span></code>, and
+copy it to the same location on the redundant master. Do the same for the
+master's public key, <code class="docutils literal"><span class="pre">master.pub</span></code>. Assuming that no minions have yet been
+connected to the new redundant master, it is safe to delete any existing key
+in this location and replace it.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">There is no logical limit to the number of redundant masters that can be
+used.</p>
+</div>
+<p>Once the new key is in place, the redundant master can be safely started.</p>
+</div>
+<div class="section" id="configure-minions">
+<h2>Configure Minions<a class="headerlink" href="#configure-minions" title="永久链接至标题">¶</a></h2>
+<p>Since minions need to be master-aware, the new master needs to be added to the
+minion configurations. Simply update the minion configurations to list all
+connected masters:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">saltmaster1.example.com</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">saltmaster2.example.com</span>
+</pre></div>
+</div>
+<p>Now the minion can be safely restarted.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>If the ipc_mode for the minion is set to TCP (default in Windows), then
+each minion in the multi-minion setup (one per master) needs its own
+tcp_pub_port and tcp_pull_port.</p>
+<p class="last">If these settings are left as the default 4510/4511, each minion object
+will receive a port 2 higher than the previous. Thus the first minion will
+get 4510/4511, the second will get 4512/4513, and so on. If these port
+decisions are unacceptable, you must configure tcp_pub_port and
+tcp_pull_port with lists of ports for each master. The length of these
+lists should match the number of masters, and there should not be overlap
+in the lists.</p>
+</div>
+<p>Now the minions will check into the original master and also check into the new
+redundant master. Both masters are first-class and have rights to the minions.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>Minions can automatically detect failed masters and attempt to reconnect
+to reconnect to them quickly. To enable this functionality, set
+<cite>master_alive_interval</cite> in the minion config and specify a number of
+seconds to poll the masters for connection status.</p>
+<p class="last">If this option is not set, minions will still reconnect to failed masters
+but the first command sent after a master comes back up may be lost while
+the minion authenticates.</p>
+</div>
+</div>
+<div class="section" id="sharing-files-between-masters">
+<h2>Sharing Files Between Masters<a class="headerlink" href="#sharing-files-between-masters" title="永久链接至标题">¶</a></h2>
+<p>Salt does not automatically share files between multiple masters. A number of
+files should be shared or sharing of these files should be strongly considered.</p>
+<div class="section" id="minion-keys">
+<h3>Minion Keys<a class="headerlink" href="#minion-keys" title="永久链接至标题">¶</a></h3>
+<p>Minion keys can be accepted the normal way using <strong>salt-key</strong> on both
+masters.  Keys accepted, deleted, or rejected on one master will NOT be
+automatically managed on redundant masters; this needs to be taken care of by
+running salt-key on both masters or sharing the
+<code class="docutils literal"><span class="pre">/etc/salt/pki/master/{minions,minions_pre,minions_rejected}</span></code> directories
+between masters.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">While sharing the <strong>/etc/salt/pki/master</strong> directory will work, it is
+strongly discouraged, since allowing access to the <strong>master.pem</strong> key
+outside of Salt creates a <em>SERIOUS</em> security risk.</p>
+</div>
+</div>
+<div class="section" id="file-roots">
+<h3>File_Roots<a class="headerlink" href="#file-roots" title="永久链接至标题">¶</a></h3>
+<p>The <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-file_roots"><code class="xref std std-conf_master docutils literal"><span class="pre">file_roots</span></code></a> contents should be kept consistent between
+masters. Otherwise state runs will not always be consistent on minions since
+instructions managed by one master will not agree with other masters.</p>
+<p>The recommended way to sync these is to use a fileserver backend like gitfs or
+to keep these files on shared storage.</p>
+</div>
+<div class="section" id="pillar-roots">
+<h3>Pillar_Roots<a class="headerlink" href="#pillar-roots" title="永久链接至标题">¶</a></h3>
+<p>Pillar roots should be given the same considerations as
+<a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-file_roots"><code class="xref std std-conf_master docutils literal"><span class="pre">file_roots</span></code></a>.</p>
+</div>
+<div class="section" id="master-configurations">
+<h3>Master Configurations<a class="headerlink" href="#master-configurations" title="永久链接至标题">¶</a></h3>
+<p>While reasons may exist to maintain separate master configurations, it is wise
+to remember that each master maintains independent control over minions.
+Therefore, access controls should be in sync between masters unless a valid
+reason otherwise exists to keep them inconsistent.</p>
+<p>These access control options include but are not limited to:</p>
+<ul class="simple">
+<li>external_auth</li>
+<li>publisher_acl</li>
+<li>peer</li>
+<li>peer_run</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="intro_scale.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Using Salt at scale" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="multimaster_pki.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Multi-Master-PKI Tutorial With Failover" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../topology/index.html">Architecture</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../highavailability/index.html">High Availability Features in Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../topology/syndic.html">Salt Syndic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro_scale.html">Using Salt at scale</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Multi Master Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#summary-of-steps">Summary of Steps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prepping-a-redundant-master">Prepping a Redundant Master</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configure-minions">Configure Minions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sharing-files-between-masters">Sharing Files Between Masters</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#minion-keys">Minion Keys</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#file-roots">File_Roots</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pillar-roots">Pillar_Roots</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#master-configurations">Master Configurations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="multimaster_pki.html">Multi-Master-PKI Tutorial With Failover</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

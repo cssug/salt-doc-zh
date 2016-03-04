@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.cloud.clouds.cloudstack</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.cloud.clouds.cloudstack">
+<span id="salt-cloud-clouds-cloudstack"></span><h1>salt.cloud.clouds.cloudstack<a class="headerlink" href="#module-salt.cloud.clouds.cloudstack" title="永久链接至标题">¶</a></h1>
+<div class="section" id="cloudstack-cloud-module">
+<h2>CloudStack Cloud Module<a class="headerlink" href="#cloudstack-cloud-module" title="永久链接至标题">¶</a></h2>
+<p>The CloudStack cloud module is used to control access to a CloudStack based
+Public Cloud.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">depends:</th><td class="field-body">libcloud</td>
+</tr>
+</tbody>
+</table>
+<p>Use of this module requires the <code class="docutils literal"><span class="pre">apikey</span></code>, <code class="docutils literal"><span class="pre">secretkey</span></code>, <code class="docutils literal"><span class="pre">host</span></code> and
+<code class="docutils literal"><span class="pre">path</span></code> parameters.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-cloudstack-cloud-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">apikey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;your api key &gt;</span>
+  <span class="l l-Scalar l-Scalar-Plain">secretkey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;your secret key &gt;</span>
+  <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">localhost</span>
+  <span class="l l-Scalar l-Scalar-Plain">path</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/client/api</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">cloudstack</span>
+</pre></div>
+</div>
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.avail_images">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">avail_images</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.avail_images" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a dict of all available VM images on the cloud provider with
+relevant data</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.avail_locations">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">avail_locations</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.avail_locations" title="永久链接至目标">¶</a></dt>
+<dd><p>返回一个字典，包含所有在云服务商可用的VM路径和相关数据</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.avail_sizes">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">avail_sizes</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.avail_sizes" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a dict of all available VM images on the cloud provider with
+relevant data</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.block_device_mappings">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">block_device_mappings</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.block_device_mappings" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the block device mapping:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">[{</span><span class="s1">&#39;DeviceName&#39;</span><span class="p">:</span> <span class="s1">&#39;/dev/sdb&#39;</span><span class="p">,</span> <span class="s1">&#39;VirtualName&#39;</span><span class="p">:</span> <span class="s1">&#39;ephemeral0&#39;</span><span class="p">},</span>
+  <span class="p">{</span><span class="s1">&#39;DeviceName&#39;</span><span class="p">:</span> <span class="s1">&#39;/dev/sdc&#39;</span><span class="p">,</span> <span class="s1">&#39;VirtualName&#39;</span><span class="p">:</span> <span class="s1">&#39;ephemeral1&#39;</span><span class="p">}]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.cloudstack_displayname">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">cloudstack_displayname</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.cloudstack_displayname" title="永久链接至目标">¶</a></dt>
+<dd><p>Return display name of VM:</p>
+<dl class="docutils">
+<dt>::</dt>
+<dd>&quot;minion1&quot;</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.create">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">create</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.create" title="永久链接至目标">¶</a></dt>
+<dd><p>从一个字典数据中创建单一的VM</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.destroy">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">destroy</code><span class="sig-paren">(</span><em>name</em>, <em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.destroy" title="永久链接至目标">¶</a></dt>
+<dd><p>Delete a single VM, and all of its volumes</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.get_configured_provider">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">get_configured_provider</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.get_configured_provider" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the first configured instance.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.get_conn">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">get_conn</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.get_conn" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a conn object for the passed VM data</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.get_dependencies">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">get_dependencies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.get_dependencies" title="永久链接至目标">¶</a></dt>
+<dd><p>Warn if dependencies aren't met.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.get_image">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">get_image</code><span class="sig-paren">(</span><em>conn</em>, <em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.get_image" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the image object to use</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.get_ip">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">get_ip</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.get_ip" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the IP address of the VM
+If the VM has  public IP as defined by libcloud module then use it
+Otherwise try to extract the private IP and use that one.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.get_key">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">get_key</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.get_key" title="永久链接至目标">¶</a></dt>
+<dd><p>Returns the ssh private key for VM access</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.get_keypair">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">get_keypair</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.get_keypair" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the keypair to use</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.get_location">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">get_location</code><span class="sig-paren">(</span><em>conn</em>, <em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.get_location" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the node location to use</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.get_networkid">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">get_networkid</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.get_networkid" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the networkid to use, only valid for Advanced Zone</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.get_node">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">get_node</code><span class="sig-paren">(</span><em>conn</em>, <em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.get_node" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a libcloud node for the named VM</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.get_password">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">get_password</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.get_password" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the password to use</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.get_project">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">get_project</code><span class="sig-paren">(</span><em>conn</em>, <em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.get_project" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the project to use.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.get_size">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">get_size</code><span class="sig-paren">(</span><em>conn</em>, <em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.get_size" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the VM's size object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.list_nodes">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">list_nodes</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.list_nodes" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of the VMs that are on the provider</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.list_nodes_full">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">list_nodes_full</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.list_nodes_full" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of the VMs that are on the provider, with all fields</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.list_nodes_select">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">list_nodes_select</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.list_nodes_select" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of the VMs that are on the provider, with select fields</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.script">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">script</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.script" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the script deployment object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.cloudstack.show_instance">
+<code class="descclassname">salt.cloud.clouds.cloudstack.</code><code class="descname">show_instance</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.cloudstack.show_instance" title="永久链接至目标">¶</a></dt>
+<dd><p>Show the details from the provider concerning an instance</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

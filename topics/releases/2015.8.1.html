@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt 2015.8.1 Release Notes</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Release Notes" href="index.html">
+        <link rel="next" title="Salt 2015.8.2 Release Notes" href="2015.8.2.html">
+        <link rel="prev" title="Git State and Execution Modules Rewritten" href="includes/git-2015.8.0.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="includes/git-2015.8.0.html" title="Git State and Execution Modules Rewritten">上一页</a>
+            
+        </li>
+        <li>
+            <a href="2015.8.2.html" title="Salt 2015.8.2 Release Notes">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="salt-2015-8-1-release-notes">
+<h1>Salt 2015.8.1 Release Notes<a class="headerlink" href="#salt-2015-8-1-release-notes" title="永久链接至标题">¶</a></h1>
+<p>Version 2015.8.1 is a bugfix release for <a class="reference internal" href="2015.8.0.html"><em>2015.8.0</em></a>.</p>
+<div class="section" id="security-fixes">
+<h2>Security Fixes<a class="headerlink" href="#security-fixes" title="永久链接至标题">¶</a></h2>
+<p>CVE-2015-6941 - <code class="docutils literal"><span class="pre">win_useradd</span></code> module and <code class="docutils literal"><span class="pre">salt-cloud</span></code> display passwords in debug log</p>
+<p>Updated the <code class="docutils literal"><span class="pre">win_useradd</span></code> module return data to no longer include the password of the newly created user. The password is now replaced with the string <code class="docutils literal"><span class="pre">XXX-REDACTED-XXX</span></code>.
+Updated the Salt Cloud debug output to no longer display <code class="docutils literal"><span class="pre">win_password</span></code> and <code class="docutils literal"><span class="pre">sudo_password</span></code> authentication credentials. Also updated the Linode driver to no longer display authentication credentials in debug logs. These credentials are now replaced with <code class="docutils literal"><span class="pre">REDACTED</span></code> in the debug output.</p>
+<p>CVE-2015-6918 - Git modules leaking HTTPS auth credentials to debug log</p>
+<p>Updated the Git state and execution modules to no longer display HTTPS basic authentication credentials in loglevel debug output on the Salt master. These credentials are now replaced with <code class="docutils literal"><span class="pre">REDACTED</span></code> in the debug output. Thanks to Andreas Stieger &lt;<a class="reference external" href="mailto:asteiger&#37;&#52;&#48;suse&#46;com">asteiger<span>&#64;</span>suse<span>&#46;</span>com</a>&gt; for bringing this to our attention.</p>
+</div>
+<div class="section" id="major-bug-fixes">
+<h2>Major Bug Fixes<a class="headerlink" href="#major-bug-fixes" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>Add support for <code class="docutils literal"><span class="pre">spm.d/*.conf</span></code> configuration of SPM (<a class="reference external" href="https://github.com/saltstack/salt/issues/27010">issue 27010</a>)</li>
+<li>Fix <code class="docutils literal"><span class="pre">proxy</span></code> grains breakage for non-proxy minions (<a class="reference external" href="https://github.com/saltstack/salt/issues/27039">issue 27039</a>)</li>
+<li>Fix global key management for git state</li>
+<li>Fix passing http auth to <code class="docutils literal"><span class="pre">util.http</span></code> from <code class="docutils literal"><span class="pre">state.file</span></code> (<a class="reference external" href="https://github.com/saltstack/salt/issues/21917">issue 21917</a>)</li>
+<li>Fix <code class="docutils literal"><span class="pre">multiprocessing:</span> <span class="pre">True</span></code> in windows (on by default`)</li>
+<li>Add <code class="docutils literal"><span class="pre">pkg.info</span></code> to pkg modules</li>
+<li>Fix name of <code class="docutils literal"><span class="pre">serial</span></code> grain (this was accidentally renamed in 2015.8.0`)</li>
+<li>Merge config values from <code class="docutils literal"><span class="pre">master.d</span></code>/<code class="docutils literal"><span class="pre">minion.d</span></code> conf files (rather than flat update`)</li>
+<li>Clean grains cache on grains sync (<a class="reference external" href="https://github.com/saltstack/salt/issues/19853">issue 19853</a>)</li>
+<li>Remove streamed response for fileclient to avoid HTTP redirection problems (<a class="reference external" href="https://github.com/saltstack/salt/issues/27093">issue 27093</a>)</li>
+<li>Fixed incorrect warning about <code class="docutils literal"><span class="pre">osrelease</span></code> grain (<a class="reference external" href="https://github.com/saltstack/salt/issues/27065">issue 27065</a>)</li>
+<li>Fix authentication via Salt-API with tokens (<a class="reference external" href="https://github.com/saltstack/salt/issues/27270">issue 27270</a>)</li>
+<li>Fix winrepo downloads from https locations (<a class="reference external" href="https://github.com/saltstack/salt/issues/27081">issue 27081</a>)</li>
+<li>Fix potential error with salt-call as non-root user (<a class="reference external" href="https://github.com/saltstack/salt/issues/26889">issue 26889</a>)</li>
+<li>Fix global minion provider overrides (<a class="reference external" href="https://github.com/saltstack/salt/issues/27209">issue 27209</a>)</li>
+<li>Fix backward compatibility issues for pecl modules</li>
+<li>Fix Windows uninstaller to only remove <code class="docutils literal"><span class="pre">./bin</span></code>, <code class="docutils literal"><span class="pre">salt*</span></code>, <code class="docutils literal"><span class="pre">nssm.exe</span></code>, <code class="docutils literal"><span class="pre">uninst.exe</span></code> (<a class="reference external" href="https://github.com/saltstack/salt/issues/27383">issue 27383</a>)</li>
+<li>Fix misc issues with mongo returner.</li>
+<li>Add sudo option to cloud config files (<a class="reference external" href="https://github.com/saltstack/salt/issues/27398">issue 27398</a>)</li>
+<li>Fix regression in RunnerClient argument handling (<a class="reference external" href="https://github.com/saltstack/salt/issues/25107">issue 25107</a>)</li>
+<li>Fix <code class="docutils literal"><span class="pre">dockerng.running</span></code> replacing creation hostconfig with runtime hostconfig (<a class="reference external" href="https://github.com/saltstack/salt/issues/27265">issue 27265</a>)</li>
+<li>Fix dockerng.running replacing creation hostconfig with runtime hostconfig (<a class="reference external" href="https://github.com/saltstack/salt/issues/27265">issue 27265</a>)</li>
+<li>Increased performance on boto asg/elb states due to <code class="docutils literal"><span class="pre">__states__</span></code> integration</li>
+<li>Windows minion no longer requires powershell to restart (<a class="reference external" href="https://github.com/saltstack/salt/issues/26629">issue 26629</a>)</li>
+<li>Fix x509 module to support recent versions of OpenSSL (<a class="reference external" href="https://github.com/saltstack/salt/issues/27326">issue 27326</a>)</li>
+<li>Some issues with proxy minions were corrected.</li>
+</ul>
+<p>Known Issues:</p>
+<ul class="simple">
+<li>Proxy minions currently cannot execute a highstate because of the way
+the proxymodule is being loaded internally.  This will be fixed in a
+future release.</li>
+</ul>
+</div>
+<div class="section" id="changes-for-v2015-8-0-v2015-8-1">
+<h2>Changes for v2015.8.0..v2015.8.1<a class="headerlink" href="#changes-for-v2015-8-0-v2015-8-1" title="永久链接至标题">¶</a></h2>
+<p>Extended changelog courtesy of Todd Stansell (<a class="reference external" href="https://github.com/tjstansell/salt-changelogs">https://github.com/tjstansell/salt-changelogs</a>):</p>
+<p><em>Generated at: 2015-10-01T04:45:02Z</em></p>
+<p>Total Merges: <strong>200</strong></p>
+<p>Changes:</p>
+<ul class="simple">
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27584">#27584</a>: (<em>jacobhammons</em>) added changes list to 2015.8.1 release notes</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27575">#27575</a>: (<em>rallytime</em>) Don't report existing instances as running only if they're actually terminated in EC2</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27573">#27573</a>: (<em>basepi</em>) [2015.8] Use the custom yaml serializer for minion_opts for salt-ssh</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27514">#27514</a>: (<em>clinta</em>) Recent Versions of OpenSSL don't allow importing incomplete PEMs</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27564">#27564</a>: (<em>jacobhammons</em>) Man pages</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27522">#27522</a>: (<em>twangboy</em>) Removed dependency on powershell to restart salt-minion</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27550">#27550</a>: (<em>rallytime</em>) [2015.8] Clean up salt-cloud logging and make it more useful</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27517">#27517</a>: (<em>jacobhammons</em>) Updated install docs</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27526">#27526</a>: (<em>eliasp</em>) Add missing newlines before param listing to fix doc rendering</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27525">#27525</a>: (<em>basepi</em>) [2015.8] Merge forward from 2015.5 to 2015.8</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27513">#27513</a>: (<em>terminalmage</em>) Fix integration tests for worktree addition in git &gt;= 2.6</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27510">#27510</a>: (<em>rallytime</em>) Merge <a class="reference external" href="https://github.com/saltstack/salt/pull/27475">#27475</a> with test fixes</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27451">#27451</a>: (<em>ticosax</em>) [dockerng] Enforce usage of host_config and require docker-py&gt;=1.4.0</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27461">#27461</a>: (<em>cachedout</em>) Only clean context if it exists</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27473">#27473</a>: (<em>terminalmage</em>) salt.utils.gitfs: Don't use close_fds=True on Windows</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27496">#27496</a>: (<em>blueyed</em>) Fix version reporting of gitpython</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27502">#27502</a>: (<em>ticosax</em>) Add test to check we don't call inspect_image on absent images.</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27497">#27497</a>: (<em>blueyed</em>) dockerng: fix image_present for forced, non-existent image</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27411">#27411</a>: (<em>terminalmage</em>) Fix invocation of git.config_get and git.config_set</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27477">#27477</a>: (<em>terminalmage</em>) Don't append role to hash_cachedir</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27474">#27474</a>: (<em>whiteinge</em>) Add fake pymongo version attribute for the docs</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27466">#27466</a>: (<em>blueyed</em>) Fix version reporting of python-gnupg and mysql-python</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27465">#27465</a>: (<em>ticosax</em>) Fix usage of dockerng &quot;cmd&quot; was <a class="reference external" href="https://github.com/saltstack/salt/pull/27459">#27459</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27417">#27417</a>: (<em>whiteinge</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/25243">#25243</a> into 2015.8</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27423">#27423</a>: (<em>dmurphy18</em>) Changes to support configurable repository for Debian / Ubuntu</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27428">#27428</a>: (<em>rallytime</em>) Back-port <a class="reference external" href="https://github.com/saltstack/salt/pull/27398">#27398</a> to 2015.8</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27429">#27429</a>: (<em>rallytime</em>) Back-port <a class="reference external" href="https://github.com/saltstack/salt/pull/27344">#27344</a> to 2015.8</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27450">#27450</a>: (<em>ticosax</em>) [dockerng] Fix typo in docstring</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27430">#27430</a>: (<em>jacksontj</em>) Fix bug introduced in eee0291ff8b65ff1e22f4dc2447a74aa28a3ce7f</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27418">#27418</a>: (<em>terminalmage</em>) Don't always remove dest path in salt.utils.files.rename()</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27383">#27383</a>: (<em>twangboy</em>) Uninstaller only removes specific files and dirs</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27416">#27416</a>: (<em>rallytime</em>) Back-port <a class="reference external" href="https://github.com/saltstack/salt/pull/27399">#27399</a> to 2015.8</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27394">#27394</a>: (<em>jacksontj</em>) Remove streamed response for fileclient to avoid HTTP redirection problems</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27415">#27415</a>: (<em>ryan-lane</em>) Backwards compat fixes for pecl module</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27407">#27407</a>: (<em>meggiebot</em>) Adding stretch label definition</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27388">#27388</a>: (<em>basepi</em>) [2015.8] Fix global provider overrides</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27386">#27386</a>: (<em>rallytime</em>) Document tty: True usage in salt-ssh roster file</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27380">#27380</a>: (<em>jtand</em>) Skipping Async tests</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27382">#27382</a>: (<em>terminalmage</em>) Revert &quot;fixes <a href="#id244"><span class="problematic" id="id245">`#27217`_</span></a> clear_old_remotes clears wrong directory (gitfs)&quot;</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27361">#27361</a>: (<em>cro</em>) Correct some issues with proxy minions</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27364">#27364</a>: (<em>ruzarowski</em>) SaltCloud[EC2] Fix missing credentials in modify_eni_properties api call</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27349">#27349</a>: (<em>jfindlay</em>) add freebsd install docs to release notes</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27343">#27343</a>: (<em>cachedout</em>) Close io loop before deleting attribute</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27337">#27337</a>: (<em>rallytime</em>) [2015.8] Fixup salt-cloud logging</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27332">#27332</a>: (<em>terminalmage</em>) Adjust dockerng/dockerio docstrings</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27353">#27353</a>: (<em>cachedout</em>) Fix case where var not set in config</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27350">#27350</a>: (<em>rallytime</em>) Allow IP-forwarding in GCE driver</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27305">#27305</a>: (<em>cachedout</em>) Re-init logging system on Windows when using multiprocessing</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27331">#27331</a>: (<em>terminalmage</em>) dockerng: Allow both cmd and command to be used to specify command</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27327">#27327</a>: (<em>isbm</em>) Fix a typo in the RPM output</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27312">#27312</a>: (<em>basepi</em>) [2015.8] Merge forward from 2015.5 to 2015.8</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27303">#27303</a>: (<em>jacobhammons</em>) Updated module doc index using <a class="reference external" href="https://github.com/saltstack/salt/pull">https://github.com/saltstack/salt/pull</a>…</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27301">#27301</a>: (<em>twangboy</em>) Pass ca_bundle for windows (fixes SSL Error)</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27300">#27300</a>: (<em>rallytime</em>) Back-port <a class="reference external" href="https://github.com/saltstack/salt/pull/27287">#27287</a> to 2015.8</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27288">#27288</a>: (<em>rallytime</em>) Filter on 'name', not 'id', when listing images</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27283">#27283</a>: (<em>jtand</em>) __grains__['osrelease'] returns a string</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27276">#27276</a>: (<em>rallytime</em>) Back-port <a class="reference external" href="https://github.com/saltstack/salt/pull/27218">#27218</a> to 2015.8</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27275">#27275</a>: (<em>rallytime</em>) Back-port <a class="reference external" href="https://github.com/saltstack/salt/pull/27213">#27213</a> to 2015.8</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27274">#27274</a>: (<em>rallytime</em>) Back-port <a class="reference external" href="https://github.com/saltstack/salt/pull/27272">#27272</a> to 2015.8</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27271">#27271</a>: (<em>isbm</em>) Bugfix: crash on token authentication via API</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27251">#27251</a>: (<em>rallytime</em>) Add support for post_uri in SoftLayer cloud drivers</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27260">#27260</a>: (<em>bechtoldt</em>) add missing module doc references</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27254">#27254</a>: (<em>jfindlay</em>) 2015.2,2015.8,Beryllium -&gt; 2015.8.0</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27245">#27245</a>: (<em>rallytime</em>) If two ssh keynames are found in DigitalOcean, abort and warn the user.</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27241">#27241</a>: (<em>jfindlay</em>) osrelease is only an integer for fedora</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27234">#27234</a>: (<em>basepi</em>) [2015.8] Merge forward from 2015.5 to 2015.8</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27240">#27240</a>: (<em>isbm</em>) Backport of the fix of 'pkg.info*' for Beryllium</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27223">#27223</a>: (<em>pprkut</em>) Support firewalld per interface zone config on rh7 systems</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27238">#27238</a>: (<em>bechtoldt</em>) salt.modules.disk.percent() throws KeyError when partition doesn't exist</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27232">#27232</a>: (<em>basepi</em>) [2015.8] Add stub release notes for 2015.8.1</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27199">#27199</a>: (<em>rallytime</em>) Avoid RunTimeError (dictionary changed size during iteration) with keys()</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27206">#27206</a>: (<em>rallytime</em>) Don't repeat GCE setup instructions, and make the use of .json files clearer</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27210">#27210</a>: (<em>rallytime</em>) Refactor some digital ocean functions</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27197">#27197</a>: (<em>basepi</em>) [2015.8] Merge forward from 2015.5 to 2015.8</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27195">#27195</a>: (<em>jacobhammons</em>) Fixed sphinx / latex build warnings and errors</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27182">#27182</a>: (<em>bernieke</em>) fix restart_on_error</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27163">#27163</a>: (<em>terminalmage</em>) Workaround upstream tornado bug affecting redirects</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27177">#27177</a>: (<em>rallytime</em>) Remove note - incorrect info</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27173">#27173</a>: (<em>rallytime</em>) Add the ability to specify multiple disks on the SoftLayer driver</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27164">#27164</a>: (<em>rallytime</em>) Make sure changes from <a class="reference external" href="https://github.com/saltstack/salt/pull/26824">#26824</a> to digital_ocean_v2.py driver make it to digital_ocean.py in 2015.8</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27143">#27143</a>: (<em>cachedout</em>) Clean grains cache on grains sync</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27150">#27150</a>: (<em>cachedout</em>) Merge config values from master.d/minion.d conf files</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27137">#27137</a>: (<em>jfindlay</em>) revert serial grain regression</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27144">#27144</a>: (<em>rallytime</em>) Don't stacktrace on softlayer_hw.show_all_prices if a code isn't supplied</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27139">#27139</a>: (<em>jacobhammons</em>) Updated key instruction on rhel7</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27134">#27134</a>: (<em>isbm</em>) Backport to 2015.8: &quot;pkg.info&quot;</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27119">#27119</a>: (<em>l2ol33rt</em>) Boto dynamodb module should be using layer 2 abstractions</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27092">#27092</a>: (<em>perfinion</em>) salt/master: chdir to root not homedir</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27131">#27131</a>: (<em>jacobhammons</em>) Install docs</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27124">#27124</a>: (<em>jfindlay</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/27123">#27123</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27111">#27111</a>: (<em>basepi</em>) [2015.8] Merge forward from 2015.5 to 2015.8</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27122">#27122</a>: (<em>terminalmage</em>) Fix broken link to git-config(1) docs</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27115">#27115</a>: (<em>jacobhammons</em>) Release docs</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27110">#27110</a>: (<em>rallytime</em>) Make sure -Q output is consistent across salt-cloud drivers</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27050">#27050</a>: (<em>twangboy</em>) Turned multiprocessing on</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27086">#27086</a>: (<em>techhat</em>) Document development of SPM loader modules</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/26941">#26941</a>: (<em>msteed</em>) Make elasticsearch work as master job cache</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27080">#27080</a>: (<em>bechtoldt</em>) [Proposal] Add Github SPM label for issues</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27064">#27064</a>: (<em>twangboy</em>) Fixed user docs</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27072">#27072</a>: (<em>rallytime</em>) Back-port <a class="reference external" href="https://github.com/saltstack/salt/pull/26840">#26840</a> to 2015.8</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27060">#27060</a>: (<em>cro</em>) Fix grains breakage when hosts are not Linux, Windows, or SunOS</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27051">#27051</a>: (<em>rallytime</em>) Back-port <a class="reference external" href="https://github.com/saltstack/salt/pull/26953">#26953</a> to 2015.8</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/26864">#26864</a>: (<em>terminalmage</em>) Only do git_pillar preflight checks on new-style git_pillar configs</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/26967">#26967</a>: (<em>TheBigBear</em>) new URL for windows salt downloads</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/26921">#26921</a>: (<em>terminalmage</em>) Get rid of error in legacy git pillar when using branch mapping notation</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/26923">#26923</a>: (<em>rallytime</em>) Code clean up of cloud drivers and files</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/27010">#27010</a>: (<em>rallytime</em>) Back-port <a class="reference external" href="https://github.com/saltstack/salt/pull/26988">#26988</a> to 2015.8</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/26985">#26985</a>: (<em>rallytime</em>) Fix versionadded tag</li>
+</ul>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="includes/git-2015.8.0.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Git State and Execution Modules Rewritten" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="2015.8.2.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt 2015.8.2 Release Notes" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Release Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#latest-branch-release">Latest Branch Release</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#previous-releases">Previous Releases</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="2016.3.0.html">Salt 2016.3.0 Release Notes - Codename Boron</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.8.html">Salt 2015.8.8 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.7.html">Salt 2015.8.7 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.5.html">Salt 2015.8.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.4.html">Salt 2015.8.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.3.html">Salt 2015.8.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.2.html">Salt 2015.8.2 Release Notes</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Salt 2015.8.1 Release Notes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#security-fixes">Security Fixes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#major-bug-fixes">Major Bug Fixes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#changes-for-v2015-8-0-v2015-8-1">Changes for v2015.8.0..v2015.8.1</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.0.html">Salt 2015.8.0 Release Notes - Codename Beryllium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.10.html">Salt 2015.5.10 Release Notes (In Progress)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.9.html">Salt 2015.5.9 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.8.html">Salt 2015.5.8 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.7.html">Salt 2015.5.7 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.6.html">Salt 2015.5.6 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.5.html">Salt 2015.5.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.4.html">Salt 2015.5.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.3.html">Salt 2015.5.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.2.html">Salt 2015.5.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.1.html">Salt 2015.5.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.0.html">Salt 2015.5.0 Release Notes - Codename Lithium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.6.html">Salt 2014.7.6 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.5.html">Salt 2014.7.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.4.html">Salt 2014.7.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.3.html">Salt 2014.7.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.2.html">Salt 2014.7.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.1.html">Salt 2014.7.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.0.html">Salt 2014.7.0 Release Notes - Codename Helium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.13.html">Salt 2014.1.13 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.12.html">Salt 2014.1.12 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.11.html">Salt 2014.1.11 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.10.html">Salt 2014.1.10 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.9.html">Salt 2014.1.9 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.8.html">Salt 2014.1.8 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.7.html">Salt 2014.1.7 发行注记</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.6.html">Salt 2014.1.6 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.5.html">Salt 2014.1.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.4.html">Salt 2014.1.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.3.html">Salt 2014.1.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.2.html">Salt 2014.1.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.1.html">Salt 2014.1.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.0.html">Salt 2014.1.0 Release Notes - Codename Hydrogen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.5.html">Salt 0.17.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.4.html">Salt 0.17.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.3.html">Salt 0.17.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.2.html">Salt 0.17.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.1.html">Salt 0.17.1发行注记</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.0.html">Salt 0.17.0发行注记</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.4.html">Salt 0.16.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.3.html">Salt 0.16.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.2.html">Salt 0.16.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.1.html">Salt 0.16.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.0.html">Salt 0.16.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.15.3.html">Salt 0.15.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.15.2.html">Salt 0.15.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.15.1.html">Salt 0.15.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.15.0.html">Salt 0.15.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.14.1.html">Salt 0.14.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.14.0.html">Salt 0.14.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.13.3.html">Salt 0.13.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.13.2.html">Salt 0.13.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.13.1.html">Salt 0.13.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.13.0.html">Salt 0.13.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.12.1.html">Salt 0.12.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.12.0.html">Salt 0.12.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.11.1.html">Salt 0.11.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.11.0.html">Salt 0.11.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.5.html">Salt 0.10.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.4.html">Salt 0.10.4发行注记</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.3.html">Salt 0.10.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.2.html">Salt 0.10.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.1.html">Salt 0.10.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.0.html">Salt 0.10.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.9.html">Salt 0.9.9 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.8.html">Salt 0.9.8 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.7.html">Salt 0.9.7 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.6.html">Salt 0.9.6 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.5.html">Salt 0.9.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.4.html">Salt 0.9.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.3.html">Salt 0.9.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.2.html">Salt 0.9.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.1.html">Salt 0.9.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.0.html">Salt 0.9.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.8.9.html">Salt 0.8.9 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.8.8.html">Salt 0.8.8 release notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.8.7.html">Salt 0.8.7 release notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.8.0.html">Salt 0.8.0 release notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.7.0.html">Salt 0.7.0 release notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.6.0.html">Salt 0.6.0 release notes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

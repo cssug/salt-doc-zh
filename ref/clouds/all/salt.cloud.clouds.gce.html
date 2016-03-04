@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.cloud.clouds.gce</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.cloud.clouds.gce">
+<span id="salt-cloud-clouds-gce"></span><h1>salt.cloud.clouds.gce<a class="headerlink" href="#module-salt.cloud.clouds.gce" title="永久链接至标题">¶</a></h1>
+<p>Copyright 2013 Google Inc. All Rights Reserved.</p>
+<p>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+<blockquote>
+<div><a class="reference external" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></div></blockquote>
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+<div class="section" id="google-compute-engine-module">
+<h2>Google Compute Engine Module<a class="headerlink" href="#google-compute-engine-module" title="永久链接至标题">¶</a></h2>
+<p>The Google Compute Engine module. This module interfaces with Google Compute
+Engine (GCE). To authenticate to GCE, you will need to create a Service Account.
+To set up Service Account Authentication, follow the <a class="reference internal" href="../../../topics/cloud/gce.html#gce-setup"><span>Google Compute Engine Setup</span></a> instructions.</p>
+<div class="section" id="example-provider-configuration">
+<h3>Example Provider Configuration<a class="headerlink" href="#example-provider-configuration" title="永久链接至标题">¶</a></h3>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-gce-config</span><span class="p p-Indicator">:</span>
+  <span class="c1"># The Google Cloud Platform Project ID</span>
+  <span class="l l-Scalar l-Scalar-Plain">project</span><span class="p p-Indicator">:</span> <span class="s">&quot;my-project-id&quot;</span>
+  <span class="c1"># The Service ACcount client ID</span>
+  <span class="l l-Scalar l-Scalar-Plain">service_account_email_address</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">1234567890@developer.gserviceaccount.com</span>
+  <span class="c1"># The location of the private key (PEM format)</span>
+  <span class="l l-Scalar l-Scalar-Plain">service_account_private_key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/home/erjohnso/PRIVKEY.pem</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">gce</span>
+  <span class="c1"># Specify whether to use public or private IP for deploy script.</span>
+  <span class="c1"># Valid options are:</span>
+  <span class="c1">#     private_ips - The salt-master is also hosted with GCE</span>
+  <span class="c1">#     public_ips - The salt-master is hosted outside of GCE</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_interface</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">public_ips</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">maintainer:</th><td class="field-body">Eric Johnson &lt;<a class="reference external" href="mailto:erjohnso&#37;&#52;&#48;google&#46;com">erjohnso<span>&#64;</span>google<span>&#46;</span>com</a>&gt;</td>
+</tr>
+<tr class="field-even field"><th class="field-name">depends:</th><td class="field-body">libcloud &gt;= 0.14.1</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.attach_disk">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">attach_disk</code><span class="sig-paren">(</span><em>name=None</em>, <em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.attach_disk" title="永久链接至目标">¶</a></dt>
+<dd><p>Attach an existing disk to an existing instance.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a attach_disk myinstance <span class="nv">disk_name</span><span class="o">=</span>mydisk <span class="nv">mode</span><span class="o">=</span>READ_WRITE
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.attach_lb">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">attach_lb</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.attach_lb" title="永久链接至目标">¶</a></dt>
+<dd><p>Add an existing node/member to an existing load-balancer configuration.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f attach_lb gce <span class="nv">name</span><span class="o">=</span>lb <span class="nv">member</span><span class="o">=</span>myinstance
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.avail_images">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">avail_images</code><span class="sig-paren">(</span><em>conn=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.avail_images" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a dict of all available VM images on the cloud provider with
+relevant data.</p>
+<p>Note that for GCE, there are custom images within the project, but the
+generic images are in other projects.  This returns a dict of images in
+the project plus images in well-known public projects that provide supported
+images, as listed on this page:
+<a class="reference external" href="https://cloud.google.com/compute/docs/operating-systems/">https://cloud.google.com/compute/docs/operating-systems/</a></p>
+<p>If image names overlap, the image in the current project is used.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.avail_locations">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">avail_locations</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.avail_locations" title="永久链接至目标">¶</a></dt>
+<dd><p>返回一个字典，包含所有在云服务商可用的VM路径和相关数据</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.avail_sizes">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">avail_sizes</code><span class="sig-paren">(</span><em>conn=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.avail_sizes" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a dict of available instances sizes (a.k.a machine types) and
+convert them to something more serializable.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.create">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">create</code><span class="sig-paren">(</span><em>vm_=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.create" title="永久链接至目标">¶</a></dt>
+<dd><p>Create a single GCE instance from a data dict.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.create_address">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">create_address</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.create_address" title="永久链接至目标">¶</a></dt>
+<dd><p>Create a static address in a region.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_address gce <span class="nv">name</span><span class="o">=</span>my-ip <span class="nv">region</span><span class="o">=</span>us-central1 <span class="nv">address</span><span class="o">=</span>IP
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.create_disk">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">create_disk</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.create_disk" title="永久链接至目标">¶</a></dt>
+<dd><p>Create a new persistent disk. Must specify <cite>disk_name</cite> and <cite>location</cite>.
+Can also specify an <cite>image</cite> or <cite>snapshot</cite> but if neither of those are
+specified, a <cite>size</cite> (in GB) is required.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_disk gce <span class="nv">disk_name</span><span class="o">=</span>pd <span class="nv">size</span><span class="o">=</span><span class="m">300</span> <span class="nv">location</span><span class="o">=</span>us-central1-b
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.create_fwrule">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">create_fwrule</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.create_fwrule" title="永久链接至目标">¶</a></dt>
+<dd><p>Create a GCE firewall rule. The 'default' network is used if not specified.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_fwrule gce <span class="nv">name</span><span class="o">=</span>allow-http <span class="nv">allow</span><span class="o">=</span>tcp:80
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.create_hc">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">create_hc</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.create_hc" title="永久链接至目标">¶</a></dt>
+<dd><p>Create an HTTP health check configuration.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_hc gce <span class="nv">name</span><span class="o">=</span>hc <span class="nv">path</span><span class="o">=</span>/healthy <span class="nv">port</span><span class="o">=</span>80
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.create_lb">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">create_lb</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.create_lb" title="永久链接至目标">¶</a></dt>
+<dd><p>Create a load-balancer configuration.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_lb gce <span class="nv">name</span><span class="o">=</span>lb <span class="nv">region</span><span class="o">=</span>us-central1 <span class="nv">ports</span><span class="o">=</span>80
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.create_network">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">create_network</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.create_network" title="永久链接至目标">¶</a></dt>
+<dd><p>Create a GCE network.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_network gce <span class="nv">name</span><span class="o">=</span>mynet <span class="nv">cidr</span><span class="o">=</span>10.10.10.0/24
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.create_snapshot">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">create_snapshot</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.create_snapshot" title="永久链接至目标">¶</a></dt>
+<dd><p>Create a new disk snapshot. Must specify <cite>name</cite> and  <cite>disk_name</cite>.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_snapshot gce <span class="nv">name</span><span class="o">=</span>snap1 <span class="nv">disk_name</span><span class="o">=</span>pd
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.delete_address">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">delete_address</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.delete_address" title="永久链接至目标">¶</a></dt>
+<dd><p>Permanently delete a static address.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_address gce <span class="nv">name</span><span class="o">=</span>my-ip
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.delete_disk">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">delete_disk</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.delete_disk" title="永久链接至目标">¶</a></dt>
+<dd><p>Permanently delete a persistent disk.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_disk gce <span class="nv">disk_name</span><span class="o">=</span>pd
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.delete_fwrule">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">delete_fwrule</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.delete_fwrule" title="永久链接至目标">¶</a></dt>
+<dd><p>Permanently delete a firewall rule.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_fwrule gce <span class="nv">name</span><span class="o">=</span>allow-http
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.delete_hc">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">delete_hc</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.delete_hc" title="永久链接至目标">¶</a></dt>
+<dd><p>Permanently delete a health check.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_hc gce <span class="nv">name</span><span class="o">=</span>hc
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.delete_lb">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">delete_lb</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.delete_lb" title="永久链接至目标">¶</a></dt>
+<dd><p>Permanently delete a load-balancer.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_lb gce <span class="nv">name</span><span class="o">=</span>lb
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.delete_network">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">delete_network</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.delete_network" title="永久链接至目标">¶</a></dt>
+<dd><p>Permanently delete a network.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_network gce <span class="nv">name</span><span class="o">=</span>mynet
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.delete_snapshot">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">delete_snapshot</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.delete_snapshot" title="永久链接至目标">¶</a></dt>
+<dd><p>Permanently delete a disk snapshot.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_snapshot gce <span class="nv">name</span><span class="o">=</span>disk-snap-1
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.destroy">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">destroy</code><span class="sig-paren">(</span><em>vm_name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.destroy" title="永久链接至目标">¶</a></dt>
+<dd><p>Call 'destroy' on the instance.  Can be called with &quot;-a destroy&quot; or -d</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a destroy myinstance1 myinstance2 ...
+salt-cloud -d myinstance1 myinstance2 ...
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.detach_disk">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">detach_disk</code><span class="sig-paren">(</span><em>name=None</em>, <em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.detach_disk" title="永久链接至目标">¶</a></dt>
+<dd><p>Detach a disk from an instance.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a detach_disk myinstance <span class="nv">disk_name</span><span class="o">=</span>mydisk
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.detach_lb">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">detach_lb</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.detach_lb" title="永久链接至目标">¶</a></dt>
+<dd><p>Remove an existing node/member from an existing load-balancer configuration.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f detach_lb gce <span class="nv">name</span><span class="o">=</span>lb <span class="nv">member</span><span class="o">=</span>myinstance
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.get_configured_provider">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">get_configured_provider</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.get_configured_provider" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the first configured instance.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.get_conn">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">get_conn</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.get_conn" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a conn object for the passed VM data</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.get_dependencies">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">get_dependencies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.get_dependencies" title="永久链接至目标">¶</a></dt>
+<dd><p>Warn if dependencies aren't met.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.get_lb_conn">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">get_lb_conn</code><span class="sig-paren">(</span><em>gce_driver=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.get_lb_conn" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a load-balancer conn object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.list_nodes">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">list_nodes</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.list_nodes" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of the VMs that are on the provider</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.list_nodes_full">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">list_nodes_full</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.list_nodes_full" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of the VMs that are on the provider, with all fields</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.list_nodes_select">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">list_nodes_select</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.list_nodes_select" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of the VMs that are on the provider, with select fields</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.reboot">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">reboot</code><span class="sig-paren">(</span><em>vm_name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.reboot" title="永久链接至目标">¶</a></dt>
+<dd><p>Call GCE 'reset' on the instance.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a reboot myinstance
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.request_instance">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">request_instance</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.request_instance" title="永久链接至目标">¶</a></dt>
+<dd><p>Request a single GCE instance from a data dict.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.script">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">script</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.script" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the script deployment object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.show_address">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">show_address</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.show_address" title="永久链接至目标">¶</a></dt>
+<dd><p>Show the details of an existing static address.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_address gce <span class="nv">name</span><span class="o">=</span>mysnapshot <span class="nv">region</span><span class="o">=</span>us-central1
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.show_disk">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">show_disk</code><span class="sig-paren">(</span><em>name=None</em>, <em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.show_disk" title="永久链接至目标">¶</a></dt>
+<dd><p>Show the details of an existing disk.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a show_disk myinstance <span class="nv">disk_name</span><span class="o">=</span>mydisk
+salt-cloud -f show_disk gce <span class="nv">disk_name</span><span class="o">=</span>mydisk
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.show_fwrule">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">show_fwrule</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.show_fwrule" title="永久链接至目标">¶</a></dt>
+<dd><p>Show the details of an existing firewall rule.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_fwrule gce <span class="nv">name</span><span class="o">=</span>allow-http
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.show_hc">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">show_hc</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.show_hc" title="永久链接至目标">¶</a></dt>
+<dd><p>Show the details of an existing health check.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_hc gce <span class="nv">name</span><span class="o">=</span>hc
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.show_instance">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">show_instance</code><span class="sig-paren">(</span><em>vm_name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.show_instance" title="永久链接至目标">¶</a></dt>
+<dd><p>Show the details of the existing instance.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.show_lb">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">show_lb</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.show_lb" title="永久链接至目标">¶</a></dt>
+<dd><p>Show the details of an existing load-balancer.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_lb gce <span class="nv">name</span><span class="o">=</span>lb
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.show_network">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">show_network</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.show_network" title="永久链接至目标">¶</a></dt>
+<dd><p>Show the details of an existing network.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_network gce <span class="nv">name</span><span class="o">=</span>mynet
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.show_pricing">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">show_pricing</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.show_pricing" title="永久链接至目标">¶</a></dt>
+<dd><p>Show pricing for a particular profile. This is only an estimate, based on
+unofficial pricing sources.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>CLI Examples:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_pricing my-gce-config <span class="nv">profile</span><span class="o">=</span>my-profile
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.show_snapshot">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">show_snapshot</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.show_snapshot" title="永久链接至目标">¶</a></dt>
+<dd><p>Show the details of an existing snapshot.</p>
+<p>命令行接口CLI 范例:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_snapshot gce <span class="nv">name</span><span class="o">=</span>mysnapshot
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.gce.update_pricing">
+<code class="descclassname">salt.cloud.clouds.gce.</code><code class="descname">update_pricing</code><span class="sig-paren">(</span><em>kwargs=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.gce.update_pricing" title="永久链接至目标">¶</a></dt>
+<dd><p>Download most recent pricing information from GCE and save locally</p>
+<p>CLI Examples:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f update_pricing my-gce-config
+</pre></div>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

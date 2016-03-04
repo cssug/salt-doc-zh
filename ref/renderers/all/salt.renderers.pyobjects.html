@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.renderers.pyobjects</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+        <link rel="up" title="Full list of builtin renderer modules" href="index.html">
+        <link rel="next" title="salt.renderers.stateconf" href="salt.renderers.stateconf.html">
+        <link rel="prev" title="salt.renderers.pydsl" href="salt.renderers.pydsl.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="salt.renderers.pydsl.html" title="salt.renderers.pydsl">上一页</a>
+            
+        </li>
+        <li>
+            <a href="salt.renderers.stateconf.html" title="salt.renderers.stateconf">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.renderers.pyobjects">
+<span id="salt-renderers-pyobjects"></span><h1>salt.renderers.pyobjects<a class="headerlink" href="#module-salt.renderers.pyobjects" title="永久链接至标题">¶</a></h1>
+<p>Python renderer that includes a Pythonic Object based interface</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">maintainer:</th><td class="field-body">Evan Borgstrom &lt;<a class="reference external" href="mailto:evan&#37;&#52;&#48;borgstrom&#46;ca">evan<span>&#64;</span>borgstrom<span>&#46;</span>ca</a>&gt;</td>
+</tr>
+</tbody>
+</table>
+<p>Let's take a look at how you use pyobjects in a state file. Here's a quick
+example that ensures the <code class="docutils literal"><span class="pre">/tmp</span></code> directory is in the correct state.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1">#!pyobjects</span>
+
+ <span class="n">File</span><span class="o">.</span><span class="n">managed</span><span class="p">(</span><span class="s2">&quot;/tmp&quot;</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;1777&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>Nice and Pythonic!</p>
+<p>By using the &quot;shebang&quot; syntax to switch to the pyobjects renderer we can now
+write our state data using an object based interface that should feel at home
+to python developers. You can import any module and do anything that you'd
+like (with caution, importing sqlalchemy, django or other large frameworks has
+not been tested yet). Using the pyobjects renderer is exactly the same as
+using the built-in Python renderer with the exception that pyobjects provides
+you with an object based interface for generating state data.</p>
+<div class="section" id="creating-state-data">
+<h2>Creating state data<a class="headerlink" href="#creating-state-data" title="永久链接至标题">¶</a></h2>
+<p>Pyobjects takes care of creating an object for each of the available states on
+the minion. Each state is represented by an object that is the CamelCase
+version of its name (i.e. <code class="docutils literal"><span class="pre">File</span></code>, <code class="docutils literal"><span class="pre">Service</span></code>, <code class="docutils literal"><span class="pre">User</span></code>, etc), and these
+objects expose all of their available state functions (i.e. <code class="docutils literal"><span class="pre">File.managed</span></code>,
+<code class="docutils literal"><span class="pre">Service.running</span></code>, etc).</p>
+<p>The name of the state is split based upon underscores (<code class="docutils literal"><span class="pre">_</span></code>), then each part
+is capitalized and finally the parts are joined back together.</p>
+<p>Some examples:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">postgres_user</span></code> becomes <code class="docutils literal"><span class="pre">PostgresUser</span></code></li>
+<li><code class="docutils literal"><span class="pre">ssh_known_hosts</span></code> becomes <code class="docutils literal"><span class="pre">SshKnownHosts</span></code></li>
+</ul>
+</div>
+<div class="section" id="context-managers-and-requisites">
+<h2>Context Managers and requisites<a class="headerlink" href="#context-managers-and-requisites" title="永久链接至标题">¶</a></h2>
+<p>How about something a little more complex. Here we're going to get into the
+core of how to use pyobjects to write states.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1">#!pyobjects</span>
+
+ <span class="k">with</span> <span class="n">Pkg</span><span class="o">.</span><span class="n">installed</span><span class="p">(</span><span class="s2">&quot;nginx&quot;</span><span class="p">):</span>
+     <span class="n">Service</span><span class="o">.</span><span class="n">running</span><span class="p">(</span><span class="s2">&quot;nginx&quot;</span><span class="p">,</span> <span class="n">enable</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+     <span class="k">with</span> <span class="n">Service</span><span class="p">(</span><span class="s2">&quot;nginx&quot;</span><span class="p">,</span> <span class="s2">&quot;watch_in&quot;</span><span class="p">):</span>
+         <span class="n">File</span><span class="o">.</span><span class="n">managed</span><span class="p">(</span><span class="s2">&quot;/etc/nginx/conf.d/mysite.conf&quot;</span><span class="p">,</span>
+                      <span class="n">owner</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;0444&#39;</span><span class="p">,</span>
+                      <span class="n">source</span><span class="o">=</span><span class="s1">&#39;salt://nginx/mysite.conf&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>The objects that are returned from each of the magic method calls are setup to
+be used a Python context managers (<code class="docutils literal"><span class="pre">with</span></code>) and when you use them as such all
+declarations made within the scope will <strong>automatically</strong> use the enclosing
+state as a requisite!</p>
+<p>The above could have also been written use direct requisite statements as.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1">#!pyobjects</span>
+
+ <span class="n">Pkg</span><span class="o">.</span><span class="n">installed</span><span class="p">(</span><span class="s2">&quot;nginx&quot;</span><span class="p">)</span>
+ <span class="n">Service</span><span class="o">.</span><span class="n">running</span><span class="p">(</span><span class="s2">&quot;nginx&quot;</span><span class="p">,</span> <span class="n">enable</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">require</span><span class="o">=</span><span class="n">Pkg</span><span class="p">(</span><span class="s2">&quot;nginx&quot;</span><span class="p">))</span>
+ <span class="n">File</span><span class="o">.</span><span class="n">managed</span><span class="p">(</span><span class="s2">&quot;/etc/nginx/conf.d/mysite.conf&quot;</span><span class="p">,</span>
+              <span class="n">owner</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;0444&#39;</span><span class="p">,</span>
+              <span class="n">source</span><span class="o">=</span><span class="s1">&#39;salt://nginx/mysite.conf&#39;</span><span class="p">,</span>
+              <span class="n">watch_in</span><span class="o">=</span><span class="n">Service</span><span class="p">(</span><span class="s2">&quot;nginx&quot;</span><span class="p">))</span>
+</pre></div>
+</td></tr></table></div>
+<p>You can use the direct requisite statement for referencing states that are
+generated outside of the current file.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1">#!pyobjects</span>
+
+ <span class="c1"># some-other-package is defined in some other state file</span>
+ <span class="n">Pkg</span><span class="o">.</span><span class="n">installed</span><span class="p">(</span><span class="s2">&quot;nginx&quot;</span><span class="p">,</span> <span class="n">require</span><span class="o">=</span><span class="n">Pkg</span><span class="p">(</span><span class="s2">&quot;some-other-package&quot;</span><span class="p">))</span>
+</pre></div>
+</td></tr></table></div>
+<p>The last thing that direct requisites provide is the ability to select which
+of the SaltStack requisites you want to use (require, require_in, watch,
+watch_in, use &amp; use_in) when using the requisite as a context manager.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1">#!pyobjects</span>
+
+ <span class="k">with</span> <span class="n">Service</span><span class="p">(</span><span class="s2">&quot;my-service&quot;</span><span class="p">,</span> <span class="s2">&quot;watch_in&quot;</span><span class="p">):</span>
+     <span class="o">...</span>
+</pre></div>
+</td></tr></table></div>
+<p>The above example would cause all declarations inside the scope of the context
+manager to automatically have their <code class="docutils literal"><span class="pre">watch_in</span></code> set to
+<code class="docutils literal"><span class="pre">Service(&quot;my-service&quot;)</span></code>.</p>
+</div>
+<div class="section" id="including-and-extending">
+<h2>Including and Extending<a class="headerlink" href="#including-and-extending" title="永久链接至标题">¶</a></h2>
+<p>To include other states use the <code class="docutils literal"><span class="pre">include()</span></code> function. It takes one name per
+state to include.</p>
+<p>To extend another state use the <code class="docutils literal"><span class="pre">extend()</span></code> function on the name when creating
+a state.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1">#!pyobjects</span>
+
+ <span class="n">include</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">,</span> <span class="s1">&#39;ssh&#39;</span><span class="p">)</span>
+
+ <span class="n">Service</span><span class="o">.</span><span class="n">running</span><span class="p">(</span><span class="n">extend</span><span class="p">(</span><span class="s1">&#39;apache&#39;</span><span class="p">),</span>
+                 <span class="n">watch</span><span class="o">=</span><span class="p">[</span><span class="n">File</span><span class="p">(</span><span class="s1">&#39;/etc/httpd/extra/httpd-vhosts.conf&#39;</span><span class="p">)])</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="importing-from-other-state-files">
+<h2>Importing from other state files<a class="headerlink" href="#importing-from-other-state-files" title="永久链接至标题">¶</a></h2>
+<p>Like any Python project that grows you will likely reach a point where you want
+to create reusability in your state tree and share objects between state files,
+Map Data (described below) is a perfect example of this.</p>
+<p>To facilitate this Python's <code class="docutils literal"><span class="pre">import</span></code> statement has been augmented to allow
+for a special case when working with a Salt state tree. If you specify a Salt
+url (<code class="docutils literal"><span class="pre">salt://...</span></code>) as the target for importing from then the pyobjects
+renderer will take care of fetching the file for you, parsing it with all of
+the pyobjects features available and then place the requested objects in the
+global scope of the template being rendered.</p>
+<p>This works for all types of import statements; <code class="docutils literal"><span class="pre">import</span> <span class="pre">X</span></code>,
+<code class="docutils literal"><span class="pre">from</span> <span class="pre">X</span> <span class="pre">import</span> <span class="pre">Y</span></code>, and <code class="docutils literal"><span class="pre">from</span> <span class="pre">X</span> <span class="pre">import</span> <span class="pre">Y</span> <span class="pre">as</span> <span class="pre">Z</span></code>.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1">#!pyobjects</span>
+
+ <span class="kn">import</span> <span class="nn">salt</span><span class="p">:</span><span class="o">//</span><span class="n">myfile</span><span class="o">.</span><span class="n">sls</span>
+ <span class="kn">from</span> <span class="nn">salt</span><span class="p">:</span><span class="o">//</span><span class="n">something</span><span class="o">/</span><span class="n">data</span><span class="o">.</span><span class="n">sls</span> <span class="kn">import</span> <span class="nn">Object</span>
+ <span class="kn">from</span> <span class="nn">salt</span><span class="p">:</span><span class="o">//</span><span class="n">something</span><span class="o">/</span><span class="n">data</span><span class="o">.</span><span class="n">sls</span> <span class="kn">import</span> <span class="nn">Object</span> <span class="kn">as</span> <span class="nn">Other</span>
+</pre></div>
+</td></tr></table></div>
+<p>See the Map Data section for a more practical use.</p>
+<p>Caveats:</p>
+<ul class="simple">
+<li>Imported objects are ALWAYS put into the global scope of your template,
+regardless of where your import statement is.</li>
+</ul>
+</div>
+<div class="section" id="salt-object">
+<h2>Salt object<a class="headerlink" href="#salt-object" title="永久链接至标题">¶</a></h2>
+<p>In the spirit of the object interface for creating state data pyobjects also
+provides a simple object interface to the <code class="docutils literal"><span class="pre">__salt__</span></code> object.</p>
+<p>A function named <code class="docutils literal"><span class="pre">salt</span></code> exists in scope for your sls files and will dispatch
+its attributes to the <code class="docutils literal"><span class="pre">__salt__</span></code> dictionary.</p>
+<p>The following lines are functionally equivalent:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1">#!pyobjects</span>
+
+ <span class="n">ret</span> <span class="o">=</span> <span class="n">salt</span><span class="o">.</span><span class="n">cmd</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
+ <span class="n">ret</span> <span class="o">=</span> <span class="n">__salt__</span><span class="p">[</span><span class="s1">&#39;cmd.run&#39;</span><span class="p">](</span><span class="n">bar</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="pillar-grain-mine-config-data">
+<h2>Pillar, grain, mine &amp; config data<a class="headerlink" href="#pillar-grain-mine-config-data" title="永久链接至标题">¶</a></h2>
+<p>Pyobjects provides shortcut functions for calling <code class="docutils literal"><span class="pre">pillar.get</span></code>,
+<code class="docutils literal"><span class="pre">grains.get</span></code>, <code class="docutils literal"><span class="pre">mine.get</span></code> &amp; <code class="docutils literal"><span class="pre">config.get</span></code> on the <code class="docutils literal"><span class="pre">__salt__</span></code> object. This
+helps maintain the readability of your state files.</p>
+<p>Each type of data can be access by a function of the same name: <code class="docutils literal"><span class="pre">pillar()</span></code>,
+<code class="docutils literal"><span class="pre">grains()</span></code>, <code class="docutils literal"><span class="pre">mine()</span></code> and <code class="docutils literal"><span class="pre">config()</span></code>.</p>
+<p>The following pairs of lines are functionally equivalent:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1">#!pyobjects</span>
+
+ <span class="n">value</span> <span class="o">=</span> <span class="n">pillar</span><span class="p">(</span><span class="s1">&#39;foo:bar:baz&#39;</span><span class="p">,</span> <span class="s1">&#39;qux&#39;</span><span class="p">)</span>
+ <span class="n">value</span> <span class="o">=</span> <span class="n">__salt__</span><span class="p">[</span><span class="s1">&#39;pillar.get&#39;</span><span class="p">](</span><span class="s1">&#39;foo:bar:baz&#39;</span><span class="p">,</span> <span class="s1">&#39;qux&#39;</span><span class="p">)</span>
+
+ <span class="n">value</span> <span class="o">=</span> <span class="n">grains</span><span class="p">(</span><span class="s1">&#39;pkg:apache&#39;</span><span class="p">)</span>
+ <span class="n">value</span> <span class="o">=</span> <span class="n">__salt__</span><span class="p">[</span><span class="s1">&#39;grains.get&#39;</span><span class="p">](</span><span class="s1">&#39;pkg:apache&#39;</span><span class="p">)</span>
+
+ <span class="n">value</span> <span class="o">=</span> <span class="n">mine</span><span class="p">(</span><span class="s1">&#39;os:Fedora&#39;</span><span class="p">,</span> <span class="s1">&#39;network.interfaces&#39;</span><span class="p">,</span> <span class="s1">&#39;grain&#39;</span><span class="p">)</span>
+ <span class="n">value</span> <span class="o">=</span> <span class="n">__salt__</span><span class="p">[</span><span class="s1">&#39;mine.get&#39;</span><span class="p">](</span><span class="s1">&#39;os:Fedora&#39;</span><span class="p">,</span> <span class="s1">&#39;network.interfaces&#39;</span><span class="p">,</span> <span class="s1">&#39;grain&#39;</span><span class="p">)</span>
+
+ <span class="n">value</span> <span class="o">=</span> <span class="n">config</span><span class="p">(</span><span class="s1">&#39;foo:bar:baz&#39;</span><span class="p">,</span> <span class="s1">&#39;qux&#39;</span><span class="p">)</span>
+ <span class="n">value</span> <span class="o">=</span> <span class="n">__salt__</span><span class="p">[</span><span class="s1">&#39;config.get&#39;</span><span class="p">](</span><span class="s1">&#39;foo:bar:baz&#39;</span><span class="p">,</span> <span class="s1">&#39;qux&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="map-data">
+<h2>Map Data<a class="headerlink" href="#map-data" title="永久链接至标题">¶</a></h2>
+<p>When building complex states or formulas you often need a way of building up a
+map of data based on grain data. The most common use of this is tracking the
+package and service name differences between distributions.</p>
+<p>To build map data using pyobjects we provide a class named Map that you use to
+build your own classes with inner classes for each set of values for the
+different grain matches.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1">#!pyobjects</span>
+
+ <span class="k">class</span> <span class="nc">Samba</span><span class="p">(</span><span class="n">Map</span><span class="p">):</span>
+     <span class="n">merge</span> <span class="o">=</span> <span class="s1">&#39;samba:lookup&#39;</span>
+
+     <span class="k">class</span> <span class="nc">Debian</span><span class="p">:</span>
+         <span class="n">server</span> <span class="o">=</span> <span class="s1">&#39;samba&#39;</span>
+         <span class="n">client</span> <span class="o">=</span> <span class="s1">&#39;samba-client&#39;</span>
+         <span class="n">service</span> <span class="o">=</span> <span class="s1">&#39;samba&#39;</span>
+
+     <span class="k">class</span> <span class="nc">Ubuntu</span><span class="p">:</span>
+         <span class="n">__grain__</span> <span class="o">=</span> <span class="s1">&#39;os&#39;</span>
+         <span class="n">service</span> <span class="o">=</span> <span class="s1">&#39;smbd&#39;</span>
+
+     <span class="k">class</span> <span class="nc">RedHat</span><span class="p">:</span>
+         <span class="n">server</span> <span class="o">=</span> <span class="s1">&#39;samba&#39;</span>
+         <span class="n">client</span> <span class="o">=</span> <span class="s1">&#39;samba&#39;</span>
+         <span class="n">service</span> <span class="o">=</span> <span class="s1">&#39;smb&#39;</span>
+</pre></div>
+</td></tr></table></div>
+<p>To use this new data you can import it into your state file and then access
+your attributes. To access the data in the map you simply access the attribute
+name on the base class that is extending Map. Assuming the above Map was in the
+file <code class="docutils literal"><span class="pre">samba/map.sls</span></code>, you could do the following.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span></span> <span class="c1">#!pyobjects</span>
+
+ <span class="kn">from</span> <span class="nn">salt</span><span class="p">:</span><span class="o">//</span><span class="n">samba</span><span class="o">/</span><span class="nb">map</span><span class="o">.</span><span class="n">sls</span> <span class="kn">import</span> <span class="nn">Samba</span>
+
+ <span class="k">with</span> <span class="n">Pkg</span><span class="o">.</span><span class="n">installed</span><span class="p">(</span><span class="s2">&quot;samba&quot;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="n">Samba</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="n">Samba</span><span class="o">.</span><span class="n">client</span><span class="p">]):</span>
+     <span class="n">Service</span><span class="o">.</span><span class="n">running</span><span class="p">(</span><span class="s2">&quot;samba&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">Samba</span><span class="o">.</span><span class="n">service</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="todo">
+<h2>待完善<a class="headerlink" href="#todo" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>Interface for working with reactor files</li>
+</ul>
+<dl class="class">
+<dt id="salt.renderers.pyobjects.PyobjectsModule">
+<em class="property">class </em><code class="descclassname">salt.renderers.pyobjects.</code><code class="descname">PyobjectsModule</code><span class="sig-paren">(</span><em>name</em>, <em>attrs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.renderers.pyobjects.PyobjectsModule" title="永久链接至目标">¶</a></dt>
+<dd><p>This provides a wrapper for bare imports.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.renderers.pyobjects.load_states">
+<code class="descclassname">salt.renderers.pyobjects.</code><code class="descname">load_states</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.renderers.pyobjects.load_states" title="永久链接至目标">¶</a></dt>
+<dd><p>This loads our states into the salt __context__</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.renderers.pyobjects.render">
+<code class="descclassname">salt.renderers.pyobjects.</code><code class="descname">render</code><span class="sig-paren">(</span><em>template</em>, <em>saltenv='base'</em>, <em>sls=''</em>, <em>salt_data=True</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.renderers.pyobjects.render" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+                            </div>
+                            <a href="salt.renderers.pydsl.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.renderers.pydsl" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="salt.renderers.stateconf.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.renderers.stateconf" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../configuration/master.html">配置Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../configuration/minion.html">配置Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../configuration/examples.html">Configuration file examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/blackout/index.html">Minion Blackout Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/eauth/access_control.html">Access Control System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/jobs/index.html">Job Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/jobs/job_cache.html">Managing the Job Cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/jobs/external_cache.html">Storing Job Results in an External System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../configuration/logging/index.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../file_server/index.html">Salt文件服务器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/tutorials/gitfs.html">Git Fileserver Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/tutorials/minionfs.html">MinionFS Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/spm/index.html">Salt Package Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/sdb/index.html">Storing Data in Other Databases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../configuration/nonroot.html">以非特权用户身份运行Salt Master/Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/tutorials/cron.html">使用cron运行Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/hardening.html">Hardening Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../security/index.html">Security disclosure policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/transports/index.html">Salt Transport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../topics/master_tops/index.html">Master Tops系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../returners/index.html">返回器</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Renderers渲染器</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../index.html#multiple-renderers">Multiple Renderers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#composing-renderers">Composing Renderers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#writing-renderers">Writing Renderers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../index.html#examples">Examples</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../index.html#full-list-of-renderers">Full List of Renderers</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="index.html">Full list of builtin renderer modules</a><ul class="current">
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.cheetah.html">salt.renderers.cheetah</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.genshi.html">salt.renderers.genshi</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.gpg.html">salt.renderers.gpg</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.hjson.html">salt.renderers.hjson</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.jinja.html">salt.renderers.jinja</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.json.html">salt.renderers.json</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.mako.html">salt.renderers.mako</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.msgpack.html">salt.renderers.msgpack</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.py.html">salt.renderers.py</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.pydsl.html">salt.renderers.pydsl</a></li>
+<li class="toctree-l5 current"><a class="current reference internal" href="">salt.renderers.pyobjects</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#creating-state-data">Creating state data</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#context-managers-and-requisites">Context Managers and requisites</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#including-and-extending">Including and Extending</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#importing-from-other-state-files">Importing from other state files</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#salt-object">Salt object</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#pillar-grain-mine-config-data">Pillar, grain, mine &amp; config data</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#map-data">Map Data</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#todo">待完善</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.stateconf.html">salt.renderers.stateconf</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.wempy.html">salt.renderers.wempy</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.yaml.html">salt.renderers.yaml</a></li>
+<li class="toctree-l5"><a class="reference internal" href="salt.renderers.yamlex.html">salt.renderers.yamlex</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.aggregation</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt code and internals" href="index.html">
+        <link rel="next" title="Exceptions" href="exceptions.html">
+        <link rel="prev" title="Salt code and internals" href="index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="index.html" title="Salt code and internals">上一页</a>
+            
+        </li>
+        <li>
+            <a href="exceptions.html" title="Exceptions">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.utils.aggregation">
+<span id="salt-aggregation"></span><h1>salt.aggregation<a class="headerlink" href="#module-salt.utils.aggregation" title="永久链接至标题">¶</a></h1>
+<div class="section" id="salt-utils-aggregation">
+<h2>salt.utils.aggregation<a class="headerlink" href="#salt-utils-aggregation" title="永久链接至标题">¶</a></h2>
+<p>This library makes it possible to introspect dataset and aggregate nodes
+when it is instructed.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>The following examples with be expressed in YAML for convenience's sake:</p>
+<ul class="last simple">
+<li>!aggr-scalar will refer to Scalar python function</li>
+<li>!aggr-map will refer to Map python object</li>
+<li>!aggr-seq will refer for Sequence python object</li>
+</ul>
+</div>
+<div class="section" id="how-to-instructs-merging">
+<h3>How to instructs merging<a class="headerlink" href="#how-to-instructs-merging" title="永久链接至标题">¶</a></h3>
+<p>This yaml document has duplicate keys:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">foo</span><span class="p p-Indicator">:</span> <span class="kt">!aggr-scalar</span> <span class="l l-Scalar l-Scalar-Plain">first</span>
+<span class="l l-Scalar l-Scalar-Plain">foo</span><span class="p p-Indicator">:</span> <span class="kt">!aggr-scalar</span> <span class="l l-Scalar l-Scalar-Plain">second</span>
+<span class="l l-Scalar l-Scalar-Plain">bar</span><span class="p p-Indicator">:</span> <span class="kt">!aggr-map</span> <span class="p p-Indicator">{</span><span class="nv">first</span><span class="p p-Indicator">:</span> <span class="nv">foo</span><span class="p p-Indicator">}</span>
+<span class="l l-Scalar l-Scalar-Plain">bar</span><span class="p p-Indicator">:</span> <span class="kt">!aggr-map</span> <span class="p p-Indicator">{</span><span class="nv">second</span><span class="p p-Indicator">:</span> <span class="nv">bar</span><span class="p p-Indicator">}</span>
+<span class="l l-Scalar l-Scalar-Plain">baz</span><span class="p p-Indicator">:</span> <span class="kt">!aggr-scalar</span> <span class="l l-Scalar l-Scalar-Plain">42</span>
+</pre></div>
+</div>
+<p>but tagged values instruct Salt that overlapping values they can be merged
+together:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">foo</span><span class="p p-Indicator">:</span> <span class="kt">!aggr-seq</span> <span class="p p-Indicator">[</span><span class="nv">first</span><span class="p p-Indicator">,</span> <span class="nv">second</span><span class="p p-Indicator">]</span>
+<span class="l l-Scalar l-Scalar-Plain">bar</span><span class="p p-Indicator">:</span> <span class="kt">!aggr-map</span> <span class="p p-Indicator">{</span><span class="nv">first</span><span class="p p-Indicator">:</span> <span class="nv">foo</span><span class="p p-Indicator">,</span> <span class="nv">second</span><span class="p p-Indicator">:</span> <span class="nv">bar</span><span class="p p-Indicator">}</span>
+<span class="l l-Scalar l-Scalar-Plain">baz</span><span class="p p-Indicator">:</span> <span class="kt">!aggr-seq</span> <span class="p p-Indicator">[</span><span class="nv">42</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="default-merge-strategy-is-keep-untouched">
+<h3>Default merge strategy is keep untouched<a class="headerlink" href="#default-merge-strategy-is-keep-untouched" title="永久链接至标题">¶</a></h3>
+<p>For example, this yaml document still has duplicate keys, but does not
+instruct aggregation:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">foo</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">first</span>
+<span class="l l-Scalar l-Scalar-Plain">foo</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">second</span>
+<span class="l l-Scalar l-Scalar-Plain">bar</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{</span><span class="nv">first</span><span class="p p-Indicator">:</span> <span class="nv">foo</span><span class="p p-Indicator">}</span>
+<span class="l l-Scalar l-Scalar-Plain">bar</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{</span><span class="nv">second</span><span class="p p-Indicator">:</span> <span class="nv">bar</span><span class="p p-Indicator">}</span>
+<span class="l l-Scalar l-Scalar-Plain">baz</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">42</span>
+</pre></div>
+</div>
+<p>So the late found values prevail:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">foo</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">second</span>
+<span class="l l-Scalar l-Scalar-Plain">bar</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{</span><span class="nv">second</span><span class="p p-Indicator">:</span> <span class="nv">bar</span><span class="p p-Indicator">}</span>
+<span class="l l-Scalar l-Scalar-Plain">baz</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">42</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="limitations">
+<h3>Limitations<a class="headerlink" href="#limitations" title="永久链接至标题">¶</a></h3>
+<p>Aggregation is permitted between tagged objects that share the same type.
+If not, the default merge strategy prevails.</p>
+<p>For example, these examples:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">foo</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{</span><span class="nv">first</span><span class="p p-Indicator">:</span> <span class="nv">value</span><span class="p p-Indicator">}</span>
+<span class="l l-Scalar l-Scalar-Plain">foo</span><span class="p p-Indicator">:</span> <span class="kt">!aggr-map</span> <span class="p p-Indicator">{</span><span class="nv">second</span><span class="p p-Indicator">:</span> <span class="nv">value</span><span class="p p-Indicator">}</span>
+
+<span class="l l-Scalar l-Scalar-Plain">bar</span><span class="p p-Indicator">:</span> <span class="kt">!aggr-map</span> <span class="p p-Indicator">{</span><span class="nv">first</span><span class="p p-Indicator">:</span> <span class="nv">value</span><span class="p p-Indicator">}</span>
+<span class="l l-Scalar l-Scalar-Plain">bar</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">42</span>
+
+<span class="l l-Scalar l-Scalar-Plain">baz</span><span class="p p-Indicator">:</span> <span class="kt">!aggr-seq</span> <span class="p p-Indicator">[</span><span class="nv">42</span><span class="p p-Indicator">]</span>
+<span class="l l-Scalar l-Scalar-Plain">baz</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[</span><span class="nv">fail</span><span class="p p-Indicator">]</span>
+
+<span class="l l-Scalar l-Scalar-Plain">qux</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">42</span>
+<span class="l l-Scalar l-Scalar-Plain">qux</span><span class="p p-Indicator">:</span> <span class="kt">!aggr-scalar</span> <span class="l l-Scalar l-Scalar-Plain">fail</span>
+</pre></div>
+</div>
+<p>are interpreted like this:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">foo</span><span class="p p-Indicator">:</span> <span class="kt">!aggr-map</span><span class="p p-Indicator">{</span><span class="nv">second</span><span class="p p-Indicator">:</span> <span class="nv">value</span><span class="p p-Indicator">}</span>
+
+<span class="l l-Scalar l-Scalar-Plain">bar</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">42</span>
+
+<span class="l l-Scalar l-Scalar-Plain">baz</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">[</span><span class="nv">fail</span><span class="p p-Indicator">]</span>
+
+<span class="l l-Scalar l-Scalar-Plain">qux</span><span class="p p-Indicator">:</span> <span class="kt">!aggr-seq</span> <span class="p p-Indicator">[</span><span class="nv">fail</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="introspection">
+<h3>Introspection<a class="headerlink" href="#introspection" title="永久链接至标题">¶</a></h3>
+<p>TODO: write this part</p>
+<dl class="function">
+<dt id="salt.utils.aggregation.aggregate">
+<code class="descclassname">salt.utils.aggregation.</code><code class="descname">aggregate</code><span class="sig-paren">(</span><em>obj_a</em>, <em>obj_b</em>, <em>level=False</em>, <em>map_class=&lt;class 'salt.utils.aggregation.Map'&gt;</em>, <em>sequence_class=&lt;class 'salt.utils.aggregation.Sequence'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.utils.aggregation.aggregate" title="永久链接至目标">¶</a></dt>
+<dd><p>Merge obj_b into obj_a.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">aggregate</span><span class="p">(</span><span class="s1">&#39;first&#39;</span><span class="p">,</span> <span class="s1">&#39;second&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;first&#39;</span><span class="p">,</span> <span class="s1">&#39;second&#39;</span><span class="p">]</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="salt.utils.aggregation.Aggregate">
+<em class="property">class </em><code class="descclassname">salt.utils.aggregation.</code><code class="descname">Aggregate</code><a class="headerlink" href="#salt.utils.aggregation.Aggregate" title="永久链接至目标">¶</a></dt>
+<dd><p>Aggregation base.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="salt.utils.aggregation.Map">
+<em class="property">class </em><code class="descclassname">salt.utils.aggregation.</code><code class="descname">Map</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.utils.aggregation.Map" title="永久链接至目标">¶</a></dt>
+<dd><p>Map aggregation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.utils.aggregation.Scalar">
+<code class="descclassname">salt.utils.aggregation.</code><code class="descname">Scalar</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.utils.aggregation.Scalar" title="永久链接至目标">¶</a></dt>
+<dd><p>Shortcut for Sequence creation</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Scalar</span><span class="p">(</span><span class="s1">&#39;foo&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">Sequence</span><span class="p">([</span><span class="s1">&#39;foo&#39;</span><span class="p">])</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="salt.utils.aggregation.Sequence">
+<em class="property">class </em><code class="descclassname">salt.utils.aggregation.</code><code class="descname">Sequence</code><a class="headerlink" href="#salt.utils.aggregation.Sequence" title="永久链接至目标">¶</a></dt>
+<dd><p>Sequence aggregation.</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt code and internals" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="exceptions.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Exceptions" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../topics/development/index.html">Salt开发</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/architecture.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/architecture.html#salt-client">Salt Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/architecture.html#salt-master">Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/architecture.html#salt-minion">Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/architecture.html#a-note-on-clearfuncs-vs-aesfuncs">A Note on ClearFuncs vs. AESFuncs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/contributing.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/deprecations.html">代码弃用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/dunder_dictionaries.html">Dunder Dictionaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/external_pillars.html">External Pillars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/hacking.html">Installing Salt for development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/labels.html">GitHub Labels and Milestones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/logging.html">内部日志</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/modular_systems.html">模块化系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/package_providers.html">Package Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/reporting_bugs.html">Reporting Bugs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/salt_projects.html">Community Projects That Use Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/topology.html">Salt Topology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/translating.html">翻译文档</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/tutorial.html">Developing Salt Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/tests/index.html">Running The Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/tests/index.html#automated-test-runs">Automated Test Runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/tests/index.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/raet/index.html">raet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/git/index.html">SaltStack Git Policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/development/conventions/index.html">Salt Conventions</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Salt code and internals</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html#contents">Contents</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="">salt.aggregation</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#salt-utils-aggregation">salt.utils.aggregation</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#how-to-instructs-merging">How to instructs merging</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#default-merge-strategy-is-keep-untouched">Default merge strategy is keep untouched</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#limitations">Limitations</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#introspection">Introspection</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="opts.html">Salt opts dictionary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="salt.exceptions.html">salt.exceptions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/projects/index.html">Salt Based Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/writing_tests.html">编写Salt测试</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

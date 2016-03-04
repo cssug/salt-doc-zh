@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.cloud.clouds.profitbricks</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.cloud.clouds.profitbricks">
+<span id="salt-cloud-clouds-profitbricks"></span><h1>salt.cloud.clouds.profitbricks<a class="headerlink" href="#module-salt.cloud.clouds.profitbricks" title="永久链接至标题">¶</a></h1>
+<div class="section" id="profitbricks-cloud-module">
+<h2>ProfitBricks Cloud Module<a class="headerlink" href="#profitbricks-cloud-module" title="永久链接至标题">¶</a></h2>
+<p>The ProfitBricks SaltStack cloud module allows a ProfitBricks server to
+be automatically deployed and bootstraped with Salt.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">depends:</th><td class="field-body">profitbrick &gt;= 2.3.0</td>
+</tr>
+</tbody>
+</table>
+<p>The module requires ProfitBricks credentials to be supplied along with
+an existing virtual datacenter UUID where the server resources will
+reside. The server should also be assigned a public LAN, a private LAN,
+or both along with SSH key pairs.
+...</p>
+<p>Set up the cloud configuration at <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers</span></code> or
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/profitbricks.conf</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-profitbricks-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">profitbricks</span>
+  <span class="c1"># The ProfitBricks login username</span>
+  <span class="l l-Scalar l-Scalar-Plain">username</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">user@example.com</span>
+  <span class="c1"># The ProfitBricks login password</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">secretpassword</span>
+  <span class="c1"># The ProfitBricks virtual datacenter UUID</span>
+  <span class="l l-Scalar l-Scalar-Plain">datacenter_id</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;UUID&gt;</span>
+  <span class="c1"># SSH private key filename</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_private_key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/path/to/private.key</span>
+  <span class="c1"># SSH public key filename</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_public_key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/path/to/public.key</span>
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-profitbricks-profile</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-profitbricks-config</span>
+  <span class="c1"># Name of a predefined instance size.</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Micro Instance</span>
+  <span class="c1"># Name or UUID of the HDD image to use.</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;UUID&gt;</span>
+  <span class="c1"># Size of the node disk in GB (overrides instance size).</span>
+  <span class="l l-Scalar l-Scalar-Plain">disk_size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">40</span>
+  <span class="c1"># Number of CPU cores to allocate to node (overrides instance size).</span>
+  <span class="l l-Scalar l-Scalar-Plain">cores</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">4</span>
+  <span class="c1"># Amount of RAM in multiples of 256 MB (overrides instance size).</span>
+  <span class="l l-Scalar l-Scalar-Plain">ram</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">4096</span>
+  <span class="c1"># Assign the node to the specified public LAN.</span>
+  <span class="l l-Scalar l-Scalar-Plain">public_lan</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;ID&gt;</span>
+  <span class="c1"># Assign the node to the specified private LAN.</span>
+  <span class="l l-Scalar l-Scalar-Plain">private_lan</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;ID&gt;</span>
+</pre></div>
+</div>
+<p>To use a private IP for connecting and bootstrapping node:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-profitbricks-profile</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_interface</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">private_lan</span>
+</pre></div>
+</div>
+<p>Set <code class="docutils literal"><span class="pre">deploy</span></code> to False if Salt should not be installed on the node.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-profitbricks-profile</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">deploy</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+</pre></div>
+</div>
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.avail_images">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">avail_images</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.avail_images" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of the images that are on the provider</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.avail_sizes">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">avail_sizes</code><span class="sig-paren">(</span><em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.avail_sizes" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a dict of all available VM sizes on the cloud provider with
+relevant data. Latest version can be found at:</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.create">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">create</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.create" title="永久链接至目标">¶</a></dt>
+<dd><p>Create a single VM from a data dict</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.create_network_interfaces">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">create_network_interfaces</code><span class="sig-paren">(</span><em>conn</em>, <em>datacenter_id</em>, <em>server_id</em>, <em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.create_network_interfaces" title="永久链接至目标">¶</a></dt>
+<dd><p>Create network interface on appropriate LAN as defined in cloud profile.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.destroy">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">destroy</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.destroy" title="永久链接至目标">¶</a></dt>
+<dd><p>destroy a machine by name</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> -- name given to the machine</li>
+<li><strong>call</strong> -- call value in this case is 'action'</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">返回:</th><td class="field-body"><p class="first last">array of booleans , true if successfully stopped and true if
+successfully removed</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -d vm_name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.get_configured_provider">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">get_configured_provider</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.get_configured_provider" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the first configured instance.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.get_conn">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">get_conn</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.get_conn" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a conn object for the passed VM data</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.get_datacenter">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">get_datacenter</code><span class="sig-paren">(</span><em>conn</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.get_datacenter" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the datacenter from the config provider datacenter ID</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.get_datacenter_id">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">get_datacenter_id</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.get_datacenter_id" title="永久链接至目标">¶</a></dt>
+<dd><p>Return datacenter ID from provider configuration</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.get_dependencies">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">get_dependencies</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.get_dependencies" title="永久链接至目标">¶</a></dt>
+<dd><p>Warn if dependencies are not met.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.get_image">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">get_image</code><span class="sig-paren">(</span><em>conn</em>, <em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.get_image" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the image object to use</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.get_key_filename">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">get_key_filename</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.get_key_filename" title="永久链接至目标">¶</a></dt>
+<dd><p>Check SSH private key file and return absolute path if exists.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.get_node">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">get_node</code><span class="sig-paren">(</span><em>conn</em>, <em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.get_node" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a node for the named VM</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.get_public_keys">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">get_public_keys</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.get_public_keys" title="永久链接至目标">¶</a></dt>
+<dd><p>Retrieve list of SSH public keys.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.get_size">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">get_size</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.get_size" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the VM's size object</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.list_datacenters">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">list_datacenters</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.list_datacenters" title="永久链接至目标">¶</a></dt>
+<dd><p>List all the data centers</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_datacenters my-profitbricks-config
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.list_nodes">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">list_nodes</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.list_nodes" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of VMs that are on the provider</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.list_nodes_full">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">list_nodes_full</code><span class="sig-paren">(</span><em>conn=None</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.list_nodes_full" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of the VMs that are on the provider, with all fields</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.override_size">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">override_size</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.override_size" title="永久链接至目标">¶</a></dt>
+<dd><p>Apply any extra component overrides to VM from the cloud profile.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.reboot">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">reboot</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.reboot" title="永久链接至目标">¶</a></dt>
+<dd><p>reboot a machine by name
+:param name: name given to the machine
+:param call: call value in this case is 'action'
+:return: true if successful</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a reboot vm_name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.set_public_lan">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">set_public_lan</code><span class="sig-paren">(</span><em>conn</em>, <em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.set_public_lan" title="永久链接至目标">¶</a></dt>
+<dd><p>Enables public Internet access for the specified public_lan.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.show_instance">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">show_instance</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.show_instance" title="永久链接至目标">¶</a></dt>
+<dd><p>Show the details from the provider concerning an instance</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.ssh_interface">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">ssh_interface</code><span class="sig-paren">(</span><em>vm_</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.ssh_interface" title="永久链接至目标">¶</a></dt>
+<dd><p>Return the ssh_interface type to connect to. Either 'public_ips' (default)
+or 'private_ips'.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.start">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">start</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.start" title="永久链接至目标">¶</a></dt>
+<dd><p>start a machine by name
+:param name: name given to the machine
+:param call: call value in this case is 'action'
+:return: true if successful</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a start vm_name
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.cloud.clouds.profitbricks.stop">
+<code class="descclassname">salt.cloud.clouds.profitbricks.</code><code class="descname">stop</code><span class="sig-paren">(</span><em>name</em>, <em>call=None</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.cloud.clouds.profitbricks.stop" title="永久链接至目标">¶</a></dt>
+<dd><p>stop a machine by name
+:param name: name given to the machine
+:param call: call value in this case is 'action'
+:return: true if successful</p>
+<p>CLI Example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a stop vm_name
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

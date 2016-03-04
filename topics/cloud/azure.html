@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Getting Started With Azure</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt云端" href="index.html">
+        <link rel="next" title="Getting Started With DigitalOcean" href="digitalocean.html">
+        <link rel="prev" title="Getting Started With Aliyun ECS" href="aliyun.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="aliyun.html" title="Getting Started With Aliyun ECS">上一页</a>
+            
+        </li>
+        <li>
+            <a href="digitalocean.html" title="Getting Started With DigitalOcean">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="getting-started-with-azure">
+<h1>Getting Started With Azure<a class="headerlink" href="#getting-started-with-azure" title="永久链接至标题">¶</a></h1>
+<div class="versionadded">
+<p><span class="versionmodified">2014.1.0 新版功能.</span></p>
+</div>
+<p>Azure is a cloud service by Microsoft providing virtual machines, SQL services,
+media services, and more. This document describes how to use Salt Cloud to
+create a virtual machine on Azure, with Salt installed.</p>
+<p>More information about Azure is located at <a class="reference external" href="http://www.windowsazure.com/">http://www.windowsazure.com/</a>.</p>
+<div class="section" id="dependencies">
+<h2>依赖<a class="headerlink" href="#dependencies" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>The <a class="reference external" href="https://pypi.python.org/pypi/azure">Azure</a> Python SDK &gt;= 0.10.2 and &lt; 1.0.0</li>
+<li>The python-requests library, for Python &lt; 2.7.9.</li>
+<li>A Microsoft Azure account</li>
+<li>OpenSSL (to generate the certificates)</li>
+<li><a class="reference external" href="https://github.com/saltstack/salt">Salt</a></li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>The Azure driver is currently being updated to work with the new version of
+the Python Azure SDK, 1.0.0. However until that process is complete, this
+driver will not work with Azure 1.0.0. Please be sure you're running on a
+minimum version of 0.10.2 and less than version 1.0.0.</p>
+<p class="last">See <a class="reference external" href="https://github.com/saltstack/salt/issues/27980">Issue #27980</a> for more information.</p>
+</div>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="永久链接至标题">¶</a></h2>
+<p>Set up the provider config at <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/azure.conf</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># Note: This example is for /etc/salt/cloud.providers.d/azure.conf</span>
+
+<span class="l l-Scalar l-Scalar-Plain">my-azure-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">azure</span>
+  <span class="l l-Scalar l-Scalar-Plain">subscription_id</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">3287abc8-f98a-c678-3bde-326766fd3617</span>
+  <span class="l l-Scalar l-Scalar-Plain">certificate_path</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/salt/azure.pem</span>
+
+  <span class="c1"># Set up the location of the salt master</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">saltmaster.example.com</span>
+
+  <span class="c1"># Optional</span>
+  <span class="l l-Scalar l-Scalar-Plain">management_host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">management.core.windows.net</span>
+</pre></div>
+</div>
+<p>The certificate used must be generated by the user. OpenSSL can be used to
+create the management certificates. Two certificates are needed: a .cer file,
+which is uploaded to Azure, and a .pem file, which is stored locally.</p>
+<p>To create the .pem file, execute the following command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>openssl req -x509 -nodes -days <span class="m">365</span> -newkey rsa:1024 -keyout /etc/salt/azure.pem -out /etc/salt/azure.pem
+</pre></div>
+</div>
+<p>To create the .cer file, execute the following command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>openssl x509 -inform pem -in /etc/salt/azure.pem -outform der -out /etc/salt/azure.cer
+</pre></div>
+</div>
+<p>After creating these files, the .cer file will need to be uploaded to
+Azure via the &quot;Upload a Management Certificate&quot; action of the &quot;Management Certificates&quot;
+tab within the &quot;Settings&quot; section of the management portal.</p>
+<p>Optionally, a <code class="docutils literal"><span class="pre">management_host</span></code> may be configured, if necessary for the region.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<div class="versionchanged">
+<p><span class="versionmodified">在 2015.8.0 版更改.</span></p>
+</div>
+<p class="last">The <code class="docutils literal"><span class="pre">provider</span></code> parameter in cloud provider definitions was renamed to <code class="docutils literal"><span class="pre">driver</span></code>. This
+change was made to avoid confusion with the <code class="docutils literal"><span class="pre">provider</span></code> parameter that is used in cloud profile
+definitions. Cloud provider definitions now use <code class="docutils literal"><span class="pre">driver</span></code> to refer to the Salt cloud module that
+provides the underlying functionality to connect to a cloud host, while cloud profiles continue
+to use <code class="docutils literal"><span class="pre">provider</span></code> to refer to provider configurations that you define.</p>
+</div>
+</div>
+<div class="section" id="cloud-profiles">
+<h2>Cloud Profiles<a class="headerlink" href="#cloud-profiles" title="永久链接至标题">¶</a></h2>
+<p>Set up an initial profile at <code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">azure-ubuntu</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-azure-config</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="s">&#39;b39f27a8b8c64d52b05eac6a62ebad85__Ubuntu-12_04_3-LTS-amd64-server-20131003-en-us-30GB&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Small</span>
+  <span class="l l-Scalar l-Scalar-Plain">location</span><span class="p p-Indicator">:</span> <span class="s">&#39;East</span><span class="nv"> </span><span class="s">US&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_username</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">azureuser</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">verybadpass</span>
+  <span class="l l-Scalar l-Scalar-Plain">slot</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">production</span>
+  <span class="l l-Scalar l-Scalar-Plain">media_link</span><span class="p p-Indicator">:</span> <span class="s">&#39;http://portalvhdabcdefghijklmn.blob.core.windows.net/vhds&#39;</span>
+</pre></div>
+</div>
+<p>These options are described in more detail below. Once configured, the profile
+can be realized with a salt command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -p azure-ubuntu newinstance
+</pre></div>
+</div>
+<p>This will create an salt minion instance named <code class="docutils literal"><span class="pre">newinstance</span></code> in Azure. If
+the command was executed on the salt-master, its Salt key will automatically
+be signed on the master.</p>
+<p>Once the instance has been created with salt-minion installed, connectivity to
+it can be verified with Salt:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt newinstance test.ping
+</pre></div>
+</div>
+</div>
+<div class="section" id="profile-options">
+<h2>Profile Options<a class="headerlink" href="#profile-options" title="永久链接至标题">¶</a></h2>
+<p>The following options are currently available for Azure.</p>
+<div class="section" id="provider">
+<h3>provider<a class="headerlink" href="#provider" title="永久链接至标题">¶</a></h3>
+<p>The name of the provider as configured in
+<cite>/etc/salt/cloud.providers.d/azure.conf</cite>.</p>
+</div>
+<div class="section" id="image">
+<h3>image<a class="headerlink" href="#image" title="永久链接至标题">¶</a></h3>
+<p>The name of the image to use to create a VM. Available images can be viewed
+using the following command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud --list-images my-azure-config
+</pre></div>
+</div>
+</div>
+<div class="section" id="size">
+<h3>size<a class="headerlink" href="#size" title="永久链接至标题">¶</a></h3>
+<p>The name of the size to use to create a VM. Available sizes can be viewed using
+the following command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud --list-sizes my-azure-config
+</pre></div>
+</div>
+</div>
+<div class="section" id="location">
+<h3>location<a class="headerlink" href="#location" title="永久链接至标题">¶</a></h3>
+<p>The name of the location to create a VM in. Available locations can be viewed
+using the following command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud --list-locations my-azure-config
+</pre></div>
+</div>
+</div>
+<div class="section" id="affinity-group">
+<h3>affinity_group<a class="headerlink" href="#affinity-group" title="永久链接至标题">¶</a></h3>
+<p>The name of the affinity group to create a VM in. Either a <code class="docutils literal"><span class="pre">location</span></code> or an
+<code class="docutils literal"><span class="pre">affinity_group</span></code> may be specified, but not both. See Affinity Groups below.</p>
+</div>
+<div class="section" id="ssh-username">
+<h3>ssh_username<a class="headerlink" href="#ssh-username" title="永久链接至标题">¶</a></h3>
+<p>The user to use to log into the newly-created VM to install Salt.</p>
+</div>
+<div class="section" id="ssh-password">
+<h3>ssh_password<a class="headerlink" href="#ssh-password" title="永久链接至标题">¶</a></h3>
+<p>The password to use to log into the newly-created VM to install Salt.</p>
+</div>
+<div class="section" id="slot">
+<h3>slot<a class="headerlink" href="#slot" title="永久链接至标题">¶</a></h3>
+<p>The environment to which the hosted service is deployed. Valid values are
+<cite>staging</cite> or <cite>production</cite>. When set to <cite>production</cite>, the resulting URL of the
+new VM will be <cite>&lt;vm_name&gt;.cloudapp.net</cite>. When set to <cite>staging</cite>, the resulting
+URL will contain a generated hash instead.</p>
+</div>
+<div class="section" id="media-link">
+<h3>media_link<a class="headerlink" href="#media-link" title="永久链接至标题">¶</a></h3>
+<p>This is the URL of the container that will store the disk that this VM uses.
+Currently, this container must already exist. If a VM has previously been
+created in the associated account, a container should already exist. In the web
+interface, go into the Storage area and click one of the available storage
+selections. Click the Containers link, and then copy the URL from the container
+that will be used. It generally looks like:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">http://portalvhdabcdefghijklmn.blob.core.windows.net/vhds</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="service-name">
+<h3>service_name<a class="headerlink" href="#service-name" title="永久链接至标题">¶</a></h3>
+<p>The name of the service in which to create the VM. If this is not specified,
+then a service will be created with the same name as the VM.</p>
+</div>
+</div>
+<div class="section" id="show-instance">
+<h2>Show Instance<a class="headerlink" href="#show-instance" title="永久链接至标题">¶</a></h2>
+<p>This action is a thin wrapper around <code class="docutils literal"><span class="pre">--full-query</span></code>, which displays details on
+a single instance only. In an environment with several machines, this will save
+a user from having to sort through all instance data, just to examine a single
+instance.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -a show_instance myinstance
+</pre></div>
+</div>
+</div>
+<div class="section" id="destroying-vms">
+<h2>Destroying VMs<a class="headerlink" href="#destroying-vms" title="永久链接至标题">¶</a></h2>
+<p>There are certain options which can be specified in the global cloud
+configuration file (usually <code class="docutils literal"><span class="pre">/etc/salt/cloud</span></code>) which affect Salt Cloud's
+behavior when a VM is destroyed.</p>
+<div class="section" id="cleanup-disks">
+<h3>cleanup_disks<a class="headerlink" href="#cleanup-disks" title="永久链接至标题">¶</a></h3>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Default is <code class="docutils literal"><span class="pre">False</span></code>. When set to <code class="docutils literal"><span class="pre">True</span></code>, Salt Cloud will wait for the VM to
+be destroyed, then attempt to destroy the main disk that is associated with the
+VM.</p>
+</div>
+<div class="section" id="cleanup-vhds">
+<h3>cleanup_vhds<a class="headerlink" href="#cleanup-vhds" title="永久链接至标题">¶</a></h3>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Default is <code class="docutils literal"><span class="pre">False</span></code>. Requires <code class="docutils literal"><span class="pre">cleanup_disks</span></code> to be set to <code class="docutils literal"><span class="pre">True</span></code>. When
+also set to <code class="docutils literal"><span class="pre">True</span></code>, Salt Cloud will ask Azure to delete the VHD associated
+with the disk that is also destroyed.</p>
+</div>
+<div class="section" id="cleanup-services">
+<h3>cleanup_services<a class="headerlink" href="#cleanup-services" title="永久链接至标题">¶</a></h3>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Default is <code class="docutils literal"><span class="pre">False</span></code>. Requires <code class="docutils literal"><span class="pre">cleanup_disks</span></code> to be set to <code class="docutils literal"><span class="pre">True</span></code>. When
+also set to <code class="docutils literal"><span class="pre">True</span></code>, Salt Cloud will wait for the disk to be destroyed, then
+attempt to remove the service that is associated with the VM. Because the disk
+belongs to the service, the disk must be destroyed before the service can be.</p>
+</div>
+</div>
+<div class="section" id="managing-hosted-services">
+<h2>Managing Hosted Services<a class="headerlink" href="#managing-hosted-services" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>An account can have one or more hosted services. A hosted service is required
+in order to create a VM. However, as mentioned above, if a hosted service is not
+specified when a VM is created, then one will automatically be created with the
+name of the name. The following functions are also available.</p>
+<div class="section" id="create-service">
+<h3>create_service<a class="headerlink" href="#create-service" title="永久链接至标题">¶</a></h3>
+<p>Create a hosted service. The following options are available.</p>
+<div class="section" id="name">
+<h4>name<a class="headerlink" href="#name" title="永久链接至标题">¶</a></h4>
+<p>Required. The name of the hosted service to create.</p>
+</div>
+<div class="section" id="label">
+<h4>label<a class="headerlink" href="#label" title="永久链接至标题">¶</a></h4>
+<p>Required. A label to apply to the hosted service.</p>
+</div>
+<div class="section" id="description">
+<h4>description<a class="headerlink" href="#description" title="永久链接至标题">¶</a></h4>
+<p>Optional. A longer description of the hosted service.</p>
+</div>
+<div class="section" id="id1">
+<h4>location<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h4>
+<p>Required, if <code class="docutils literal"><span class="pre">affinity_group</span></code> is not set. The location in which to create the
+hosted service. Either the <code class="docutils literal"><span class="pre">location</span></code> or the <code class="docutils literal"><span class="pre">affinity_group</span></code> must be set,
+but not both.</p>
+</div>
+<div class="section" id="id2">
+<h4>affinity_group<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h4>
+<p>Required, if <code class="docutils literal"><span class="pre">location</span></code> is not set. The affinity group in which to create the
+hosted service. Either the <code class="docutils literal"><span class="pre">location</span></code> or the <code class="docutils literal"><span class="pre">affinity_group</span></code> must be set,
+but not both.</p>
+</div>
+<div class="section" id="extended-properties">
+<h4>extended_properties<a class="headerlink" href="#extended-properties" title="永久链接至标题">¶</a></h4>
+<p>Optional. Dictionary containing name/value pairs of hosted service properties.
+You can have a maximum of 50 extended property name/value pairs. The maximum
+length of the Name element is 64 characters, only alphanumeric characters and
+underscores are valid in the Name, and the name must start with a letter.
+The value has a maximum length of 255 characters.</p>
+</div>
+<div class="section" id="cli-example">
+<h4>CLI Example<a class="headerlink" href="#cli-example" title="永久链接至标题">¶</a></h4>
+<p>The following example illustrates creating a hosted service.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_service my-azure <span class="nv">name</span><span class="o">=</span>my-service <span class="nv">label</span><span class="o">=</span>my-service <span class="nv">location</span><span class="o">=</span><span class="s1">&#39;West US&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="show-service">
+<h3>show_service<a class="headerlink" href="#show-service" title="永久链接至标题">¶</a></h3>
+<p>Return details about a specific hosted service. Can also be called with
+<code class="docutils literal"><span class="pre">get_service</span></code>.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_storage my-azure <span class="nv">name</span><span class="o">=</span>my-service
+</pre></div>
+</div>
+</div>
+<div class="section" id="list-services">
+<h3>list_services<a class="headerlink" href="#list-services" title="永久链接至标题">¶</a></h3>
+<p>List all hosted services associates with the subscription.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_services my-azure-config
+</pre></div>
+</div>
+</div>
+<div class="section" id="delete-service">
+<h3>delete_service<a class="headerlink" href="#delete-service" title="永久链接至标题">¶</a></h3>
+<p>Delete a specific hosted service.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_service my-azure <span class="nv">name</span><span class="o">=</span>my-service
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="managing-storage-accounts">
+<h2>Managing Storage Accounts<a class="headerlink" href="#managing-storage-accounts" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Salt Cloud can manage storage accounts associated with the account. The
+following functions are available. Deprecated marked as deprecated are marked
+as such as per the SDK documentation, but are still included for completeness
+with the SDK.</p>
+<div class="section" id="create-storage">
+<h3>create_storage<a class="headerlink" href="#create-storage" title="永久链接至标题">¶</a></h3>
+<p>Create a storage account. The following options are supported.</p>
+<div class="section" id="id3">
+<h4>name<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h4>
+<p>Required. The name of the storage account to create.</p>
+</div>
+<div class="section" id="id4">
+<h4>label<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h4>
+<p>Required. A label to apply to the storage account.</p>
+</div>
+<div class="section" id="id5">
+<h4>description<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h4>
+<p>Optional. A longer description of the storage account.</p>
+</div>
+<div class="section" id="id6">
+<h4>location<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h4>
+<p>Required, if <code class="docutils literal"><span class="pre">affinity_group</span></code> is not set. The location in which to create the
+storage account. Either the <code class="docutils literal"><span class="pre">location</span></code> or the <code class="docutils literal"><span class="pre">affinity_group</span></code> must be set,
+but not both.</p>
+</div>
+<div class="section" id="id7">
+<h4>affinity_group<a class="headerlink" href="#id7" title="永久链接至标题">¶</a></h4>
+<p>Required, if <code class="docutils literal"><span class="pre">location</span></code> is not set. The affinity group in which to create the
+storage account. Either the <code class="docutils literal"><span class="pre">location</span></code> or the <code class="docutils literal"><span class="pre">affinity_group</span></code> must be set,
+but not both.</p>
+</div>
+<div class="section" id="id8">
+<h4>extended_properties<a class="headerlink" href="#id8" title="永久链接至标题">¶</a></h4>
+<p>Optional. Dictionary containing name/value pairs of storage account properties.
+You can have a maximum of 50 extended property name/value pairs. The maximum
+length of the Name element is 64 characters, only alphanumeric characters and
+underscores are valid in the Name, and the name must start with a letter. The
+value has a maximum length of 255 characters.</p>
+</div>
+<div class="section" id="geo-replication-enabled">
+<h4>geo_replication_enabled<a class="headerlink" href="#geo-replication-enabled" title="永久链接至标题">¶</a></h4>
+<p>Deprecated. Replaced by the account_type parameter.</p>
+</div>
+<div class="section" id="account-type">
+<h4>account_type<a class="headerlink" href="#account-type" title="永久链接至标题">¶</a></h4>
+<p>Specifies whether the account supports locally-redundant storage, geo-redundant
+storage, zone-redundant storage, or read access geo-redundant storage. Possible
+values are:</p>
+<ul class="simple">
+<li>Standard_LRS</li>
+<li>Standard_ZRS</li>
+<li>Standard_GRS</li>
+<li>Standard_RAGRS</li>
+</ul>
+</div>
+<div class="section" id="id9">
+<h4>CLI Example<a class="headerlink" href="#id9" title="永久链接至标题">¶</a></h4>
+<p>The following example illustrates creating a storage account.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_storage my-azure <span class="nv">name</span><span class="o">=</span>my-storage <span class="nv">label</span><span class="o">=</span>my-storage <span class="nv">location</span><span class="o">=</span><span class="s1">&#39;West US&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="list-storage">
+<h3>list_storage<a class="headerlink" href="#list-storage" title="永久链接至标题">¶</a></h3>
+<p>List all storage accounts associates with the subscription.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_storage my-azure-config
+</pre></div>
+</div>
+</div>
+<div class="section" id="show-storage">
+<h3>show_storage<a class="headerlink" href="#show-storage" title="永久链接至标题">¶</a></h3>
+<p>Return details about a specific storage account. Can also be called with
+<code class="docutils literal"><span class="pre">get_storage</span></code>.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_storage my-azure <span class="nv">name</span><span class="o">=</span>my-storage
+</pre></div>
+</div>
+</div>
+<div class="section" id="update-storage">
+<h3>update_storage<a class="headerlink" href="#update-storage" title="永久链接至标题">¶</a></h3>
+<p>Update details concerning a storage account. Any of the options available in
+<code class="docutils literal"><span class="pre">create_storage</span></code> can be used, but the name cannot be changed.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f update_storage my-azure <span class="nv">name</span><span class="o">=</span>my-storage <span class="nv">label</span><span class="o">=</span>my-storage
+</pre></div>
+</div>
+</div>
+<div class="section" id="delete-storage">
+<h3>delete_storage<a class="headerlink" href="#delete-storage" title="永久链接至标题">¶</a></h3>
+<p>Delete a specific storage account.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_storage my-azure <span class="nv">name</span><span class="o">=</span>my-storage
+</pre></div>
+</div>
+</div>
+<div class="section" id="show-storage-keys">
+<h3>show_storage_keys<a class="headerlink" href="#show-storage-keys" title="永久链接至标题">¶</a></h3>
+<p>Returns the primary and secondary access keys for the specified storage account.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_storage_keys my-azure <span class="nv">name</span><span class="o">=</span>my-storage
+</pre></div>
+</div>
+</div>
+<div class="section" id="regenerate-storage-keys">
+<h3>regenerate_storage_keys<a class="headerlink" href="#regenerate-storage-keys" title="永久链接至标题">¶</a></h3>
+<p>Regenerate storage account keys. Requires a key_type (&quot;primary&quot; or &quot;secondary&quot;)
+to be specified.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f regenerate_storage_keys my-azure <span class="nv">name</span><span class="o">=</span>my-storage <span class="nv">key_type</span><span class="o">=</span>primary
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="managing-disks">
+<h2>Managing Disks<a class="headerlink" href="#managing-disks" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>When a VM is created, a disk will also be created for it. The following
+functions are available for managing disks. Deprecated marked as deprecated are
+marked as such as per the SDK documentation, but are still included for
+completeness with the SDK.</p>
+<div class="section" id="show-disk">
+<h3>show_disk<a class="headerlink" href="#show-disk" title="永久链接至标题">¶</a></h3>
+<p>Return details about a specific disk. Can also be called with <code class="docutils literal"><span class="pre">get_disk</span></code>.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_disk my-azure <span class="nv">name</span><span class="o">=</span>my-disk
+</pre></div>
+</div>
+</div>
+<div class="section" id="list-disks">
+<h3>list_disks<a class="headerlink" href="#list-disks" title="永久链接至标题">¶</a></h3>
+<p>List all disks associates with the account.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_disks my-azure
+</pre></div>
+</div>
+</div>
+<div class="section" id="update-disk">
+<h3>update_disk<a class="headerlink" href="#update-disk" title="永久链接至标题">¶</a></h3>
+<p>Update details for a disk. The following options are available.</p>
+<div class="section" id="id10">
+<h4>name<a class="headerlink" href="#id10" title="永久链接至标题">¶</a></h4>
+<p>Required. The name of the disk to update.</p>
+</div>
+<div class="section" id="has-operating-system">
+<h4>has_operating_system<a class="headerlink" href="#has-operating-system" title="永久链接至标题">¶</a></h4>
+<p>Deprecated.</p>
+</div>
+<div class="section" id="id11">
+<h4>label<a class="headerlink" href="#id11" title="永久链接至标题">¶</a></h4>
+<p>Required. The label for the disk.</p>
+</div>
+<div class="section" id="id12">
+<h4>media_link<a class="headerlink" href="#id12" title="永久链接至标题">¶</a></h4>
+<p>Deprecated. The location of the disk in the account, including the storage
+container that it is in. This should not need to be changed.</p>
+</div>
+<div class="section" id="new-name">
+<h4>new_name<a class="headerlink" href="#new-name" title="永久链接至标题">¶</a></h4>
+<p>Deprecated. If renaming the disk, the new name.</p>
+</div>
+<div class="section" id="os">
+<h4>os<a class="headerlink" href="#os" title="永久链接至标题">¶</a></h4>
+<p>Deprecated.</p>
+</div>
+<div class="section" id="id13">
+<h4>CLI Example<a class="headerlink" href="#id13" title="永久链接至标题">¶</a></h4>
+<p>The following example illustrates updating a disk.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f update_disk my-azure <span class="nv">name</span><span class="o">=</span>my-disk <span class="nv">label</span><span class="o">=</span>my-disk
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="delete-disk">
+<h3>delete_disk<a class="headerlink" href="#delete-disk" title="永久链接至标题">¶</a></h3>
+<p>Delete a specific disk.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_disk my-azure <span class="nv">name</span><span class="o">=</span>my-disk
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="managing-service-certificates">
+<h2>Managing Service Certificates<a class="headerlink" href="#managing-service-certificates" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Stored at the cloud service level, these certificates are used by your deployed
+services. For more information on service certificates, see the following link:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://msdn.microsoft.com/en-us/library/azure/gg981929.aspx">Manage Certificates</a></li>
+</ul>
+<p>The following functions are available.</p>
+<div class="section" id="list-service-certificates">
+<h3>list_service_certificates<a class="headerlink" href="#list-service-certificates" title="永久链接至标题">¶</a></h3>
+<p>List service certificates associated with the account.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_service_certificates my-azure
+</pre></div>
+</div>
+</div>
+<div class="section" id="show-service-certificate">
+<h3>show_service_certificate<a class="headerlink" href="#show-service-certificate" title="永久链接至标题">¶</a></h3>
+<p>Show the data for a specific service certificate associated with the account.
+The <code class="docutils literal"><span class="pre">name</span></code>, <code class="docutils literal"><span class="pre">thumbprint</span></code>, and <code class="docutils literal"><span class="pre">thumbalgorithm</span></code> can be obtained from
+<code class="docutils literal"><span class="pre">list_service_certificates</span></code>. Can also be called with
+<code class="docutils literal"><span class="pre">get_service_certificate</span></code>.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_service_certificate my-azure <span class="nv">name</span><span class="o">=</span>my_service_certificate <span class="se">\</span>
+    <span class="nv">thumbalgorithm</span><span class="o">=</span>sha1 <span class="nv">thumbprint</span><span class="o">=</span>0123456789ABCDEF
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-service-certificate">
+<h3>add_service_certificate<a class="headerlink" href="#add-service-certificate" title="永久链接至标题">¶</a></h3>
+<p>Add a service certificate to the account. This requires that a certificate
+already exists, which is then added to the account. For more information on
+creating the certificate itself, see:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://msdn.microsoft.com/en-us/library/azure/gg432987.aspx">Create a Service Certificate for Azure</a></li>
+</ul>
+<p>The following options are available.</p>
+<div class="section" id="id16">
+<h4>name<a class="headerlink" href="#id16" title="永久链接至标题">¶</a></h4>
+<p>Required. The name of the hosted service that the certificate will belong to.</p>
+</div>
+<div class="section" id="data">
+<h4>data<a class="headerlink" href="#data" title="永久链接至标题">¶</a></h4>
+<p>Required. The base-64 encoded form of the pfx file.</p>
+</div>
+<div class="section" id="certificate-format">
+<h4>certificate_format<a class="headerlink" href="#certificate-format" title="永久链接至标题">¶</a></h4>
+<p>Required. The service certificate format. The only supported value is pfx.</p>
+</div>
+<div class="section" id="password">
+<h4>password<a class="headerlink" href="#password" title="永久链接至标题">¶</a></h4>
+<p>The certificate password.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f add_service_certificate my-azure <span class="nv">name</span><span class="o">=</span>my-cert <span class="se">\</span>
+    <span class="nv">data</span><span class="o">=</span><span class="s1">&#39;...CERT_DATA...&#39;</span> <span class="nv">certificate_format</span><span class="o">=</span>pfx <span class="nv">password</span><span class="o">=</span>verybadpass
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="delete-service-certificate">
+<h3>delete_service_certificate<a class="headerlink" href="#delete-service-certificate" title="永久链接至标题">¶</a></h3>
+<p>Delete a service certificate from the account. The <code class="docutils literal"><span class="pre">name</span></code>, <code class="docutils literal"><span class="pre">thumbprint</span></code>,
+and <code class="docutils literal"><span class="pre">thumbalgorithm</span></code> can be obtained from <code class="docutils literal"><span class="pre">list_service_certificates</span></code>.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_service_certificate my-azure <span class="se">\</span>
+    <span class="nv">name</span><span class="o">=</span>my_service_certificate <span class="se">\</span>
+    <span class="nv">thumbalgorithm</span><span class="o">=</span>sha1 <span class="nv">thumbprint</span><span class="o">=</span>0123456789ABCDEF
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="managing-management-certificates">
+<h2>Managing Management Certificates<a class="headerlink" href="#managing-management-certificates" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>A Azure management certificate is an X.509 v3 certificate used to authenticate
+an agent, such as Visual Studio Tools for Windows Azure or a client application
+that uses the Service Management API, acting on behalf of the subscription owner
+to manage subscription resources. Azure management certificates are uploaded to
+Azure and stored at the subscription level. The management certificate store can
+hold up to 100 certificates per subscription. These certificates are used to
+authenticate your Windows Azure deployment.</p>
+<p>For more information on management certificates, see the following link.</p>
+<ul class="simple">
+<li><a class="reference external" href="https://msdn.microsoft.com/en-us/library/azure/gg981929.aspx">Manage Certificates</a></li>
+</ul>
+<p>The following functions are available.</p>
+<div class="section" id="list-management-certificates">
+<h3>list_management_certificates<a class="headerlink" href="#list-management-certificates" title="永久链接至标题">¶</a></h3>
+<p>List management certificates associated with the account.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_management_certificates my-azure
+</pre></div>
+</div>
+</div>
+<div class="section" id="show-management-certificate">
+<h3>show_management_certificate<a class="headerlink" href="#show-management-certificate" title="永久链接至标题">¶</a></h3>
+<p>Show the data for a specific management certificate associated with the account.
+The <code class="docutils literal"><span class="pre">name</span></code>, <code class="docutils literal"><span class="pre">thumbprint</span></code>, and <code class="docutils literal"><span class="pre">thumbalgorithm</span></code> can be obtained from
+<code class="docutils literal"><span class="pre">list_management_certificates</span></code>. Can also be called with
+<code class="docutils literal"><span class="pre">get_management_certificate</span></code>.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_management_certificate my-azure <span class="nv">name</span><span class="o">=</span>my_management_certificate <span class="se">\</span>
+    <span class="nv">thumbalgorithm</span><span class="o">=</span>sha1 <span class="nv">thumbprint</span><span class="o">=</span>0123456789ABCDEF
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-management-certificate">
+<h3>add_management_certificate<a class="headerlink" href="#add-management-certificate" title="永久链接至标题">¶</a></h3>
+<p>Management certificates must have a key length of at least 2048 bits and should
+reside in the Personal certificate store. When the certificate is installed on
+the client, it should contain the private key of the certificate. To upload to
+the certificate to the Microsoft Azure Management Portal, you must export it as
+a .cer format file that does not contain the private key. For more information
+on creating management certificates, see the following link:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://msdn.microsoft.com/en-us/library/azure/gg551722.aspx">Create and Upload a Management Certificate for Azure</a></li>
+</ul>
+<p>The following options are available.</p>
+<div class="section" id="public-key">
+<h4>public_key<a class="headerlink" href="#public-key" title="永久链接至标题">¶</a></h4>
+<p>A base64 representation of the management certificate public key.</p>
+</div>
+<div class="section" id="thumbprint">
+<h4>thumbprint<a class="headerlink" href="#thumbprint" title="永久链接至标题">¶</a></h4>
+<p>The thumb print that uniquely identifies the management certificate.</p>
+</div>
+<div class="section" id="id19">
+<h4>data<a class="headerlink" href="#id19" title="永久链接至标题">¶</a></h4>
+<p>The certificate's raw data in base-64 encoded .cer format.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f add_management_certificate my-azure <span class="nv">public_key</span><span class="o">=</span><span class="s1">&#39;...PUBKEY...&#39;</span> <span class="se">\</span>
+    <span class="nv">thumbprint</span><span class="o">=</span>0123456789ABCDEF <span class="nv">data</span><span class="o">=</span><span class="s1">&#39;...CERT_DATA...&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="delete-management-certificate">
+<h3>delete_management_certificate<a class="headerlink" href="#delete-management-certificate" title="永久链接至标题">¶</a></h3>
+<p>Delete a management certificate from the account. The <code class="docutils literal"><span class="pre">thumbprint</span></code> can be
+obtained from <code class="docutils literal"><span class="pre">list_management_certificates</span></code>.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_management_certificate my-azure <span class="nv">thumbprint</span><span class="o">=</span>0123456789ABCDEF
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="virtual-network-management">
+<h2>Virtual Network Management<a class="headerlink" href="#virtual-network-management" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>The following are functions for managing virtual networks.</p>
+<div class="section" id="list-virtual-networks">
+<h3>list_virtual_networks<a class="headerlink" href="#list-virtual-networks" title="永久链接至标题">¶</a></h3>
+<p>List input endpoints associated with the deployment.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_virtual_networks my-azure <span class="nv">service</span><span class="o">=</span>myservice <span class="nv">deployment</span><span class="o">=</span>mydeployment
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="managing-input-endpoints">
+<h2>Managing Input Endpoints<a class="headerlink" href="#managing-input-endpoints" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Input endpoints are used to manage port access for roles. Because endpoints
+cannot be managed by the Azure Python SDK, Salt Cloud uses the API directly.
+With versions of Python before 2.7.9, the <code class="docutils literal"><span class="pre">requests-python</span></code> package needs to
+be installed in order for this to work. Additionally, the following needs to be
+set in the master's configuration file:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>requests_lib: True
+</pre></div>
+</div>
+<p>The following functions are available.</p>
+<div class="section" id="list-input-endpoints">
+<h3>list_input_endpoints<a class="headerlink" href="#list-input-endpoints" title="永久链接至标题">¶</a></h3>
+<p>List input endpoints associated with the deployment</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_input_endpoints my-azure <span class="nv">service</span><span class="o">=</span>myservice <span class="nv">deployment</span><span class="o">=</span>mydeployment
+</pre></div>
+</div>
+</div>
+<div class="section" id="show-input-endpoint">
+<h3>show_input_endpoint<a class="headerlink" href="#show-input-endpoint" title="永久链接至标题">¶</a></h3>
+<p>Show an input endpoint associated with the deployment</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_input_endpoint my-azure <span class="nv">service</span><span class="o">=</span>myservice <span class="se">\</span>
+    <span class="nv">deployment</span><span class="o">=</span>mydeployment <span class="nv">name</span><span class="o">=</span>SSH
+</pre></div>
+</div>
+</div>
+<div class="section" id="add-input-endpoint">
+<h3>add_input_endpoint<a class="headerlink" href="#add-input-endpoint" title="永久链接至标题">¶</a></h3>
+<p>Add an input endpoint to the deployment. Please note that there may be a delay
+before the changes show up. The following options are available.</p>
+<div class="section" id="service">
+<h4>service<a class="headerlink" href="#service" title="永久链接至标题">¶</a></h4>
+<p>Required. The name of the hosted service which the VM belongs to.</p>
+</div>
+<div class="section" id="deployment">
+<h4>deployment<a class="headerlink" href="#deployment" title="永久链接至标题">¶</a></h4>
+<p>Required. The name of the deployment that the VM belongs to. If the VM was
+created with Salt Cloud, the deployment name probably matches the VM name.</p>
+</div>
+<div class="section" id="role">
+<h4>role<a class="headerlink" href="#role" title="永久链接至标题">¶</a></h4>
+<p>Required. The name of the role that the VM belongs to. If the VM was created
+with Salt Cloud, the role name probably matches the VM name.</p>
+</div>
+<div class="section" id="id20">
+<h4>name<a class="headerlink" href="#id20" title="永久链接至标题">¶</a></h4>
+<p>Required. The name of the input endpoint. This typically matches the port that
+the endpoint is set to. For instance, port 22 would be called SSH.</p>
+</div>
+<div class="section" id="port">
+<h4>port<a class="headerlink" href="#port" title="永久链接至标题">¶</a></h4>
+<p>Required. The public (Internet-facing) port that is used for the endpoint.</p>
+</div>
+<div class="section" id="local-port">
+<h4>local_port<a class="headerlink" href="#local-port" title="永久链接至标题">¶</a></h4>
+<p>Optional. The private port on the VM itself that will be matched with the port.
+This is typically the same as the <code class="docutils literal"><span class="pre">port</span></code>. If this value is not specified, it
+will be copied from <code class="docutils literal"><span class="pre">port</span></code>.</p>
+</div>
+<div class="section" id="protocol">
+<h4>protocol<a class="headerlink" href="#protocol" title="永久链接至标题">¶</a></h4>
+<p>Required. Either <code class="docutils literal"><span class="pre">tcp</span></code> or <code class="docutils literal"><span class="pre">udp</span></code>.</p>
+</div>
+<div class="section" id="enable-direct-server-return">
+<h4>enable_direct_server_return<a class="headerlink" href="#enable-direct-server-return" title="永久链接至标题">¶</a></h4>
+<p>Optional. If an internal load balancer exists in the account, it can be used
+with a direct server return. The default value is <code class="docutils literal"><span class="pre">False</span></code>. Please see the
+following article for an explanation of this option.</p>
+<ul class="simple">
+<li><a class="reference external" href="http://azure.microsoft.com/en-us/documentation/articles/virtual-machines-load-balance/">Load Balancing for Azure Infrastructure Services</a></li>
+</ul>
+</div>
+<div class="section" id="timeout-for-tcp-idle-connection">
+<h4>timeout_for_tcp_idle_connection<a class="headerlink" href="#timeout-for-tcp-idle-connection" title="永久链接至标题">¶</a></h4>
+<p>Optional. The default value is <code class="docutils literal"><span class="pre">4</span></code>. Please see the following article for an
+explanation of this option.</p>
+<ul class="simple">
+<li><a class="reference external" href="http://azure.microsoft.com/blog/2014/08/14/new-configurable-idle-timeout-for-azure-load-balancer/">Configurable Idle Timeout for Azure Load Balancer</a></li>
+</ul>
+</div>
+<div class="section" id="id23">
+<h4>CLI Example<a class="headerlink" href="#id23" title="永久链接至标题">¶</a></h4>
+<p>The following example illustrates adding an input endpoint.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f add_input_endpoint my-azure <span class="nv">service</span><span class="o">=</span>myservice <span class="se">\</span>
+    <span class="nv">deployment</span><span class="o">=</span>mydeployment <span class="nv">role</span><span class="o">=</span>myrole <span class="nv">name</span><span class="o">=</span>HTTP <span class="nv">local_port</span><span class="o">=</span><span class="m">80</span> <span class="se">\</span>
+    <span class="nv">port</span><span class="o">=</span><span class="m">80</span> <span class="nv">protocol</span><span class="o">=</span>tcp <span class="nv">enable_direct_server_return</span><span class="o">=</span>False <span class="se">\</span>
+    <span class="nv">timeout_for_tcp_idle_connection</span><span class="o">=</span>4
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="update-input-endpoint">
+<h3>update_input_endpoint<a class="headerlink" href="#update-input-endpoint" title="永久链接至标题">¶</a></h3>
+<p>Updates the details for a specific input endpoint. All options from
+<code class="docutils literal"><span class="pre">add_input_endpoint</span></code> are supported.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f update_input_endpoint my-azure <span class="nv">service</span><span class="o">=</span>myservice <span class="se">\</span>
+    <span class="nv">deployment</span><span class="o">=</span>mydeployment <span class="nv">role</span><span class="o">=</span>myrole <span class="nv">name</span><span class="o">=</span>HTTP <span class="nv">local_port</span><span class="o">=</span><span class="m">80</span> <span class="se">\</span>
+    <span class="nv">port</span><span class="o">=</span><span class="m">80</span> <span class="nv">protocol</span><span class="o">=</span>tcp <span class="nv">enable_direct_server_return</span><span class="o">=</span>False <span class="se">\</span>
+    <span class="nv">timeout_for_tcp_idle_connection</span><span class="o">=</span>4
+</pre></div>
+</div>
+</div>
+<div class="section" id="delete-input-endpoint">
+<h3>delete_input_endpoint<a class="headerlink" href="#delete-input-endpoint" title="永久链接至标题">¶</a></h3>
+<p>Delete an input endpoint from the deployment. Please note that there may be a
+delay before the changes show up.  The following items are required.</p>
+<div class="section" id="id24">
+<h4>CLI Example<a class="headerlink" href="#id24" title="永久链接至标题">¶</a></h4>
+<p>The following example illustrates deleting an input endpoint.</p>
+</div>
+<div class="section" id="id25">
+<h4>service<a class="headerlink" href="#id25" title="永久链接至标题">¶</a></h4>
+<p>The name of the hosted service which the VM belongs to.</p>
+</div>
+<div class="section" id="id26">
+<h4>deployment<a class="headerlink" href="#id26" title="永久链接至标题">¶</a></h4>
+<p>The name of the deployment that the VM belongs to. If the VM was created with
+Salt Cloud, the deployment name probably matches the VM name.</p>
+</div>
+<div class="section" id="id27">
+<h4>role<a class="headerlink" href="#id27" title="永久链接至标题">¶</a></h4>
+<p>The name of the role that the VM belongs to. If the VM was created with Salt
+Cloud, the role name probably matches the VM name.</p>
+</div>
+<div class="section" id="id28">
+<h4>name<a class="headerlink" href="#id28" title="永久链接至标题">¶</a></h4>
+<p>The name of the input endpoint. This typically matches the port that the
+endpoint is set to. For instance, port 22 would be called SSH.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_input_endpoint my-azure <span class="nv">service</span><span class="o">=</span>myservice <span class="se">\</span>
+    <span class="nv">deployment</span><span class="o">=</span>mydeployment <span class="nv">role</span><span class="o">=</span>myrole <span class="nv">name</span><span class="o">=</span>HTTP
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="managing-affinity-groups">
+<h2>Managing Affinity Groups<a class="headerlink" href="#managing-affinity-groups" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Affinity groups allow you to group your Azure services to optimize performance.
+All services and VMs within an affinity group will be located in the same
+region. For more information on Affinity groups, see the following link:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://msdn.microsoft.com/en-us/library/azure/jj156209.aspx">Create an Affinity Group in the Management Portal</a></li>
+</ul>
+<p>The following functions are available.</p>
+<div class="section" id="list-affinity-groups">
+<h3>list_affinity_groups<a class="headerlink" href="#list-affinity-groups" title="永久链接至标题">¶</a></h3>
+<p>List input endpoints associated with the account</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_affinity_groups my-azure
+</pre></div>
+</div>
+</div>
+<div class="section" id="show-affinity-group">
+<h3>show_affinity_group<a class="headerlink" href="#show-affinity-group" title="永久链接至标题">¶</a></h3>
+<p>Show an affinity group associated with the account</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_affinity_group my-azure <span class="nv">service</span><span class="o">=</span>myservice <span class="se">\</span>
+    <span class="nv">deployment</span><span class="o">=</span>mydeployment <span class="nv">name</span><span class="o">=</span>SSH
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-affinity-group">
+<h3>create_affinity_group<a class="headerlink" href="#create-affinity-group" title="永久链接至标题">¶</a></h3>
+<p>Create a new affinity group. The following options are supported.</p>
+<div class="section" id="id30">
+<h4>name<a class="headerlink" href="#id30" title="永久链接至标题">¶</a></h4>
+<p>Required. The name of the new affinity group.</p>
+</div>
+<div class="section" id="id31">
+<h4>location<a class="headerlink" href="#id31" title="永久链接至标题">¶</a></h4>
+<p>Required. The region in which the affinity group lives.</p>
+</div>
+<div class="section" id="id32">
+<h4>label<a class="headerlink" href="#id32" title="永久链接至标题">¶</a></h4>
+<p>Required. A label describing the new affinity group.</p>
+</div>
+<div class="section" id="id33">
+<h4>description<a class="headerlink" href="#id33" title="永久链接至标题">¶</a></h4>
+<p>Optional. A longer description of the affinity group.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_affinity_group my-azure <span class="nv">name</span><span class="o">=</span>my_affinity_group <span class="se">\</span>
+   <span class="nv">label</span><span class="o">=</span>my-affinity-group <span class="nv">location</span><span class="o">=</span><span class="s1">&#39;West US&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="update-affinity-group">
+<h3>update_affinity_group<a class="headerlink" href="#update-affinity-group" title="永久链接至标题">¶</a></h3>
+<p>Update an affinity group's properties</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f update_affinity_group my-azure <span class="nv">name</span><span class="o">=</span>my_group <span class="nv">label</span><span class="o">=</span>my_group
+</pre></div>
+</div>
+</div>
+<div class="section" id="delete-affinity-group">
+<h3>delete_affinity_group<a class="headerlink" href="#delete-affinity-group" title="永久链接至标题">¶</a></h3>
+<p>Delete a specific affinity group associated with the account</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_affinity_group my-azure <span class="nv">name</span><span class="o">=</span>my_affinity_group
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="managing-blob-storage">
+<h2>Managing Blob Storage<a class="headerlink" href="#managing-blob-storage" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.0 新版功能.</span></p>
+</div>
+<p>Azure storage containers and their contents can be managed with Salt Cloud. This
+is not as elegant as using one of the other available clients in Windows, but it
+benefits Linux and Unix users, as there are fewer options available on those
+platforms.</p>
+<div class="section" id="blob-storage-configuration">
+<h3>Blob Storage Configuration<a class="headerlink" href="#blob-storage-configuration" title="永久链接至标题">¶</a></h3>
+<p>Blob storage must be configured differently than the standard Azure
+configuration. Both a <code class="docutils literal"><span class="pre">storage_account</span></code> and a <code class="docutils literal"><span class="pre">storage_key</span></code> must be
+specified either through the Azure provider configuration (in addition to the
+other Azure configuration) or via the command line.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">storage_account</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mystorage</span>
+<span class="l l-Scalar l-Scalar-Plain">storage_key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ffhj334fDSGFEGDFGFDewr34fwfsFSDFwe==</span>
+</pre></div>
+</div>
+<div class="section" id="storage-account">
+<h4>storage_account<a class="headerlink" href="#storage-account" title="永久链接至标题">¶</a></h4>
+<p>This is one of the storage accounts that is available via the <code class="docutils literal"><span class="pre">list_storage</span></code>
+function.</p>
+</div>
+<div class="section" id="storage-key">
+<h4>storage_key<a class="headerlink" href="#storage-key" title="永久链接至标题">¶</a></h4>
+<p>Both a primary and a secondary <code class="docutils literal"><span class="pre">storage_key</span></code> can be obtained by running the
+<code class="docutils literal"><span class="pre">show_storage_keys</span></code> function. Either key may be used.</p>
+</div>
+</div>
+<div class="section" id="blob-functions">
+<h3>Blob Functions<a class="headerlink" href="#blob-functions" title="永久链接至标题">¶</a></h3>
+<p>The following functions are made available through Salt Cloud for managing
+blog storage.</p>
+<div class="section" id="make-blob-url">
+<h4>make_blob_url<a class="headerlink" href="#make-blob-url" title="永久链接至标题">¶</a></h4>
+<p>Creates the URL to access a blob</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f make_blob_url my-azure <span class="nv">container</span><span class="o">=</span>mycontainer <span class="nv">blob</span><span class="o">=</span>myblob
+</pre></div>
+</div>
+<div class="section" id="container">
+<h5>container<a class="headerlink" href="#container" title="永久链接至标题">¶</a></h5>
+<p>Name of the container.</p>
+</div>
+<div class="section" id="blob">
+<h5>blob<a class="headerlink" href="#blob" title="永久链接至标题">¶</a></h5>
+<p>Name of the blob.</p>
+</div>
+<div class="section" id="account">
+<h5>account<a class="headerlink" href="#account" title="永久链接至标题">¶</a></h5>
+<p>Name of the storage account. If not specified, derives the host base
+from the provider configuration.</p>
+</div>
+<div class="section" id="id34">
+<h5>protocol<a class="headerlink" href="#id34" title="永久链接至标题">¶</a></h5>
+<p>Protocol to use: 'http' or 'https'. If not specified, derives the host
+base from the provider configuration.</p>
+</div>
+<div class="section" id="host-base">
+<h5>host_base<a class="headerlink" href="#host-base" title="永久链接至标题">¶</a></h5>
+<p>Live host base URL.  If not specified, derives the host base from the
+provider configuration.</p>
+</div>
+</div>
+<div class="section" id="list-storage-containers">
+<h4>list_storage_containers<a class="headerlink" href="#list-storage-containers" title="永久链接至标题">¶</a></h4>
+<p>List containers associated with the storage account</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_storage_containers my-azure
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-storage-container">
+<h4>create_storage_container<a class="headerlink" href="#create-storage-container" title="永久链接至标题">¶</a></h4>
+<p>Create a storage container</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f create_storage_container my-azure <span class="nv">name</span><span class="o">=</span>mycontainer
+</pre></div>
+</div>
+<div class="section" id="id35">
+<h5>name<a class="headerlink" href="#id35" title="永久链接至标题">¶</a></h5>
+<p>Name of container to create.</p>
+</div>
+<div class="section" id="meta-name-values">
+<h5>meta_name_values<a class="headerlink" href="#meta-name-values" title="永久链接至标题">¶</a></h5>
+<p>Optional. A dict with name_value pairs to associate with the
+container as metadata. Example:{'Category':'test'}</p>
+</div>
+<div class="section" id="blob-public-access">
+<h5>blob_public_access<a class="headerlink" href="#blob-public-access" title="永久链接至标题">¶</a></h5>
+<p>Optional. Possible values include: container, blob</p>
+</div>
+<div class="section" id="fail-on-exist">
+<h5>fail_on_exist<a class="headerlink" href="#fail-on-exist" title="永久链接至标题">¶</a></h5>
+<p>Specify whether to throw an exception when the container exists.</p>
+</div>
+</div>
+<div class="section" id="show-storage-container">
+<h4>show_storage_container<a class="headerlink" href="#show-storage-container" title="永久链接至标题">¶</a></h4>
+<p>Show a container associated with the storage account</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_storage_container my-azure <span class="nv">name</span><span class="o">=</span>myservice
+</pre></div>
+</div>
+<div class="section" id="id36">
+<h5>name<a class="headerlink" href="#id36" title="永久链接至标题">¶</a></h5>
+<p>Name of container to show.</p>
+</div>
+</div>
+<div class="section" id="show-storage-container-metadata">
+<h4>show_storage_container_metadata<a class="headerlink" href="#show-storage-container-metadata" title="永久链接至标题">¶</a></h4>
+<p>Show a storage container's metadata</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_storage_container_metadata my-azure <span class="nv">name</span><span class="o">=</span>myservice
+</pre></div>
+</div>
+<div class="section" id="id37">
+<h5>name<a class="headerlink" href="#id37" title="永久链接至标题">¶</a></h5>
+<p>Name of container to show.</p>
+</div>
+<div class="section" id="lease-id">
+<h5>lease_id<a class="headerlink" href="#lease-id" title="永久链接至标题">¶</a></h5>
+<p>If specified, show_storage_container_metadata only succeeds if the
+container's lease is active and matches this ID.</p>
+</div>
+</div>
+<div class="section" id="set-storage-container-metadata">
+<h4>set_storage_container_metadata<a class="headerlink" href="#set-storage-container-metadata" title="永久链接至标题">¶</a></h4>
+<p>Set a storage container's metadata</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f set_storage_container my-azure <span class="nv">name</span><span class="o">=</span>mycontainer <span class="se">\</span>
+    <span class="nv">x_ms_meta_name_values</span><span class="o">=</span><span class="s1">&#39;{&quot;my_name&quot;: &quot;my_value&quot;}&#39;</span>
+</pre></div>
+</div>
+<div class="section" id="id38">
+<h5>name<a class="headerlink" href="#id38" title="永久链接至标题">¶</a></h5>
+<p>Name of existing container.
+meta_name_values
+<code class="docutils literal"><span class="pre">````````````</span></code>
+A dict containing name, value for metadata.
+Example: {'category':'test'}
+lease_id
+<code class="docutils literal"><span class="pre">````</span></code>
+If specified, set_storage_container_metadata only succeeds if the
+container's lease is active and matches this ID.</p>
+</div>
+</div>
+<div class="section" id="show-storage-container-acl">
+<h4>show_storage_container_acl<a class="headerlink" href="#show-storage-container-acl" title="永久链接至标题">¶</a></h4>
+<p>Show a storage container's acl</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_storage_container_acl my-azure <span class="nv">name</span><span class="o">=</span>myservice
+</pre></div>
+</div>
+<div class="section" id="id39">
+<h5>name<a class="headerlink" href="#id39" title="永久链接至标题">¶</a></h5>
+<p>Name of existing container.</p>
+</div>
+<div class="section" id="id40">
+<h5>lease_id<a class="headerlink" href="#id40" title="永久链接至标题">¶</a></h5>
+<p>If specified, show_storage_container_acl only succeeds if the
+container's lease is active and matches this ID.</p>
+</div>
+</div>
+<div class="section" id="set-storage-container-acl">
+<h4>set_storage_container_acl<a class="headerlink" href="#set-storage-container-acl" title="永久链接至标题">¶</a></h4>
+<p>Set a storage container's acl</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f set_storage_container my-azure <span class="nv">name</span><span class="o">=</span>mycontainer
+</pre></div>
+</div>
+<div class="section" id="id41">
+<h5>name<a class="headerlink" href="#id41" title="永久链接至标题">¶</a></h5>
+<p>Name of existing container.</p>
+</div>
+<div class="section" id="signed-identifiers">
+<h5>signed_identifiers<a class="headerlink" href="#signed-identifiers" title="永久链接至标题">¶</a></h5>
+<p>SignedIdentifers instance</p>
+</div>
+<div class="section" id="id42">
+<h5>blob_public_access<a class="headerlink" href="#id42" title="永久链接至标题">¶</a></h5>
+<p>Optional. Possible values include: container, blob</p>
+</div>
+<div class="section" id="id43">
+<h5>lease_id<a class="headerlink" href="#id43" title="永久链接至标题">¶</a></h5>
+<p>If specified, set_storage_container_acl only succeeds if the
+container's lease is active and matches this ID.</p>
+</div>
+</div>
+<div class="section" id="delete-storage-container">
+<h4>delete_storage_container<a class="headerlink" href="#delete-storage-container" title="永久链接至标题">¶</a></h4>
+<p>Delete a container associated with the storage account</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f delete_storage_container my-azure <span class="nv">name</span><span class="o">=</span>mycontainer
+</pre></div>
+</div>
+<div class="section" id="id44">
+<h5>name<a class="headerlink" href="#id44" title="永久链接至标题">¶</a></h5>
+<p>Name of container to create.</p>
+</div>
+<div class="section" id="fail-not-exist">
+<h5>fail_not_exist<a class="headerlink" href="#fail-not-exist" title="永久链接至标题">¶</a></h5>
+<p>Specify whether to throw an exception when the container exists.</p>
+</div>
+<div class="section" id="id45">
+<h5>lease_id<a class="headerlink" href="#id45" title="永久链接至标题">¶</a></h5>
+<p>If specified, delete_storage_container only succeeds if the
+container's lease is active and matches this ID.</p>
+</div>
+</div>
+<div class="section" id="lease-storage-container">
+<h4>lease_storage_container<a class="headerlink" href="#lease-storage-container" title="永久链接至标题">¶</a></h4>
+<p>Lease a container associated with the storage account</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f lease_storage_container my-azure <span class="nv">name</span><span class="o">=</span>mycontainer
+</pre></div>
+</div>
+<div class="section" id="id46">
+<h5>name<a class="headerlink" href="#id46" title="永久链接至标题">¶</a></h5>
+<p>Name of container to create.</p>
+</div>
+<div class="section" id="lease-action">
+<h5>lease_action<a class="headerlink" href="#lease-action" title="永久链接至标题">¶</a></h5>
+<p>Required. Possible values: acquire|renew|release|break|change</p>
+</div>
+<div class="section" id="id47">
+<h5>lease_id<a class="headerlink" href="#id47" title="永久链接至标题">¶</a></h5>
+<p>Required if the container has an active lease.</p>
+</div>
+<div class="section" id="lease-duration">
+<h5>lease_duration<a class="headerlink" href="#lease-duration" title="永久链接至标题">¶</a></h5>
+<p>Specifies the duration of the lease, in seconds, or negative one
+(-1) for a lease that never expires. A non-infinite lease can be
+between 15 and 60 seconds. A lease duration cannot be changed
+using renew or change. For backwards compatibility, the default is
+60, and the value is only used on an acquire operation.</p>
+</div>
+<div class="section" id="lease-break-period">
+<h5>lease_break_period<a class="headerlink" href="#lease-break-period" title="永久链接至标题">¶</a></h5>
+<p>Optional. For a break operation, this is the proposed duration of
+seconds that the lease should continue before it is broken, between
+0 and 60 seconds. This break period is only used if it is shorter
+than the time remaining on the lease. If longer, the time remaining
+on the lease is used. A new lease will not be available before the
+break period has expired, but the lease may be held for longer than
+the break period. If this header does not appear with a break
+operation, a fixed-duration lease breaks after the remaining lease
+period elapses, and an infinite lease breaks immediately.</p>
+</div>
+<div class="section" id="proposed-lease-id">
+<h5>proposed_lease_id<a class="headerlink" href="#proposed-lease-id" title="永久链接至标题">¶</a></h5>
+<p>Optional for acquire, required for change. Proposed lease ID, in a
+GUID string format.</p>
+</div>
+</div>
+<div class="section" id="list-blobs">
+<h4>list_blobs<a class="headerlink" href="#list-blobs" title="永久链接至标题">¶</a></h4>
+<p>List blobs associated with the container</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f list_blobs my-azure <span class="nv">container</span><span class="o">=</span>mycontainer
+</pre></div>
+</div>
+<div class="section" id="id48">
+<h5>container<a class="headerlink" href="#id48" title="永久链接至标题">¶</a></h5>
+<p>The name of the storage container</p>
+</div>
+<div class="section" id="prefix">
+<h5>prefix<a class="headerlink" href="#prefix" title="永久链接至标题">¶</a></h5>
+<p>Optional. Filters the results to return only blobs whose names
+begin with the specified prefix.</p>
+</div>
+<div class="section" id="marker">
+<h5>marker<a class="headerlink" href="#marker" title="永久链接至标题">¶</a></h5>
+<p>Optional. A string value that identifies the portion of the list
+to be returned with the next list operation. The operation returns
+a marker value within the response body if the list returned was
+not complete. The marker value may then be used in a subsequent
+call to request the next set of list items. The marker value is
+opaque to the client.</p>
+</div>
+<div class="section" id="maxresults">
+<h5>maxresults<a class="headerlink" href="#maxresults" title="永久链接至标题">¶</a></h5>
+<p>Optional. Specifies the maximum number of blobs to return,
+including all BlobPrefix elements. If the request does not specify
+maxresults or specifies a value greater than 5,000, the server will
+return up to 5,000 items. Setting maxresults to a value less than
+or equal to zero results in error response code 400 (Bad Request).</p>
+</div>
+<div class="section" id="include">
+<h5>include<a class="headerlink" href="#include" title="永久链接至标题">¶</a></h5>
+<p>Optional. Specifies one or more datasets to include in the
+response. To specify more than one of these options on the URI,
+you must separate each option with a comma. Valid values are:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>snapshots:
+    Specifies that snapshots should be included in the
+    enumeration. Snapshots are listed from oldest to newest in
+    the response.
+metadata:
+    Specifies that blob metadata be returned in the response.
+uncommittedblobs:
+    Specifies that blobs for which blocks have been uploaded,
+    but which have not been committed using Put Block List
+    (REST API), be included in the response.
+copy:
+    Version 2012-02-12 and newer. Specifies that metadata
+    related to any current or previous Copy Blob operation
+    should be included in the response.
+</pre></div>
+</div>
+</div>
+<div class="section" id="delimiter">
+<h5>delimiter<a class="headerlink" href="#delimiter" title="永久链接至标题">¶</a></h5>
+<p>Optional. When the request includes this parameter, the operation
+returns a BlobPrefix element in the response body that acts as a
+placeholder for all blobs whose names begin with the same
+substring up to the appearance of the delimiter character. The
+delimiter may be a single character or a string.</p>
+</div>
+</div>
+<div class="section" id="show-blob-service-properties">
+<h4>show_blob_service_properties<a class="headerlink" href="#show-blob-service-properties" title="永久链接至标题">¶</a></h4>
+<p>Show a blob's service properties</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_blob_service_properties my-azure
+</pre></div>
+</div>
+</div>
+<div class="section" id="set-blob-service-properties">
+<h4>set_blob_service_properties<a class="headerlink" href="#set-blob-service-properties" title="永久链接至标题">¶</a></h4>
+<p>Sets the properties of a storage account's Blob service, including
+Windows Azure Storage Analytics. You can also use this operation to
+set the default request version for all incoming requests that do not
+have a version specified.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f set_blob_service_properties my-azure
+</pre></div>
+</div>
+<div class="section" id="properties">
+<h5>properties<a class="headerlink" href="#properties" title="永久链接至标题">¶</a></h5>
+<p>a StorageServiceProperties object.</p>
+</div>
+<div class="section" id="timeout">
+<h5>timeout<a class="headerlink" href="#timeout" title="永久链接至标题">¶</a></h5>
+<p>Optional. The timeout parameter is expressed in seconds.</p>
+</div>
+</div>
+<div class="section" id="show-blob-properties">
+<h4>show_blob_properties<a class="headerlink" href="#show-blob-properties" title="永久链接至标题">¶</a></h4>
+<p>Returns all user-defined metadata, standard HTTP properties, and
+system properties for the blob.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f show_blob_properties my-azure <span class="nv">container</span><span class="o">=</span>mycontainer <span class="nv">blob</span><span class="o">=</span>myblob
+</pre></div>
+</div>
+<div class="section" id="id49">
+<h5>container<a class="headerlink" href="#id49" title="永久链接至标题">¶</a></h5>
+<p>Name of existing container.</p>
+</div>
+<div class="section" id="id50">
+<h5>blob<a class="headerlink" href="#id50" title="永久链接至标题">¶</a></h5>
+<p>Name of existing blob.</p>
+</div>
+<div class="section" id="id51">
+<h5>lease_id<a class="headerlink" href="#id51" title="永久链接至标题">¶</a></h5>
+<p>Required if the blob has an active lease.</p>
+</div>
+</div>
+<div class="section" id="set-blob-properties">
+<h4>set_blob_properties<a class="headerlink" href="#set-blob-properties" title="永久链接至标题">¶</a></h4>
+<p>Set a blob's properties</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f set_blob_properties my-azure
+</pre></div>
+</div>
+<div class="section" id="id52">
+<h5>container<a class="headerlink" href="#id52" title="永久链接至标题">¶</a></h5>
+<p>Name of existing container.</p>
+</div>
+<div class="section" id="id53">
+<h5>blob<a class="headerlink" href="#id53" title="永久链接至标题">¶</a></h5>
+<p>Name of existing blob.</p>
+</div>
+<div class="section" id="blob-cache-control">
+<h5>blob_cache_control<a class="headerlink" href="#blob-cache-control" title="永久链接至标题">¶</a></h5>
+<p>Optional. Modifies the cache control string for the blob.</p>
+</div>
+<div class="section" id="blob-content-type">
+<h5>blob_content_type<a class="headerlink" href="#blob-content-type" title="永久链接至标题">¶</a></h5>
+<p>Optional. Sets the blob's content type.</p>
+</div>
+<div class="section" id="blob-content-md5">
+<h5>blob_content_md5<a class="headerlink" href="#blob-content-md5" title="永久链接至标题">¶</a></h5>
+<p>Optional. Sets the blob's MD5 hash.</p>
+</div>
+<div class="section" id="blob-content-encoding">
+<h5>blob_content_encoding<a class="headerlink" href="#blob-content-encoding" title="永久链接至标题">¶</a></h5>
+<p>Optional. Sets the blob's content encoding.</p>
+</div>
+<div class="section" id="blob-content-language">
+<h5>blob_content_language<a class="headerlink" href="#blob-content-language" title="永久链接至标题">¶</a></h5>
+<p>Optional. Sets the blob's content language.</p>
+</div>
+<div class="section" id="id54">
+<h5>lease_id<a class="headerlink" href="#id54" title="永久链接至标题">¶</a></h5>
+<p>Required if the blob has an active lease.</p>
+</div>
+<div class="section" id="blob-content-disposition">
+<h5>blob_content_disposition<a class="headerlink" href="#blob-content-disposition" title="永久链接至标题">¶</a></h5>
+<p>Optional. Sets the blob's Content-Disposition header.
+The Content-Disposition response header field conveys additional
+information about how to process the response payload, and also can
+be used to attach additional metadata. For example, if set to
+attachment, it indicates that the user-agent should not display the
+response, but instead show a Save As dialog with a filename other
+than the blob name specified.</p>
+</div>
+</div>
+<div class="section" id="put-blob">
+<h4>put_blob<a class="headerlink" href="#put-blob" title="永久链接至标题">¶</a></h4>
+<p>Upload a blob</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f put_blob my-azure <span class="nv">container</span><span class="o">=</span>base <span class="nv">name</span><span class="o">=</span>top.sls <span class="nv">blob_path</span><span class="o">=</span>/srv/salt/top.sls
+salt-cloud -f put_blob my-azure <span class="nv">container</span><span class="o">=</span>base <span class="nv">name</span><span class="o">=</span>content.txt <span class="nv">blob_content</span><span class="o">=</span><span class="s1">&#39;Some content&#39;</span>
+</pre></div>
+</div>
+<div class="section" id="id55">
+<h5>container<a class="headerlink" href="#id55" title="永久链接至标题">¶</a></h5>
+<p>Name of existing container.</p>
+</div>
+<div class="section" id="id56">
+<h5>name<a class="headerlink" href="#id56" title="永久链接至标题">¶</a></h5>
+<p>Name of existing blob.</p>
+</div>
+<div class="section" id="blob-path">
+<h5>blob_path<a class="headerlink" href="#blob-path" title="永久链接至标题">¶</a></h5>
+<p>The path on the local machine of the file to upload as a blob. Either
+this or blob_content must be specified.</p>
+</div>
+<div class="section" id="blob-content">
+<h5>blob_content<a class="headerlink" href="#blob-content" title="永久链接至标题">¶</a></h5>
+<p>The actual content to be uploaded as a blob. Either this or blob_path
+must me specified.</p>
+</div>
+<div class="section" id="cache-control">
+<h5>cache_control<a class="headerlink" href="#cache-control" title="永久链接至标题">¶</a></h5>
+<p>Optional. The Blob service stores this value but does not use or
+modify it.</p>
+</div>
+<div class="section" id="content-language">
+<h5>content_language<a class="headerlink" href="#content-language" title="永久链接至标题">¶</a></h5>
+<p>Optional. Specifies the natural languages used by this resource.</p>
+</div>
+<div class="section" id="content-md5">
+<h5>content_md5<a class="headerlink" href="#content-md5" title="永久链接至标题">¶</a></h5>
+<p>Optional. An MD5 hash of the blob content. This hash is used to
+verify the integrity of the blob during transport. When this header
+is specified, the storage service checks the hash that has arrived
+with the one that was sent. If the two hashes do not match, the
+operation will fail with error code 400 (Bad Request).</p>
+</div>
+<div class="section" id="id57">
+<h5>blob_content_type<a class="headerlink" href="#id57" title="永久链接至标题">¶</a></h5>
+<p>Optional. Set the blob's content type.</p>
+</div>
+<div class="section" id="id58">
+<h5>blob_content_encoding<a class="headerlink" href="#id58" title="永久链接至标题">¶</a></h5>
+<p>Optional. Set the blob's content encoding.</p>
+</div>
+<div class="section" id="id59">
+<h5>blob_content_language<a class="headerlink" href="#id59" title="永久链接至标题">¶</a></h5>
+<p>Optional. Set the blob's content language.</p>
+</div>
+<div class="section" id="id60">
+<h5>blob_content_md5<a class="headerlink" href="#id60" title="永久链接至标题">¶</a></h5>
+<p>Optional. Set the blob's MD5 hash.</p>
+</div>
+<div class="section" id="id61">
+<h5>blob_cache_control<a class="headerlink" href="#id61" title="永久链接至标题">¶</a></h5>
+<p>Optional. Sets the blob's cache control.</p>
+</div>
+<div class="section" id="id62">
+<h5>meta_name_values<a class="headerlink" href="#id62" title="永久链接至标题">¶</a></h5>
+<p>A dict containing name, value for metadata.</p>
+</div>
+<div class="section" id="id63">
+<h5>lease_id<a class="headerlink" href="#id63" title="永久链接至标题">¶</a></h5>
+<p>Required if the blob has an active lease.</p>
+</div>
+</div>
+<div class="section" id="get-blob">
+<h4>get_blob<a class="headerlink" href="#get-blob" title="永久链接至标题">¶</a></h4>
+<p>Download a blob</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -f get_blob my-azure <span class="nv">container</span><span class="o">=</span>base <span class="nv">name</span><span class="o">=</span>top.sls <span class="nv">local_path</span><span class="o">=</span>/srv/salt/top.sls
+salt-cloud -f get_blob my-azure <span class="nv">container</span><span class="o">=</span>base <span class="nv">name</span><span class="o">=</span>content.txt <span class="nv">return_content</span><span class="o">=</span>True
+</pre></div>
+</div>
+<div class="section" id="id64">
+<h5>container<a class="headerlink" href="#id64" title="永久链接至标题">¶</a></h5>
+<p>Name of existing container.</p>
+</div>
+<div class="section" id="id65">
+<h5>name<a class="headerlink" href="#id65" title="永久链接至标题">¶</a></h5>
+<p>Name of existing blob.</p>
+</div>
+<div class="section" id="local-path">
+<h5>local_path<a class="headerlink" href="#local-path" title="永久链接至标题">¶</a></h5>
+<p>The path on the local machine to download the blob to. Either this or
+return_content must be specified.</p>
+</div>
+<div class="section" id="return-content">
+<h5>return_content<a class="headerlink" href="#return-content" title="永久链接至标题">¶</a></h5>
+<p>Whether or not to return the content directly from the blob. If
+specified, must be True or False. Either this or the local_path must
+be specified.</p>
+</div>
+<div class="section" id="snapshot">
+<h5>snapshot<a class="headerlink" href="#snapshot" title="永久链接至标题">¶</a></h5>
+<p>Optional. The snapshot parameter is an opaque DateTime value that,
+when present, specifies the blob snapshot to retrieve.</p>
+</div>
+<div class="section" id="id66">
+<h5>lease_id<a class="headerlink" href="#id66" title="永久链接至标题">¶</a></h5>
+<p>Required if the blob has an active lease.</p>
+</div>
+<div class="section" id="progress-callback">
+<h5>progress_callback<a class="headerlink" href="#progress-callback" title="永久链接至标题">¶</a></h5>
+<p>callback for progress with signature function(current, total) where
+current is the number of bytes transferred so far, and total is the
+size of the blob.</p>
+</div>
+<div class="section" id="max-connections">
+<h5>max_connections<a class="headerlink" href="#max-connections" title="永久链接至标题">¶</a></h5>
+<p>Maximum number of parallel connections to use when the blob size
+exceeds 64MB.
+Set to 1 to download the blob chunks sequentially.
+Set to 2 or more to download the blob chunks in parallel. This uses
+more system resources but will download faster.</p>
+</div>
+<div class="section" id="max-retries">
+<h5>max_retries<a class="headerlink" href="#max-retries" title="永久链接至标题">¶</a></h5>
+<p>Number of times to retry download of blob chunk if an error occurs.</p>
+</div>
+<div class="section" id="retry-wait">
+<h5>retry_wait<a class="headerlink" href="#retry-wait" title="永久链接至标题">¶</a></h5>
+<p>Sleep time in secs between retries.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="aliyun.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started With Aliyun ECS" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="digitalocean.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Getting Started With DigitalOcean" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt云端</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">入门指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud">Using Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#core-configuration">Cloud核心配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#windows-configuration">Windows Configuration</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#cloud-provider-specifics">Cloud Provider Specifics</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aliyun.html">    Getting Started With Aliyun</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">    Getting Started With Azure</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dependencies">依赖</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cloud-profiles">Cloud Profiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#profile-options">Profile Options</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#provider">provider</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#image">image</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#size">size</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#location">location</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#affinity-group">affinity_group</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#ssh-username">ssh_username</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#ssh-password">ssh_password</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#slot">slot</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#media-link">media_link</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#service-name">service_name</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#show-instance">Show Instance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#destroying-vms">Destroying VMs</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#cleanup-disks">cleanup_disks</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#cleanup-vhds">cleanup_vhds</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#cleanup-services">cleanup_services</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#managing-hosted-services">Managing Hosted Services</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#create-service">create_service</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#name">name</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#label">label</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#description">description</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id1">location</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id2">affinity_group</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#extended-properties">extended_properties</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#cli-example">CLI Example</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#show-service">show_service</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#list-services">list_services</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#delete-service">delete_service</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#managing-storage-accounts">Managing Storage Accounts</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#create-storage">create_storage</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#id3">name</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id4">label</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id5">description</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id6">location</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id7">affinity_group</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id8">extended_properties</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#geo-replication-enabled">geo_replication_enabled</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#account-type">account_type</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id9">CLI Example</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#list-storage">list_storage</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#show-storage">show_storage</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#update-storage">update_storage</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#delete-storage">delete_storage</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#show-storage-keys">show_storage_keys</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#regenerate-storage-keys">regenerate_storage_keys</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#managing-disks">Managing Disks</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#show-disk">show_disk</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#list-disks">list_disks</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#update-disk">update_disk</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#id10">name</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#has-operating-system">has_operating_system</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id11">label</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id12">media_link</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#new-name">new_name</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#os">os</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id13">CLI Example</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#delete-disk">delete_disk</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#managing-service-certificates">Managing Service Certificates</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#list-service-certificates">list_service_certificates</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#show-service-certificate">show_service_certificate</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#add-service-certificate">add_service_certificate</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#id16">name</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#data">data</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#certificate-format">certificate_format</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#password">password</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#delete-service-certificate">delete_service_certificate</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#managing-management-certificates">Managing Management Certificates</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#list-management-certificates">list_management_certificates</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#show-management-certificate">show_management_certificate</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#add-management-certificate">add_management_certificate</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#public-key">public_key</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#thumbprint">thumbprint</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id19">data</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#delete-management-certificate">delete_management_certificate</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#virtual-network-management">Virtual Network Management</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#list-virtual-networks">list_virtual_networks</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#managing-input-endpoints">Managing Input Endpoints</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#list-input-endpoints">list_input_endpoints</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#show-input-endpoint">show_input_endpoint</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#add-input-endpoint">add_input_endpoint</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#service">service</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#deployment">deployment</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#role">role</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id20">name</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#port">port</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#local-port">local_port</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#protocol">protocol</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#enable-direct-server-return">enable_direct_server_return</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#timeout-for-tcp-idle-connection">timeout_for_tcp_idle_connection</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id23">CLI Example</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#update-input-endpoint">update_input_endpoint</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#delete-input-endpoint">delete_input_endpoint</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#id24">CLI Example</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id25">service</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id26">deployment</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id27">role</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id28">name</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#managing-affinity-groups">Managing Affinity Groups</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#list-affinity-groups">list_affinity_groups</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#show-affinity-group">show_affinity_group</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#create-affinity-group">create_affinity_group</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#id30">name</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id31">location</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id32">label</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#id33">description</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#update-affinity-group">update_affinity_group</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#delete-affinity-group">delete_affinity_group</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#managing-blob-storage">Managing Blob Storage</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#blob-storage-configuration">Blob Storage Configuration</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#storage-account">storage_account</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#storage-key">storage_key</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#blob-functions">Blob Functions</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#make-blob-url">make_blob_url</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#container">container</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#blob">blob</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#account">account</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id34">protocol</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#host-base">host_base</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="#list-storage-containers">list_storage_containers</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#create-storage-container">create_storage_container</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#id35">name</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#meta-name-values">meta_name_values</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#blob-public-access">blob_public_access</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#fail-on-exist">fail_on_exist</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="#show-storage-container">show_storage_container</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#id36">name</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="#show-storage-container-metadata">show_storage_container_metadata</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#id37">name</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#lease-id">lease_id</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="#set-storage-container-metadata">set_storage_container_metadata</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#id38">name</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="#show-storage-container-acl">show_storage_container_acl</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#id39">name</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id40">lease_id</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="#set-storage-container-acl">set_storage_container_acl</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#id41">name</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#signed-identifiers">signed_identifiers</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id42">blob_public_access</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id43">lease_id</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="#delete-storage-container">delete_storage_container</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#id44">name</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#fail-not-exist">fail_not_exist</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id45">lease_id</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="#lease-storage-container">lease_storage_container</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#id46">name</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#lease-action">lease_action</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id47">lease_id</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#lease-duration">lease_duration</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#lease-break-period">lease_break_period</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#proposed-lease-id">proposed_lease_id</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="#list-blobs">list_blobs</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#id48">container</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#prefix">prefix</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#marker">marker</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#maxresults">maxresults</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#include">include</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#delimiter">delimiter</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="#show-blob-service-properties">show_blob_service_properties</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#set-blob-service-properties">set_blob_service_properties</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#properties">properties</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#timeout">timeout</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="#show-blob-properties">show_blob_properties</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#id49">container</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id50">blob</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id51">lease_id</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="#set-blob-properties">set_blob_properties</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#id52">container</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id53">blob</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#blob-cache-control">blob_cache_control</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#blob-content-type">blob_content_type</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#blob-content-md5">blob_content_md5</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#blob-content-encoding">blob_content_encoding</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#blob-content-language">blob_content_language</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id54">lease_id</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#blob-content-disposition">blob_content_disposition</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="#put-blob">put_blob</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#id55">container</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id56">name</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#blob-path">blob_path</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#blob-content">blob_content</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#cache-control">cache_control</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#content-language">content_language</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#content-md5">content_md5</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id57">blob_content_type</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id58">blob_content_encoding</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id59">blob_content_language</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id60">blob_content_md5</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id61">blob_cache_control</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id62">meta_name_values</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id63">lease_id</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="#get-blob">get_blob</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#id64">container</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id65">name</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#local-path">local_path</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#return-content">return_content</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#snapshot">snapshot</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#id66">lease_id</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#progress-callback">progress_callback</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#max-connections">max_connections</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#max-retries">max_retries</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#retry-wait">retry_wait</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="digitalocean.html">    Getting Started With DigitalOcean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html">    Getting Started With EC2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gogrid.html">    Getting Started With GoGrid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html">    Getting Started With Google Compute Engine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hpcloud.html">    Getting Started With HP Cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="joyent.html">    Getting Started With Joyent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lxc.html">    Getting Started With LXC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linode.html">    Getting Started With Linode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="opennebula.html">    Getting Started With OpenNebula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="openstack.html">    Getting Started With OpenStack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parallels.html">    Getting Started With Parallels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="profitbricks.html">    Getting Started With Profitbricks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="proxmox.html">    Getting Started With Proxmox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rackspace.html">    Getting Started With Rackspace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="saltify.html">    Getting Started With Saltify</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scaleway.html">    Getting Started With Scaleway</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html">    Getting Started With SoftLayer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vexxhost.html">    Getting Started With Vexxhost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="virtualbox.html">    Getting Started With Virtualbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vmware.html">    Getting Started With VMware</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vsphere.html">    Getting Started With vSphere</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#miscellaneous-options">Miscellaneous Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#troubleshooting-steps">Troubleshooting Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#extending-salt-cloud">Extending Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud-from-salt">Using Salt Cloud from Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#feature-comparison">Feature Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorials">Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

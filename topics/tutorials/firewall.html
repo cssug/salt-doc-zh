@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>为Salt开启防火墙配置</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="安装教程" href="../installation/index.html">
+        <link rel="next" title="Preseed Minion with Accepted Key" href="preseed_key.html">
+        <link rel="prev" title="Salt Bootstrap" href="salt_bootstrap.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="salt_bootstrap.html" title="Salt Bootstrap">上一页</a>
+            
+        </li>
+        <li>
+            <a href="preseed_key.html" title="Preseed Minion with Accepted Key">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="opening-the-firewall-up-for-salt">
+<span id="firewall"></span><h1>为Salt开启防火墙配置<a class="headerlink" href="#opening-the-firewall-up-for-salt" title="永久链接至标题">¶</a></h1>
+<p>The Salt master communicates with the minions using an AES-encrypted ZeroMQ
+connection. These communications are done over TCP ports <strong>4505</strong> and <strong>4506</strong>,
+which need to be accessible on the master only. This document outlines suggested
+firewall rules for allowing these incoming connections to the master.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">在Salt minions端没有设置防火墙的必要。下面的配置只是涉及master。</p>
+</div>
+<div class="section" id="fedora-18-and-beyond-rhel-7-centos-7">
+<h2>Fedora 18 and beyond / RHEL 7 / CentOS 7<a class="headerlink" href="#fedora-18-and-beyond-rhel-7-centos-7" title="永久链接至标题">¶</a></h2>
+<p>Starting with Fedora 18 <a class="reference external" href="https://fedoraproject.org/wiki/FirewallD">FirewallD</a> is the tool that is used to dynamically
+manage the firewall rules on a host. It has support for IPv4/6 settings and
+the separation of runtime and permanent configurations. To interact with
+FirewallD use the command line client <code class="docutils literal"><span class="pre">firewall-cmd</span></code>.</p>
+<p><strong>firewall-cmd example</strong>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>firewall-cmd --permanent --zone<span class="o">=</span>&lt;zone&gt; --add-port<span class="o">=</span>4505-4506/tcp
+</pre></div>
+</div>
+<p>Please choose the desired zone according to your setup. Don't forget to reload
+after you made your changes.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>firewall-cmd --reload
+</pre></div>
+</div>
+</div>
+<div class="section" id="rhel-6-centos-6">
+<h2>RHEL 6 / CentOS 6<a class="headerlink" href="#rhel-6-centos-6" title="永久链接至标题">¶</a></h2>
+<p>一些Linux发行版带有的``lokkit``命令行软件可以很简单的通过命令行打开iptables防火墙的端口。只是需要小心不要太粗心而关闭了ssh端口。</p>
+<p><strong>lokkit范例</strong>：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>lokkit -p 22:tcp -p 4505:tcp -p 4506:tcp
+</pre></div>
+</div>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a>system-config-firewall-tui``命令提供了一个文本界面来修改防火墙配置。</p>
+<p><strong>system-config-firewall-tui</strong>：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>system-config-firewall-tui
+</pre></div>
+</div>
+</div>
+<div class="section" id="opensuse">
+<h2>openSUSE<a class="headerlink" href="#opensuse" title="永久链接至标题">¶</a></h2>
+<p>Salt安装防火墙规则通过 <a class="reference external" href="https://github.com/saltstack/salt/blob/develop/pkg/suse/salt.SuSEfirewall2">/etc/sysconfig/SuSEfirewall2.d/services/salt</a>。使用这个方法开启：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>SuSEfirewall2 open
+SuSEfirewall2 start
+</pre></div>
+</div>
+<p>如果你有一个旧版本的Salt，并不包含以上的配置文件，那么可以使用``SuSEfirewall2``命令非常简单的通过命令行打开iptables防火墙端口。</p>
+<p><strong>SuSEfirewall范例</strong>：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>SuSEfirewall2 open EXT TCP 4505
+SuSEfirewall2 open EXT TCP 4506
+</pre></div>
+</div>
+<p>在YaST2中已经提供了一个几乎文本界面的防火墙模块去修改防火墙配置。</p>
+<p><strong>YaST2</strong>：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>yast2 firewall
+</pre></div>
+</div>
+</div>
+<div class="section" id="iptables">
+<span id="linux-iptables"></span><h2>iptables<a class="headerlink" href="#iptables" title="永久链接至标题">¶</a></h2>
+<p>不同Linux发行版的`iptables`_ (又名`netfilter`_) 规则存放在不同的路径，使得很难形成一个标准化防火墙配置文档。本文档已经包含了一些更常见的路径，但是你的情况可能有所不同。</p>
+<p><strong>Fedora / RHEL / CentOS</strong>：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>/etc/sysconfig/iptables
+</pre></div>
+</div>
+<p><strong>Arch Linux</strong>：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>/etc/iptables/iptables.rules
+</pre></div>
+</div>
+<p><strong>Debian</strong></p>
+<p>依照这些操作指南: <a class="reference external" href="https://wiki.debian.org/iptables">https://wiki.debian.org/iptables</a></p>
+<p>一旦你找到了你的防火墙规则配置，你需要加入下面两条规则``tcp/4505``和``tcp/4506``来允许数据传输：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>-A INPUT -m state --state new -m tcp -p tcp --dport <span class="m">4505</span> -j ACCEPT
+-A INPUT -m state --state new -m tcp -p tcp --dport <span class="m">4506</span> -j ACCEPT
+</pre></div>
+</div>
+<p><strong>Ubuntu</strong></p>
+<p>Salt安装防火墙规则通过 <a class="reference external" href="https://github.com/saltstack/salt/blob/develop/pkg/salt.ufw">/etc/ufw/applications.d/salt.ufw</a>。使用这个方法开启：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>ufw allow salt
+</pre></div>
+</div>
+</div>
+<div class="section" id="pf-conf">
+<h2>pf.conf<a class="headerlink" href="#pf-conf" title="永久链接至标题">¶</a></h2>
+<p>BSD家族的操作系统使用`packet filter (pf)`_。接下来的例子描述了如何添加附加选项到``pf.conf``来访问Salt master。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pass in on $int_if proto tcp from any to $int_if port 4505
+pass in on $int_if proto tcp from any to $int_if port 4506
+</pre></div>
+</div>
+<p>一旦这些附加选项在``pf.conf``配置，规则需要重新加载。这些可以通过使用``pfctl``命令完成。</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pfctl -vf /etc/pf.conf
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="whitelist-communication-to-master">
+<h1>Master端白名单<a class="headerlink" href="#whitelist-communication-to-master" title="永久链接至标题">¶</a></h1>
+<p>There are situations where you want to selectively allow Minion traffic
+from specific hosts or networks into your Salt Master. The first
+scenario which comes to mind is to prevent unwanted traffic to your
+Master out of security concerns, but another scenario is to handle
+Minion upgrades when there are backwards incompatible changes between
+the installed Salt versions in your environment.</p>
+<p>这里有个范例:ref:<a href="#id1"><span class="problematic" id="id2">`</span></a>Linux iptables &lt;linux-iptables&gt;`在Master端如何设置：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># Allow Minions from these networks</span>
+-I INPUT -s 10.1.2.0/24 -p tcp -m multiport --dports 4505,4506 -j ACCEPT
+-I INPUT -s 10.1.3.0/24 -p tcp -m multiport --dports 4505,4506 -j ACCEPT
+<span class="c1"># Allow Salt to communicate with Master on the loopback interface</span>
+-A INPUT -i lo -p tcp -m multiport --dports 4505,4506 -j ACCEPT
+<span class="c1"># Reject everything else</span>
+-A INPUT -p tcp -m multiport --dports 4505,4506 -j REJECT
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">重要的是注意这里``salt``命令需要传递一个``salt-master``的监听网络socket在*loopback*接口。没有这个你将会看不到Salt从master端输出的信息，即使是简单的``salt '*' test.ping``，因为``salt``客户端从没有接收到``salt-master``告诉它要执行什么。</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="salt_bootstrap.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt Bootstrap" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="preseed_key.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Preseed Minion with Accepted Key" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../installation/index.html">安装教程</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html#quick-install">快速安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html#platform-specific-installation-instructions">对应平台的安装教程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html#initial-configuration">Initial Configuration</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../installation/index.html#additional-installation-guides">Additional Installation Guides</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="salt_bootstrap.html">Salt Bootstrap</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">为Salt开启防火墙配置</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fedora-18-and-beyond-rhel-7-centos-7">Fedora 18 and beyond / RHEL 7 / CentOS 7</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rhel-6-centos-6">RHEL 6 / CentOS 6</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#opensuse">openSUSE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#iptables">iptables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pf-conf">pf.conf</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#whitelist-communication-to-master">Master端白名单</a></li>
+<li class="toctree-l3"><a class="reference internal" href="preseed_key.html">Preseed Minion with Accepted Key</a></li>
+<li class="toctree-l3"><a class="reference internal" href="walkthrough_macosx.html">The MacOS X (Maverick) Developer Step By Step Guide To Salt Installation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rooted.html">running salt as normal user tutorial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="standalone_minion.html">Standalone Minion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quickstart.html">Salt无Master快速入门</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html#dependencies">依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html#optional-dependencies">可选依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html#upgrading-salt">升级Salt</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

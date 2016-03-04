@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>ESXi Proxy Minion</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt Proxy Minion" href="../proxyminion/index.html">
+        <link rel="next" title="Salt Virt" href="../virt/index.html">
+        <link rel="prev" title="Proxy Minion States" href="../proxyminion/state.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../proxyminion/state.html" title="Proxy Minion States">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../virt/index.html" title="Salt Virt">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="esxi-proxy-minion">
+<span id="tutorial-esxi-proxy"></span><h1>ESXi Proxy Minion<a class="headerlink" href="#esxi-proxy-minion" title="永久链接至标题">¶</a></h1>
+<div class="versionadded">
+<p><span class="versionmodified">2015.8.4 新版功能.</span></p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>This tutorial assumes basic knowledge of Salt. To get up to speed, check
+out the <a class="reference internal" href="walkthrough.html"><em>Salt Walkthrough</em></a>.</p>
+<p>This tutorial also assumes a basic understanding of Salt Proxy Minions. If
+you're unfamiliar with Salt's Proxy Minion system, please read the
+<a class="reference internal" href="../proxyminion/index.html"><em>Salt Proxy Minion</em></a> documentation and the
+<a class="reference internal" href="../proxyminion/demo.html"><em>Salt Proxy Minion End-to-End Example</em></a>
+tutorial.</p>
+<p class="last">The third assumption that this tutorial makes is that you also have a
+basic understanding of ESXi hosts. You can learn more about ESXi hosts on
+<a class="reference external" href="https://www.vmware.com/products/esxi-and-esx/overview">VMware's various resources</a>.</p>
+</div>
+<p>Salt's ESXi Proxy Minion allows a VMware ESXi host to be treated as an individual
+Salt Minion, without installing a Salt Minion on the ESXi host.</p>
+<p>Since an ESXi host may not necessarily run on an OS capable of hosting a Python
+stack, the ESXi host can't run a regular Salt Minion directly. Therefore, Salt's
+Proxy Minion functionality enables you to designate another machine to host a
+proxy process that &quot;proxies&quot; communication from the Salt Master to the ESXi host.
+The master does not know or care that the ESXi target is not a &quot;real&quot; Salt Minion.</p>
+<p>More in-depth conceptual reading on Proxy Minions can be found in the
+<a class="reference internal" href="../proxyminion/index.html"><em>Proxy Minion</em></a> section of Salt's documentation.</p>
+<p>Salt's ESXi Proxy Minion was added in the 2015.8.4 release of Salt.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>Be aware that some functionality for the ESXi Proxy Minion may depend on the
+type of license attached the ESXi host(s).</p>
+<p>For example, certain services are only available to manipulate service state
+or policies with a VMware vSphere Enterprise or Enterprise Plus license, while
+others are available with a Standard license. The <code class="docutils literal"><span class="pre">ntpd</span></code> service is restricted
+to an Enterprise Plus license, while <code class="docutils literal"><span class="pre">ssh</span></code> is available via the Standard
+license.</p>
+<p class="last">Please see the <a class="reference external" href="https://www.vmware.com/products/vsphere/compare">vSphere Comparison</a> page for more information.</p>
+</div>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="永久链接至标题">¶</a></h2>
+<p>Manipulation of the ESXi host via a Proxy Minion requires the machine running
+the Proxy Minion process to have the ESXCLI package (and all of it's dependencies)
+and the pyVmomi Python Library to be installed.</p>
+<div class="section" id="esxi-password">
+<h3>ESXi Password<a class="headerlink" href="#esxi-password" title="永久链接至标题">¶</a></h3>
+<p>The ESXi Proxy Minion uses VMware's API to perform tasks on the host as if it was
+a regular Salt Minion. In order to access the API that is already running on the
+ESXi host, the ESXi host must have a username and password that is used to log
+into the host. The username is usually <code class="docutils literal"><span class="pre">root</span></code>. Before Salt can access the ESXi
+host via VMware's API, a default password <em>must</em> be set on the host.</p>
+</div>
+<div class="section" id="pyvmomi">
+<h3>pyVmomi<a class="headerlink" href="#pyvmomi" title="永久链接至标题">¶</a></h3>
+<p>The pyVmomi Python library must be installed on the machine that is running the
+proxy process. pyVmomi can be installed via pip:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pip install pyVmomi
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Version 6.0 of pyVmomi has some problems with SSL error handling on certain
+versions of Python. If using version 6.0 of pyVmomi, the machine that you
+are running the proxy minion process from must have either Python 2.6,
+Python 2.7.9, or newer. This is due to an upstream dependency in pyVmomi 6.0
+that is not supported in Python version 2.7 to 2.7.8. If the
+version of Python running the proxy process is not in the supported range, you
+will need to install an earlier version of pyVmomi. See <a class="reference external" href="https://github.com/saltstack/salt/issues/29537">Issue #29537</a> for
+more information.</p>
+</div>
+<p>Based on the note above, to install an earlier version of pyVmomi than the
+version currently listed in PyPi, run the following:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pip install <span class="nv">pyVmomi</span><span class="o">==</span>5.5.0.2014.1.1
+</pre></div>
+</div>
+<p>The 5.5.0.2014.1.1 is a known stable version that the original ESXi Proxy Minion
+was developed against.</p>
+</div>
+<div class="section" id="esxcli">
+<h3>ESXCLI<a class="headerlink" href="#esxcli" title="永久链接至标题">¶</a></h3>
+<p>Currently, about a third of the functions used for the ESXi Proxy Minion require
+the ESXCLI package be installed on the machine running the Proxy Minion process.</p>
+<p>The ESXCLI package is also referred to as the VMware vSphere CLI, or vCLI. VMware
+provides vCLI package installation instructions for <a class="reference external" href="http://pubs.vmware.com/vsphere-55/index.jsp#com.vmware.vcli.getstart.doc/cli_install.4.2.html">vSphere 5.5</a> and
+<a class="reference external" href="http://pubs.vmware.com/vsphere-60/index.jsp#com.vmware.vcli.getstart.doc/cli_install.4.2.html">vSphere 6.0</a>.</p>
+<p>Once all of the required dependencies are in place and the vCLI package is
+installed, you can check to see if you can connect to your ESXi host by running
+the following command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>esxcli -s &lt;host-location&gt; -u &lt;username&gt; -p &lt;password&gt; system syslog config get
+</pre></div>
+</div>
+<p>If the connection was successful, ESXCLI was successfully installed on your system.
+You should see output related to the ESXi host's syslog configuration.</p>
+</div>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="永久链接至标题">¶</a></h2>
+<p>There are several places where various configuration values need to be set in
+order for the ESXi Proxy Minion to run and connect properly.</p>
+<div class="section" id="proxy-config-file">
+<h3>Proxy Config File<a class="headerlink" href="#proxy-config-file" title="永久链接至标题">¶</a></h3>
+<p>On the machine that will be running the Proxy Minon process(es), a proxy config
+file must be in place. This file should be located in the <code class="docutils literal"><span class="pre">/etc/salt/</span></code> directory
+and should be named <code class="docutils literal"><span class="pre">proxy</span></code>. If the file is not there by default, create it.</p>
+<p>This file should contain the location of your Salt Master that the Salt Proxy
+will connect to.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">If you're running your ESXi Proxy Minion on version of Salt that is 2015.8.2
+or newer, you also need to set <code class="docutils literal"><span class="pre">add_proxymodule_to_opts:</span> <span class="pre">False</span></code> in your
+proxy config file. The need to specify this configuration will be removed with
+Salt <code class="docutils literal"><span class="pre">2016.3.0</span></code>, the next major feature release. See the <a class="reference external" href="https://docs.saltstack.com/en/latest/topics/proxyminion/index.html#new-in-2015-8-2">New in 2015.8.2</a>
+section of the Proxy Minion documentation for more information.</p>
+</div>
+<p>Example Proxy Config File:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># /etc/salt/proxy</span>
+
+<span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;salt-master-location&gt;</span>
+<span class="l l-Scalar l-Scalar-Plain">add_proxymodule_to_opts</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="pillar-profiles">
+<h3>Pillar Profiles<a class="headerlink" href="#pillar-profiles" title="永久链接至标题">¶</a></h3>
+<p>Proxy minions get their configuration from Salt's Pillar. Every proxy must
+have a stanza in Pillar and a reference in the Pillar top-file that matches
+the Proxy ID. At a minimum for communication with the ESXi host, the pillar
+should look like this:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">proxy</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">proxytype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">esxi</span>
+  <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;ip or dns name of esxi host&gt;</span>
+  <span class="l l-Scalar l-Scalar-Plain">username</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;ESXi username&gt;</span>
+  <span class="l l-Scalar l-Scalar-Plain">passwords</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">first_password</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">second_password</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">third_password</span>
+</pre></div>
+</div>
+<p>Some other optional settings are <code class="docutils literal"><span class="pre">protocol</span></code> and <code class="docutils literal"><span class="pre">port</span></code>. These can be added
+to the pillar configuration.</p>
+<div class="section" id="proxytype">
+<h4>proxytype<a class="headerlink" href="#proxytype" title="永久链接至标题">¶</a></h4>
+<p>The <code class="docutils literal"><span class="pre">proxytype</span></code> key and value pair is critical, as it tells Salt which
+interface to load from the <code class="docutils literal"><span class="pre">proxy</span></code> directory in Salt's install hierarchy,
+or from <code class="docutils literal"><span class="pre">/srv/salt/_proxy</span></code> on the Salt Master (if you have created your
+own proxy module, for example). To use this ESXi Proxy Module, set this to
+<code class="docutils literal"><span class="pre">esxi</span></code>.</p>
+</div>
+<div class="section" id="host">
+<h4>host<a class="headerlink" href="#host" title="永久链接至标题">¶</a></h4>
+<p>The location, or ip/dns, of the ESXi host. Required.</p>
+</div>
+<div class="section" id="username">
+<h4>username<a class="headerlink" href="#username" title="永久链接至标题">¶</a></h4>
+<p>The username used to login to the ESXi host, such as <code class="docutils literal"><span class="pre">root</span></code>. Required.</p>
+</div>
+<div class="section" id="passwords">
+<h4>passwords<a class="headerlink" href="#passwords" title="永久链接至标题">¶</a></h4>
+<p>A list of passwords to be used to try and login to the ESXi host. At least
+one password in this list is required.</p>
+<p>The proxy integration will try the passwords listed in order. It is
+configured this way so you can have a regular password and the password you
+may be updating for an ESXi host either via the
+<a class="reference internal" href="../../ref/modules/all/salt.modules.vsphere.html"><em>vsphere.update_host_password</em></a>
+execution module function or via the
+<code class="xref doc docutils literal"><span class="pre">esxi.password_present</span></code> state
+function. This way, after the password is changed, you should not need to
+restart the proxy minion--it should just pick up the the new password
+provided in the list. You can then change pillar at will to move that
+password to the front and retire the unused ones.</p>
+<p>Use-case/reasoning for using a list of passwords: You are setting up an
+ESXi host for the first time, and the host comes with a default password.
+You know that you'll be changing this password during your initial setup
+from the default to a new password. If you only have one password option,
+and if you have a state changing the password, any remote execution commands
+or states that run after the password change will not be able to run on the
+host until the password is updated in Pillar and the Proxy Minion process is
+restarted.</p>
+<p>This allows you to use any number of potential fallback passwords.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>When a password is changed on the host to one in the list of possible
+passwords, the further down on the list the password is, the longer
+individual commands will take to return. This is due to the nature of
+pyVmomi's login system. We have to wait for the first attempt to fail
+before trying the next password on the list.</p>
+<p>This scenario is especially true, and even slower, when the proxy
+minion first starts. If the correct password is not the first password
+on the list, it may take up to a minute for <code class="docutils literal"><span class="pre">test.ping</span></code> to respond
+with a <code class="docutils literal"><span class="pre">True</span></code> result. Once the initial authorization is complete, the
+responses for commands will be a little faster.</p>
+<p class="last">To avoid these longer waiting periods, SaltStack recommends moving the
+correct password to the top of the list and restarting the proxy minion
+at your earliest convenience.</p>
+</div>
+</div>
+<div class="section" id="protocol">
+<h4>protocol<a class="headerlink" href="#protocol" title="永久链接至标题">¶</a></h4>
+<p>If the ESXi host is not using the default protocol, set this value to an
+alternate protocol. Default is <code class="docutils literal"><span class="pre">https</span></code>. For example:</p>
+</div>
+<div class="section" id="port">
+<h4>port<a class="headerlink" href="#port" title="永久链接至标题">¶</a></h4>
+<p>If the ESXi host is not using the default port, set this value to an
+alternate port. Default is <code class="docutils literal"><span class="pre">443</span></code>.</p>
+</div>
+</div>
+<div class="section" id="example-configuration-files">
+<h3>Example Configuration Files<a class="headerlink" href="#example-configuration-files" title="永久链接至标题">¶</a></h3>
+<p>An example of all of the basic configurations that need to be in place before
+starting the Proxy Minion processes includes the Proxy Config File, Pillar
+Top File, and any individual Proxy Minion Pillar files.</p>
+<p>In this example, we'll assuming there are two ESXi hosts to connect to. Therefore,
+we'll be creating two Proxy Minion config files, one config for each ESXi host.</p>
+<p>Proxy Config File:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># /etc/salt/proxy</span>
+
+<span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;salt-master-location&gt;</span>
+<span class="l l-Scalar l-Scalar-Plain">add_proxymodule_to_opts</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+</pre></div>
+</div>
+<p>Pillar Top File:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># /srv/pillar/top.sls</span>
+
+<span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;esxi-1&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">esxi-1</span>
+  <span class="s">&#39;esxi-2&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">esxi-2</span>
+</pre></div>
+</div>
+<p>Pillar Config File for the first ESXi host, esxi-1:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># /srv/pillar/esxi-1.sls</span>
+
+<span class="l l-Scalar l-Scalar-Plain">proxy</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">proxytype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">esxi</span>
+  <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">esxi-1.example.com</span>
+  <span class="l l-Scalar l-Scalar-Plain">username</span><span class="p p-Indicator">:</span> <span class="s">&#39;root&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">passwords</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bad-password-1</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">backup-bad-password-1</span>
+</pre></div>
+</div>
+<p>Pillar Config File for the second ESXi host, esxi-2:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># /srv/pillar/esxi-2.sls</span>
+
+<span class="l l-Scalar l-Scalar-Plain">proxy</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">proxytype</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">esxi</span>
+  <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">esxi-2.example.com</span>
+  <span class="l l-Scalar l-Scalar-Plain">username</span><span class="p p-Indicator">:</span> <span class="s">&#39;root&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">passwords</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bad-password-2</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">backup-bad-password-2</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="starting-the-proxy-minion">
+<h2>Starting the Proxy Minion<a class="headerlink" href="#starting-the-proxy-minion" title="永久链接至标题">¶</a></h2>
+<p>Once all of the correct configuration files are in place, it is time to start the
+proxy processes!</p>
+<ol class="arabic simple">
+<li>First, make sure your Salt Master is running.</li>
+<li>Start the first Salt Proxy, in debug mode, by giving the Proxy Minion process
+and ID that matches the config file name created in the <a class="reference internal" href="#configuration">Configuration</a> section.</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-proxy --proxyid<span class="o">=</span><span class="s1">&#39;esxi-1&#39;</span> -l debug
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li>Accept the <code class="docutils literal"><span class="pre">esxi-1</span></code> Proxy Minion's key on the Salt Master:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-key -L</span>
+Accepted Keys:
+Denied Keys:
+Unaccepted Keys:
+esxi-1
+Rejected Keys:
+<span class="c1">#</span>
+<span class="c1"># salt-key -a esxi-1</span>
+The following keys are going to be accepted:
+Unaccepted Keys:
+esxi-1
+Proceed? <span class="o">[</span>n/Y<span class="o">]</span> y
+Key <span class="k">for</span> minion esxi-1 accepted.
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li>Repeat for the second Salt Proxy, this time we'll run the proxy process as a
+daemon, as an example.</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-proxy --proxyid<span class="o">=</span><span class="s1">&#39;esxi-2&#39;</span> -d
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li>Accept the <code class="docutils literal"><span class="pre">esxi-2</span></code> Proxy Minion's key on the Salt Master:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt-key -L</span>
+Accepted Keys:
+esxi-1
+Denied Keys:
+Unaccepted Keys:
+esxi-2
+Rejected Keys:
+<span class="c1">#</span>
+<span class="c1"># salt-key -a esxi-1</span>
+The following keys are going to be accepted:
+Unaccepted Keys:
+esxi-2
+Proceed? <span class="o">[</span>n/Y<span class="o">]</span> y
+Key <span class="k">for</span> minion esxi-1 accepted.
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li>Check and see if your Proxy Minions are responding:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt &#39;esxi-*&#39; test.ping</span>
+esxi-1:
+    True
+esxi-3:
+    True
+</pre></div>
+</div>
+</div>
+<div class="section" id="executing-commands">
+<h2>Executing Commands<a class="headerlink" href="#executing-commands" title="永久链接至标题">¶</a></h2>
+<p>Now that you've configured your Proxy Minions and have them responding successfully
+to a <code class="docutils literal"><span class="pre">test.ping</span></code>, we can start executing commands against the ESXi hosts via Salt.</p>
+<p>It's important to understand how this particular proxy works, and there are a couple
+of important pieces to be aware of in order to start running remote execution and
+state commands against the ESXi host via a Proxy Minion: the
+<a class="reference internal" href="#vsphere-execution-module">vSphere Execution Module</a>, the <a class="reference internal" href="#esxi-execution-module">ESXi Execution Module</a>, and the <a class="reference internal" href="#esxi-state-module">ESXi State Module</a>.</p>
+<div class="section" id="vsphere-execution-module">
+<h3>vSphere Execution Module<a class="headerlink" href="#vsphere-execution-module" title="永久链接至标题">¶</a></h3>
+<p>The <a class="reference internal" href="../../ref/modules/all/salt.modules.vsphere.html"><em>Salt.modules.vsphere</em></a> is a
+standard Salt execution module that does the bulk of the work for the ESXi Proxy
+Minion. If you pull up the docs for it you'll see that almost every function in
+the module takes credentials (<code class="docutils literal"><span class="pre">username</span></code> and <code class="docutils literal"><span class="pre">password</span></code>) and a target <code class="docutils literal"><span class="pre">host</span></code>
+argument. When credentials and a host aren't passed, Salt runs commands
+through <code class="docutils literal"><span class="pre">pyVmomi</span></code> or <code class="docutils literal"><span class="pre">ESXCLI</span></code> against the local machine. If you wanted,
+you could run functions from this module on any machine where an appropriate
+version of <code class="docutils literal"><span class="pre">pyVmomi</span></code> and <code class="docutils literal"><span class="pre">ESXCLI</span></code> are installed, and that machine would reach
+out over the network and communicate with the ESXi host.</p>
+<p>You'll notice that most of the functions in the vSphere module require a <code class="docutils literal"><span class="pre">host</span></code>,
+<code class="docutils literal"><span class="pre">username</span></code>, and <code class="docutils literal"><span class="pre">password</span></code>. These parameters are contained in the Pillar files and
+passed through to the function via the proxy process that is already running. You don't
+need to provide these parameters when you execute the commands. See the
+<a class="reference internal" href="#running-remote-execution-commands">Running Remote Execution Commands</a> section below for an example.</p>
+</div>
+<div class="section" id="esxi-execution-module">
+<h3>ESXi Execution Module<a class="headerlink" href="#esxi-execution-module" title="永久链接至标题">¶</a></h3>
+<p>In order for the Pillar information set up in the <a class="reference internal" href="#configuration">Configuration</a> section above to
+be passed to the function call in the vSphere Execution Module, the
+<a class="reference internal" href="../../ref/modules/all/salt.modules.esxi.html"><em>salt.modules.esxi</em></a> execution module acts
+as a &quot;shim&quot; between the vSphere execution module functions and the proxy process.</p>
+<p>The &quot;shim&quot; takes the authentication credentials specified in the Pillar files and
+passes them through to the <code class="docutils literal"><span class="pre">host</span></code>, <code class="docutils literal"><span class="pre">username</span></code>, <code class="docutils literal"><span class="pre">password</span></code>, and optional
+<code class="docutils literal"><span class="pre">protocol</span></code> and <code class="docutils literal"><span class="pre">port</span></code> options required by the vSphere Execution Module functions.</p>
+<p>If the function takes more positional, or keyword, arguments you can append them
+to the call. It's this shim that speaks to the ESXi host through the proxy, arranging
+for the credentials and hostname to be pulled from the Pillar section for the ESXi
+Proxy Minion.</p>
+<p>Because of the presence of the shim, to lookup documentation for what
+functions you can use to interface with the ESXi host, you'll want to
+look in <a class="reference internal" href="../../ref/modules/all/salt.modules.vsphere.html"><em>salt.modules.vsphere</em></a>
+instead of <a class="reference internal" href="../../ref/modules/all/salt.modules.esxi.html"><em>salt.modules.esxi</em></a>.</p>
+</div>
+<div class="section" id="running-remote-execution-commands">
+<h3>Running Remote Execution Commands<a class="headerlink" href="#running-remote-execution-commands" title="永久链接至标题">¶</a></h3>
+<p>To run commands from the Salt Master to execute, via the ESXi Proxy Minion, against
+the ESXi host, you use the <code class="docutils literal"><span class="pre">esxi.cmd</span> <span class="pre">&lt;vsphere-function-name&gt;</span></code> syntax to call
+functions located in the vSphere Execution Module. Both args and kwargs needed
+for various vsphere execution module functions must be passed through in a kwarg-
+type manor. For example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;esxi-*&#39;</span> esxi.cmd system_info
+salt <span class="s1">&#39;exsi-*&#39;</span> esxi.cmd get_service_running <span class="nv">service_name</span><span class="o">=</span><span class="s1">&#39;ssh&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="esxi-state-module">
+<h3>ESXi State Module<a class="headerlink" href="#esxi-state-module" title="永久链接至标题">¶</a></h3>
+<p>The ESXi State Module functions similarly to other state modules. The &quot;shim&quot; provided
+by the <a class="reference internal" href="#esxi-execution-module">ESXi Execution Module</a> passes the necessary <code class="docutils literal"><span class="pre">host</span></code>, <code class="docutils literal"><span class="pre">username</span></code>, and
+<code class="docutils literal"><span class="pre">password</span></code> credentials through, so those options don't need to be provided in the
+state. Other than that, state files are written and executed just like any other
+Salt state. See the <a class="reference internal" href="../../ref/states/all/salt.states.esxi.html"><em>salt.modules.esxi</em></a> state
+for ESXi state functions.</p>
+<p>The follow state file is an example of how to configure various pieces of an ESXi host
+including enabling SSH, uploading and SSH key, configuring a coredump network config,
+syslog, ntp, enabling VMotion, resetting a host password, and more.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># /srv/salt/configure-esxi.sls</span>
+
+<span class="l l-Scalar l-Scalar-Plain">configure-host-ssh</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">esxi.ssh_configured</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">service_running</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ssh_key_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/salt/ssh_keys/my_key.pub</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">service_policy</span><span class="p p-Indicator">:</span> <span class="s">&#39;automatic&#39;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">service_restart</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">certificate_verify</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+
+<span class="l l-Scalar l-Scalar-Plain">configure-host-coredump</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">esxi.coredump_configured</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">enabled</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">dump_ip</span><span class="p p-Indicator">:</span> <span class="s">&#39;my-coredump-ip.example.com&#39;</span>
+
+<span class="l l-Scalar l-Scalar-Plain">configure-host-syslog</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">esxi.syslog_configured</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">syslog_configs</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">loghost</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ssl://localhost:5432,tcp://10.1.0.1:1514</span>
+        <span class="l l-Scalar l-Scalar-Plain">default-timeout</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">120</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">firewall</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">reset_service</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">reset_syslog_config</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">reset_configs</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">loghost,default-timeout</span>
+
+<span class="l l-Scalar l-Scalar-Plain">configure-host-ntp</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">esxi.ntp_configured</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">service_running</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ntp_servers</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">192.174.1.100</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">192.174.1.200</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">service_policy</span><span class="p p-Indicator">:</span> <span class="s">&#39;automatic&#39;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">service_restart</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+
+<span class="l l-Scalar l-Scalar-Plain">configure-vmotion</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">esxi.vmotion_configured</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">enabled</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+
+<span class="l l-Scalar l-Scalar-Plain">configure-host-vsan</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">esxi.vsan_configured</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">enabled</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">add_disks_to_vsan</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+
+<span class="l l-Scalar l-Scalar-Plain">configure-host-password</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">esxi.password_present</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="s">&#39;new-bad-password&#39;</span>
+</pre></div>
+</div>
+<p>States are called via the ESXi Proxy Minion just as they would on a regular minion.
+For example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;esxi-*&#39;</span> state.sls configure-esxi <span class="nv">test</span><span class="o">=</span><span class="nb">true</span>
+salt <span class="s1">&#39;esxi-*&#39;</span> state.sls configure-esxi
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="relevant-salt-files-and-resources">
+<h2>Relevant Salt Files and Resources<a class="headerlink" href="#relevant-salt-files-and-resources" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="../../ref/proxy/all/salt.proxy.esxi.html#module-salt.proxy.esxi" title="salt.proxy.esxi"><code class="xref py py-mod docutils literal"><span class="pre">ESXi</span> <span class="pre">Proxy</span> <span class="pre">Minion</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.esxi.html#module-salt.modules.esxi" title="salt.modules.esxi"><code class="xref py py-mod docutils literal"><span class="pre">ESXi</span> <span class="pre">Execution</span> <span class="pre">Module</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.esxi.html#module-salt.states.esxi" title="salt.states.esxi"><code class="xref py py-mod docutils literal"><span class="pre">ESXi</span> <span class="pre">State</span> <span class="pre">Module</span></code></a></li>
+<li><a class="reference internal" href="../proxyminion/index.html"><em>Salt Proxy Minion Docs</em></a></li>
+<li><a class="reference internal" href="../proxyminion/demo.html"><em>Salt Proxy Minion End-to-End Example</em></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.vsphere.html#module-salt.modules.vsphere" title="salt.modules.vsphere"><code class="xref py py-mod docutils literal"><span class="pre">vSphere</span> <span class="pre">Execution</span> <span class="pre">Module</span></code></a></li>
+</ul>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../proxyminion/state.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Proxy Minion States" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../virt/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt Virt" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../proxyminion/index.html#new-in-2015-8-2">New in 2015.8.2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../proxyminion/index.html#new-in-2015-8">New in 2015.8</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../proxyminion/index.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../proxyminion/index.html#the-proxyenabled-directive">The __proxyenabled__ directive</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../proxyminion/index.html#ssh-proxymodules">SSH Proxymodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../proxyminion/index.html#connection-setup">Connection Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../proxyminion/index.html#command-execution">Command execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../proxyminion/index.html#output-parsing">Output parsing</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../proxyminion/index.html#connection-teardown">Connection teardown</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../proxyminion/ssh.html">Salt Proxy Minion SSH End-to-End Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../proxyminion/beacon.html">Proxy Minion Beacon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../proxyminion/state.html">Proxy Minion States</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="">ESXi Proxy Minion</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#dependencies">Dependencies</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#esxi-password">ESXi Password</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#pyvmomi">pyVmomi</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#esxcli">ESXCLI</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#configuration">Configuration</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#proxy-config-file">Proxy Config File</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#pillar-profiles">Pillar Profiles</a><ul>
+<li class="toctree-l7"><a class="reference internal" href="#proxytype">proxytype</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#host">host</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#username">username</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#passwords">passwords</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#protocol">protocol</a></li>
+<li class="toctree-l7"><a class="reference internal" href="#port">port</a></li>
+</ul>
+</li>
+<li class="toctree-l6"><a class="reference internal" href="#example-configuration-files">Example Configuration Files</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#starting-the-proxy-minion">Starting the Proxy Minion</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#executing-commands">Executing Commands</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#vsphere-execution-module">vSphere Execution Module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#esxi-execution-module">ESXi Execution Module</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#running-remote-execution-commands">Running Remote Execution Commands</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#esxi-state-module">ESXi State Module</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#relevant-salt-files-and-resources">Relevant Salt Files and Resources</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Writing Execution Modules</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Remote Execution" href="../../topics/execution/index.html">
+        <link rel="next" title="Configuration Management" href="../../topics/states/index.html">
+        <link rel="prev" title="Running Commands on Salt Minions" href="../../topics/execution/remote_execution.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../topics/execution/remote_execution.html" title="Running Commands on Salt Minions">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../../topics/states/index.html" title="Configuration Management">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="writing-execution-modules">
+<span id="id1"></span><h1>Writing Execution Modules<a class="headerlink" href="#writing-execution-modules" title="永久链接至标题">¶</a></h1>
+<p>Salt execution modules are the functions called by the <strong class="command">salt</strong> command.</p>
+<div class="section" id="modules-are-easy-to-write">
+<h2>模块也很容易写！<a class="headerlink" href="#modules-are-easy-to-write" title="永久链接至标题">¶</a></h2>
+<p>Writing Salt execution modules is straightforward.</p>
+<p>A Salt execution module is a Python or <a class="reference external" href="http://cython.org/">Cython</a> module
+placed in a directory called <code class="docutils literal"><span class="pre">_modules/</span></code>
+within the <a class="reference internal" href="../configuration/master.html#std:conf_master-file_roots"><code class="xref std std-conf_master docutils literal"><span class="pre">file_roots</span></code></a> as specified by the master config file. By
+default this is <code class="docutils literal"><span class="pre">/srv/salt/_modules</span></code> on Linux systems.</p>
+<p>Modules placed in <code class="docutils literal"><span class="pre">_modules/</span></code> will be synced to the minions when any of the following
+Salt functions are called:</p>
+<ul class="simple">
+<li><a class="reference internal" href="all/salt.modules.state.html#salt.modules.state.highstate" title="salt.modules.state.highstate"><code class="xref py py-mod docutils literal"><span class="pre">state.highstate</span></code></a></li>
+<li><a class="reference internal" href="all/salt.modules.saltutil.html#salt.modules.saltutil.sync_modules" title="salt.modules.saltutil.sync_modules"><code class="xref py py-mod docutils literal"><span class="pre">saltutil.sync_modules</span></code></a></li>
+<li><a class="reference internal" href="all/salt.modules.saltutil.html#salt.modules.saltutil.sync_all" title="salt.modules.saltutil.sync_all"><code class="xref py py-mod docutils literal"><span class="pre">saltutil.sync_all</span></code></a></li>
+</ul>
+<p>Note that a module's default name is its filename
+(i.e. <code class="docutils literal"><span class="pre">foo.py</span></code> becomes module <code class="docutils literal"><span class="pre">foo</span></code>), but that its name can be overridden
+by using a <a class="reference internal" href="#virtual-modules"><span>__virtual__ function</span></a>.</p>
+<p>If a Salt module has errors and cannot be imported, the Salt minion will continue
+to load without issue and the module with errors will simply be omitted.</p>
+<p>如果要增加一个Cyphon模块，文件必须以``&lt;模块名&gt;.pyx``命名，这样调用者才知道模块需要作为一个Cython模块导入。Cython模块的编译是Minion启动时自动进行的，所以只需要``*.pyx``文件就可以了。</p>
+</div>
+<div class="section" id="zip-archives-as-modules">
+<h2>Zip Archives as Modules<a class="headerlink" href="#zip-archives-as-modules" title="永久链接至标题">¶</a></h2>
+<p>Python 2.3 and higher allows developers to directly import zip archives containing Python code.
+By setting <a class="reference internal" href="../configuration/minion.html#std:conf_minion-enable_zip_modules"><code class="xref std std-conf_minion docutils literal"><span class="pre">enable_zip_modules</span></code></a> to <code class="docutils literal"><span class="pre">True</span></code> in the minion config, the Salt loader
+will be able to import <code class="docutils literal"><span class="pre">.zip</span></code> files in this fashion.  This allows Salt module developers to
+package dependencies with their modules for ease of deployment, isolation, etc.</p>
+<p>For a user, Zip Archive modules behave just like other modules.  When executing a function from a
+module provided as the file <code class="docutils literal"><span class="pre">my_module.zip</span></code>, a user would call a function within that module
+as <code class="docutils literal"><span class="pre">my_module.&lt;function&gt;</span></code>.</p>
+<div class="section" id="creating-a-zip-archive-module">
+<h3>Creating a Zip Archive Module<a class="headerlink" href="#creating-a-zip-archive-module" title="永久链接至标题">¶</a></h3>
+<p>A Zip Archive module is structured similarly to a simple <a class="reference external" href="https://docs.python.org/2/tutorial/modules.html#packages">Python package</a>.  The <code class="docutils literal"><span class="pre">.zip</span></code> file contains
+a single directory with the same name as the module.  The module code traditionally in <code class="docutils literal"><span class="pre">&lt;module_name&gt;.py</span></code>
+goes in <code class="docutils literal"><span class="pre">&lt;module_name&gt;/__init__.py</span></code>.  The dependency packages are subdirectories of <code class="docutils literal"><span class="pre">&lt;module_name&gt;/</span></code>.</p>
+<p>Here is an example directory structure for the <code class="docutils literal"><span class="pre">lumberjack</span></code> module, which has two library dependencies
+(<code class="docutils literal"><span class="pre">sleep</span></code> and <code class="docutils literal"><span class="pre">work</span></code>) to be included.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>modules $ ls -R lumberjack
+__init__.py     sleep           work
+
+lumberjack/sleep:
+__init__.py
+
+lumberjack/work:
+__init__.py
+</pre></div>
+</div>
+<p>The contents of <code class="docutils literal"><span class="pre">lumberjack/__init__.py</span></code> show how to import and use these included libraries.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Libraries included in lumberjack.zip</span>
+<span class="kn">from</span> <span class="nn">lumberjack</span> <span class="kn">import</span> <span class="n">sleep</span><span class="p">,</span> <span class="n">work</span>
+
+
+<span class="k">def</span> <span class="nf">is_ok</span><span class="p">(</span><span class="n">person</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Checks whether a person is really a lumberjack &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">sleep</span><span class="o">.</span><span class="n">all_night</span><span class="p">(</span><span class="n">person</span><span class="p">)</span> <span class="ow">and</span> <span class="n">work</span><span class="o">.</span><span class="n">all_day</span><span class="p">(</span><span class="n">person</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then, create the zip:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>modules $ zip -r lumberjack lumberjack
+  adding: lumberjack/ <span class="o">(</span>stored 0%<span class="o">)</span>
+  adding: lumberjack/__init__.py <span class="o">(</span>deflated 39%<span class="o">)</span>
+  adding: lumberjack/sleep/ <span class="o">(</span>stored 0%<span class="o">)</span>
+  adding: lumberjack/sleep/__init__.py <span class="o">(</span>deflated 7%<span class="o">)</span>
+  adding: lumberjack/work/ <span class="o">(</span>stored 0%<span class="o">)</span>
+  adding: lumberjack/work/__init__.py <span class="o">(</span>deflated 7%<span class="o">)</span>
+modules $ unzip -l lumberjack.zip
+Archive:  lumberjack.zip
+  Length     Date   Time    Name
+ --------    ----   ----    ----
+        <span class="m">0</span>  08-21-15 20:08   lumberjack/
+      <span class="m">348</span>  08-21-15 20:08   lumberjack/__init__.py
+        <span class="m">0</span>  08-21-15 19:53   lumberjack/sleep/
+       <span class="m">83</span>  08-21-15 19:53   lumberjack/sleep/__init__.py
+        <span class="m">0</span>  08-21-15 19:53   lumberjack/work/
+       <span class="m">81</span>  08-21-15 19:21   lumberjack/work/__init__.py
+ --------                   -------
+      <span class="m">512</span>                   <span class="m">6</span> files
+</pre></div>
+</div>
+<p>Once placed in <a class="reference internal" href="../configuration/master.html#std:conf_master-file_roots"><code class="xref std std-conf_master docutils literal"><span class="pre">file_roots</span></code></a>, Salt users can distribute and use <code class="docutils literal"><span class="pre">lumberjack.zip</span></code> like any other module.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ sudo salt minion1 saltutil.sync_modules
+minion1:
+  - modules.lumberjack
+$ sudo salt minion1 lumberjack.is_ok <span class="s1">&#39;Michael Palin&#39;</span>
+minion1:
+  True
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="cross-calling-execution-modules">
+<span id="id2"></span><h2>Cross Calling Execution Modules<a class="headerlink" href="#cross-calling-execution-modules" title="永久链接至标题">¶</a></h2>
+<p>All of the Salt execution modules are available to each other and modules can call
+functions available in other execution modules.</p>
+<p>The variable <code class="docutils literal"><span class="pre">__salt__</span></code> is packed into the modules after they are loaded into
+the Salt minion.</p>
+<p>The <code class="docutils literal"><span class="pre">__salt__</span></code> variable is a <a class="reference external" href="http://docs.python.org/2/library/stdtypes.html#typesmapping" title="(在 Python v2.7)"><span class="xref std std-ref">Python dictionary</span></a>
+containing all of the Salt functions. Dictionary keys are strings representing the
+names of the modules and the values are the functions themselves.</p>
+<p>Salt modules can be cross-called by accessing the value in the <code class="docutils literal"><span class="pre">__salt__</span></code> dict:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">bar</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">__salt__</span><span class="p">[</span><span class="s1">&#39;cmd.run&#39;</span><span class="p">](</span><span class="n">bar</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This code will call the <cite>run</cite> function in the <a class="reference internal" href="all/salt.modules.cmdmod.html#module-salt.modules.cmdmod" title="salt.modules.cmdmod"><code class="xref py py-mod docutils literal"><span class="pre">cmd</span></code></a>
+module and pass the argument <code class="docutils literal"><span class="pre">bar</span></code> to it.</p>
+</div>
+<div class="section" id="preloaded-execution-module-data">
+<h2>Preloaded Execution Module Data<a class="headerlink" href="#preloaded-execution-module-data" title="永久链接至标题">¶</a></h2>
+<p>When interacting with execution modules often it is nice to be able to read information
+dynamically about the minion or to load in configuration parameters for a module.</p>
+<p>Salt allows for different types of data to be loaded into the modules by the
+minion.</p>
+<div class="section" id="grains-data">
+<h3>Grains 数据<a class="headerlink" href="#grains-data" title="永久链接至标题">¶</a></h3>
+<p>在Minion上，Salt Grains检测到的值是一个字典:ref:<cite>dict &lt;python2:typesmapping&gt;</cite>，字典命名为``__grains__``而且可以从Python 模块内部可调用对象进行访问。</p>
+<p>To see the contents of the grains dictionary for a given system in your deployment
+run the <code class="xref py py-func docutils literal"><span class="pre">grains.items()</span></code> function:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;hostname&#39;</span> grains.items --output<span class="o">=</span>pprint
+</pre></div>
+</div>
+<p>Any value in a grains dictionary can be accessed as any other Python dictionary. For
+example, the grain representing the minion ID is stored in the <code class="docutils literal"><span class="pre">id</span></code> key and from
+an execution module, the value would be stored in <code class="docutils literal"><span class="pre">__grains__['id']</span></code>.</p>
+</div>
+<div class="section" id="module-configuration">
+<h3>模块配置<a class="headerlink" href="#module-configuration" title="永久链接至标题">¶</a></h3>
+<p>Since parameters for configuring a module may be desired, Salt allows for
+configuration information from the  minion configuration file to be passed to
+execution modules.</p>
+<p>Since the minion configuration file is a YAML document, arbitrary configuration
+data can be passed in the minion config that is read by the modules. It is therefore
+<strong>strongly</strong> recommended that the values passed in the configuration file match
+the module name. A value intended for the <code class="docutils literal"><span class="pre">test</span></code> execution module should be named
+<code class="docutils literal"><span class="pre">test.&lt;value&gt;</span></code>.</p>
+<p>The test execution module contains usage of the module configuration and the default
+configuration file for the minion contains the information and format used to
+pass data to the modules. <a class="reference internal" href="all/salt.modules.test.html#module-salt.modules.test" title="salt.modules.test"><code class="xref py py-mod docutils literal"><span class="pre">salt.modules.test</span></code></a>, <code class="file docutils literal"><span class="pre">conf/minion</span></code>.</p>
+</div>
+</div>
+<div class="section" id="printout-configuration">
+<h2>输出配置<a class="headerlink" href="#printout-configuration" title="永久链接至标题">¶</a></h2>
+<p>Since execution module functions can return different data, and the way the data is
+printed can greatly change the presentation, Salt has a printout configuration.</p>
+<p>When writing a module the <code class="docutils literal"><span class="pre">__outputter__</span></code> dictionary can be declared in the module.
+The <code class="docutils literal"><span class="pre">__outputter__</span></code> dictionary contains a mapping of function name to Salt
+Outputter.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">__outputter__</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;run&#39;</span><span class="p">:</span> <span class="s1">&#39;txt&#39;</span>
+                <span class="p">}</span>
+</pre></div>
+</div>
+<p>这确保文字输出器被使用了。</p>
+</div>
+<div class="section" id="virtual-modules">
+<span id="id3"></span><h2>虚拟模块<a class="headerlink" href="#virtual-modules" title="永久链接至标题">¶</a></h2>
+<p>Virtual modules let you override the name of a module in order to use the same
+name to refer to one of several similar modules. The specific module that is
+loaded for a virtual name is selected based on the current platform or
+environment.</p>
+<p>For example, packages are managed across platforms using the <code class="docutils literal"><span class="pre">pkg</span></code> module.
+<code class="docutils literal"><span class="pre">pkg</span></code> is a virtual module name that is
+an alias for the specific package manager module that is loaded on a specific
+system (for example, <a class="reference internal" href="all/salt.modules.yumpkg.html#module-salt.modules.yumpkg" title="salt.modules.yumpkg"><code class="xref py py-mod docutils literal"><span class="pre">yumpkg</span></code></a> on RHEL/CentOS systems
+, and <a class="reference internal" href="all/salt.modules.aptpkg.html#module-salt.modules.aptpkg" title="salt.modules.aptpkg"><code class="xref py py-mod docutils literal"><span class="pre">aptpkg</span></code></a> on Ubuntu).</p>
+<p>Virtual module names are set using the <code class="docutils literal"><span class="pre">__virtual__</span></code> function and the
+<a class="reference internal" href="#modules-virtual-name"><span>virtual name</span></a>.</p>
+</div>
+<div class="section" id="virtual-function">
+<h2><code class="docutils literal"><span class="pre">__virtual__</span></code> Function<a class="headerlink" href="#virtual-function" title="永久链接至标题">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">__virtual__</span></code> function returns either a <a class="reference external" href="http://docs.python.org/2/library/stdtypes.html#typesseq" title="(在 Python v2.7)"><span class="xref std std-ref">string</span></a>,
+<a class="reference external" href="http://docs.python.org/3/library/constants.html#True" title="(在 Python v3.5)"><code class="xref py py-data docutils literal"><span class="pre">True</span></code></a>, <a class="reference external" href="http://docs.python.org/3/library/constants.html#False" title="(在 Python v3.5)"><code class="xref py py-data docutils literal"><span class="pre">False</span></code></a>, or <a class="reference external" href="http://docs.python.org/3/library/constants.html#False" title="(在 Python v3.5)"><code class="xref py py-data docutils literal"><span class="pre">False</span></code></a> with an <a class="reference internal" href="#modules-error-info"><span>error
+string</span></a>. If a string is returned then the module is loaded
+using the name of the string as the virtual name. If <code class="docutils literal"><span class="pre">True</span></code> is returned the
+module is loaded using the current module name. If <code class="docutils literal"><span class="pre">False</span></code> is returned the
+module is not loaded. <code class="docutils literal"><span class="pre">False</span></code> lets the module perform system checks and
+prevent loading if dependencies are not met.</p>
+<p>Since <code class="docutils literal"><span class="pre">__virtual__</span></code> is called before the module is loaded, <code class="docutils literal"><span class="pre">__salt__</span></code> will be
+unavailable as it will not have been packed into the module at this point in time.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Modules which return a string from <code class="docutils literal"><span class="pre">__virtual__</span></code> that is already used by a module that
+ships with Salt will _override_ the stock module.</p>
+</div>
+<div class="section" id="returning-error-information-from-virtual">
+<span id="modules-error-info"></span><h3>Returning Error Information from <code class="docutils literal"><span class="pre">__virtual__</span></code><a class="headerlink" href="#returning-error-information-from-virtual" title="永久链接至标题">¶</a></h3>
+<p>Optionally, Salt plugin modules, such as execution, state, returner, beacon,
+etc. modules may additionally return a string containing the reason that a
+module could not be loaded.  For example, an execution module called <code class="docutils literal"><span class="pre">cheese</span></code>
+and a corresponding state module also called <code class="docutils literal"><span class="pre">cheese</span></code>, both depending on a
+utility called <code class="docutils literal"><span class="pre">enzymes</span></code> should have <code class="docutils literal"><span class="pre">__virtual__</span></code> functions that handle
+the case when the dependency is unavailable.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Cheese execution (or returner/beacon/etc.) module</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">enzymes</span>
+    <span class="n">HAS_ENZYMES</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">HAS_ENZYMES</span> <span class="o">=</span> <span class="bp">False</span>
+
+
+<span class="k">def</span> <span class="nf">__virtual__</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    only load cheese if enzymes are available</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">HAS_ENZYMES</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;cheese&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">False</span><span class="p">,</span> <span class="s1">&#39;The cheese execution module cannot be loaded: enzymes unavailable.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Cheese state module</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">__virtual__</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    only load cheese if enzymes are available</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># predicate loading of the cheese state on the corresponding execution module</span>
+    <span class="k">if</span> <span class="s1">&#39;cheese.slice&#39;</span> <span class="ow">in</span> <span class="n">__salt__</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;cheese&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">False</span><span class="p">,</span> <span class="s1">&#39;The cheese state module cannot be loaded: enzymes unavailable.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="永久链接至标题">¶</a></h3>
+<p>The package manager modules are among the best examples of using the <code class="docutils literal"><span class="pre">__virtual__</span></code>
+function. Some examples:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/saltstack/salt/blob/develop/salt/modules/pacman.py">pacman.py</a></li>
+<li><a class="reference external" href="https://github.com/saltstack/salt/blob/develop/salt/modules/yumpkg.py">yumpkg.py</a></li>
+<li><a class="reference external" href="https://github.com/saltstack/salt/blob/develop/salt/modules/aptpkg.py">aptpkg.py</a></li>
+<li><a class="reference external" href="https://github.com/saltstack/salt/blob/develop/salt/modules/at.py">at.py</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="virtualname">
+<span id="modules-virtual-name"></span><h2><code class="docutils literal"><span class="pre">__virtualname__</span></code><a class="headerlink" href="#virtualname" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">__virtualname__</span></code> is a variable that is used by the documentation build
+system to know the virtual name of a module without calling the <code class="docutils literal"><span class="pre">__virtual__</span></code>
+function. Modules that return a string from the <code class="docutils literal"><span class="pre">__virtual__</span></code> function
+must also set the <code class="docutils literal"><span class="pre">__virtualname__</span></code> variable.</p>
+<p>To avoid setting the virtual name string twice, you can implement
+<code class="docutils literal"><span class="pre">__virtual__</span></code> to return the value set for <code class="docutils literal"><span class="pre">__virtualname__</span></code> using a pattern
+similar to the following:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Define the module&#39;s virtual name</span>
+<span class="n">__virtualname__</span> <span class="o">=</span> <span class="s1">&#39;pkg&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">__virtual__</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Confine this module to Mac OS with Homebrew.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s1">&#39;brew&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">__grains__</span><span class="p">[</span><span class="s1">&#39;os&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;MacOS&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">__virtualname__</span>
+    <span class="k">return</span> <span class="bp">False</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="documentation">
+<h2>文档<a class="headerlink" href="#documentation" title="永久链接至标题">¶</a></h2>
+<p>Salt execution modules are documented. The <code class="xref py py-func docutils literal"><span class="pre">sys.doc()</span></code> function will return the
+documentation for all available modules:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> sys.doc
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">sys.doc</span></code> function simply prints out the docstrings found in the modules; when
+writing Salt execution modules, please follow the formatting conventions for docstrings as
+they appear in the other modules.</p>
+<div class="section" id="adding-documentation-to-salt-modules">
+<h3>给Salt模块增加文档<a class="headerlink" href="#adding-documentation-to-salt-modules" title="永久链接至标题">¶</a></h3>
+<p>It is strongly suggested that all Salt modules have documentation added.</p>
+<p>To add documentation add a <a class="reference external" href="http://docs.python.org/2/glossary.html#term-docstring">Python docstring</a> to the function.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">spam</span><span class="p">(</span><span class="n">eggs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A function to make some spam with eggs!</span>
+
+<span class="sd">    CLI Example::</span>
+
+<span class="sd">        salt &#39;*&#39; test.spam eggs</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">eggs</span>
+</pre></div>
+</div>
+<p>Now when the sys.doc call is executed the docstring will be cleanly returned
+to the calling terminal.</p>
+<p>Documentation added to execution modules in docstrings will automatically be added
+to the online web-based documentation.</p>
+</div>
+<div class="section" id="add-execution-module-metadata">
+<h3>Add Execution Module Metadata<a class="headerlink" href="#add-execution-module-metadata" title="永久链接至标题">¶</a></h3>
+<p>When writing a Python docstring for an execution module, add information about the module
+using the following field lists:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>:maintainer:    Thomas Hatch &lt;thatch@saltstack.com, Seth House &lt;shouse@saltstack.com&gt;
+:maturity:      new
+:depends:       python-mysqldb
+:platform:      all
+</pre></div>
+</div>
+<p>The maintainer field is a comma-delimited list of developers who help maintain
+this module.</p>
+<p>The maturity field indicates the level of quality and testing for this module.
+Standard labels will be determined.</p>
+<p>The depends field is a comma-delimited list of modules that this module depends
+on.</p>
+<p>The platform field is a comma-delimited list of platforms that this module is
+known to run on.</p>
+</div>
+</div>
+<div class="section" id="log-output">
+<h2>Log Output<a class="headerlink" href="#log-output" title="永久链接至标题">¶</a></h2>
+<p>You can call the logger from custom modules to write messages to the minion
+logs. The following code snippet demonstrates writing log messages:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Here is Some Information&#39;</span><span class="p">)</span>
+<span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;You Should Not Do That&#39;</span><span class="p">)</span>
+<span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;It Is Busted&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="private-functions">
+<h2>Private Functions<a class="headerlink" href="#private-functions" title="永久链接至标题">¶</a></h2>
+<p>In Salt, Python callable objects contained within an execution module are made available
+to the Salt minion for use. The only exception to this rule is a callable
+object with a name starting with an underscore <code class="docutils literal"><span class="pre">_</span></code>.</p>
+<div class="section" id="objects-loaded-into-the-salt-minion">
+<h3>Salt Minion中调用的对象<a class="headerlink" href="#objects-loaded-into-the-salt-minion" title="永久链接至标题">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="n">bar</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">bar</span>
+
+<span class="k">class</span> <span class="nc">baz</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quo</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="objects-not-loaded-into-the-salt-minion">
+<h3>Salt Minion没有调用的对象<a class="headerlink" href="#objects-not-loaded-into-the-salt-minion" title="永久链接至标题">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">_foobar</span><span class="p">(</span><span class="n">baz</span><span class="p">):</span> <span class="c1"># Preceded with an _</span>
+    <span class="k">return</span> <span class="n">baz</span>
+
+<span class="n">cheese</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># Not a callable Python object</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Some callable names also end with an underscore <code class="docutils literal"><span class="pre">_</span></code>, to avoid keyword clashes
+with Python keywords.  When using execution modules, or state modules, with these
+in them the trailing underscore should be omitted.</p>
+</div>
+</div>
+</div>
+<div class="section" id="useful-decorators-for-modules">
+<h2>Useful Decorators for Modules<a class="headerlink" href="#useful-decorators-for-modules" title="永久链接至标题">¶</a></h2>
+<div class="section" id="depends-decorator">
+<h3>Depends Decorator<a class="headerlink" href="#depends-decorator" title="永久链接至标题">¶</a></h3>
+<p>When writing execution modules there are many times where some of the module will
+work on all hosts but some functions have an external dependency, such as a service
+that needs to be installed or a binary that needs to be present on the system.</p>
+<p>Instead of trying to wrap much of the code in large try/except blocks, a decorator can
+be used.</p>
+<p>If the dependencies passed to the decorator don't exist, then the salt minion will remove
+those functions from the module on that host.</p>
+<p>If a &quot;fallback_function&quot; is defined, it will replace the function instead of removing it</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">salt.utils.decorators</span> <span class="kn">import</span> <span class="n">depends</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">dependency_that_sometimes_exists</span>
+<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="s1">&#39;Failed to import dependency_that_sometimes_exists: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+<span class="nd">@depends</span><span class="p">(</span><span class="s1">&#39;dependency_that_sometimes_exists&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foo</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Function with a dependency on the &quot;dependency_that_sometimes_exists&quot; module,</span>
+<span class="sd">    if the &quot;dependency_that_sometimes_exists&quot; is missing this function will not exist</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="bp">True</span>
+
+<span class="k">def</span> <span class="nf">_fallback</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Fallback function for the depends decorator to replace a function with</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="s1">&#39;&quot;dependency_that_sometimes_exists&quot; needs to be installed for this function to exist&#39;</span>
+
+<span class="nd">@depends</span><span class="p">(</span><span class="s1">&#39;dependency_that_sometimes_exists&#39;</span><span class="p">,</span> <span class="n">fallback_function</span><span class="o">=</span><span class="n">_fallback</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foo</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Function with a dependency on the &quot;dependency_that_sometimes_exists&quot; module.</span>
+<span class="sd">    If the &quot;dependency_that_sometimes_exists&quot; is missing this function will be</span>
+<span class="sd">    replaced with &quot;_fallback&quot;</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+</div>
+<p>In addition to global dependencies the depends decorator also supports raw booleans.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">salt.utils.decorators</span> <span class="kn">import</span> <span class="n">depends</span>
+
+<span class="n">HAS_DEP</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">dependency_that_sometimes_exists</span>
+    <span class="n">HAS_DEP</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<span class="nd">@depends</span><span class="p">(</span><span class="n">HAS_DEP</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">foo</span><span class="p">():</span>
+    <span class="k">return</span> <span class="bp">True</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../../topics/execution/remote_execution.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Running Commands on Salt Minions" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../../topics/states/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Configuration Management" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../topics/execution/index.html">Remote Execution</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/modules.html">远程执行教程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/execution/remote_execution.html">Running Commands on Salt Minions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Writing Execution Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#modules-are-easy-to-write">模块也很容易写！</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zip-archives-as-modules">Zip Archives as Modules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#creating-a-zip-archive-module">Creating a Zip Archive Module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#cross-calling-execution-modules">Cross Calling Execution Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#preloaded-execution-module-data">Preloaded Execution Module Data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#grains-data">Grains 数据</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-configuration">模块配置</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#printout-configuration">输出配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#virtual-modules">虚拟模块</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#virtual-function"><code class="docutils literal"><span class="pre">__virtual__</span></code> Function</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#returning-error-information-from-virtual">Returning Error Information from <code class="docutils literal"><span class="pre">__virtual__</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#virtualname"><code class="docutils literal"><span class="pre">__virtualname__</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#documentation">文档</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#adding-documentation-to-salt-modules">给Salt模块增加文档</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#add-execution-module-metadata">Add Execution Module Metadata</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#log-output">Log Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#private-functions">Private Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#objects-loaded-into-the-salt-minion">Salt Minion中调用的对象</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#objects-not-loaded-into-the-salt-minion">Salt Minion没有调用的对象</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#useful-decorators-for-modules">Useful Decorators for Modules</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#depends-decorator">Depends Decorator</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

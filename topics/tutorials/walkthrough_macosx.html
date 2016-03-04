@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>The MacOS X (Maverick) Developer Step By Step Guide To Salt Installation</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="安装教程" href="../installation/index.html">
+        <link rel="next" title="running salt as normal user tutorial" href="rooted.html">
+        <link rel="prev" title="Preseed Minion with Accepted Key" href="preseed_key.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="preseed_key.html" title="Preseed Minion with Accepted Key">上一页</a>
+            
+        </li>
+        <li>
+            <a href="rooted.html" title="running salt as normal user tutorial">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="the-macos-x-maverick-developer-step-by-step-guide-to-salt-installation">
+<h1>The MacOS X (Maverick) Developer Step By Step Guide To Salt Installation<a class="headerlink" href="#the-macos-x-maverick-developer-step-by-step-guide-to-salt-installation" title="永久链接至标题">¶</a></h1>
+<p>This document provides a step-by-step guide to installing a Salt cluster
+consisting of  one master, and one minion running on a local VM hosted on Mac OS X.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">This guide is aimed at developers who wish to run Salt in a virtual machine.
+The official (Linux) walkthrough can be found
+<a class="reference external" href="http://docs.saltstack.com/topics/tutorials/walkthrough.html">here</a>.</p>
+</div>
+<div class="section" id="the-5-cent-salt-intro">
+<h2>The 5 Cent Salt Intro<a class="headerlink" href="#the-5-cent-salt-intro" title="永久链接至标题">¶</a></h2>
+<p>Since you're here you've probably already heard about Salt, so you already
+know Salt lets you configure and run commands on hordes of servers easily.
+Here's a brief overview of a Salt cluster:</p>
+<ul>
+<li><p class="first">Salt works by having a &quot;master&quot; server sending commands to one or multiple
+&quot;minion&quot; servers <a class="footnote-reference" href="#id2" id="id1">[1]</a>. The master server is the &quot;command center&quot;. It is
+going to be the place where you store your configuration files, aka: &quot;which
+server is the db, which is the web server, and what libraries and software
+they should have installed&quot;. The minions receive orders from the master.
+Minions are the servers actually performing work for your business.</p>
+</li>
+<li><p class="first">Salt has two types of configuration files:</p>
+<p>1. the &quot;salt communication channels&quot; or &quot;meta&quot;  or &quot;config&quot; configuration
+files (not official names): one for the master (usually is /etc/salt/master
+, <strong>on the master server</strong>), and one for minions (default is
+/etc/salt/minion or /etc/salt/minion.conf, <strong>on the minion servers</strong>). Those
+files are used to determine things like the Salt Master IP, port, Salt
+folder locations, etc.. If these are configured incorrectly, your minions
+will probably be unable to receive orders from the master, or the master
+will not know which software a given minion should install.</p>
+<p>2. the &quot;business&quot; or &quot;service&quot; configuration files (once again, not an
+official name): these are configuration files, ending with &quot;.sls&quot; extension,
+that describe which software should run on which server, along with
+particular configuration properties for the software that is being
+installed. These files should be created in the /srv/salt folder by default,
+but their location can be changed using ... /etc/salt/master configuration file!</p>
+</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">This tutorial contains a third important configuration file, not to
+be confused with the previous two: the virtual machine provisioning
+configuration file. This in itself is not specifically tied to Salt, but
+it also contains some Salt configuration. More on that in step 3. Also
+note that all configuration files are YAML files. So indentation matters.</p>
+</div>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Salt also works with &quot;masterless&quot; configuration where a minion is
+autonomous (in which case salt can be seen as a local configuration tool),
+or in &quot;multiple master&quot; configuration. See the documentation for more on
+that.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="before-digging-in-the-architecture-of-the-salt-cluster">
+<h2>Before Digging In, The Architecture Of The Salt Cluster<a class="headerlink" href="#before-digging-in-the-architecture-of-the-salt-cluster" title="永久链接至标题">¶</a></h2>
+<div class="section" id="salt-master">
+<h3>Salt Master<a class="headerlink" href="#salt-master" title="永久链接至标题">¶</a></h3>
+<p>The &quot;Salt master&quot; server is going to be the Mac OS machine, directly. Commands
+will be run from a terminal app, so Salt will need to be installed on the Mac.
+This is going to be more convenient for toying around with configuration files.</p>
+</div>
+<div class="section" id="salt-minion">
+<h3>Salt Minion<a class="headerlink" href="#salt-minion" title="永久链接至标题">¶</a></h3>
+<p>We'll only have one &quot;Salt minion&quot; server. It is going to be running on a
+Virtual Machine running on the Mac, using VirtualBox. It will run an Ubuntu
+distribution.</p>
+<div class="section" id="step-1-configuring-the-salt-master-on-your-mac">
+<h4>Step 1 - Configuring The Salt Master On Your Mac<a class="headerlink" href="#step-1-configuring-the-salt-master-on-your-mac" title="永久链接至标题">¶</a></h4>
+<p><a class="reference external" href="http://docs.saltstack.com/topics/installation/osx.html">official documentation</a></p>
+<p>Because Salt has a lot of dependencies that are not built in Mac OS X, we will
+use Homebrew to install Salt. Homebrew is a package manager for Mac, it's
+great, use it (for this tutorial at least!). Some people spend a lot of time
+installing libs by hand to better understand dependencies, and then realize how
+useful a package manager is once they're configuring a brand new machine and
+have to do it all over again. It also lets you <em>uninstall</em> things easily.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Brew is a Ruby program (Ruby is installed by default with your Mac). Brew
+downloads, compiles, and links software. The linking phase is when compiled
+software is deployed on your machine. It may conflict with manually
+installed software, especially in the /usr/local directory. It's ok,
+remove the manually installed version then refresh the link by typing
+<code class="docutils literal"><span class="pre">brew</span> <span class="pre">link</span> <span class="pre">'packageName'</span></code>. Brew has a <code class="docutils literal"><span class="pre">brew</span> <span class="pre">doctor</span></code> command that can
+help you troubleshoot. It's a great command, use it often. Brew requires
+xcode command line tools. When you run brew the first time it asks you to
+install them if they're not already on your system. Brew installs
+software in /usr/local/bin (system bins are in /usr/bin). In order to use
+those bins you need your $PATH to search there first. Brew tells you if
+your $PATH needs to be fixed.</p>
+</div>
+<div class="admonition tip">
+<p class="first admonition-title">小技巧</p>
+<p class="last">Use the keyboard shortcut <code class="docutils literal"><span class="pre">cmd</span> <span class="pre">+</span> <span class="pre">shift</span> <span class="pre">+</span> <span class="pre">period</span></code> in the &quot;open&quot; Mac OS X
+dialog box to display hidden files and folders, such as .profile.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="install-homebrew">
+<h2>Install Homebrew<a class="headerlink" href="#install-homebrew" title="永久链接至标题">¶</a></h2>
+<p>Install Homebrew here <a class="reference external" href="http://brew.sh/">http://brew.sh/</a>
+Or just type</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>ruby -e <span class="s2">&quot;</span><span class="k">$(</span>curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install<span class="k">)</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+<p>Now type the following commands in your terminal (you may want to type <code class="docutils literal"><span class="pre">brew</span>
+<span class="pre">doctor</span></code> after each to make sure everything's fine):</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>brew install python
+brew install swig
+brew install zmq
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">zmq is ZeroMQ. It's a fantastic library used for server to server network
+communication and is at the core of Salt efficiency.</p>
+</div>
+</div>
+<div class="section" id="install-salt">
+<h2>安装Salt<a class="headerlink" href="#install-salt" title="永久链接至标题">¶</a></h2>
+<p>You should now have everything ready to launch this command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pip install salt
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">There should be no need for <code class="docutils literal"><span class="pre">sudo</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">salt</span></code>. Brew installed
+Python for your user, so you should have all the access. In case you
+would like to check, type <code class="docutils literal"><span class="pre">which</span> <span class="pre">python</span></code> to ensure that it's
+/usr/local/bin/python, and <code class="docutils literal"><span class="pre">which</span> <span class="pre">pip</span></code> which should be
+/usr/local/bin/pip.</p>
+</div>
+<p>Now type <code class="docutils literal"><span class="pre">python</span></code> in a terminal then, <code class="docutils literal"><span class="pre">import</span> <span class="pre">salt</span></code>. There should be no
+errors. Now exit the Python terminal using <code class="docutils literal"><span class="pre">exit()</span></code>.</p>
+</div>
+<div class="section" id="create-the-master-configuration">
+<h2>Create The Master Configuration<a class="headerlink" href="#create-the-master-configuration" title="永久链接至标题">¶</a></h2>
+<p>If the default /etc/salt/master configuration file was not created,
+copy-paste it from here:
+<a class="reference external" href="http://docs.saltstack.com/ref/configuration/examples.html#configuration-examples-master">http://docs.saltstack.com/ref/configuration/examples.html#configuration-examples-master</a></p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">/etc/salt/master</span></code> is a file, not a folder.</p>
+</div>
+<p>Salt Master configuration changes. The Salt master needs a few customization
+to be able to run on Mac OS X:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo launchctl limit maxfiles <span class="m">4096</span> 8192
+</pre></div>
+</div>
+<p>In the /etc/salt/master file, change max_open_files to 8192 (or just add the
+line: <code class="docutils literal"><span class="pre">max_open_files:</span> <span class="pre">8192</span></code> (no quote) if it doesn't already exists).</p>
+<p>You should now be able to launch the Salt master:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo salt-master --log-level<span class="o">=</span>all
+</pre></div>
+</div>
+<p>There should be no errors when running the above command.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">This command is supposed to be a daemon, but for toying around, we'll keep
+it running on a terminal to monitor the activity.</p>
+</div>
+<p>Now that the master is set, let's configure a minion on a VM.</p>
+<p>The Salt minion is going to run on a Virtual Machine. There are a lot of
+software options that let you run virtual machines on a mac, But for this
+tutorial we're going to use VirtualBox. In addition to virtualBox, we will use
+Vagrant, which allows you to create the base VM configuration.</p>
+<p>Vagrant lets you build ready to use VM images, starting from an OS image and
+customizing it using &quot;provisioners&quot;. In our case, we'll use it to:</p>
+<ul class="simple">
+<li>Download the base Ubuntu image</li>
+<li>Install salt on that Ubuntu image (Salt is going to be the &quot;provisioner&quot;
+for the VM).</li>
+<li>Launch the VM</li>
+<li>SSH into the VM to debug</li>
+<li>Stop the VM once you're done.</li>
+</ul>
+</div>
+<div class="section" id="install-virtualbox">
+<h2>Install VirtualBox<a class="headerlink" href="#install-virtualbox" title="永久链接至标题">¶</a></h2>
+<p>Go get it here: <a class="reference external" href="https://www.virtualBox.org/wiki/Downloads">https://www.virtualBox.org/wiki/Downloads</a> (click on VirtualBox
+for OS X hosts =&gt; x86/amd64)</p>
+</div>
+<div class="section" id="install-vagrant">
+<h2>Install Vagrant<a class="headerlink" href="#install-vagrant" title="永久链接至标题">¶</a></h2>
+<p>Go get it here: <a class="reference external" href="http://downloads.vagrantup.com/">http://downloads.vagrantup.com/</a> and choose the latest version
+(1.3.5 at time of writing), then the .dmg file. Double-click to install it.
+Make sure the <code class="docutils literal"><span class="pre">vagrant</span></code> command is found when run in the terminal. Type
+<code class="docutils literal"><span class="pre">vagrant</span></code>. It should display a list of commands.</p>
+</div>
+<div class="section" id="create-the-minion-vm-folder">
+<h2>Create The Minion VM Folder<a class="headerlink" href="#create-the-minion-vm-folder" title="永久链接至标题">¶</a></h2>
+<p>Create a folder in which you will store your minion's VM. In this tutorial,
+it's going to be a minion folder in the $home directory.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nb">cd</span> $home
+mkdir minion
+</pre></div>
+</div>
+</div>
+<div class="section" id="initialize-vagrant">
+<h2>Initialize Vagrant<a class="headerlink" href="#initialize-vagrant" title="永久链接至标题">¶</a></h2>
+<p>From the minion folder, type</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>vagrant init
+</pre></div>
+</div>
+<p>This command creates a default Vagrantfile configuration file. This
+configuration file will be used to pass configuration parameters to the Salt
+provisioner in Step 3.</p>
+</div>
+<div class="section" id="import-precise64-ubuntu-box">
+<h2>Import Precise64 Ubuntu Box<a class="headerlink" href="#import-precise64-ubuntu-box" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>vagrant box add precise64 http://files.vagrantup.com/precise64.box
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">This box is added at the global Vagrant level. You only need to do it
+once as each VM will use this same file.</p>
+</div>
+</div>
+<div class="section" id="modify-the-vagrantfile">
+<h2>Modify the Vagrantfile<a class="headerlink" href="#modify-the-vagrantfile" title="永久链接至标题">¶</a></h2>
+<p>Modify ./minion/Vagrantfile to use th precise64 box. Change the <code class="docutils literal"><span class="pre">config.vm.box</span></code>
+line to:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">config.vm.box = &quot;precise64&quot;</span>
+</pre></div>
+</div>
+<p>Uncomment the line creating a host-only IP. This is the ip of your minion
+(you can change it to something else if that IP is already in use):</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">config.vm.network :private_network, ip</span><span class="p p-Indicator">:</span> <span class="s">&quot;192.168.33.10&quot;</span>
+</pre></div>
+</div>
+<p>At this point you should have a VM that can run, although there won't be much
+in it. Let's check that.</p>
+</div>
+<div class="section" id="checking-the-vm">
+<h2>Checking The VM<a class="headerlink" href="#checking-the-vm" title="永久链接至标题">¶</a></h2>
+<p>From the $home/minion folder type:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>vagrant up
+</pre></div>
+</div>
+<p>A log showing the VM booting should be present. Once it's done you'll be back
+to the terminal:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>ping 192.168.33.10
+</pre></div>
+</div>
+<p>The VM should respond to your ping request.</p>
+<p>Now log into the VM in ssh using Vagrant again:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>vagrant ssh
+</pre></div>
+</div>
+<p>You should see the shell prompt change to something similar to
+<code class="docutils literal"><span class="pre">vagrant&#64;precise64:~$</span></code> meaning you're inside the VM. From there, enter the
+following:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>ping 10.0.2.2
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">That ip is the ip of your VM host (the Mac OS X OS). The number is a
+VirtualBox default and is displayed in the log after the Vagrant ssh
+command. We'll use that IP to tell the minion where the Salt master is.
+Once you're done, end the ssh session by typing <code class="docutils literal"><span class="pre">exit</span></code>.</p>
+</div>
+<p>It's now time to connect the VM to the salt master</p>
+</div>
+<div class="section" id="creating-the-minion-configuration-file">
+<h2>Creating The Minion Configuration File<a class="headerlink" href="#creating-the-minion-configuration-file" title="永久链接至标题">¶</a></h2>
+<p>Create the <code class="docutils literal"><span class="pre">/etc/salt/minion</span></code> file. In that file, put the
+following lines, giving the ID for this minion, and the IP of the master:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10.0.2.2</span>
+<span class="l l-Scalar l-Scalar-Plain">id</span><span class="p p-Indicator">:</span> <span class="s">&#39;minion1&#39;</span>
+<span class="l l-Scalar l-Scalar-Plain">file_client</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">remote</span>
+</pre></div>
+</div>
+<p>Minions authenticate with the master using keys. Keys are generated
+automatically if you don't provide one and can accept them later on. However,
+this requires accepting the minion key every time the minion is destroyed or
+created (which could be quite often). A better way is to create those keys in
+advance, feed them to the minion, and authorize them once.</p>
+</div>
+<div class="section" id="preseed-minion-keys">
+<h2>Preseed minion keys<a class="headerlink" href="#preseed-minion-keys" title="永久链接至标题">¶</a></h2>
+<p>From the minion folder on your Mac run:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo salt-key --gen-keys<span class="o">=</span>minion1
+</pre></div>
+</div>
+<p>This should create two files: minion1.pem, and minion1.pub.
+Since those files have been created using sudo, but will be used by vagrant,
+you need to change ownership:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo chown youruser:yourgroup minion1.pem
+sudo chown youruser:yourgroup minion1.pub
+</pre></div>
+</div>
+<p>Then copy the .pub file into the list of accepted minions:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo cp minion1.pub /etc/salt/pki/master/minions/minion1
+</pre></div>
+</div>
+</div>
+<div class="section" id="modify-vagrantfile-to-use-salt-provisioner">
+<h2>Modify Vagrantfile to Use Salt Provisioner<a class="headerlink" href="#modify-vagrantfile-to-use-salt-provisioner" title="永久链接至标题">¶</a></h2>
+<p>Let's now modify the Vagrantfile used to provision the Salt VM. Add the
+following section in the Vagrantfile (note: it should be at the same
+indentation level as the other properties):</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># salt-vagrant config</span>
+<span class="l l-Scalar l-Scalar-Plain">config.vm.provision :salt do |salt|</span>
+    <span class="l l-Scalar l-Scalar-Plain">salt.run_highstate = true</span>
+    <span class="l l-Scalar l-Scalar-Plain">salt.minion_config = &quot;/etc/salt/minion&quot;</span>
+    <span class="l l-Scalar l-Scalar-Plain">salt.minion_key = &quot;./minion1.pem&quot;</span>
+    <span class="l l-Scalar l-Scalar-Plain">salt.minion_pub = &quot;./minion1.pub&quot;</span>
+<span class="l l-Scalar l-Scalar-Plain">end</span>
+</pre></div>
+</div>
+<p>Now destroy the vm and recreate it from the /minion folder:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>vagrant destroy
+vagrant up
+</pre></div>
+</div>
+<p>If everything is fine you should see the following message:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="s2">&quot;Bootstrapping Salt... (this may take a while)</span>
+<span class="s2">Salt successfully configured and installed!&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="checking-master-minion-communication">
+<h2>Checking Master-Minion Communication<a class="headerlink" href="#checking-master-minion-communication" title="永久链接至标题">¶</a></h2>
+<p>To make sure the master and minion are talking to each other, enter the
+following:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo salt <span class="s1">&#39;*&#39;</span> test.ping
+</pre></div>
+</div>
+<p>You should see your minion answering the ping. It's now time to do some
+configuration.</p>
+<p>In this step we'll use the Salt master to instruct our minion to install
+Nginx.</p>
+</div>
+<div class="section" id="checking-the-system-s-original-state">
+<h2>Checking the system's original state<a class="headerlink" href="#checking-the-system-s-original-state" title="永久链接至标题">¶</a></h2>
+<p>First, make sure that an HTTP server is not installed on our minion.
+When opening a browser directed at <code class="docutils literal"><span class="pre">http://192.168.33.10/</span></code> You should get an
+error saying the site cannot be reached.</p>
+</div>
+<div class="section" id="initialize-the-top-sls-file">
+<h2>Initialize the top.sls file<a class="headerlink" href="#initialize-the-top-sls-file" title="永久链接至标题">¶</a></h2>
+<p>System configuration is done in the /srv/salt/top.sls file (and
+subfiles/folders), and then applied by running the <code class="docutils literal"><span class="pre">state.highstate</span></code>
+command to have the Salt master give orders so minions will update their
+instructions and run the associated commands.</p>
+<p>First Create an empty file on your Salt master (Mac OS X machine):</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>touch /srv/salt/top.sls
+</pre></div>
+</div>
+<p>When the file is empty, or if no configuration is found for our minion
+an error is reported:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo salt <span class="s1">&#39;minion1&#39;</span> state.highstate
+</pre></div>
+</div>
+<p>Should return an error stating:
+&quot;No Top file or external nodes data matches found&quot;.</p>
+</div>
+<div class="section" id="create-the-nginx-configuration">
+<h2>Create The Nginx Configuration<a class="headerlink" href="#create-the-nginx-configuration" title="永久链接至标题">¶</a></h2>
+<p>Now is finally the time to enter the real meat of our server's configuration.
+For this tutorial our minion will be treated as a web server that needs to
+have Nginx installed.</p>
+<p>Insert the following lines into the <code class="docutils literal"><span class="pre">/srv/salt/top.sls</span></code> file (which should
+current be empty).</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;minion1&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bin.nginx</span>
+</pre></div>
+</div>
+<p>Now create a <code class="docutils literal"><span class="pre">/srv/salt/bin/nginx.sls</span></code> file containing the following:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">nginx</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pkg.installed</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">nginx</span>
+  <span class="l l-Scalar l-Scalar-Plain">service.running</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">enable</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">reload</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="check-minion-state">
+<h2>Check Minion State<a class="headerlink" href="#check-minion-state" title="永久链接至标题">¶</a></h2>
+<p>Finally run the state.highstate command again:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>sudo salt <span class="s1">&#39;minion1&#39;</span> state.highstate
+</pre></div>
+</div>
+<p>You should see a log showing that the Nginx package has been installed
+and the service configured. To prove it, open your browser and navigate to
+<a class="reference external" href="http://192.168.33.10/">http://192.168.33.10/</a>, you should see the standard Nginx welcome page.</p>
+<p>Congratulations!</p>
+</div>
+<div class="section" id="where-to-go-from-here">
+<h2>Where To Go From Here<a class="headerlink" href="#where-to-go-from-here" title="永久链接至标题">¶</a></h2>
+<p>A full description of configuration management within Salt (sls files among
+other things) is available here:
+<a class="reference external" href="http://docs.saltstack.com/en/latest/index.html#configuration-management">http://docs.saltstack.com/en/latest/index.html#configuration-management</a></p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="preseed_key.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Preseed Minion with Accepted Key" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="rooted.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="running salt as normal user tutorial" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../installation/index.html">安装教程</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html#quick-install">快速安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html#platform-specific-installation-instructions">对应平台的安装教程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html#initial-configuration">Initial Configuration</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../installation/index.html#additional-installation-guides">Additional Installation Guides</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="salt_bootstrap.html">Salt Bootstrap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="firewall.html">为Salt开启防火墙配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="firewall.html#whitelist-communication-to-master">Master端白名单</a></li>
+<li class="toctree-l3"><a class="reference internal" href="preseed_key.html">Preseed Minion with Accepted Key</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">The MacOS X (Maverick) Developer Step By Step Guide To Salt Installation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#the-5-cent-salt-intro">The 5 Cent Salt Intro</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#before-digging-in-the-architecture-of-the-salt-cluster">Before Digging In, The Architecture Of The Salt Cluster</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#salt-master">Salt Master</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#salt-minion">Salt Minion</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#step-1-configuring-the-salt-master-on-your-mac">Step 1 - Configuring The Salt Master On Your Mac</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#install-homebrew">Install Homebrew</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#install-salt">安装Salt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-the-master-configuration">Create The Master Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#install-virtualbox">Install VirtualBox</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#install-vagrant">Install Vagrant</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-the-minion-vm-folder">Create The Minion VM Folder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initialize-vagrant">Initialize Vagrant</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#import-precise64-ubuntu-box">Import Precise64 Ubuntu Box</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modify-the-vagrantfile">Modify the Vagrantfile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#checking-the-vm">Checking The VM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#creating-the-minion-configuration-file">Creating The Minion Configuration File</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#preseed-minion-keys">Preseed minion keys</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modify-vagrantfile-to-use-salt-provisioner">Modify Vagrantfile to Use Salt Provisioner</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#checking-master-minion-communication">Checking Master-Minion Communication</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#checking-the-system-s-original-state">Checking the system's original state</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initialize-the-top-sls-file">Initialize the top.sls file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-the-nginx-configuration">Create The Nginx Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#check-minion-state">Check Minion State</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#where-to-go-from-here">Where To Go From Here</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rooted.html">running salt as normal user tutorial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="standalone_minion.html">Standalone Minion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="quickstart.html">Salt无Master快速入门</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html#dependencies">依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html#optional-dependencies">可选依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation/index.html#upgrading-salt">升级Salt</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

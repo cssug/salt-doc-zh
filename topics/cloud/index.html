@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt云端</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="next" title="salt-cloud" href="../../ref/cli/salt-cloud.html">
+        <link rel="prev" title="Salt Rosters" href="../ssh/roster.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../ssh/roster.html" title="Salt Rosters">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../../ref/cli/salt-cloud.html" title="salt-cloud">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="salt-cloud">
+<span id="id1"></span><h1>Salt云端<a class="headerlink" href="#salt-cloud" title="永久链接至标题">¶</a></h1>
+
+<row class="intro-row">
+    <div class="col-sm-4">
+        <div class="intro-text">Provision systems on cloud hosts / hypervisors and immediately bring them under management.</div>
+    </div>
+
+    <div class="col-sm-8">
+        <div class="embed-responsive embed-responsive-4by3">
+            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/fs0UFjvWA_c"></iframe>
+        </div>
+    </div>
+
+</row><div class="section" id="getting-started">
+<h2>入门指南<a class="headerlink" href="#getting-started" title="永久链接至标题">¶</a></h2>
+<p>Salt Cloud is built-in to Salt and is configured on and executed from your Salt Master.</p>
+<div class="section" id="define-a-provider">
+<h3>Define a Provider<a class="headerlink" href="#define-a-provider" title="永久链接至标题">¶</a></h3>
+<p>The first step is to add the credentials for your cloud host. Credentials
+and other settings provided by the cloud host are stored in provider configuration files.
+Provider configurations contain the details needed to connect to a cloud host such as EC2, GCE, Rackspace, etc.,
+and any global options that you want set on your cloud minions (such as the location of your Salt Master).</p>
+<p>On your Salt Master, browse to <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/</span></code> and create a file called <code class="docutils literal"><span class="pre">&lt;provider&gt;.provider.conf</span></code>,
+replacing <code class="docutils literal"><span class="pre">&lt;provider&gt;</span></code> with <code class="docutils literal"><span class="pre">ec2</span></code>, <code class="docutils literal"><span class="pre">softlayer</span></code>, and so on. The name helps you identify the contents, and is not
+important as long as the file ends in <code class="docutils literal"><span class="pre">.conf</span></code>.</p>
+<p>Next, browse to the <a class="reference internal" href="#cloud-provider-specifics"><span>Provider specifics</span></a> and add any required settings for your
+cloud host to this file. Here is an example for Amazon EC2:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-ec2</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ec2</span>
+  <span class="c1"># Set the EC2 access credentials (see below)</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">id</span><span class="p p-Indicator">:</span> <span class="s">&#39;HJGRYCILJLKJYG&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">key</span><span class="p p-Indicator">:</span> <span class="s">&#39;kdjgfsgm;woormgl/aserigjksjdhasdfgn&#39;</span>
+  <span class="c1"># Make sure this key is owned by root with permissions 0400.</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">private_key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/salt/my_test_key.pem</span>
+  <span class="l l-Scalar l-Scalar-Plain">keyname</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my_test_key</span>
+  <span class="l l-Scalar l-Scalar-Plain">securitygroup</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+  <span class="c1"># Optional: Set up the location of the Salt Master</span>
+  <span class="c1">#</span>
+  <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">saltmaster.example.com</span>
+</pre></div>
+</div>
+<p>The required configuration varies between cloud hosts so make sure you read the provider specifics.</p>
+</div>
+<div class="section" id="list-cloud-provider-options">
+<h3>List Cloud Provider Options<a class="headerlink" href="#list-cloud-provider-options" title="永久链接至标题">¶</a></h3>
+<p>You can now query the cloud provider you configured for available locations,
+images, and sizes. This information is used when you set up VM profiles.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud --list-locations &lt;provider_name&gt;  <span class="c1"># my-ec2 in the previous example</span>
+salt-cloud --list-images &lt;provider_name&gt;
+salt-cloud --list-sizes &lt;provider_name&gt;
+</pre></div>
+</div>
+<p>Replace <code class="docutils literal"><span class="pre">&lt;provider_name&gt;</span></code> with the name of the provider configuration you defined.</p>
+</div>
+<div class="section" id="create-vm-profiles">
+<h3>Create VM Profiles<a class="headerlink" href="#create-vm-profiles" title="永久链接至标题">¶</a></h3>
+<p>On your Salt Master, browse to <code class="docutils literal"><span class="pre">/etc/salt/cloud.profiles.d/</span></code> and create a file called <code class="docutils literal"><span class="pre">&lt;provider&gt;.profiles.conf</span></code>,
+replacing <code class="docutils literal"><span class="pre">&lt;provider&gt;</span></code> with <code class="docutils literal"><span class="pre">ec2</span></code>, <code class="docutils literal"><span class="pre">softlayer</span></code>, and so on. The file must end in <code class="docutils literal"><span class="pre">.conf</span></code>.</p>
+<p>You can now add any custom profiles you'd like to define to this file. Here are a few examples:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">micro_ec2</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-ec2</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ami-d514f291</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">t1.micro</span>
+
+<span class="l l-Scalar l-Scalar-Plain">medium_ec2</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-ec2</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ami-d514f291</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">m3.medium</span>
+
+<span class="l l-Scalar l-Scalar-Plain">large_ec2</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-ec2</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ami-d514f291</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">m3.large</span>
+</pre></div>
+</div>
+<p>Notice that the <code class="docutils literal"><span class="pre">provider</span></code> in our profile matches the provider name that we defined? That is how Salt Cloud
+knows how to connect to create a VM with these attributes.</p>
+</div>
+<div class="section" id="create-vms">
+<h3>Create VMs<a class="headerlink" href="#create-vms" title="永久链接至标题">¶</a></h3>
+<p>VMs are created by calling <code class="docutils literal"><span class="pre">salt-cloud</span></code> with the following options:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -p &lt;profile&gt; &lt;name1&gt; &lt;name2&gt; ...
+</pre></div>
+</div>
+<p>For example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -p micro_ec2 minion1 minion2
+</pre></div>
+</div>
+</div>
+<div class="section" id="destroy-vms">
+<h3>Destroy VMs<a class="headerlink" href="#destroy-vms" title="永久链接至标题">¶</a></h3>
+<p>Add a <code class="docutils literal"><span class="pre">-d</span></code> and the minion name you provided to destroy:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud -d minion1 minion2
+</pre></div>
+</div>
+</div>
+<div class="section" id="query-vms">
+<h3>Query VMs<a class="headerlink" href="#query-vms" title="永久链接至标题">¶</a></h3>
+<p>You can view details about the VMs you've created using <code class="docutils literal"><span class="pre">--query</span></code>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-cloud --query
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="using-salt-cloud">
+<h2>Using Salt Cloud<a class="headerlink" href="#using-salt-cloud" title="永久链接至标题">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/salt-cloud.html">Command Line Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/cli/salt-cloud.html#synopsis">大纲</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/cli/salt-cloud.html#description">描述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/cli/salt-cloud.html#options">选项</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ref/cli/salt-cloud.html#execution-options">Execution Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ref/cli/salt-cloud.html#query-options">Query Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ref/cli/salt-cloud.html#cloud-providers-listings">Cloud Providers Listings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ref/cli/salt-cloud.html#cloud-credentials">Cloud Credentials</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ref/cli/salt-cloud.html#output-options">Output Options</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/cli/salt-cloud.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/cli/salt-cloud.html#see-also">另请参阅</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basic.html">Basic</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basic.html#creating-a-vm">Creating a VM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic.html#destroying-a-vm">Destroying a VM</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="profiles.html">Profiles</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="profiles.html#multiple-configuration-files">Multiple Configuration Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profiles.html#larger-example">Larger Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="map.html">Maps</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="map.html#setting-up-new-salt-masters">Setting up New Salt Masters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="action.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="function.html">Functions</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="core-configuration">
+<h2>Cloud核心配置<a class="headerlink" href="#core-configuration" title="永久链接至标题">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install/index.html">Installing salt cloud</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install/index.html#installing-salt-cloud-for-development">安装Salt Cloud for development</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Core Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="config.html#thread-pool-size">Thread Pool Size</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#minion-configuration">Minion配置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#cloud-configuration-syntax">Cloud Configuration Syntax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#pillar-configuration">Pillar Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#cloud-configurations">Cloud Configurations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="config.html#scaleway">Scaleway</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#rackspace">Rackspace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#amazon-aws">Amazon AWS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#linode">Linode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#joyent-cloud">Joyent Cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#gogrid">GoGrid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#openstack">OpenStack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#digitalocean">DigitalOcean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#parallels">Parallels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#proxmox">Proxmox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#lxc">LXC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#saltify">Saltify</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="config.html#extending-profiles-and-cloud-providers-configuration">Extending Profiles and Cloud Providers Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="config.html#extending-profiles">Extending Profiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html#extending-providers">Extending Providers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="windows-configuration">
+<h2>Windows Configuration<a class="headerlink" href="#windows-configuration" title="永久链接至标题">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="windows.html">    Windows Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="windows.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="windows.html#firewall-settings">Firewall Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="windows.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="windows.html#auto-generated-passwords-on-ec2">Auto-Generated Passwords on EC2</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="cloud-provider-specifics">
+<span id="id2"></span><h2>Cloud Provider Specifics<a class="headerlink" href="#cloud-provider-specifics" title="永久链接至标题">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="aliyun.html">    Getting Started With Aliyun</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aliyun.html#dependencies">依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aliyun.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aliyun.html#profiles">Profiles</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aliyun.html#cloud-profiles">Cloud Profiles</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="azure.html">    Getting Started With Azure</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="azure.html#dependencies">依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="azure.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="azure.html#cloud-profiles">Cloud Profiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="azure.html#profile-options">Profile Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#provider">provider</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#image">image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#size">size</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#location">location</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#affinity-group">affinity_group</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#ssh-username">ssh_username</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#ssh-password">ssh_password</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#slot">slot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#media-link">media_link</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#service-name">service_name</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="azure.html#show-instance">Show Instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="azure.html#destroying-vms">Destroying VMs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#cleanup-disks">cleanup_disks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#cleanup-vhds">cleanup_vhds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#cleanup-services">cleanup_services</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="azure.html#managing-hosted-services">Managing Hosted Services</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#create-service">create_service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#show-service">show_service</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#list-services">list_services</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#delete-service">delete_service</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="azure.html#managing-storage-accounts">Managing Storage Accounts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#create-storage">create_storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#list-storage">list_storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#show-storage">show_storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#update-storage">update_storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#delete-storage">delete_storage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#show-storage-keys">show_storage_keys</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#regenerate-storage-keys">regenerate_storage_keys</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="azure.html#managing-disks">Managing Disks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#show-disk">show_disk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#list-disks">list_disks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#update-disk">update_disk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#delete-disk">delete_disk</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="azure.html#managing-service-certificates">Managing Service Certificates</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#list-service-certificates">list_service_certificates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#show-service-certificate">show_service_certificate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#add-service-certificate">add_service_certificate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#delete-service-certificate">delete_service_certificate</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="azure.html#managing-management-certificates">Managing Management Certificates</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#list-management-certificates">list_management_certificates</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#show-management-certificate">show_management_certificate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#add-management-certificate">add_management_certificate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#delete-management-certificate">delete_management_certificate</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="azure.html#virtual-network-management">Virtual Network Management</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#list-virtual-networks">list_virtual_networks</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="azure.html#managing-input-endpoints">Managing Input Endpoints</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#list-input-endpoints">list_input_endpoints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#show-input-endpoint">show_input_endpoint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#add-input-endpoint">add_input_endpoint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#update-input-endpoint">update_input_endpoint</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#delete-input-endpoint">delete_input_endpoint</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="azure.html#managing-affinity-groups">Managing Affinity Groups</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#list-affinity-groups">list_affinity_groups</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#show-affinity-group">show_affinity_group</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#create-affinity-group">create_affinity_group</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#update-affinity-group">update_affinity_group</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#delete-affinity-group">delete_affinity_group</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="azure.html#managing-blob-storage">Managing Blob Storage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#blob-storage-configuration">Blob Storage Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html#blob-functions">Blob Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="digitalocean.html">    Getting Started With DigitalOcean</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="digitalocean.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="digitalocean.html#profiles">Profiles</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="digitalocean.html#cloud-profiles">Cloud Profiles</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="digitalocean.html#miscellaneous-information">Miscellaneous Information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="aws.html">    Getting Started With EC2</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#dependencies">依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#access-credentials">Access Credentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#windows-deploy-timeouts">Windows Deploy Timeouts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#id1">Windows Deploy Timeouts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#key-pairs">Key Pairs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#security-groups">Security Groups</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#iam-profile">IAM Profile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#cloud-profiles">Cloud Profiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#required-settings">Required Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#optional-settings">Optional Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#modify-ec2-tags">Modify EC2 Tags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#rename-ec2-instances">Rename EC2 Instances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#rename-on-destroy">Rename on Destroy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#listing-images">Listing Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#ec2-images">EC2 Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#show-image">show_image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#show-instance">show_instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#ebs-optimized">ebs_optimized</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#del-root-vol-on-destroy">del_root_vol_on_destroy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#del-all-vols-on-destroy">del_all_vols_on_destroy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#ec2-termination-protection">EC2 Termination Protection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#alternate-endpoint">Alternate Endpoint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#volume-management">Volume Management</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aws.html#creating-volumes">Creating Volumes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html#attaching-volumes">Attaching Volumes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html#show-a-volume">Show a Volume</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html#detaching-volumes">Detaching Volumes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html#deleting-volumes">Deleting Volumes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#managing-key-pairs">Managing Key Pairs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aws.html#creating-a-key-pair">Creating a Key Pair</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html#importing-a-key-pair">Importing a Key Pair</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html#show-a-key-pair">Show a Key Pair</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html#delete-a-key-pair">Delete a Key Pair</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#launching-instances-into-a-vpc">Launching instances into a VPC</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aws.html#simple-launching-into-a-vpc">Simple launching into a VPC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html#specifying-interface-properties">Specifying interface properties</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gogrid.html">    Getting Started With GoGrid</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gogrid.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gogrid.html#profiles">Profiles</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gogrid.html#cloud-profiles">Cloud Profiles</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gogrid.html#assigning-ips">Assigning IPs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gce.html">    Getting Started With Google Compute Engine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gce.html#dependencies">依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gce.html#google-compute-engine-setup">Google Compute Engine Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gce.html#provider-configuration">Provider Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gce.html#profile-configuration">Profile Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gce.html#gce-specific-settings">GCE Specific Settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#initial-profile">Initial Profile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#image">image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#size">size</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#location">location</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#network">network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#tags">tags</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#metadata">metadata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#use-persistent-disk">use_persistent_disk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#delete-boot-pd">delete_boot_pd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#ssh-interface">ssh_interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#external-ip">external_ip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#ex-disk-type">ex_disk_type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#ip-forwarding">ip_forwarding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#profile-with-scopes">Profile with scopes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gce.html#ssh-remote-access">SSH Remote Access</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gce.html#single-instance-details">Single instance details</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gce.html#destroy-persistent-disks-and-metadata">Destroy, persistent disks, and metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gce.html#list-various-resources">List various resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gce.html#persistent-disk">Persistent Disk</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#create">Create</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#delete">Delete</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#attach">Attach</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#detach">Detach</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#show-disk">Show disk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#create-snapshot">Create snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#delete-snapshot">Delete snapshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#show-snapshot">Show snapshot</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gce.html#networking">Networking</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#create-network">Create network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#destroy-network">Destroy network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#show-network">Show network</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#create-address">Create address</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#delete-address">Delete address</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#show-address">Show address</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#create-firewall">Create firewall</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#delete-firewall">Delete firewall</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#show-firewall">Show firewall</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gce.html#load-balancer">Load Balancer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#http-health-check">HTTP Health Check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#id1">Load-balancer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html#attach-and-detach-lb">Attach and Detach LB</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hpcloud.html">    Getting Started With HP Cloud</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hpcloud.html#set-up-a-cloud-provider-configuration-file">Set up a cloud provider configuration file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hpcloud.html#compute-region">Compute Region</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hpcloud.html#authentication">Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hpcloud.html#set-up-a-cloud-profile-config-file">Set up a cloud profile config file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hpcloud.html#launch-an-instance">Launch an instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hpcloud.html#manage-the-instance">Manage the instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hpcloud.html#ssh-to-the-instance">SSH to the instance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hpcloud.html#using-a-private-ip">Using a private IP</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="joyent.html">    Getting Started With Joyent</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="joyent.html#dependencies">依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="joyent.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="joyent.html#profiles">Profiles</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="joyent.html#cloud-profiles">Cloud Profiles</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="joyent.html#smartdatacenter">SmartDataCenter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="joyent.html#miscellaneous-configuration">Miscellaneous Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="joyent.html#use-ssl">use_ssl</a></li>
+<li class="toctree-l3"><a class="reference internal" href="joyent.html#verify-ssl">verify_ssl</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="lxc.html">    Getting Started With LXC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lxc.html#limitations">Limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lxc.html#operation">操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lxc.html#provider-configuration">Provider configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lxc.html#profile-configuration">Profile configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lxc.html#driver-support">Driver Support</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="linode.html">    Getting Started With Linode</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="linode.html#provider-configuration">Provider Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linode.html#profile-configuration">Profile Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="linode.html#listing-sizes">Listing Sizes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linode.html#listing-images">Listing Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linode.html#listing-locations">Listing Locations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="linode.html#linode-specific-settings">Linode Specific Settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="linode.html#image">image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linode.html#location">location</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linode.html#size">size</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linode.html#assign-private-ip">assign_private_ip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linode.html#private-ip">private_ip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linode.html#ssh-interface">ssh_interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linode.html#clonefrom">clonefrom</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="linode.html#cloning">Cloning</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="opennebula.html">    Getting Started With OpenNebula</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="opennebula.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="opennebula.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="opennebula.html#access-credentials">Access Credentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="opennebula.html#key-pairs">Key Pairs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="opennebula.html#cloud-profiles">Cloud Profiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="opennebula.html#required-settings">Required Settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="opennebula.html#required-settings-for-vm-deployment">Required Settings for VM Deployment</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="opennebula.html#listing-images">Listing Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="opennebula.html#listing-locations">Listing Locations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="opennebula.html#listing-sizes">Listing Sizes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="opennebula.html#additional-opennebula-api-functionality">Additional OpenNebula API Functionality</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="openstack.html">    Getting Started With OpenStack</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="openstack.html#dependencies">依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openstack.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openstack.html#using-nova-client-to-get-information-from-openstack">Using nova client to get information from OpenStack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openstack.html#compute-region">Compute Region</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openstack.html#authentication">Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openstack.html#profiles">Profiles</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="openstack.html#change-password">change_password</a></li>
+<li class="toctree-l3"><a class="reference internal" href="openstack.html#userdata-file">userdata_file</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="parallels.html">    Getting Started With Parallels</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="parallels.html#access-credentials">Access Credentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallels.html#cloud-profiles">Cloud Profiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallels.html#required-settings">Required Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parallels.html#optional-settings">Optional Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="profitbricks.html">    Getting Started With Profitbricks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="profitbricks.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profitbricks.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profitbricks.html#virtual-data-center">Virtual Data Center</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profitbricks.html#authentication">Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="profitbricks.html#profiles">Profiles</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="proxmox.html">    Getting Started With Proxmox</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="proxmox.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="proxmox.html#access-credentials">Access Credentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="proxmox.html#cloud-profiles">Cloud Profiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="proxmox.html#required-settings">Required Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="proxmox.html#optional-settings">Optional Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="proxmox.html#qemu">QEMU</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rackspace.html">    Getting Started With Rackspace</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rackspace.html#dependencies">依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rackspace.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rackspace.html#compute-region">Compute Region</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rackspace.html#authentication">Authentication</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rackspace.html#rackconnect-environments">RackConnect Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rackspace.html#managed-cloud-environments">Managed Cloud Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rackspace.html#first-and-next-generation-images">First and Next Generation Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rackspace.html#private-subnets">Private Subnets</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="saltify.html">    Getting Started With Saltify</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="saltify.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="saltify.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="saltify.html#profiles">Profiles</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="saltify.html#using-map-files">Using Map Files</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="scaleway.html">    Getting Started With Scaleway</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="scaleway.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scaleway.html#profiles">Profiles</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="scaleway.html#cloud-profiles">Cloud Profiles</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="softlayer.html">    Getting Started With SoftLayer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="softlayer.html#dependencies">依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softlayer.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softlayer.html#access-credentials">Access Credentials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="softlayer.html#profiles">Profiles</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#cloud-profiles">Cloud Profiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#using-multiple-disks">Using Multiple Disks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#id1">Cloud Profiles</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="softlayer.html#actions">Actions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#show-instance">show_instance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="softlayer.html#functions">Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#list-vlans">list_vlans</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#list-custom-images">list_custom_images</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="softlayer.html#optional-products-for-softlayer-hw">Optional Products for SoftLayer HW</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#public-secondary-ip-addresses">Public Secondary IP Addresses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#primary-ipv6-addresses">Primary IPv6 Addresses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#public-static-ipv6-addresses">Public Static IPv6 Addresses</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#os-specific-addon">OS-Specific Addon</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#control-panel-software">Control Panel Software</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#database-software">Database Software</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#anti-virus-spyware-protection">Anti-Virus &amp; Spyware Protection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#insurance">Insurance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#monitoring">Monitoring</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#notification">Notification</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#advanced-monitoring">Advanced Monitoring</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#response">Response</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#intrusion-detection-protection">Intrusion Detection &amp; Protection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html#hardware-software-firewalls">Hardware &amp; Software Firewalls</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vexxhost.html">    Getting Started With Vexxhost</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="vexxhost.html#cloud-provider-configuration">Cloud Provider Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vexxhost.html#authentication">Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vexxhost.html#cloud-profile-configuration">Cloud Profile Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vexxhost.html#provision-an-instance">Provision an instance</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="virtualbox.html">    Getting Started With Virtualbox</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="virtualbox.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtualbox.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtualbox.html#profiles">Profiles</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="virtualbox.html#provisioning">Provisioning</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="virtualbox.html#actions">Actions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="virtualbox.html#functions">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vmware.html">    Getting Started With VMware</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="vmware.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmware.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmware.html#profiles">Profiles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmware.html#cloning-a-vm">Cloning a VM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmware.html#cloning-a-template">Cloning a Template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vmware.html#creating-a-vm">Creating a VM</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="vsphere.html">    Getting Started With vSphere</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="vsphere.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vsphere.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vsphere.html#profiles">Profiles</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="vsphere.html#cloud-profiles">Cloud Profiles</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="miscellaneous-options">
+<h2>Miscellaneous Options<a class="headerlink" href="#miscellaneous-options" title="永久链接至标题">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="misc.html">Miscellaneous</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="misc.html#deploy-script-arguments">Deploy Script Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="misc.html#selecting-the-file-transport">Selecting the File Transport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="misc.html#sync-after-install">Sync After Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="misc.html#setting-up-new-salt-masters">Setting Up New Salt Masters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="misc.html#setting-up-a-salt-syndic-with-salt-cloud">Setting Up a Salt Syndic with Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="misc.html#ssh-port">SSH Port</a></li>
+<li class="toctree-l2"><a class="reference internal" href="misc.html#id1">SSH Port</a></li>
+<li class="toctree-l2"><a class="reference internal" href="misc.html#delete-ssh-keys">Delete SSH Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="misc.html#keeping-tmp-files">Keeping /tmp/ Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="misc.html#hide-output-from-minion-install">Hide Output From Minion Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="misc.html#connection-timeout">Connection Timeout</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="misc.html#wait-for-ip-timeout">wait_for_ip_timeout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc.html#wait-for-ip-interval">wait_for_ip_interval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc.html#ssh-connect-timeout">ssh_connect_timeout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc.html#wait-for-passwd-timeout">wait_for_passwd_timeout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc.html#wait-for-passwd-maxtries">wait_for_passwd_maxtries</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc.html#wait-for-fun-timeout">wait_for_fun_timeout</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc.html#wait-for-spot-timeout">wait_for_spot_timeout</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="misc.html#salt-cloud-cache">Salt Cloud Cache</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="misc.html#update-cachedir">update_cachedir</a></li>
+<li class="toctree-l3"><a class="reference internal" href="misc.html#diff-cache-events">diff_cache_events</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="misc.html#ssh-known-hosts">SSH Known Hosts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="misc.html#ssh-agent">SSH Agent</a></li>
+<li class="toctree-l2"><a class="reference internal" href="misc.html#file-map-upload">File Map Upload</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="troubleshooting-steps">
+<h2>Troubleshooting Steps<a class="headerlink" href="#troubleshooting-steps" title="永久链接至标题">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">    Troubleshooting</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#virtual-machines-are-created-but-do-not-respond">Virtual Machines Are Created, But Do Not Respond</a></li>
+<li class="toctree-l2"><a class="reference internal" href="troubleshooting.html#generic-troubleshooting-steps">Generic Troubleshooting Steps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#debug-mode">Debug Mode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#salt-bootstrap">Salt Bootstrap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#the-bootstrap-log">The Bootstrap Log</a></li>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#keeping-temp-files">Keeping Temp Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#unprivileged-primary-users">Unprivileged Primary Users</a></li>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#tmp-is-mounted-as-noexec"><code class="docutils literal"><span class="pre">/tmp/</span></code> is Mounted as <code class="docutils literal"><span class="pre">noexec</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html#executing-the-deploy-script-manually">Executing the Deploy Script Manually</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="extending-salt-cloud">
+<h2>Extending Salt Cloud<a class="headerlink" href="#extending-salt-cloud" title="永久链接至标题">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cloud.html">Adding Cloud Providers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cloud.html#all-driver-modules">All Driver Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html#the-virtual-function">The __virtual__() Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html#the-get-configured-provider-function">The get_configured_provider() Function</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cloud.html#libcloud-based-modules">Libcloud Based Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html#the-create-function">The create() Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html#the-libcloudfuncs-functions">The libcloudfuncs Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cloud.html#non-libcloud-based-modules">Non-Libcloud Based Modules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html#id1">The <code class="docutils literal"><span class="pre">create()</span></code> Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html#the-get-size-function">The get_size() Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html#the-get-image-function">The get_image() Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html#the-avail-locations-function">The avail_locations() Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html#the-avail-images-function">The avail_images() Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html#the-avail-sizes-function">The avail_sizes() Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html#the-script-function">The script() Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html#the-destroy-function">The destroy() Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html#the-list-nodes-function">The list_nodes() Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html#the-list-nodes-full-function">The list_nodes_full() Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html#the-list-nodes-select-function">The list_nodes_select() Function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html#the-show-instance-function">The show_instance() Function</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cloud.html#actions-and-functions">Actions and Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html#actions">Actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="deploy.html">Adding OS Support</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="deploy.html#other-generic-deploy-scripts">Other Generic Deploy Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deploy.html#post-deploy-commands">Post-Deploy Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deploy.html#skipping-the-deploy-script">Skipping the Deploy Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deploy.html#updating-salt-bootstrap">Updating Salt Bootstrap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deploy.html#keeping-tmp-files">Keeping /tmp/ Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deploy.html#deploy-script-arguments">Deploy Script Arguments</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="using-salt-cloud-from-salt">
+<h2>Using Salt Cloud from Salt<a class="headerlink" href="#using-salt-cloud-from-salt" title="永久链接至标题">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="salt.html">Using Salt Cloud from Salt</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="salt.html#minion-keys">Minion Keys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salt.html#execution-module">Execution Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="salt.html#list-images">list_images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.html#list-sizes">list_sizes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.html#list-locations">list_locations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.html#query">query</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.html#full-query">full_query</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.html#select-query">select_query</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.html#profile">profile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.html#create">create</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.html#destroy">destroy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.html#action">action</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="salt.html#state-module">State Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="salt.html#cloud-present">cloud.present</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.html#cloud-profile">cloud.profile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.html#cloud-absent">cloud.absent</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="salt.html#runner-module">Runner Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salt.html#cloudclient">CloudClient</a></li>
+<li class="toctree-l2"><a class="reference internal" href="salt.html#reactor">Reactor</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="feature-comparison">
+<h2>Feature Comparison<a class="headerlink" href="#feature-comparison" title="永久链接至标题">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="features.html#legacy-drivers">Legacy Drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#note-for-developers">Note for Developers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#standard-features">Standard Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#actions">Actions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.html#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="tutorials">
+<h2>Tutorials<a class="headerlink" href="#tutorials" title="永久链接至标题">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reactor.html">Using Salt Cloud with the Event Reactor</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reactor.html#event-structure">Event Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reactor.html#available-events">Available Events</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reactor.html#salt-cloud-minion-id-creating">salt/cloud/&lt;minion_id&gt;/creating</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reactor.html#salt-cloud-minion-id-requesting">salt/cloud/&lt;minion_id&gt;/requesting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reactor.html#salt-cloud-minion-id-querying">salt/cloud/&lt;minion_id&gt;/querying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reactor.html#salt-cloud-minion-id-waiting-for-ssh">salt/cloud/&lt;minion_id&gt;/waiting_for_ssh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reactor.html#salt-cloud-minion-id-deploying">salt/cloud/&lt;minion_id&gt;/deploying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reactor.html#salt-cloud-minion-id-created">salt/cloud/&lt;minion_id&gt;/created</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reactor.html#configuring-the-event-reactor">Configuring the Event Reactor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reactor.html#reactor-sls-files">Reactor SLS Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reactor.html#example-reactor-based-highstate">Example: Reactor-Based Highstate</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../ssh/roster.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt Rosters" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../../ref/cli/salt-cloud.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt-cloud" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Salt云端</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">入门指南</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#define-a-provider">Define a Provider</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#list-cloud-provider-options">List Cloud Provider Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-vm-profiles">Create VM Profiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#create-vms">Create VMs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#destroy-vms">Destroy VMs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#query-vms">Query VMs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#using-salt-cloud">Using Salt Cloud</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ref/cli/salt-cloud.html">Command Line Reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="basic.html">Basic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="profiles.html">Profiles</a></li>
+<li class="toctree-l3"><a class="reference internal" href="map.html">Maps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="action.html">Actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="function.html">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#core-configuration">Cloud核心配置</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="install/index.html">Installing salt cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html">Core Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#windows-configuration">Windows Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="windows.html">    Windows Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#cloud-provider-specifics">Cloud Provider Specifics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aliyun.html">    Getting Started With Aliyun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure.html">    Getting Started With Azure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="digitalocean.html">    Getting Started With DigitalOcean</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html">    Getting Started With EC2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gogrid.html">    Getting Started With GoGrid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gce.html">    Getting Started With Google Compute Engine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hpcloud.html">    Getting Started With HP Cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="joyent.html">    Getting Started With Joyent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lxc.html">    Getting Started With LXC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="linode.html">    Getting Started With Linode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="opennebula.html">    Getting Started With OpenNebula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="openstack.html">    Getting Started With OpenStack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parallels.html">    Getting Started With Parallels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="profitbricks.html">    Getting Started With Profitbricks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="proxmox.html">    Getting Started With Proxmox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rackspace.html">    Getting Started With Rackspace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="saltify.html">    Getting Started With Saltify</a></li>
+<li class="toctree-l3"><a class="reference internal" href="scaleway.html">    Getting Started With Scaleway</a></li>
+<li class="toctree-l3"><a class="reference internal" href="softlayer.html">    Getting Started With SoftLayer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vexxhost.html">    Getting Started With Vexxhost</a></li>
+<li class="toctree-l3"><a class="reference internal" href="virtualbox.html">    Getting Started With Virtualbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vmware.html">    Getting Started With VMware</a></li>
+<li class="toctree-l3"><a class="reference internal" href="vsphere.html">    Getting Started With vSphere</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#miscellaneous-options">Miscellaneous Options</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="misc.html">Miscellaneous</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#troubleshooting-steps">Troubleshooting Steps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="troubleshooting.html">    Troubleshooting</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#extending-salt-cloud">Extending Salt Cloud</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cloud.html">Adding Cloud Providers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="deploy.html">Adding OS Support</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#using-salt-cloud-from-salt">Using Salt Cloud from Salt</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="salt.html">Using Salt Cloud from Salt</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#feature-comparison">Feature Comparison</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.html">Features</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorials">Tutorials</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reactor.html">Using Salt Cloud with the Event Reactor</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

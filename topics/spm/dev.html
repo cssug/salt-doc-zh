@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>SPM Development Guide</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt Package Manager" href="index.html">
+        <link rel="next" title="Storing Data in Other Databases" href="../sdb/index.html">
+        <link rel="prev" title="FORMULA File" href="spm_formula.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="spm_formula.html" title="FORMULA File">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../sdb/index.html" title="Storing Data in Other Databases">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="spm-development-guide">
+<span id="spm-development"></span><h1>SPM Development Guide<a class="headerlink" href="#spm-development-guide" title="永久链接至标题">¶</a></h1>
+<p>This document discusses developing additional code for SPM.</p>
+<div class="section" id="spm-specific-loader-modules">
+<h2>SPM-Specific Loader Modules<a class="headerlink" href="#spm-specific-loader-modules" title="永久链接至标题">¶</a></h2>
+<p>SPM was designed to behave like traditional package managers, which apply files
+to the filesystem and store package metadata in a local database. However,
+because modern infrastructures often extend beyond those use cases, certain
+parts of SPM have been broken out into their own set of modules.</p>
+<p>Each function that accepts arguments has a set of required and optional
+arguments. Take note that SPM will pass all arguments in, and therefore each
+function must accept each of those arguments. However, arguments that are
+marked as required are crucial to SPM's core functionality, while arguments that
+are marked as optional are provided as a benefit to the module, if it needs to
+use them.</p>
+<div class="section" id="package-database">
+<h3>Package Database<a class="headerlink" href="#package-database" title="永久链接至标题">¶</a></h3>
+<p>By default, the package database is stored using the <code class="docutils literal"><span class="pre">sqlite3</span></code> module. This
+module was chosen because support for SQLite3 is built into Python itself.</p>
+<p>Modules for managing the package database are stored in the <code class="docutils literal"><span class="pre">salt/spm/pkgdb/</span></code>
+directory. A number of functions must exist to support database management.</p>
+<div class="section" id="init">
+<h4>init()<a class="headerlink" href="#init" title="永久链接至标题">¶</a></h4>
+<p>Get a database connection, and initialize the package database if necessary.</p>
+<p>This function accepts no arguments. If a database is used which supports a
+connection object, then that connection object is returned. For instance, the
+<code class="docutils literal"><span class="pre">sqlite3</span></code> module returns a <code class="docutils literal"><span class="pre">connect()</span></code> object from the <code class="docutils literal"><span class="pre">sqlite3</span></code> library:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">__opts__</span><span class="p">[</span><span class="s1">&#39;spm_db&#39;</span><span class="p">],</span> <span class="n">isolation_level</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+<span class="o">...</span>
+<span class="k">return</span> <span class="n">conn</span>
+</pre></div>
+</div>
+<p>SPM itself will not use this connection object; it will be passed in as-is to
+the other functions in the module. Therefore, when you set up this object, make
+sure to do so in a way that is easily usable throughout the module.</p>
+</div>
+<div class="section" id="info">
+<h4>info()<a class="headerlink" href="#info" title="永久链接至标题">¶</a></h4>
+<p>Return information for a package. This generally consists of the information
+that is stored in the <code class="docutils literal"><span class="pre">FORMULA</span></code> file in the package.</p>
+<p>The arguments that are passed in, in order, are <code class="docutils literal"><span class="pre">package</span></code> (required) and
+<code class="docutils literal"><span class="pre">conn</span></code> (optional).</p>
+<p><code class="docutils literal"><span class="pre">package</span></code> is the name of the package, as specified in the <code class="docutils literal"><span class="pre">FORMULA</span></code>.
+<code class="docutils literal"><span class="pre">conn</span></code> is the connection object returned from <code class="docutils literal"><span class="pre">init()</span></code>.</p>
+</div>
+<div class="section" id="list-files">
+<h4>list_files()<a class="headerlink" href="#list-files" title="永久链接至标题">¶</a></h4>
+<p>Return a list of files for an installed package. Only the filename should be
+returned, and no other information.</p>
+<p>The arguments that are passed in, in order, are <code class="docutils literal"><span class="pre">package</span></code> (required) and
+<code class="docutils literal"><span class="pre">conn</span></code> (optional).</p>
+<p><code class="docutils literal"><span class="pre">package</span></code> is the name of the package, as specified in the <code class="docutils literal"><span class="pre">FORMULA</span></code>.
+<code class="docutils literal"><span class="pre">conn</span></code> is the connection object returned from <code class="docutils literal"><span class="pre">init()</span></code>.</p>
+</div>
+<div class="section" id="register-pkg">
+<h4>register_pkg()<a class="headerlink" href="#register-pkg" title="永久链接至标题">¶</a></h4>
+<p>Register a package in the package database. Nothing is expected to be returned
+from this function.</p>
+<p>The arguments that are passed in, in order, are <code class="docutils literal"><span class="pre">name</span></code> (required),
+<code class="docutils literal"><span class="pre">formula_def</span></code> (required), and <code class="docutils literal"><span class="pre">conn</span></code> (optional).</p>
+<p><code class="docutils literal"><span class="pre">name</span></code> is the name of the package, as specified in the <code class="docutils literal"><span class="pre">FORMULA</span></code>.
+<code class="docutils literal"><span class="pre">formula_def</span></code> is the contents of the <code class="docutils literal"><span class="pre">FORMULA</span></code> file, as a <code class="docutils literal"><span class="pre">dict</span></code>. <code class="docutils literal"><span class="pre">conn</span></code>
+is the connection object returned from <code class="docutils literal"><span class="pre">init()</span></code>.</p>
+</div>
+<div class="section" id="register-file">
+<h4>register_file()<a class="headerlink" href="#register-file" title="永久链接至标题">¶</a></h4>
+<p>Register a file in the package database. Nothing is expected to be returned
+from this function.</p>
+<p>The arguments that are passed in are <code class="docutils literal"><span class="pre">name</span></code> (required), <code class="docutils literal"><span class="pre">member</span></code> (required),
+<code class="docutils literal"><span class="pre">path</span></code> (required), <code class="docutils literal"><span class="pre">digest</span></code> (optional), and <code class="docutils literal"><span class="pre">conn</span></code> (optional).</p>
+<p><code class="docutils literal"><span class="pre">name</span></code> is the name of the package.</p>
+<p><code class="docutils literal"><span class="pre">member</span></code> is a <code class="docutils literal"><span class="pre">tarfile</span></code> object for the
+package file. It is included, because it contains most of the information for
+the file.</p>
+<p><code class="docutils literal"><span class="pre">path</span></code> is the location of the file on the local filesystem.</p>
+<p><code class="docutils literal"><span class="pre">digest</span></code> is the SHA1 checksum of the file.</p>
+<p><code class="docutils literal"><span class="pre">conn</span></code> is the connection object returned from <code class="docutils literal"><span class="pre">init()</span></code>.</p>
+</div>
+<div class="section" id="unregister-pkg">
+<h4>unregister_pkg()<a class="headerlink" href="#unregister-pkg" title="永久链接至标题">¶</a></h4>
+<p>Unregister a package from the package database. This usually only involves
+removing the package's record from the database. Nothing is expected to be
+returned from this function.</p>
+<p>The arguments that are passed in, in order, are <code class="docutils literal"><span class="pre">name</span></code> (required) and
+<code class="docutils literal"><span class="pre">conn</span></code> (optional).</p>
+<p><code class="docutils literal"><span class="pre">name</span></code> is the name of the package, as specified in the <code class="docutils literal"><span class="pre">FORMULA</span></code>. <code class="docutils literal"><span class="pre">conn</span></code>
+is the connection object returned from <code class="docutils literal"><span class="pre">init()</span></code>.</p>
+</div>
+<div class="section" id="unregister-file">
+<h4>unregister_file()<a class="headerlink" href="#unregister-file" title="永久链接至标题">¶</a></h4>
+<p>Unregister a package from the package database. This usually only involves
+removing the package's record from the database. Nothing is expected to be
+returned from this function.</p>
+<p>The arguments that are passed in, in order, are <code class="docutils literal"><span class="pre">name</span></code> (required), <code class="docutils literal"><span class="pre">pkg</span></code>
+(optional) and <code class="docutils literal"><span class="pre">conn</span></code> (optional).</p>
+<p><code class="docutils literal"><span class="pre">name</span></code> is the path of the file, as it was installed on the filesystem.</p>
+<p><code class="docutils literal"><span class="pre">pkg</span></code> is the name of the package that the file belongs to.</p>
+<p><code class="docutils literal"><span class="pre">conn</span></code> is the connection object returned from <code class="docutils literal"><span class="pre">init()</span></code>.</p>
+</div>
+<div class="section" id="db-exists">
+<h4>db_exists()<a class="headerlink" href="#db-exists" title="永久链接至标题">¶</a></h4>
+<p>Check to see whether the package database already exists. This is the path to
+the package database file. This function will return <code class="docutils literal"><span class="pre">True</span></code> or <code class="docutils literal"><span class="pre">False</span></code>.</p>
+<p>The only argument that is expected is <code class="docutils literal"><span class="pre">db_</span></code>, which is the package database
+file.</p>
+</div>
+</div>
+<div class="section" id="package-files">
+<h3>Package Files<a class="headerlink" href="#package-files" title="永久链接至标题">¶</a></h3>
+<p>By default, package files are installed using the <code class="docutils literal"><span class="pre">local</span></code> module. This module
+applies files to the local filesystem, on the machine that the package is
+installed on.</p>
+<p>Modules for managing the package database are stored in the
+<code class="docutils literal"><span class="pre">salt/spm/pkgfiles/</span></code> directory. A number of functions must exist to support
+file management.</p>
+<div class="section" id="id1">
+<h4>init()<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h4>
+<p>Initialize the installation location for the package files. Normally these will
+be directory paths, but other external destinations such as databases can be
+used. For this reason, this function will return a connection object, which can
+be a database object. However, in the default <code class="docutils literal"><span class="pre">local</span></code> module, this object is a
+dict containing the paths. This object will be passed into all other functions.</p>
+<p>Three directories are used for the destinations: <code class="docutils literal"><span class="pre">formula_path</span></code>,
+<code class="docutils literal"><span class="pre">pillar_path</span></code>, and <code class="docutils literal"><span class="pre">reactor_path</span></code>.</p>
+<p><code class="docutils literal"><span class="pre">formula_path</span></code> is the location of most of the files that will be installed.
+The default is specific to the operating system, but is normally <code class="docutils literal"><span class="pre">/srv/salt/</span></code>.</p>
+<p><code class="docutils literal"><span class="pre">pillar_path</span></code> is the location that the <code class="docutils literal"><span class="pre">pillar.example</span></code> file will be
+installed to.  The default is specific to the operating system, but is normally
+<code class="docutils literal"><span class="pre">/srv/pillar/</span></code>.</p>
+<p><code class="docutils literal"><span class="pre">reactor_path</span></code> is the location that reactor files will be installed to. The
+default is specific to the operating system, but is normally <code class="docutils literal"><span class="pre">/srv/reactor/</span></code>.</p>
+</div>
+<div class="section" id="check-existing">
+<h4>check_existing()<a class="headerlink" href="#check-existing" title="永久链接至标题">¶</a></h4>
+<p>Check the filesystem for existing files. All files for the package will be
+checked, and if any are existing, then this function will normally state that
+SPM will refuse to install the package.</p>
+<p>This function returns a list of the files that exist on the system.</p>
+<p>The arguments that are passed into this function are, in order: <code class="docutils literal"><span class="pre">package</span></code>
+(required), <code class="docutils literal"><span class="pre">pkg_files</span></code> (required), <code class="docutils literal"><span class="pre">formula_def</span></code> (formula_def), and
+<code class="docutils literal"><span class="pre">conn</span></code> (optional).</p>
+<p><code class="docutils literal"><span class="pre">package</span></code> is the name of the package that is to be installed.</p>
+<p><code class="docutils literal"><span class="pre">pkg_files</span></code> is a list of the files to be checked.</p>
+<p><code class="docutils literal"><span class="pre">formula_def</span></code> is a copy of the information that is stored in the <code class="docutils literal"><span class="pre">FORMULA</span></code>
+file.</p>
+<p><code class="docutils literal"><span class="pre">conn</span></code> is the file connection object.</p>
+</div>
+<div class="section" id="install-file">
+<h4>install_file()<a class="headerlink" href="#install-file" title="永久链接至标题">¶</a></h4>
+<p>Install a single file to the destination (normally on the filesystem). Nothing
+is expected to be returned from this function.</p>
+<p>This function returns the final location that the file was installed to.</p>
+<p>The arguments that are passed into this function are, in order, <code class="docutils literal"><span class="pre">package</span></code>
+(required), <code class="docutils literal"><span class="pre">formula_tar</span></code> (required), <code class="docutils literal"><span class="pre">member</span></code> (required), <code class="docutils literal"><span class="pre">formula_def</span></code>
+(required), and <code class="docutils literal"><span class="pre">conn</span></code> (optional).</p>
+<p><code class="docutils literal"><span class="pre">package</span></code> is the name of the package that is to be installed.</p>
+<p><code class="docutils literal"><span class="pre">formula_tar</span></code> is the tarfile object for the package. This is passed in so that
+the function can call <code class="docutils literal"><span class="pre">formula_tar.extract()</span></code> for the file.</p>
+<p><code class="docutils literal"><span class="pre">member</span></code> is the tarfile object which represents the individual file. This may
+be modified as necessary, before being passed into <code class="docutils literal"><span class="pre">formula_tar.extract()</span></code>.</p>
+<p><code class="docutils literal"><span class="pre">formula_def</span></code> is a copy of the information from the <code class="docutils literal"><span class="pre">FORMULA</span></code> file.</p>
+<p><code class="docutils literal"><span class="pre">conn</span></code> is the file connection object.</p>
+</div>
+<div class="section" id="remove-file">
+<h4>remove_file()<a class="headerlink" href="#remove-file" title="永久链接至标题">¶</a></h4>
+<p>Remove a single file from file system. Normally this will be little more than an
+<code class="docutils literal"><span class="pre">os.remove()</span></code>. Nothing is expected to be returned from this function.</p>
+<p>The arguments that are passed into this function are, in order, <code class="docutils literal"><span class="pre">path</span></code>
+(required) and <code class="docutils literal"><span class="pre">conn</span></code> (optional).</p>
+<p><code class="docutils literal"><span class="pre">path</span></code> is the absolute path to the file to be removed.</p>
+<p><code class="docutils literal"><span class="pre">conn</span></code> is the file connection object.</p>
+</div>
+<div class="section" id="hash-file">
+<h4>hash_file()<a class="headerlink" href="#hash-file" title="永久链接至标题">¶</a></h4>
+<p>Returns the hexdigest hash value of a file.</p>
+<p>The arguments that are passed into this function are, in order, <code class="docutils literal"><span class="pre">path</span></code>
+(required), <code class="docutils literal"><span class="pre">hashobj</span></code> (required), and <code class="docutils literal"><span class="pre">conn</span></code> (optional).</p>
+<p><code class="docutils literal"><span class="pre">path</span></code> is the absolute path to the file.</p>
+<p><code class="docutils literal"><span class="pre">hashobj</span></code> is a reference to <code class="docutils literal"><span class="pre">hashlib.sha1()</span></code>, which is used to pull the
+<code class="docutils literal"><span class="pre">hexdigest()</span></code> for the file.</p>
+<p><code class="docutils literal"><span class="pre">conn</span></code> is the file connection object.</p>
+<p>This function will not generally be more complex than:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">hash_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">hashobj</span><span class="p">,</span> <span class="n">conn</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">salt</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">fopen</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">hashobj</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">hashobj</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="path-exists">
+<h4>path_exists()<a class="headerlink" href="#path-exists" title="永久链接至标题">¶</a></h4>
+<p>Check to see whether the file already exists on the filesystem. Returns <code class="docutils literal"><span class="pre">True</span></code>
+or <code class="docutils literal"><span class="pre">False</span></code>.</p>
+<p>This function expects a <code class="docutils literal"><span class="pre">path</span></code> argument, which is the absolute path to the
+file to be checked.</p>
+</div>
+<div class="section" id="path-isdir">
+<h4>path_isdir()<a class="headerlink" href="#path-isdir" title="永久链接至标题">¶</a></h4>
+<p>Check to see whether the path specified is a directory. Returns <code class="docutils literal"><span class="pre">True</span></code> or
+<code class="docutils literal"><span class="pre">False</span></code>.</p>
+<p>This function expects a <code class="docutils literal"><span class="pre">path</span></code> argument, which is the absolute path to be
+checked.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="spm_formula.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="FORMULA File" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../sdb/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Storing Data in Other Databases" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/master.html">配置Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/minion.html">配置Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/examples.html">Configuration file examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../blackout/index.html">Minion Blackout Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../eauth/access_control.html">Access Control System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs/index.html">Job Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs/job_cache.html">Managing the Job Cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs/external_cache.html">Storing Job Results in an External System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/logging/index.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/file_server/index.html">Salt文件服务器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/gitfs.html">Git Fileserver Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/minionfs.html">MinionFS Backend Walkthrough</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Salt Package Manager</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="packaging.html">Building SPM Packages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="repo.html">Distributing SPM Packages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="master.html">Installing SPM Packages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config.html">SPM Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spm_formula.html">FORMULA File</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">SPM Development Guide</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#spm-specific-loader-modules">SPM-Specific Loader Modules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#package-database">Package Database</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#init">init()</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#info">info()</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#list-files">list_files()</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#register-pkg">register_pkg()</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#register-file">register_file()</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#unregister-pkg">unregister_pkg()</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#unregister-file">unregister_file()</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#db-exists">db_exists()</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="#package-files">Package Files</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="#id1">init()</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#check-existing">check_existing()</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#install-file">install_file()</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#remove-file">remove_file()</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#hash-file">hash_file()</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#path-exists">path_exists()</a></li>
+<li class="toctree-l6"><a class="reference internal" href="#path-isdir">path_isdir()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sdb/index.html">Storing Data in Other Databases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/nonroot.html">以非特权用户身份运行Salt Master/Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/cron.html">使用cron运行Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hardening.html">Hardening Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../security/index.html">Security disclosure policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transports/index.html">Salt Transport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../master_tops/index.html">Master Tops系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/returners/index.html">返回器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/renderers/index.html">Renderers渲染器</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

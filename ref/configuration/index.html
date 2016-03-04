@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>配置Salt</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="安装教程" href="../../topics/installation/index.html">
+        <link rel="next" title="Salt Bootstrap" href="../../topics/tutorials/salt_bootstrap.html">
+        <link rel="prev" title="SUSE" href="../../topics/installation/suse.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../topics/installation/suse.html" title="SUSE">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../../topics/tutorials/salt_bootstrap.html" title="Salt Bootstrap">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="configuring-salt">
+<span id="id1"></span><h1>配置Salt<a class="headerlink" href="#configuring-salt" title="永久链接至标题">¶</a></h1>
+<p>Salt 的配置非常简单。 默认的  <a class="reference internal" href="../../glossary.html#term-master"><span class="xref std std-term">master</span></a>  配置就可以在大多数情况下运行。仅仅需要更改的是 <a class="reference internal" href="../../glossary.html#term-minion"><span class="xref std std-term">minion</span></a> ，在 minion 配置文件中设置 master 的地址。</p>
+<p>The configuration files will be installed to <code class="file docutils literal"><span class="pre">/etc/salt</span></code> and are named
+after the respective components, <code class="file docutils literal"><span class="pre">/etc/salt/master</span></code>, and
+<code class="file docutils literal"><span class="pre">/etc/salt/minion</span></code>.</p>
+<div class="section" id="master-configuration">
+<h2>Master配置<a class="headerlink" href="#master-configuration" title="永久链接至标题">¶</a></h2>
+<p>默认Salt master监听所有网卡接口(0.0.0.0)的4505和4506端口. 如果需要指定监听IP, 通过 <code class="docutils literal"><span class="pre">/etc/salt/master</span></code> 配置文件中的&quot;interface&quot;指令进行如下修改:</p>
+<div class="highlight-diff"><div class="highlight"><pre><span></span><span class="gd">- #interface: 0.0.0.0</span>
+<span class="gi">+ interface: 10.0.0.1</span>
+</pre></div>
+</div>
+<p>更新完配置文件后，需要重启Salt master以使其生效配置.  如果想了解更多的关于master的其他选项请访问:  <a class="reference internal" href="master.html"><em>master配置参考</em></a> .</p>
+</div>
+<div class="section" id="minion-configuration">
+<h2>Minion配置<a class="headerlink" href="#minion-configuration" title="永久链接至标题">¶</a></h2>
+<p>尽管Salt Minion有许多配置选项，但配置Minion还是非常简单的. 默认的配置Minion会尝试连接DNS名为&quot;salt&quot;的master，如果minion解析到的地址正确，就无需再做配置.</p>
+<p>如果DNS名为&quot;salt&quot;并不能解析到本地正确的Master地址，需要通过如下方法修改 <code class="docutils literal"><span class="pre">/etc/salt/minion</span></code> 配置文件中的&quot;master&quot;指令:</p>
+<div class="highlight-diff"><div class="highlight"><pre><span></span><span class="gd">- #master: salt</span>
+<span class="gi">+ master: 10.0.0.1</span>
+</pre></div>
+</div>
+<p>更新完配置后，需要重启Salt minion以使配置生效. 如果想了解更多关于minion的配置选项，请访问  <a class="reference internal" href="minion.html"><em>minion配置参考</em></a> .</p>
+</div>
+<div class="section" id="running-salt">
+<h2>运行Salt<a class="headerlink" href="#running-salt" title="永久链接至标题">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">前台启动master(如果要以daemon方式启动，请指定 <cite>-d参数 &lt;salt-master -d&gt;</cite>):</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-master
+</pre></div>
+</div>
+</li>
+<li><p class="first">前台启动minion(如果要以daemon方式启动，请指定 <cite>-d参数 &lt;salt-minion -d&gt;</cite>):</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-minion
+</pre></div>
+</div>
+</li>
+</ol>
+<div class="admonition-having-trouble admonition">
+<p class="first admonition-title">运行有问题?</p>
+<p>排除 Salt 故障最简单的方法是在前台运行 master 和 minion，同时把 <a class="reference internal" href="../cli/salt-master.html#cmdoption-salt-master-l"><code class="xref std std-option docutils literal"><span class="pre">log</span> <span class="pre">level</span></code></a> 设为``debug``</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-master --log-level<span class="o">=</span>debug
+</pre></div>
+</div>
+<p class="last">想了解更多关于salt的日志系统，请访问 <a class="reference internal" href="logging/index.html"><em>logging document</em></a>.</p>
+</div>
+<div class="admonition-run-as-an-unprivileged-non-root-user admonition">
+<p class="first admonition-title">以普通(非root)用户运行</p>
+<p>想要使用其他用户身份运行Salt，参见:conf_master:<a href="#id1"><span class="problematic" id="id2">`</span></a>user`参数在master配置文件中。</p>
+<p>Additionally, ownership, and permissions need to be set such that the
+desired user can read from and write to the following directories (and
+their subdirectories, where applicable):</p>
+<ul class="simple">
+<li>/etc/salt</li>
+<li>/var/cache/salt</li>
+<li>/var/log/salt</li>
+<li>/var/run/salt</li>
+</ul>
+<p class="last">更多关于如何使用非特权用户运行salt的信息可以在 <a class="reference internal" href="nonroot.html"><em>这里</em></a> 找到。</p>
+</div>
+<p>我们也提供了一份完整的 <a class="reference internal" href="../../topics/troubleshooting/index.html"><em>troubleshooting指南</em></a> .</p>
+</div>
+<div class="section" id="key-identity">
+<span id="id2"></span><h2>Key Identity<a class="headerlink" href="#key-identity" title="永久链接至标题">¶</a></h2>
+<p>Salt provides commands to validate the identity of your Salt master
+and Salt minions before the initial key exchange. Validating key identity helps
+avoid inadvertently connecting to the wrong Salt master, and helps prevent
+a potential MiTM attack when establishing the initial connection.</p>
+<div class="section" id="master-key-fingerprint">
+<h3>Master Key Fingerprint<a class="headerlink" href="#master-key-fingerprint" title="永久链接至标题">¶</a></h3>
+<p>Print the master key fingerprint by running the following command on the Salt master:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-key -F master
+</pre></div>
+</div>
+<p>Copy the <code class="docutils literal"><span class="pre">master.pub</span></code> fingerprint from the <em>Local Keys</em> section, and then set this value
+as the <a class="reference internal" href="minion.html#std:conf_minion-master_finger"><code class="xref std std-conf_minion docutils literal"><span class="pre">master_finger</span></code></a> in the minion configuration file. Save the configuration
+file and then restart the Salt minion.</p>
+</div>
+<div class="section" id="minion-key-fingerprint">
+<h3>Minion Key Fingerprint<a class="headerlink" href="#minion-key-fingerprint" title="永久链接至标题">¶</a></h3>
+<p>Run the following command on each Salt minion to view the minion key fingerprint:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-call --local key.finger
+</pre></div>
+</div>
+<p>Compare this value to the value that is displayed when you run the
+<code class="docutils literal"><span class="pre">salt-key</span> <span class="pre">--finger</span> <span class="pre">&lt;MINION_ID&gt;</span></code> command on the Salt master.</p>
+</div>
+</div>
+<div class="section" id="key-management">
+<h2>Key管理<a class="headerlink" href="#key-management" title="永久链接至标题">¶</a></h2>
+<p>Salt在Master和Minion之间的通讯采用AES加密. 这就确保了发送给minions的命令不会被篡改， Master和Minion之间的通讯认证通过信任的已接受的key进行管理.</p>
+<p>在发送给Minion之前，需要确保minion的key已经被Master所接受. 运行 <a href="#id1"><span class="problematic" id="id2">``</span></a>salt-key``命令将列出Salt Master已知的所有keys.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="o">[</span>root@master ~<span class="o">]</span><span class="c1"># salt-key -L</span>
+Unaccepted Keys:
+alpha
+bravo
+charlie
+delta
+Accepted Keys:
+</pre></div>
+</div>
+<p>下边的例子中，Salt已知有四个Minions，但是没有接受一个minion的key。 接受key以使Mionions可以被Master管控，需要使用 <code class="docutils literal"><span class="pre">salt-key</span></code> 命令:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="o">[</span>root@master ~<span class="o">]</span><span class="c1"># salt-key -A</span>
+<span class="o">[</span>root@master ~<span class="o">]</span><span class="c1"># salt-key -L</span>
+Unaccepted Keys:
+Accepted Keys:
+alpha
+bravo
+charlie
+delta
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">salt-key</span></code> 命令能够进行单个操作，也可以进行批量操作. 例子中使用 <code class="docutils literal"><span class="pre">-A</span></code> 进行批量接受所有待定的keys. 接受单个key使用小写字母a， <code class="docutils literal"><span class="pre">-a</span> <span class="pre">keyname</span></code>.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参见</p>
+<p class="last"><a class="reference internal" href="../cli/salt-key.html"><em>salt-key man页</em></a></p>
+</div>
+</div>
+<div class="section" id="sending-commands">
+<h2>发送指令<a class="headerlink" href="#sending-commands" title="永久链接至标题">¶</a></h2>
+<p>Master和Minion连通性测试可以通过运行 <a href="#id1"><span class="problematic" id="id2">``</span></a>test.ping` 命令:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="o">[</span>root@master ~<span class="o">]</span><span class="c1"># salt alpha test.ping</span>
+alpha:
+    True
+</pre></div>
+</div>
+<p>Master与所有Minons的连通性测试可以使用下边类似的方法:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="o">[</span>root@master ~<span class="o">]</span><span class="c1"># salt &#39;*&#39; test.ping</span>
+alpha:
+    True
+bravo:
+    True
+charlie:
+    True
+delta:
+    True
+</pre></div>
+</div>
+<p>每个Minions应该发送一个 <code class="docutils literal"><span class="pre">True</span></code> 回应并显示出来.</p>
+</div>
+<div class="section" id="what-s-next">
+<h2>接下来做些什么?<a class="headerlink" href="#what-s-next" title="永久链接至标题">¶</a></h2>
+<p>Understanding <a class="reference internal" href="../../topics/targeting/index.html#targeting"><span>targeting</span></a> is important. From there, depending
+on the way you wish to use Salt, you should also proceed to learn about
+<a class="reference internal" href="../../topics/execution/index.html#remote-execution"><span>Remote Execution</span></a> and <a class="reference internal" href="../../topics/states/index.html#configuration-management"><span>Configuration Management</span></a>.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../../topics/installation/suse.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="SUSE" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../../topics/tutorials/salt_bootstrap.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt Bootstrap" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../topics/installation/index.html">安装教程</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../topics/installation/index.html#quick-install">快速安装</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/installation/index.html#platform-specific-installation-instructions">对应平台的安装教程</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../topics/installation/index.html#initial-configuration">Initial Configuration</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="">配置Salt</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#master-configuration">Master配置</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#minion-configuration">Minion配置</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-salt">运行Salt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#key-identity">Key Identity</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#master-key-fingerprint">Master Key Fingerprint</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#minion-key-fingerprint">Minion Key Fingerprint</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#key-management">Key管理</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sending-commands">发送指令</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#what-s-next">接下来做些什么?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/installation/index.html#additional-installation-guides">Additional Installation Guides</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/installation/index.html#dependencies">依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/installation/index.html#optional-dependencies">可选依赖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/installation/index.html#upgrading-salt">升级Salt</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

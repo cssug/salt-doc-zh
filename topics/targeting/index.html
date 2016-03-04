@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Targeting Minions</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Using Salt" href="../using_salt.html">
+        <link rel="next" title="Matching the minion id" href="globbing.html">
+        <link rel="prev" title="Pillar 演练" href="../tutorials/pillar.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../tutorials/pillar.html" title="Pillar 演练">上一页</a>
+            
+        </li>
+        <li>
+            <a href="globbing.html" title="Matching the minion id">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="targeting-minions">
+<span id="targeting"></span><h1>Targeting Minions<a class="headerlink" href="#targeting-minions" title="永久链接至标题">¶</a></h1>
+<p>Targeting minions is specifying which minions should run a command or execute a
+state by matching against hostnames, or system information, or defined groups,
+or even combinations thereof.</p>
+<p>For example the command <code class="docutils literal"><span class="pre">salt</span> <span class="pre">web1</span> <span class="pre">apache.signal</span> <span class="pre">restart</span></code> to restart the
+Apache httpd server specifies the machine <code class="docutils literal"><span class="pre">web1</span></code> as the target and the
+command will only be run on that one minion.</p>
+<p>Similarly when using States, the following <a class="reference internal" href="../../glossary.html#term-top-file"><span class="xref std std-term">top file</span></a> specifies that only
+the <code class="docutils literal"><span class="pre">web1</span></code> minion should execute the contents of <code class="docutils literal"><span class="pre">webserver.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;web1&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">webserver</span>
+</pre></div>
+</div>
+<p>The simple target specifications, glob, regex, and list will cover many use
+cases, and for some will cover all use cases, but more powerful options exist.</p>
+<div class="section" id="targeting-with-grains">
+<h2>Targeting with Grains<a class="headerlink" href="#targeting-with-grains" title="永久链接至标题">¶</a></h2>
+<p>The Grains interface was built into Salt to allow minions to be targeted by
+system properties. So minions running on a particular operating system can
+be called to execute a function, or a specific kernel.</p>
+<p>Calling via a grain is done by passing the -G option to salt, specifying
+a grain and a glob expression to match the value of the grain. The syntax for
+the target is the grain key followed by a globexpression: &quot;os:Arch*&quot;.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt -G <span class="s1">&#39;os:Fedora&#39;</span> test.ping
+</pre></div>
+</div>
+<p>Will return True from all of the minions running Fedora.</p>
+<p>To discover what grains are available and what the values are, execute the
+grains.item salt function:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> grains.items
+</pre></div>
+</div>
+<p>more info on using targeting with grains can be found <a class="reference internal" href="grains.html#targeting-grains"><span>here</span></a>.</p>
+</div>
+<div class="section" id="targeting-with-executions">
+<h2>Targeting with Executions<a class="headerlink" href="#targeting-with-executions" title="永久链接至标题">¶</a></h2>
+<p>As of 0.8.8 targeting with executions is still under heavy development and this
+documentation is written to reference the behavior of execution matching in the
+future.</p>
+<p>Execution matching allows for a primary function to be executed, and then based
+on the return of the primary function the main function is executed.</p>
+<p>Execution matching allows for matching minions based on any arbitrary running
+data on the minions.</p>
+</div>
+<div class="section" id="compound-targeting">
+<h2>Compound Targeting<a class="headerlink" href="#compound-targeting" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">0.9.5 新版功能.</span></p>
+</div>
+<p>Multiple target interfaces can be used in conjunction to determine the command
+targets. These targets can then be combined using and or or statements. This
+is well defined with an example:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt -C <span class="s1">&#39;G@os:Debian and webser* or E@db.*&#39;</span> test.ping
+</pre></div>
+</div>
+<p>In this example any minion who's id starts with <code class="docutils literal"><span class="pre">webser</span></code> and is running
+Debian, or any minion who's id starts with db will be matched.</p>
+<p>The type of matcher defaults to glob, but can be specified with the
+corresponding letter followed by the <code class="docutils literal"><span class="pre">&#64;</span></code> symbol. In the above example a grain
+is used with <code class="docutils literal"><span class="pre">G&#64;</span></code> as well as a regular expression with <code class="docutils literal"><span class="pre">E&#64;</span></code>. The
+<code class="docutils literal"><span class="pre">webser*</span></code> target does not need to be prefaced with a target type specifier
+because it is a glob.</p>
+<p>more info on using compound targeting can be found <a class="reference internal" href="compound.html#targeting-compound"><span>here</span></a>.</p>
+</div>
+<div class="section" id="node-group-targeting">
+<h2>Node Group Targeting<a class="headerlink" href="#node-group-targeting" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">0.9.5 新版功能.</span></p>
+</div>
+<p>For certain cases, it can be convenient to have a predefined group of minions
+on which to execute commands. This can be accomplished using what are called
+<a class="reference internal" href="nodegroups.html#targeting-nodegroups"><span>nodegroups</span></a>. Nodegroups allow for predefined
+compound targets to be declared in the master configuration file, as a sort of
+shorthand for having to type out complicated compound expressions.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">nodegroups</span><span class="p p-Indicator">:</span>
+ <span class="l l-Scalar l-Scalar-Plain"> group1</span><span class="p p-Indicator">:</span> <span class="s">&#39;L@foo.domain.com,bar.domain.com,baz.domain.com</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">bl*.domain.com&#39;</span>
+ <span class="l l-Scalar l-Scalar-Plain"> group2</span><span class="p p-Indicator">:</span> <span class="s">&#39;G@os:Debian</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">foo.domain.com&#39;</span>
+ <span class="l l-Scalar l-Scalar-Plain"> group3</span><span class="p p-Indicator">:</span> <span class="s">&#39;G@os:Debian</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">N@group1&#39;</span>
+</pre></div>
+</div>
+<p>There are many ways to target individual minions or groups of minions in Salt:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="globbing.html">Matching the <code class="docutils literal"><span class="pre">minion</span> <span class="pre">id</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="globbing.html#globbing">Globbing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="globbing.html#regular-expressions">正则表达式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="globbing.html#lists">Lists</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="grains.html">Targeting using Grains</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pillar.html">Targeting using Pillar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ipcidr.html">Subnet/IP Address Matching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compound.html">Compound matchers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="compound.html#precedence-matching">Precedence Matching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="compound.html#alternate-delimiters">Alternate Delimiters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nodegroups.html">节点组</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nodegroups.html#using-nodegroups-in-sls-files">Using Nodegroups in SLS files</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="batch.html">Batch Size</a></li>
+<li class="toctree-l1"><a class="reference internal" href="range.html">SECO Range</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="range.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="range.html#preparing-salt">Preparing Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="range.html#targeting-with-range">Targeting with Range</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../tutorials/pillar.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Pillar 演练" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="globbing.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Matching the minion id" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../using_salt.html">Using Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../grains/index.html">Grains</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pillar/index.html">在Pillar中存储静态数据</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Targeting Minions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#targeting-with-grains">Targeting with Grains</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#targeting-with-executions">Targeting with Executions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compound-targeting">Compound Targeting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#node-group-targeting">Node Group Targeting</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="globbing.html">Matching the <code class="docutils literal"><span class="pre">minion</span> <span class="pre">id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="grains.html">Targeting using Grains</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pillar.html">Targeting using Pillar</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ipcidr.html">Subnet/IP Address Matching</a></li>
+<li class="toctree-l4"><a class="reference internal" href="compound.html">Compound matchers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="nodegroups.html">节点组</a></li>
+<li class="toctree-l4"><a class="reference internal" href="batch.html">Batch Size</a></li>
+<li class="toctree-l4"><a class="reference internal" href="range.html">SECO Range</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../mine/index.html">Salt Mine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/runners/index.html">Runners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../engines/index.html">Salt Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../yaml/index.html">了解YAML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../troubleshooting/index.html">解决问题</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../faq.html">常见问题</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../best_practices.html">Salt Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.pillar.pepa</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+        <link rel="up" title="Full list of builtin pillar modules" href="index.html">
+        <link rel="next" title="salt.pillar.pillar_ldap" href="salt.pillar.pillar_ldap.html">
+        <link rel="prev" title="salt.pillar.neutron module" href="salt.pillar.neutron.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="salt.pillar.neutron.html" title="salt.pillar.neutron module">上一页</a>
+            
+        </li>
+        <li>
+            <a href="salt.pillar.pillar_ldap.html" title="salt.pillar.pillar_ldap">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.pillar.pepa">
+<span id="salt-pillar-pepa"></span><h1>salt.pillar.pepa<a class="headerlink" href="#module-salt.pillar.pepa" title="永久链接至标题">¶</a></h1>
+<div class="section" id="pepa">
+<h2>Pepa<a class="headerlink" href="#pepa" title="永久链接至标题">¶</a></h2>
+<p>Configuration templating for SaltStack using Hierarchical substitution and Jinja.</p>
+</div>
+<div class="section" id="configuring-pepa">
+<h2>Configuring Pepa<a class="headerlink" href="#configuring-pepa" title="永久链接至标题">¶</a></h2>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">extension_modules</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt/ext</span>
+
+<span class="l l-Scalar l-Scalar-Plain">ext_pillar</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pepa</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">resource</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">host</span>                <span class="c1"># Name of resource directory and sub-key in pillars</span>
+      <span class="l l-Scalar l-Scalar-Plain">sequence</span><span class="p p-Indicator">:</span>                     <span class="c1"># Sequence used for hierarchical substitution</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">hostname</span><span class="p p-Indicator">:</span>                 <span class="c1"># Name of key</span>
+            <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">input</span>             <span class="c1"># Alias used for template directory</span>
+            <span class="l l-Scalar l-Scalar-Plain">base_only</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>         <span class="c1"># Only use templates from Base environment, i.e. no staging</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">default</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">environment</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">location..region</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">region</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">location..country</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">country</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">location..datacenter</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">datacenter</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">roles</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">osfinger</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">os</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">hostname</span><span class="p p-Indicator">:</span>
+            <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">override</span>
+            <span class="l l-Scalar l-Scalar-Plain">base_only</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+      <span class="l l-Scalar l-Scalar-Plain">subkey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>                  <span class="c1"># Create a sub-key in pillars, named after the resource in this case [host]</span>
+      <span class="l l-Scalar l-Scalar-Plain">subkey_only</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>             <span class="c1"># Only create a sub-key, and leave the top level untouched</span>
+
+<span class="l l-Scalar l-Scalar-Plain">pepa_roots</span><span class="p p-Indicator">:</span>                         <span class="c1"># Base directory for each environment</span>
+  <span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/srv/pepa/base</span>              <span class="c1"># Path for base environment</span>
+  <span class="l l-Scalar l-Scalar-Plain">dev</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/srv/pepa/base</span>               <span class="c1"># Associate dev with base</span>
+  <span class="l l-Scalar l-Scalar-Plain">qa</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/srv/pepa/qa</span>
+  <span class="l l-Scalar l-Scalar-Plain">prod</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/srv/pepa/prod</span>
+
+<span class="c1"># Use a different delimiter for nested dictionaries, defaults to &#39;..&#39; since some keys may use &#39;.&#39; in the name</span>
+<span class="c1">#pepa_delimiter: ..</span>
+
+<span class="c1"># Supply Grains for Pepa, this should **ONLY** be used for testing or validation</span>
+<span class="c1">#pepa_grains:</span>
+<span class="c1">#  environment: dev</span>
+
+<span class="c1"># Supply Pillar for Pepa, this should **ONLY** be used for testing or validation</span>
+<span class="c1">#pepa_pillars:</span>
+<span class="c1">#  saltversion: 0.17.4</span>
+
+<span class="c1"># Enable debug for Pepa, and keep Salt on warning</span>
+<span class="c1">#log_level: debug</span>
+
+<span class="c1">#log_granular_levels:</span>
+<span class="c1">#  salt: warning</span>
+<span class="c1">#  salt.loaded.ext.pillar.pepa: debug</span>
+</pre></div>
+</div>
+<p>Pepa can also be used in Master-less SaltStack setup.</p>
+</div>
+<div class="section" id="command-line">
+<h2>Command line<a class="headerlink" href="#command-line" title="永久链接至标题">¶</a></h2>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>usage: pepa.py <span class="o">[</span>-h<span class="o">]</span> <span class="o">[</span>-c CONFIG<span class="o">]</span> <span class="o">[</span>-d<span class="o">]</span> <span class="o">[</span>-g GRAINS<span class="o">]</span> <span class="o">[</span>-p PILLAR<span class="o">]</span> <span class="o">[</span>-n<span class="o">]</span> <span class="o">[</span>-v<span class="o">]</span>
+               hostname
+
+positional arguments:
+  hostname              Hostname
+
+optional arguments:
+  -h, --help            show this <span class="nb">help</span> message and <span class="nb">exit</span>
+  -c CONFIG, --config CONFIG
+                        Configuration file
+  -d, --debug           Print debug info
+  -g GRAINS, --grains GRAINS
+                        Input Grains as YAML
+  -p PILLAR, --pillar PILLAR
+                        Input Pillar as YAML
+  -n, --no-color        No color output
+  -v, --validate        Validate output
+</pre></div>
+</div>
+</div>
+<div class="section" id="templates">
+<h2>Templates<a class="headerlink" href="#templates" title="永久链接至标题">¶</a></h2>
+<p>Templates is configuration for a host or software, that can use information from Grains or Pillars. These can then be used for hierarchically substitution.</p>
+<p><strong>Example File:</strong> host/input/test_example_com.yaml</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">location..region</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">emea</span>
+<span class="l l-Scalar l-Scalar-Plain">location..country</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">nl</span>
+<span class="l l-Scalar l-Scalar-Plain">location..datacenter</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">foobar</span>
+<span class="l l-Scalar l-Scalar-Plain">environment</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">dev</span>
+<span class="l l-Scalar l-Scalar-Plain">roles</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt.master</span>
+<span class="l l-Scalar l-Scalar-Plain">network..gateway</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10.0.0.254</span>
+<span class="l l-Scalar l-Scalar-Plain">network..interfaces..eth0..hwaddr</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">00:20:26:a1:12:12</span>
+<span class="l l-Scalar l-Scalar-Plain">network..interfaces..eth0..dhcp</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+<span class="l l-Scalar l-Scalar-Plain">network..interfaces..eth0..ipv4</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10.0.0.3</span>
+<span class="l l-Scalar l-Scalar-Plain">network..interfaces..eth0..netmask</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">255.255.255.0</span>
+<span class="l l-Scalar l-Scalar-Plain">network..interfaces..eth0..fqdn</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{{</span> <span class="nv">hostname</span> <span class="p p-Indicator">}}</span>
+<span class="l l-Scalar l-Scalar-Plain">cobbler..profile</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">fedora-19-x86_64</span>
+</pre></div>
+</div>
+<p>As you see in this example you can use Jinja directly inside the template.</p>
+<p><strong>Example File:</strong> host/region/amer.yaml</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">network..dns..servers</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">10.0.0.1</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">10.0.0.2</span>
+<span class="l l-Scalar l-Scalar-Plain">time..ntp..servers</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ntp1.amer.example.com</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ntp2.amer.example.com</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ntp3.amer.example.com</span>
+<span class="l l-Scalar l-Scalar-Plain">time..timezone</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">America/Chihuahua</span>
+<span class="l l-Scalar l-Scalar-Plain">yum..mirror</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">yum.amer.example.com</span>
+</pre></div>
+</div>
+<p>Each template is named after the value of the key using lowercase and all extended characters are replaced with underscore.</p>
+<p><strong>Example:</strong></p>
+<p>osfinger: Fedora-19</p>
+<p><strong>Would become:</strong></p>
+<p>fedora_19.yaml</p>
+</div>
+<div class="section" id="nested-dictionaries">
+<h2>Nested dictionaries<a class="headerlink" href="#nested-dictionaries" title="永久链接至标题">¶</a></h2>
+<p>In order to create nested dictionaries as output you can use double dot <strong>&quot;..&quot;</strong> as a delimiter. You can change this using &quot;pepa_delimiter&quot; we choose double dot since single dot is already used by key names in some modules, and using &quot;:&quot; requires quoting in the YAML.</p>
+<p><strong>Example:</strong></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">network..dns..servers</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">10.0.0.1</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">10.0.0.2</span>
+<span class="l l-Scalar l-Scalar-Plain">network..dns..options</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">timeout:2</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">attempts:1</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ndots:1</span>
+<span class="l l-Scalar l-Scalar-Plain">network..dns..search</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">example.com</span>
+</pre></div>
+</div>
+<p><strong>Would become:</strong></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">network</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">dns</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">servers</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">10.0.0.1</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">10.0.0.2</span>
+    <span class="l l-Scalar l-Scalar-Plain">options</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">timeout:2</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">attempts:1</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ndots:1</span>
+    <span class="l l-Scalar l-Scalar-Plain">search</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">example.com</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="operators">
+<h2>Operators<a class="headerlink" href="#operators" title="永久链接至标题">¶</a></h2>
+<p>Operators can be used to merge/unset a list/hash or set the key as immutable, so it can't be changed.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="81%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Operator</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>merge()</td>
+<td>Merge list or hash</td>
+</tr>
+<tr class="row-odd"><td>unset()</td>
+<td>Unset key</td>
+</tr>
+<tr class="row-even"><td>immutable()</td>
+<td>Set the key as immutable, so it can't be changed</td>
+</tr>
+<tr class="row-odd"><td>imerge()</td>
+<td>Set immutable and merge</td>
+</tr>
+<tr class="row-even"><td>iunset()</td>
+<td>Set immutable and unset</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example:</strong></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">network..dns..search..merge()</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">foobar.com</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">dummy.nl</span>
+<span class="l l-Scalar l-Scalar-Plain">owner..immutable()</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Operations</span>
+<span class="l l-Scalar l-Scalar-Plain">host..printers..unset()</span><span class="p p-Indicator">:</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="validation">
+<h2>Validation<a class="headerlink" href="#validation" title="永久链接至标题">¶</a></h2>
+<p>Since it's very hard to test Jinja as is, the best approach is to run all the permutations of input and validate the output, i.e. Unit Testing.</p>
+<p>To facilitate this in Pepa we use YAML, Jinja and Cerberus &lt;<a class="reference external" href="https://github.com/nicolaiarocci/cerberus">https://github.com/nicolaiarocci/cerberus</a>&gt;.</p>
+</div>
+<div class="section" id="schema">
+<h2>Schema<a class="headerlink" href="#schema" title="永久链接至标题">¶</a></h2>
+<p>So this is a validation schema for network configuration, as you see it can be customized with Jinja just as Pepa templates.</p>
+<p>This was designed to be run as a build job in Jenkins or similar tool. You can provide Grains/Pillar input using either the config file or command line arguments.</p>
+<p><strong>File Example: host/validation/network.yaml</strong></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>network..dns..search:
+  type: list
+  allowed:
+    - example.com
+
+network..dns..options:
+  type: list
+  allowed: [&#39;timeout:2&#39;, &#39;attempts:1&#39;, &#39;ndots:1&#39;]
+
+network..dns..servers:
+  type: list
+  schema:
+    regex: ^([0-9]{1,3}\.){3}[0-9]{1,3}$
+
+network..gateway:
+  type: string
+  regex: ^([0-9]{1,3}\.){3}[0-9]{1,3}$
+
+{% if network.interfaces is defined %}
+{% for interface in network.interfaces %}
+
+network..interfaces..{{ interface }}..dhcp:
+  type: boolean
+
+network..interfaces..{{ interface }}..fqdn:
+  type: string
+  regex: ^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-zA-Z]{2,6}$
+
+network..interfaces..{{ interface }}..hwaddr:
+  type: string
+  regex: ^([0-9a-f]{1,2}\:){5}[0-9a-f]{1,2}$
+
+network..interfaces..{{ interface }}..ipv4:
+  type: string
+  regex: ^([0-9]{1,3}\.){3}[0-9]{1,3}$
+
+network..interfaces..{{ interface }}..netmask:
+  type: string
+  regex: ^([0-9]{1,3}\.){3}[0-9]{1,3}$
+
+{% endfor %}
+{% endif %}
+</pre></div>
+</div>
+</div>
+<div class="section" id="links">
+<h2>Links<a class="headerlink" href="#links" title="永久链接至标题">¶</a></h2>
+<p>For more examples and information see &lt;<a class="reference external" href="https://github.com/mickep76/pepa">https://github.com/mickep76/pepa</a>&gt;.</p>
+<dl class="function">
+<dt id="salt.pillar.pepa.ext_pillar">
+<code class="descclassname">salt.pillar.pepa.</code><code class="descname">ext_pillar</code><span class="sig-paren">(</span><em>minion_id</em>, <em>pillar</em>, <em>resource</em>, <em>sequence</em>, <em>subkey=False</em>, <em>subkey_only=False</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.pillar.pepa.ext_pillar" title="永久链接至目标">¶</a></dt>
+<dd><p>Evaluate Pepa templates</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.pillar.pepa.key_value_to_tree">
+<code class="descclassname">salt.pillar.pepa.</code><code class="descname">key_value_to_tree</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.pillar.pepa.key_value_to_tree" title="永久链接至目标">¶</a></dt>
+<dd><p>Convert key/value to tree</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.pillar.pepa.validate">
+<code class="descclassname">salt.pillar.pepa.</code><code class="descname">validate</code><span class="sig-paren">(</span><em>output</em>, <em>resource</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.pillar.pepa.validate" title="永久链接至目标">¶</a></dt>
+<dd><p>Validate Pepa templates</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+                            </div>
+                            <a href="salt.pillar.neutron.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.pillar.neutron module" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="salt.pillar.pillar_ldap.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.pillar.pillar_ldap" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Salt Module Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../auth/all/index.html">内建身份认证模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../beacons/all/index.html">Full list of builtin beacon modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../engines/all/index.html">Full list of builtin engine modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../file_server/all/index.html">文件服务内置模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../grains/all/index.html">Full list of builtin grains modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/all/index.html">Full list of builtin execution modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../netapi/all/index.html">Full list of netapi modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../output/all/index.html">完整的内置输出模块的列表</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Full list of builtin pillar modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.cmd_json.html">salt.pillar.cmd_json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.cmd_yaml.html">salt.pillar.cmd_yaml</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.cmd_yamlex.html">salt.pillar.cmd_yamlex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.cobbler.html">salt.pillar.cobbler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.consul_pillar.html">salt.pillar.consul_pillar module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.django_orm.html">salt.pillar.django_orm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.ec2_pillar.html">salt.pillar.ec2_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.etcd_pillar.html">salt.pillar.etcd_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.file_tree.html">salt.pillar.file_tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.foreman.html">salt.pillar.foreman</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.git_pillar.html">salt.pillar.git_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.hg_pillar.html">salt.pillar.hg_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.hiera.html">salt.pillar.hiera</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.http_yaml.html">salt.pillar.http_yaml module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.libvirt.html">salt.pillar.libvirt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.mongo.html">salt.pillar.mongo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.mysql.html">salt.pillar.mysql</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.neutron.html">salt.pillar.neutron module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">salt.pillar.pepa</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pepa">Pepa</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configuring-pepa">Configuring Pepa</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#command-line">Command line</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#templates">Templates</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nested-dictionaries">Nested dictionaries</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#operators">Operators</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#validation">Validation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#schema">Schema</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#links">Links</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.pillar_ldap.html">salt.pillar.pillar_ldap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.puppet.html">salt.pillar.puppet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.reclass_adapter.html">salt.pillar.reclass_adapter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.redismod.html">salt.pillar.redismod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.s3.html">salt.pillar.s3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.sql_base.html">salt.pillar.sql_base module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.sqlcipher.html">salt.pillar.sqlcipher module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.sqlite3.html">salt.pillar.sqlite3 module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.stack.html">salt.pillar.stack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.svn_pillar.html">salt.pillar.svn_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.varstack_pillar.html">salt.pillar.varstack_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.virtkey.html">salt.pillar.virtkey</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../proxy/all/index.html">Full list of builtin proxy modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../queues/all/index.html">Full list of builtin queues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../renderers/all/index.html">Full list of builtin renderer modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../returners/all/index.html">所有内置的返回接收器模块列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../roster/all/index.html">Full list of builtin roster modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../runners/all/index.html">Full list of runner modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sdb/all/index.html">Full list of builtin sdb modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../serializers/all/index.html">Full list of builtin serializers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../states/all/index.html">所有内置的state模块列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tops/all/index.html">master内置顶级模块的全部列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../wheel/all/index.html">Full list of builtin wheel modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

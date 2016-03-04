@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Multi-Master-PKI Tutorial With Failover</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Architecture" href="../topology/index.html">
+        <link rel="next" title="Windows" href="../windows/index.html">
+        <link rel="prev" title="Multi Master Tutorial" href="multimaster.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="multimaster.html" title="Multi Master Tutorial">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../windows/index.html" title="Windows">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="multi-master-pki-tutorial-with-failover">
+<h1>Multi-Master-PKI Tutorial With Failover<a class="headerlink" href="#multi-master-pki-tutorial-with-failover" title="永久链接至标题">¶</a></h1>
+<p>This tutorial will explain, how to run a salt-environment where a single
+minion can have multiple masters and fail-over between them if its current
+master fails.</p>
+<p>The individual steps are</p>
+<ul>
+<li><p class="first">setup the master(s) to sign its auth-replies</p>
+</li>
+<li><p class="first">setup minion(s) to verify master-public-keys</p>
+</li>
+<li><p class="first">enable multiple masters on minion(s)</p>
+</li>
+<li><p class="first">enable master-check on  minion(s)</p>
+<blockquote>
+<div><p>Please note, that it is advised to have good knowledge of the salt-
+authentication and communication-process to understand this tutorial.
+All of the settings described here, go on top of the default
+authentication/communication process.</p>
+</div></blockquote>
+</li>
+</ul>
+<div class="section" id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="永久链接至标题">¶</a></h2>
+<p>The default behaviour of a salt-minion is to connect to a master and accept
+the masters public key. With each publication, the master sends his public-key
+for the minion to check and if this public-key ever changes, the minion
+complains and exits. Practically this means, that there can only be a single
+master at any given time.</p>
+<p>Would it not be much nicer, if the minion could have any number of masters
+(1:n) and jump to the next master if its current master died because of a
+network or hardware failure?</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">There is also a MultiMaster-Tutorial with a different approach and topology
+than this one, that might also suite your needs or might even be better suited
+<a class="reference external" href="http://docs.saltstack.com/en/latest/topics/tutorials/multimaster.html">Multi-Master Tutorial</a></p>
+</div>
+<p>It is also desirable, to add some sort of authenticity-check to the very first
+public key a minion receives from a master. Currently a minions takes the
+first masters public key for granted.</p>
+</div>
+<div class="section" id="the-goal">
+<h2>The Goal<a class="headerlink" href="#the-goal" title="永久链接至标题">¶</a></h2>
+<p>Setup the master to sign the public key it sends to the minions and enable the
+minions to verify this signature for authenticity.</p>
+</div>
+<div class="section" id="prepping-the-master-to-sign-its-public-key">
+<h2>Prepping the master to sign its public key<a class="headerlink" href="#prepping-the-master-to-sign-its-public-key" title="永久链接至标题">¶</a></h2>
+<p>For signing to work, both master and minion must have the signing and/or
+verification settings enabled. If the master signs the public key but the
+minion does not verify it, the minion will complain and exit. The same
+happens, when the master does not sign but the minion tries to verify.</p>
+<p>The easiest way to have the master sign its public key is to set</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master_sign_pubkey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>After restarting the salt-master service, the master will automatically
+generate a new key-pair</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master_sign.pem</span>
+<span class="l l-Scalar l-Scalar-Plain">master_sign.pub</span>
+</pre></div>
+</div>
+<p>A custom name can be set for the signing key-pair by setting</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master_sign_key_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;name_without_suffix&gt;</span>
+</pre></div>
+</div>
+<p>The master will then generate that key-pair upon restart and use it for
+creating the public keys signature attached to the auth-reply.</p>
+<p>The computation is done for every auth-request of a minion. If many minions
+auth very often, it is advised to use conf_master:<cite>master_pubkey_signature</cite>
+and conf_master:<cite>master_use_pubkey_signature</cite> settings described below.</p>
+<p>If multiple masters are in use and should sign their auth-replies, the signing
+key-pair master_sign.* has to be copied to each master. Otherwise a minion
+will fail to verify the masters public when connecting to a different master
+than it did initially. That is because the public keys signature was created
+with a different signing key-pair.</p>
+</div>
+<div class="section" id="prepping-the-minion-to-verify-received-public-keys">
+<h2>Prepping the minion to verify received public keys<a class="headerlink" href="#prepping-the-minion-to-verify-received-public-keys" title="永久链接至标题">¶</a></h2>
+<p>The minion must have the public key (and only that one!) available to be
+able to verify a signature it receives. That public key (defaults to
+master_sign.pub) must be copied from the master to the minions pki-directory.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>/etc/salt/pki/minion/master_sign.pub
+
+DO NOT COPY THE master_sign.pem FILE. IT MUST STAY ON THE MASTER AND
+ONLY THERE!
+</pre></div>
+</div>
+<p>When that is done, enable the signature checking in the minions configuration</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">verify_master_pubkey_sign</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>and restart the minion. For the first try, the minion should be run in manual
+debug mode.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ salt-minion -l debug
+</pre></div>
+</div>
+<p>Upon connecting to the master, the following lines should appear on the output:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="o">[</span>DEBUG   <span class="o">]</span> Attempting to authenticate with the Salt Master at 172.16.0.10
+<span class="o">[</span>DEBUG   <span class="o">]</span> Loaded minion key: /etc/salt/pki/minion/minion.pem
+<span class="o">[</span>DEBUG   <span class="o">]</span> salt.crypt.verify_signature: Loading public key
+<span class="o">[</span>DEBUG   <span class="o">]</span> salt.crypt.verify_signature: Verifying signature
+<span class="o">[</span>DEBUG   <span class="o">]</span> Successfully verified signature of master public key with verification public key master_sign.pub
+<span class="o">[</span>INFO    <span class="o">]</span> Received signed and verified master pubkey from master 172.16.0.10
+<span class="o">[</span>DEBUG   <span class="o">]</span> Decrypting the current master AES key
+</pre></div>
+</div>
+<p>If the signature verification fails, something went wrong and it will look
+like this</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>[DEBUG   ] Attempting to authenticate with the Salt Master at 172.16.0.10
+[DEBUG   ] Loaded minion key: /etc/salt/pki/minion/minion.pem
+[DEBUG   ] salt.crypt.verify_signature: Loading public key
+[DEBUG   ] salt.crypt.verify_signature: Verifying signature
+[DEBUG   ] Failed to verify signature of public key
+[CRITICAL] The Salt Master server&#39;s public key did not authenticate!
+</pre></div>
+</div>
+<p>In a case like this, it should be checked, that the verification pubkey
+(master_sign.pub) on the minion is the same as the one on the master.</p>
+<p>Once the verification is successful, the minion can be started in daemon mode
+again.</p>
+<p>For the paranoid among us, its also possible to verify the public whenever it
+is received from the master. That is, for every single auth-attempt which can be
+quite frequent. For example just the start of the minion will force the signature
+to be checked 6 times for various things like auth, mine, highstate, etc.</p>
+<p>If that is desired, enable the setting</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">always_verify_signature</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="multiple-masters-for-a-minion">
+<h2>Multiple Masters For A Minion<a class="headerlink" href="#multiple-masters-for-a-minion" title="永久链接至标题">¶</a></h2>
+<p>Configuring multiple masters on a minion is done by specifying two settings:</p>
+<ul class="simple">
+<li>a list of masters addresses</li>
+<li>what type of master is defined</li>
+</ul>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">172.16.0.10</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">172.16.0.11</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">172.16.0.12</span>
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master_type</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">failover</span>
+</pre></div>
+</div>
+<p>This tells the minion that all the master above are available for it to
+connect to. When started with this configuration, it will try the master
+in the order they are defined. To randomize that order, set</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master_shuffle</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>The master-list will then be shuffled before the first connection attempt.</p>
+<p>The first master that accepts the minion, is used by the minion. If the
+master does not yet know the minion, that counts as accepted and the minion
+stays on that master.</p>
+<p>For the minion to be able to detect if its still connected to its current
+master enable the check for it</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master_alive_interval</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;seconds&gt;</span>
+</pre></div>
+</div>
+<p>If the loss of the connection is detected, the minion will temporarily
+remove the failed master from the list and try one of the other masters
+defined (again shuffled if that is enabled).</p>
+</div>
+<div class="section" id="testing-the-setup">
+<h2>Testing the setup<a class="headerlink" href="#testing-the-setup" title="永久链接至标题">¶</a></h2>
+<p>At least two running masters are needed to test the failover setup.</p>
+<p>Both masters should be running and the minion should be running on the command
+line in debug mode</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ salt-minion -l debug
+</pre></div>
+</div>
+<p>The minion will connect to the first master from its master list</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="o">[</span>DEBUG   <span class="o">]</span> Attempting to authenticate with the Salt Master at 172.16.0.10
+<span class="o">[</span>DEBUG   <span class="o">]</span> Loaded minion key: /etc/salt/pki/minion/minion.pem
+<span class="o">[</span>DEBUG   <span class="o">]</span> salt.crypt.verify_signature: Loading public key
+<span class="o">[</span>DEBUG   <span class="o">]</span> salt.crypt.verify_signature: Verifying signature
+<span class="o">[</span>DEBUG   <span class="o">]</span> Successfully verified signature of master public key with verification public key master_sign.pub
+<span class="o">[</span>INFO    <span class="o">]</span> Received signed and verified master pubkey from master 172.16.0.10
+<span class="o">[</span>DEBUG   <span class="o">]</span> Decrypting the current master AES key
+</pre></div>
+</div>
+<p>A test.ping on the master the minion is currently connected to should be run to
+test connectivity.</p>
+<p>If successful, that master should be turned off. A firewall-rule denying the
+minions packets will also do the trick.</p>
+<p>Depending on the configured conf_minion:<cite>master_alive_interval</cite>, the minion
+will notice the loss of the connection and log it to its logfile.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="o">[</span>INFO    <span class="o">]</span> Connection to master 172.16.0.10 lost
+<span class="o">[</span>INFO    <span class="o">]</span> Trying to tune in to next master from master-list
+</pre></div>
+</div>
+<p>The minion will then remove the current master from the list and try connecting
+to the next master</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="o">[</span>INFO    <span class="o">]</span> Removing possibly failed master 172.16.0.10 from list of masters
+<span class="o">[</span>WARNING <span class="o">]</span> Master ip address changed from 172.16.0.10 to 172.16.0.11
+<span class="o">[</span>DEBUG   <span class="o">]</span> Attempting to authenticate with the Salt Master at 172.16.0.11
+</pre></div>
+</div>
+<p>If everything is configured correctly, the new masters public key will be
+verified successfully</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="o">[</span>DEBUG   <span class="o">]</span> Loaded minion key: /etc/salt/pki/minion/minion.pem
+<span class="o">[</span>DEBUG   <span class="o">]</span> salt.crypt.verify_signature: Loading public key
+<span class="o">[</span>DEBUG   <span class="o">]</span> salt.crypt.verify_signature: Verifying signature
+<span class="o">[</span>DEBUG   <span class="o">]</span> Successfully verified signature of master public key with verification public key master_sign.pub
+</pre></div>
+</div>
+<p>the authentication with the new master is successful</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="o">[</span>INFO    <span class="o">]</span> Received signed and verified master pubkey from master 172.16.0.11
+<span class="o">[</span>DEBUG   <span class="o">]</span> Decrypting the current master AES key
+<span class="o">[</span>DEBUG   <span class="o">]</span> Loaded minion key: /etc/salt/pki/minion/minion.pem
+<span class="o">[</span>INFO    <span class="o">]</span> Authentication with master successful!
+</pre></div>
+</div>
+<p>and the minion can be pinged again from its new master.</p>
+</div>
+<div class="section" id="performance-tuning">
+<h2>Performance Tuning<a class="headerlink" href="#performance-tuning" title="永久链接至标题">¶</a></h2>
+<p>With the setup described above, the master computes a signature for every
+auth-request of a minion. With many minions and many auth-requests, that
+can chew up quite a bit of CPU-Power.</p>
+<p>To avoid that, the master can use a pre-created signature of its public-key.
+The signature is saved as a base64 encoded string which the master reads
+once when starting and attaches only that string to auth-replies.</p>
+<p>Enabling this also gives paranoid users the possibility, to have the signing
+key-pair on a different system than the actual salt-master and create the public
+keys signature there. Probably on a system with more restrictive firewall rules,
+without internet access, less users, etc.</p>
+<p>That signature can be created with</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ salt-key --gen-signature
+</pre></div>
+</div>
+<p>This will create a default signature file in the master pki-directory</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>/etc/salt/pki/master/master_pubkey_signature
+</pre></div>
+</div>
+<p>It is a simple text-file with the binary-signature converted to base64.</p>
+<p>If no signing-pair is present yet, this will auto-create the signing pair and
+the signature file in one call</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ salt-key --gen-signature --auto-create
+</pre></div>
+</div>
+<p>Telling the master to use the pre-created signature is done with</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master_use_pubkey_signature</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>That requires the file 'master_pubkey_signature' to be present in the masters
+pki-directory with the correct signature.</p>
+<p>If the signature file is named differently, its name can be set with</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master_pubkey_signature</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">&lt;filename&gt;</span>
+</pre></div>
+</div>
+<p>With many masters and many public-keys (default and signing), it is advised to
+use the salt-masters hostname for the signature-files name. Signatures can be
+easily confused because they do not provide any information about the key the
+signature was created from.</p>
+<p>Verifying that everything works is done the same way as above.</p>
+</div>
+<div class="section" id="how-the-signing-and-verification-works">
+<h2>How the signing and verification works<a class="headerlink" href="#how-the-signing-and-verification-works" title="永久链接至标题">¶</a></h2>
+<p>The default key-pair of the salt-master is</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">/etc/salt/pki/master/master.pem</span>
+<span class="l l-Scalar l-Scalar-Plain">/etc/salt/pki/master/master.pub</span>
+</pre></div>
+</div>
+<p>To be able to create a signature of a message (in this case a public-key),
+another key-pair has to be added to the setup. Its default name is:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master_sign.pem</span>
+<span class="l l-Scalar l-Scalar-Plain">master_sign.pub</span>
+</pre></div>
+</div>
+<p>The combination of the master.* and master_sign.* key-pairs give the
+possibility of generating signatures. The signature of a given message
+is unique and can be verified, if the public-key of the signing-key-pair
+is available to the recipient (the minion).</p>
+<p>The signature of the masters public-key in master.pub is computed with</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master_sign.pem</span>
+<span class="l l-Scalar l-Scalar-Plain">master.pub</span>
+<span class="l l-Scalar l-Scalar-Plain">M2Crypto.EVP.sign_update()</span>
+</pre></div>
+</div>
+<p>This results in a binary signature which is converted to base64 and attached
+to the auth-reply send to the minion.</p>
+<p>With the signing-pairs public-key available to the minion, the attached
+signature can be verified with</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master_sign.pub</span>
+<span class="l l-Scalar l-Scalar-Plain">master.pub</span>
+<span class="l l-Scalar l-Scalar-Plain">M2Cryptos EVP.verify_update().</span>
+</pre></div>
+</div>
+<p>When running multiple masters, either the signing key-pair has to be present
+on all of them, or the master_pubkey_signature has to be pre-computed for
+each master individually (because they all have different public-keys).</p>
+<blockquote>
+<div>DO NOT PUT THE SAME master.pub ON ALL MASTERS FOR EASE OF USE.</div></blockquote>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="multimaster.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Multi Master Tutorial" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../windows/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Windows" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../topology/index.html">Architecture</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../highavailability/index.html">High Availability Features in Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../topology/syndic.html">Salt Syndic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro_scale.html">Using Salt at scale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multimaster.html">Multi Master Tutorial</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Multi-Master-PKI Tutorial With Failover</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#motivation">Motivation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-goal">The Goal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prepping-the-master-to-sign-its-public-key">Prepping the master to sign its public key</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prepping-the-minion-to-verify-received-public-keys">Prepping the minion to verify received public keys</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multiple-masters-for-a-minion">Multiple Masters For A Minion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#testing-the-setup">Testing the setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#performance-tuning">Performance Tuning</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#how-the-signing-and-verification-works">How the signing and verification works</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

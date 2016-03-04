@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt 2016.3.0 Release Notes - Codename Boron</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Release Notes" href="index.html">
+        <link rel="next" title="Salt 2015.8.0 Release Notes - Codename Beryllium" href="2015.8.0.html">
+        <link rel="prev" title="Release Notes" href="index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="index.html" title="Release Notes">上一页</a>
+            
+        </li>
+        <li>
+            <a href="2015.8.0.html" title="Salt 2015.8.0 Release Notes - Codename Beryllium">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="salt-2016-3-0-release-notes-codename-boron">
+<h1>Salt 2016.3.0 Release Notes - Codename Boron<a class="headerlink" href="#salt-2016-3-0-release-notes-codename-boron" title="永久链接至标题">¶</a></h1>
+<div class="section" id="backwards-incompatible-changes">
+<h2>Backwards-incompatible Changes<a class="headerlink" href="#backwards-incompatible-changes" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>The default path for the <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-extension_modules"><code class="xref std std-conf_master docutils literal"><span class="pre">extension_modules</span></code></a> master config
+option has been changed.  Prior to this release, the location was a directory
+named <code class="docutils literal"><span class="pre">extmods</span></code> in the Salt cachedir. On most platforms, this would put the
+<a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-extension_modules"><code class="xref std std-conf_master docutils literal"><span class="pre">extension_modules</span></code></a> directory in <code class="docutils literal"><span class="pre">/var/cache/salt/extmods</span></code>.
+It has been moved one directory down, into the master cachedir. On most
+platforms, this is <code class="docutils literal"><span class="pre">/var/cache/salt/master/extmods</span></code>. Most users won't have
+to worry about this, but those who have been manually placing custom runners
+into <code class="docutils literal"><span class="pre">/var/cache/salt/extmods/runners</span></code>, or ouputters into
+<code class="docutils literal"><span class="pre">/var/cache/salt/extmods/output</span></code>, etc. will be affected by this. To
+transition, it is recommended not to simply move the extmods directory into
+<code class="docutils literal"><span class="pre">/var/cache/salt/master</span></code>, but to copy the custom modules into the salt
+fileserver under <code class="docutils literal"><span class="pre">salt://_runners</span></code>, <code class="docutils literal"><span class="pre">salt://_output</span></code>, etc. and sync them
+using the functions in the new <a class="reference internal" href="../../ref/runners/all/salt.runners.saltutil.html#module-salt.runners.saltutil" title="salt.runners.saltutil"><code class="xref py py-mod docutils literal"><span class="pre">saltutil</span> <span class="pre">runner</span></code></a>.</li>
+</ul>
+</div>
+<div class="section" id="core-changes">
+<h2>Core Changes<a class="headerlink" href="#core-changes" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>The onchanges requisite now fires if _any_ watched state changes. Refs #19592.</li>
+<li>The <code class="docutils literal"><span class="pre">ext_pillar</span></code> functions <strong>must</strong> now accept a minion ID as the first
+argument. This stops the deprecation path started in Salt 0.17.x. Before this
+minion ID first argument was introduced, the minion ID could be retrieved
+accessing <code class="docutils literal"><span class="pre">__opts__['id']</span></code> loosing the reference to the master ID initially
+set in opts. This is no longer the case, <code class="docutils literal"><span class="pre">__opts__['id']</span></code> will be kept as
+the master ID.</li>
+<li>Custom types can now be synced to the master using the new <a class="reference internal" href="../../ref/runners/all/salt.runners.saltutil.html#module-salt.runners.saltutil" title="salt.runners.saltutil"><code class="xref py py-mod docutils literal"><span class="pre">saltutil</span>
+<span class="pre">runner</span></code></a>. Before, these needed to manually be placed
+under the <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-extension_modules"><code class="xref std std-conf_master docutils literal"><span class="pre">extension_modules</span></code></a> directory. This allows custom
+modules to easily be synced to the master to make them available when
+compiling Pillar data. Just place custom runners into <code class="docutils literal"><span class="pre">salt://_runners</span></code>,
+custom outputters into <code class="docutils literal"><span class="pre">salt://_output</span></code>, etc. and use the functions from
+the <a class="reference internal" href="../../ref/runners/all/salt.runners.saltutil.html#module-salt.runners.saltutil" title="salt.runners.saltutil"><code class="xref py py-mod docutils literal"><span class="pre">saltutil</span> <span class="pre">runner</span></code></a> to sync them.</li>
+<li>the <cite>client_acl</cite> configuration options were renamed to <cite>publisher_acl</cite>.
+todo: describe the new behavior of <cite>publisher_acl</cite></li>
+</ul>
+</div>
+<div class="section" id="external-module-packaging">
+<h2>External Module Packaging<a class="headerlink" href="#external-module-packaging" title="永久链接至标题">¶</a></h2>
+<p>Modules may now be packaged via entry-points in setuptools. See
+<code class="xref doc docutils literal"><span class="pre">external</span> <span class="pre">module</span> <span class="pre">packaging</span> <span class="pre">&lt;/topics/tutorials/packaging_modules</span></code> tutorial
+for more information.</p>
+</div>
+<div class="section" id="cloud-changes">
+<h2>Cloud Changes<a class="headerlink" href="#cloud-changes" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>Refactored the OpenNebula driver and added numerous <a href="#id1"><span class="problematic" id="id2">``</span></a>--function``s and
+<a href="#id3"><span class="problematic" id="id4">``</span></a>--action``s to enhance Salt support for image, template, security group,
+virtual network and virtual machine management in OpenNebula.</li>
+</ul>
+</div>
+<div class="section" id="platform-changes">
+<h2>Platform Changes<a class="headerlink" href="#platform-changes" title="永久链接至标题">¶</a></h2>
+<ul class="simple">
+<li>Renamed modules related to OS X. The following module filenames were changed.
+The virtual name remained unchanged.</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/30558">#30558</a>: renamed osxdesktop.py to mac_desktop.py</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/30557">#30557</a>: renamed macports.py to mac_ports.py</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/30556">#30556</a>: renamed darwin_sysctl.py to mac_sysctl.py</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/30555">#30555</a>: renamed brew.py to mac_brew.py</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/30552">#30552</a>: renamed darwin_pkgutil.py to mac_pkgutil.py</li>
+</ul>
+</div>
+<div class="section" id="new-features">
+<h2>New Features<a class="headerlink" href="#new-features" title="永久链接至标题">¶</a></h2>
+<div class="section" id="thorium-provisional-new-reactor">
+<h3>Thorium - Provisional New Reactor<a class="headerlink" href="#thorium-provisional-new-reactor" title="永久链接至标题">¶</a></h3>
+<p>The 2016.3 release introduces the new Thorium Reactor. This reactor is an
+experimental new feature that implements a flow programing interface using
+the salt state system as the engine. This means that the Thorium reactor uses
+a classic state tree approach to create a reactor that can aggregate event
+data from multiple sources and make aggregate decisions about executing
+reactions.</p>
+<p>This feature is both experimental and provisional, it may be removed and apis
+may be changed. This system should be considered as ambitious as the Salt
+State System in that the scope of adding a programmable logic engine of
+this scale into the event systems is non trivial.</p>
+</div>
+<div class="section" id="simplified-custom-module-deployment">
+<h3>Simplified Custom Module Deployment<a class="headerlink" href="#simplified-custom-module-deployment" title="永久链接至标题">¶</a></h3>
+<p><a class="reference internal" href="../../ref/runners/all/salt.runners.saltutil.html#module-salt.runners.saltutil" title="salt.runners.saltutil"><code class="xref py py-mod docutils literal"><span class="pre">saltutil</span> <span class="pre">runner</span></code></a></p>
+</div>
+<div class="section" id="improved-mac-os-support">
+<h3>Improved Mac OS Support<a class="headerlink" href="#improved-mac-os-support" title="永久链接至标题">¶</a></h3>
+</div>
+<div class="section" id="tornado-transport">
+<h3>Tornado Transport<a class="headerlink" href="#tornado-transport" title="永久链接至标题">¶</a></h3>
+</div>
+<div class="section" id="windows-dsc-integration-experiemental">
+<h3>Windows DSC Integration (Experiemental)<a class="headerlink" href="#windows-dsc-integration-experiemental" title="永久链接至标题">¶</a></h3>
+</div>
+<div class="section" id="dimension-data-cloud-support">
+<h3>Dimension Data Cloud Support<a class="headerlink" href="#dimension-data-cloud-support" title="永久链接至标题">¶</a></h3>
+</div>
+<div class="section" id="minion-blackout">
+<h3>Minion Blackout<a class="headerlink" href="#minion-blackout" title="永久链接至标题">¶</a></h3>
+</div>
+</div>
+<div class="section" id="new-modules">
+<h2>New Modules<a class="headerlink" href="#new-modules" title="永久链接至标题">¶</a></h2>
+<p>The following list contains a link to the new modules added in this release.
+Many additional modules were updated with new functionality, these changes are
+indicated with <code class="docutils literal"><span class="pre">New</span> <span class="pre">in</span> <span class="pre">version</span> <span class="pre">Boron</span></code> throughout the documentation.</p>
+<div class="section" id="beacons">
+<h3>Beacons<a class="headerlink" href="#beacons" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><a class="reference internal" href="../../ref/beacons/all/salt.beacons.adb.html#module-salt.beacons.adb" title="salt.beacons.adb"><code class="xref py py-mod docutils literal"><span class="pre">beacons.adb</span></code></a></li>
+<li><a class="reference internal" href="../../ref/beacons/all/salt.beacons.memusage.html#module-salt.beacons.memusage" title="salt.beacons.memusage"><code class="xref py py-mod docutils literal"><span class="pre">beacons.memusage</span></code></a></li>
+<li><code class="xref py py-mod docutils literal"><span class="pre">beacons.network_settings</span></code></li>
+<li><a class="reference internal" href="../../ref/beacons/all/salt.beacons.proxy_example.html#module-salt.beacons.proxy_example" title="salt.beacons.proxy_example"><code class="xref py py-mod docutils literal"><span class="pre">beacons.proxy_example</span></code></a></li>
+<li><a class="reference internal" href="../../ref/beacons/all/salt.beacons.salt_proxy.html#module-salt.beacons.salt_proxy" title="salt.beacons.salt_proxy"><code class="xref py py-mod docutils literal"><span class="pre">beacons.salt_proxy</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="engines">
+<h3>Engines<a class="headerlink" href="#engines" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><a class="reference internal" href="../../ref/engines/all/salt.engines.docker_events.html#module-salt.engines.docker_events" title="salt.engines.docker_events"><code class="xref py py-mod docutils literal"><span class="pre">engines.docker_events</span></code></a></li>
+<li><a class="reference internal" href="../../ref/engines/all/salt.engines.redis_sentinel.html#module-salt.engines.redis_sentinel" title="salt.engines.redis_sentinel"><code class="xref py py-mod docutils literal"><span class="pre">engines.redis_sentinel</span></code></a></li>
+<li><a class="reference internal" href="../../ref/engines/all/salt.engines.slack.html#module-salt.engines.slack" title="salt.engines.slack"><code class="xref py py-mod docutils literal"><span class="pre">engines.slack</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="execution-modules">
+<h3>Execution Modules<a class="headerlink" href="#execution-modules" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.bcache.html#module-salt.modules.bcache" title="salt.modules.bcache"><code class="xref py py-mod docutils literal"><span class="pre">modules.bcache</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.boto_cloudtrail.html#module-salt.modules.boto_cloudtrail" title="salt.modules.boto_cloudtrail"><code class="xref py py-mod docutils literal"><span class="pre">modules.boto_cloudtrail</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.boto_datapipeline.html#module-salt.modules.boto_datapipeline" title="salt.modules.boto_datapipeline"><code class="xref py py-mod docutils literal"><span class="pre">modules.boto_datapipeline</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.boto_iot.html#module-salt.modules.boto_iot" title="salt.modules.boto_iot"><code class="xref py py-mod docutils literal"><span class="pre">modules.boto_iot</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.boto_lambda.html#module-salt.modules.boto_lambda" title="salt.modules.boto_lambda"><code class="xref py py-mod docutils literal"><span class="pre">modules.boto_lambda</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.chronos.html#module-salt.modules.chronos" title="salt.modules.chronos"><code class="xref py py-mod docutils literal"><span class="pre">modules.chronos</span></code></a></li>
+<li><code class="xref py py-mod docutils literal"><span class="pre">modules.cytest</span></code></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.dockercompose.html#module-salt.modules.dockercompose" title="salt.modules.dockercompose"><code class="xref py py-mod docutils literal"><span class="pre">modules.dockercompose</span></code></a></li>
+<li><code class="xref py py-mod docutils literal"><span class="pre">modules.dsc</span></code></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.ethtool.html#module-salt.modules.ethtool" title="salt.modules.ethtool"><code class="xref py py-mod docutils literal"><span class="pre">modules.ethtool</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.github.html#module-salt.modules.github" title="salt.modules.github"><code class="xref py py-mod docutils literal"><span class="pre">modules.github</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.iwtools.html#module-salt.modules.iwtools" title="salt.modules.iwtools"><code class="xref py py-mod docutils literal"><span class="pre">modules.iwtools</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.jenkins.html#module-salt.modules.jenkins" title="salt.modules.jenkins"><code class="xref py py-mod docutils literal"><span class="pre">modules.jenkins</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.linux_ip.html#module-salt.modules.linux_ip" title="salt.modules.linux_ip"><code class="xref py py-mod docutils literal"><span class="pre">modules.linux_ip</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.mac_shadow.html#module-salt.modules.mac_shadow" title="salt.modules.mac_shadow"><code class="xref py py-mod docutils literal"><span class="pre">modules.mac_shadow</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.mac_softwareupdate.html#module-salt.modules.mac_softwareupdate" title="salt.modules.mac_softwareupdate"><code class="xref py py-mod docutils literal"><span class="pre">modules.mac_softwareupdate</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.marathon.html#module-salt.modules.marathon" title="salt.modules.marathon"><code class="xref py py-mod docutils literal"><span class="pre">modules.marathon</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.minion.html#module-salt.modules.minion" title="salt.modules.minion"><code class="xref py py-mod docutils literal"><span class="pre">modules.minion</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.openvswitch.html#module-salt.modules.openvswitch" title="salt.modules.openvswitch"><code class="xref py py-mod docutils literal"><span class="pre">modules.openvswitch</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.opkg.html#module-salt.modules.opkg" title="salt.modules.opkg"><code class="xref py py-mod docutils literal"><span class="pre">modules.opkg</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.philips_hue.html#module-salt.modules.philips_hue" title="salt.modules.philips_hue"><code class="xref py py-mod docutils literal"><span class="pre">modules.philips_hue</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.pushbullet.html#module-salt.modules.pushbullet" title="salt.modules.pushbullet"><code class="xref py py-mod docutils literal"><span class="pre">modules.pushbullet</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.restartcheck.html#module-salt.modules.restartcheck" title="salt.modules.restartcheck"><code class="xref py py-mod docutils literal"><span class="pre">modules.restartcheck</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.s6.html#module-salt.modules.s6" title="salt.modules.s6"><code class="xref py py-mod docutils literal"><span class="pre">modules.s6</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.salt_proxy.html#module-salt.modules.salt_proxy" title="salt.modules.salt_proxy"><code class="xref py py-mod docutils literal"><span class="pre">modules.salt_proxy</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.ssh_package.html#module-salt.modules.ssh_package" title="salt.modules.ssh_package"><code class="xref py py-mod docutils literal"><span class="pre">modules.ssh_package</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.ssh_service.html#module-salt.modules.ssh_service" title="salt.modules.ssh_service"><code class="xref py py-mod docutils literal"><span class="pre">modules.ssh_service</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.sysfs.html#module-salt.modules.sysfs" title="salt.modules.sysfs"><code class="xref py py-mod docutils literal"><span class="pre">modules.sysfs</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.vboxmanage.html#module-salt.modules.vboxmanage" title="salt.modules.vboxmanage"><code class="xref py py-mod docutils literal"><span class="pre">modules.vboxmanage</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.win_dsc.html#module-salt.modules.win_dsc" title="salt.modules.win_dsc"><code class="xref py py-mod docutils literal"><span class="pre">modules.win_dsc</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.win_iis.html#module-salt.modules.win_iis" title="salt.modules.win_iis"><code class="xref py py-mod docutils literal"><span class="pre">modules.win_iis</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.win_task.html#module-salt.modules.win_task" title="salt.modules.win_task"><code class="xref py py-mod docutils literal"><span class="pre">modules.win_task</span></code></a></li>
+<li><a class="reference internal" href="../../ref/modules/all/salt.modules.zabbix.html#module-salt.modules.zabbix" title="salt.modules.zabbix"><code class="xref py py-mod docutils literal"><span class="pre">modules.zabbix</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="pillar">
+<h3>Pillar<a class="headerlink" href="#pillar" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><a class="reference internal" href="../../ref/pillar/all/salt.pillar.http_yaml.html#module-salt.pillar.http_yaml" title="salt.pillar.http_yaml"><code class="xref py py-mod docutils literal"><span class="pre">pillar.http_yaml</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="proxy">
+<h3>Proxy<a class="headerlink" href="#proxy" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><a class="reference internal" href="../../ref/proxy/all/salt.proxy.chronos.html#module-salt.proxy.chronos" title="salt.proxy.chronos"><code class="xref py py-mod docutils literal"><span class="pre">proxy.chronos</span></code></a></li>
+<li><code class="xref py py-mod docutils literal"><span class="pre">proxy.junos</span></code></li>
+<li><a class="reference internal" href="../../ref/proxy/all/salt.proxy.marathon.html#module-salt.proxy.marathon" title="salt.proxy.marathon"><code class="xref py py-mod docutils literal"><span class="pre">proxy.marathon</span></code></a></li>
+<li><code class="xref py py-mod docutils literal"><span class="pre">proxy.phillips_hue</span></code></li>
+<li><a class="reference internal" href="../../ref/proxy/all/salt.proxy.ssh_sample.html#module-salt.proxy.ssh_sample" title="salt.proxy.ssh_sample"><code class="xref py py-mod docutils literal"><span class="pre">proxy.ssh_sample</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="roster">
+<h3>Roster<a class="headerlink" href="#roster" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><a class="reference internal" href="../../ref/roster/all/salt.roster.range.html#module-salt.roster.range" title="salt.roster.range"><code class="xref py py-mod docutils literal"><span class="pre">roster.range</span></code></a></li>
+</ul>
+</div>
+<div class="section" id="states">
+<h3>States<a class="headerlink" href="#states" title="永久链接至标题">¶</a></h3>
+<ul class="simple">
+<li><a class="reference internal" href="../../ref/states/all/salt.states.apache_conf.html#module-salt.states.apache_conf" title="salt.states.apache_conf"><code class="xref py py-mod docutils literal"><span class="pre">states.apache_conf</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.apache_site.html#module-salt.states.apache_site" title="salt.states.apache_site"><code class="xref py py-mod docutils literal"><span class="pre">states.apache_site</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.boto_cloudtrail.html#module-salt.states.boto_cloudtrail" title="salt.states.boto_cloudtrail"><code class="xref py py-mod docutils literal"><span class="pre">states.boto_cloudtrail</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.boto_datapipeline.html#module-salt.states.boto_datapipeline" title="salt.states.boto_datapipeline"><code class="xref py py-mod docutils literal"><span class="pre">states.boto_datapipeline</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.boto_iot.html#module-salt.states.boto_iot" title="salt.states.boto_iot"><code class="xref py py-mod docutils literal"><span class="pre">states.boto_iot</span></code></a></li>
+<li><code class="xref py py-mod docutils literal"><span class="pre">states.boto_lamda</span></code></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.chocolatey.html#module-salt.states.chocolatey" title="salt.states.chocolatey"><code class="xref py py-mod docutils literal"><span class="pre">states.chocolatey</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.chronos_job.html#module-salt.states.chronos_job" title="salt.states.chronos_job"><code class="xref py py-mod docutils literal"><span class="pre">states.chronos_job</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.firewall.html#module-salt.states.firewall" title="salt.states.firewall"><code class="xref py py-mod docutils literal"><span class="pre">states.firewall</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.github.html#module-salt.states.github" title="salt.states.github"><code class="xref py py-mod docutils literal"><span class="pre">states.github</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.gpg.html#module-salt.states.gpg" title="salt.states.gpg"><code class="xref py py-mod docutils literal"><span class="pre">states.gpg</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.grafana_dashboard.html#module-salt.states.grafana_dashboard" title="salt.states.grafana_dashboard"><code class="xref py py-mod docutils literal"><span class="pre">states.grafana_dashboard</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.grafana_datasource.html#module-salt.states.grafana_datasource" title="salt.states.grafana_datasource"><code class="xref py py-mod docutils literal"><span class="pre">states.grafana_datasource</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.infoblox.html#module-salt.states.infoblox" title="salt.states.infoblox"><code class="xref py py-mod docutils literal"><span class="pre">states.infoblox</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.jenkins.html#module-salt.states.jenkins" title="salt.states.jenkins"><code class="xref py py-mod docutils literal"><span class="pre">states.jenkins</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.marathon_app.html#module-salt.states.marathon_app" title="salt.states.marathon_app"><code class="xref py py-mod docutils literal"><span class="pre">states.marathon_app</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.openvswitch_bridge.html#module-salt.states.openvswitch_bridge" title="salt.states.openvswitch_bridge"><code class="xref py py-mod docutils literal"><span class="pre">states.openvswitch_bridge</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.openvswitch_port.html#module-salt.states.openvswitch_port" title="salt.states.openvswitch_port"><code class="xref py py-mod docutils literal"><span class="pre">states.openvswitch_port</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.postgres_cluster.html#module-salt.states.postgres_cluster" title="salt.states.postgres_cluster"><code class="xref py py-mod docutils literal"><span class="pre">states.postgres_cluster</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.salt_proxy.html#module-salt.states.salt_proxy" title="salt.states.salt_proxy"><code class="xref py py-mod docutils literal"><span class="pre">states.salt_proxy</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.virt.html#module-salt.states.virt" title="salt.states.virt"><code class="xref py py-mod docutils literal"><span class="pre">states.virt</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.zabbix_host.html#module-salt.states.zabbix_host" title="salt.states.zabbix_host"><code class="xref py py-mod docutils literal"><span class="pre">states.zabbix_host</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.zabbix_hostgroup.html#module-salt.states.zabbix_hostgroup" title="salt.states.zabbix_hostgroup"><code class="xref py py-mod docutils literal"><span class="pre">states.zabbix_hostgroup</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.zabbix_user.html#module-salt.states.zabbix_user" title="salt.states.zabbix_user"><code class="xref py py-mod docutils literal"><span class="pre">states.zabbix_user</span></code></a></li>
+<li><a class="reference internal" href="../../ref/states/all/salt.states.zabbix_usergroup.html#module-salt.states.zabbix_usergroup" title="salt.states.zabbix_usergroup"><code class="xref py py-mod docutils literal"><span class="pre">states.zabbix_usergroup</span></code></a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="notable-bug-fixes">
+<h2>Notable Bug Fixes<a class="headerlink" href="#notable-bug-fixes" title="永久链接至标题">¶</a></h2>
+<p><a class="reference external" href="https://github.com/saltstack/salt/issues/25816">issue 25816</a>: Fixed an issue that caused the Windows installer to not stop
+the old minion processes, resulting in a failed installation.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Release Notes" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="2015.8.0.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt 2015.8.0 Release Notes - Codename Beryllium" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Release Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#latest-branch-release">Latest Branch Release</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#previous-releases">Previous Releases</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="">Salt 2016.3.0 Release Notes - Codename Boron</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#backwards-incompatible-changes">Backwards-incompatible Changes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#core-changes">Core Changes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#external-module-packaging">External Module Packaging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cloud-changes">Cloud Changes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#platform-changes">Platform Changes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#new-features">New Features</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#thorium-provisional-new-reactor">Thorium - Provisional New Reactor</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#simplified-custom-module-deployment">Simplified Custom Module Deployment</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#improved-mac-os-support">Improved Mac OS Support</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#tornado-transport">Tornado Transport</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#windows-dsc-integration-experiemental">Windows DSC Integration (Experiemental)</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#dimension-data-cloud-support">Dimension Data Cloud Support</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#minion-blackout">Minion Blackout</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#new-modules">New Modules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#beacons">Beacons</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#engines">Engines</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#execution-modules">Execution Modules</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#pillar">Pillar</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#proxy">Proxy</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#roster">Roster</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#states">States</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#notable-bug-fixes">Notable Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.8.html">Salt 2015.8.8 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.7.html">Salt 2015.8.7 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.5.html">Salt 2015.8.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.4.html">Salt 2015.8.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.3.html">Salt 2015.8.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.2.html">Salt 2015.8.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.1.html">Salt 2015.8.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.0.html">Salt 2015.8.0 Release Notes - Codename Beryllium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.10.html">Salt 2015.5.10 Release Notes (In Progress)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.9.html">Salt 2015.5.9 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.8.html">Salt 2015.5.8 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.7.html">Salt 2015.5.7 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.6.html">Salt 2015.5.6 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.5.html">Salt 2015.5.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.4.html">Salt 2015.5.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.3.html">Salt 2015.5.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.2.html">Salt 2015.5.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.1.html">Salt 2015.5.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.0.html">Salt 2015.5.0 Release Notes - Codename Lithium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.6.html">Salt 2014.7.6 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.5.html">Salt 2014.7.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.4.html">Salt 2014.7.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.3.html">Salt 2014.7.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.2.html">Salt 2014.7.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.1.html">Salt 2014.7.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.0.html">Salt 2014.7.0 Release Notes - Codename Helium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.13.html">Salt 2014.1.13 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.12.html">Salt 2014.1.12 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.11.html">Salt 2014.1.11 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.10.html">Salt 2014.1.10 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.9.html">Salt 2014.1.9 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.8.html">Salt 2014.1.8 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.7.html">Salt 2014.1.7 发行注记</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.6.html">Salt 2014.1.6 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.5.html">Salt 2014.1.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.4.html">Salt 2014.1.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.3.html">Salt 2014.1.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.2.html">Salt 2014.1.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.1.html">Salt 2014.1.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.0.html">Salt 2014.1.0 Release Notes - Codename Hydrogen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.5.html">Salt 0.17.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.4.html">Salt 0.17.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.3.html">Salt 0.17.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.2.html">Salt 0.17.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.1.html">Salt 0.17.1发行注记</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.0.html">Salt 0.17.0发行注记</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.4.html">Salt 0.16.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.3.html">Salt 0.16.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.2.html">Salt 0.16.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.1.html">Salt 0.16.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.0.html">Salt 0.16.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.15.3.html">Salt 0.15.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.15.2.html">Salt 0.15.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.15.1.html">Salt 0.15.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.15.0.html">Salt 0.15.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.14.1.html">Salt 0.14.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.14.0.html">Salt 0.14.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.13.3.html">Salt 0.13.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.13.2.html">Salt 0.13.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.13.1.html">Salt 0.13.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.13.0.html">Salt 0.13.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.12.1.html">Salt 0.12.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.12.0.html">Salt 0.12.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.11.1.html">Salt 0.11.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.11.0.html">Salt 0.11.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.5.html">Salt 0.10.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.4.html">Salt 0.10.4发行注记</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.3.html">Salt 0.10.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.2.html">Salt 0.10.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.1.html">Salt 0.10.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.0.html">Salt 0.10.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.9.html">Salt 0.9.9 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.8.html">Salt 0.9.8 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.7.html">Salt 0.9.7 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.6.html">Salt 0.9.6 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.5.html">Salt 0.9.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.4.html">Salt 0.9.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.3.html">Salt 0.9.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.2.html">Salt 0.9.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.1.html">Salt 0.9.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.0.html">Salt 0.9.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.8.9.html">Salt 0.8.9 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.8.8.html">Salt 0.8.8 release notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.8.7.html">Salt 0.8.7 release notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.8.0.html">Salt 0.8.0 release notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.7.0.html">Salt 0.7.0 release notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.6.0.html">Salt 0.6.0 release notes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

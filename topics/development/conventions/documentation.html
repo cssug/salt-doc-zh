@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Writing Salt Documentation</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+        <link rel="up" title="Salt Conventions" href="index.html">
+        <link rel="next" title="Salt Formulas" href="formulas.html">
+        <link rel="prev" title="Salt Conventions" href="index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="index.html" title="Salt Conventions">上一页</a>
+            
+        </li>
+        <li>
+            <a href="formulas.html" title="Salt Formulas">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="writing-salt-documentation">
+<span id="salt-docs"></span><h1>Writing Salt Documentation<a class="headerlink" href="#writing-salt-documentation" title="永久链接至标题">¶</a></h1>
+<p>Salt's documentation is built using the <a class="reference external" href="http://sphinx-doc.org/">Sphinx</a> documentation system. It can
+be built in a large variety of output formats including HTML, PDF, ePub, and
+manpage.</p>
+<p>All the documentation is contained in the main Salt repository. Speaking
+broadly, most of the narrative documentation is contained within the
+<a class="reference external" href="https://github.com/saltstack/salt/blob/develop/doc">https://github.com/saltstack/salt/blob/develop/doc</a> subdirectory and most of the reference and API documentation is
+written inline with Salt's Python code and extracted using a Sphinx extension.</p>
+<div class="section" id="style">
+<span id="docs-style"></span><h2>Style<a class="headerlink" href="#style" title="永久链接至标题">¶</a></h2>
+<p>The Salt project recommends the <a class="reference external" href="https://development.standards.ieee.org/myproject/Public/mytools/draft/styleman.pdf">IEEE style guide</a> as a general reference for
+writing guidelines. Those guidelines are not strictly enforced but rather serve
+as an excellent resource for technical writing questions. The <a class="reference external" href="http://www.ncbi.nlm.nih.gov/books/NBK993/">NCBI style
+guide</a> is another very approachable resource.</p>
+<div class="section" id="point-of-view">
+<h3>Point-of-view<a class="headerlink" href="#point-of-view" title="永久链接至标题">¶</a></h3>
+<p>Use third-person perspective and avoid &quot;I&quot;, &quot;we&quot;, &quot;you&quot; forms of address.
+Identify the addressee specifically e.g., &quot;users should&quot;, &quot;the compiler does&quot;,
+etc.</p>
+</div>
+<div class="section" id="active-voice">
+<h3>Active voice<a class="headerlink" href="#active-voice" title="永久链接至标题">¶</a></h3>
+<p>Use active voice and present-tense. Avoid filler words.</p>
+</div>
+<div class="section" id="title-capitalization">
+<h3>Title capitalization<a class="headerlink" href="#title-capitalization" title="永久链接至标题">¶</a></h3>
+<p>Document titles and section titles within a page should follow normal sentence
+capitalization rules. Words that are capitalized as part of a regular sentence
+should be capitalized in a title and otherwise left as lowercase. Punctuation
+can be omitted unless it aids the intent of the title (e.g., exclamation points
+or question marks).</p>
+<p>For example:</p>
+<div class="highlight-restructuredtext"><div class="highlight"><pre><span></span><span class="gh">This is a main heading</span>
+<span class="gh">======================</span>
+
+Paragraph.
+
+<span class="gh">This is an exciting sub-heading!</span>
+<span class="gh">--------------------------------</span>
+
+Paragraph.
+</pre></div>
+</div>
+</div>
+<div class="section" id="serial-commas">
+<span id="docs-modules"></span><h3>Serial Commas<a class="headerlink" href="#serial-commas" title="永久链接至标题">¶</a></h3>
+<p>According to Wikipedia: In English punctuation, a serial comma or series comma
+(also called Oxford comma and Harvard comma) is a comma placed immediately
+before the coordinating conjunction (usually &quot;and&quot;, &quot;or&quot;, or &quot;nor&quot;) in a series of
+three or more terms. For example, a list of three countries might be punctuated
+either as &quot;France, Italy, and Spain&quot; (with the serial comma), or as &quot;France,
+Italy and Spain&quot; (without the serial comma).&quot;</p>
+<p>When writing a list that includes three or more items, the serial comma should
+always be used.</p>
+</div>
+</div>
+<div class="section" id="documenting-modules">
+<h2>Documenting modules<a class="headerlink" href="#documenting-modules" title="永久链接至标题">¶</a></h2>
+<p>Documentation for Salt's various module types is inline in the code. During the
+documentation build process it is extracted and formatted into the final HTML,
+PDF, etc format.</p>
+<div class="section" id="inline-documentation">
+<h3>Inline documentation<a class="headerlink" href="#inline-documentation" title="永久链接至标题">¶</a></h3>
+<p>Python has special multi-line strings called docstrings as the first element in
+a function or class. These strings allow documentation to live alongside the
+code and can contain special formatting. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">my_function</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Upper-case the given value</span>
+
+<span class="sd">    Usage:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        val = &#39;a string&#39;</span>
+<span class="sd">        new_val = myfunction(val)</span>
+<span class="sd">        print(new_val) # &#39;A STRING&#39;</span>
+
+<span class="sd">    :param value: a string</span>
+<span class="sd">    :return: a copy of ``value`` that has been upper-cased</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="specify-a-release-for-additions-or-changes">
+<h3>Specify a release for additions or changes<a class="headerlink" href="#specify-a-release-for-additions-or-changes" title="永久链接至标题">¶</a></h3>
+<p>New functions or changes to existing functions should include a marker that
+denotes what Salt release will be affected. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">my_function</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Upper-case the given value</span>
+
+<span class="sd">    .. versionadded:: 2014.7.0</span>
+
+<span class="sd">    &lt;...snip...&gt;</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>For changes to a function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">my_function</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">strip</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Upper-case the given value</span>
+
+<span class="sd">    .. versionchanged:: 2016.3.0</span>
+<span class="sd">        Added a flag to also strip whitespace from the string.</span>
+
+<span class="sd">    &lt;...snip...&gt;</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">strip</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="adding-module-documentation-to-the-index">
+<h3>Adding module documentation to the index<a class="headerlink" href="#adding-module-documentation-to-the-index" title="永久链接至标题">¶</a></h3>
+<p>Each module type has an index listing all modules of that type. For example:
+<span class="xref std std-ref">all-salt.modules</span>, <a class="reference internal" href="../../../ref/states/all/index.html#all-salt-states"><span>所有内置的state模块列表</span></a>, <a class="reference internal" href="../../../ref/renderers/all/index.html#all-salt-renderers"><span>Full list of builtin renderer modules</span></a>.
+New modules must be added to the index manually.</p>
+<ol class="arabic simple">
+<li>Edit the file for the module type:
+<a class="reference external" href="https://github.com/saltstack/salt/blob/develop/doc/ref/modules/all/index.rst">execution modules</a>,
+<a class="reference external" href="https://github.com/saltstack/salt/blob/develop/doc/ref/states/all/index.rst">state modules</a>,
+<a class="reference external" href="https://github.com/saltstack/salt/blob/develop/doc/ref/renderers/all/index.rst">renderer modules</a>, etc.</li>
+<li>Add the new module to the alphebetized list.</li>
+<li><a class="reference internal" href="#docs-building"><span>Build the documentation</span></a> which will generate an <code class="docutils literal"><span class="pre">.rst</span></code>
+file for the new module in the same directory as the <code class="docutils literal"><span class="pre">index.rst</span></code>.</li>
+<li>Commit the changes to <code class="docutils literal"><span class="pre">index.rst</span></code> and the new <code class="docutils literal"><span class="pre">.rst</span></code> file and send a
+pull request.</li>
+</ol>
+</div>
+</div>
+<div class="section" id="cross-references">
+<span id="docs-ref"></span><h2>Cross-references<a class="headerlink" href="#cross-references" title="永久链接至标题">¶</a></h2>
+<p>The Sphinx documentation system contains a wide variety of cross-referencing
+capabilities.</p>
+<div class="section" id="glossary-entries">
+<span id="docs-ref-glossary"></span><h3>Glossary entries<a class="headerlink" href="#glossary-entries" title="永久链接至标题">¶</a></h3>
+<p>Link to <a class="reference external" href="http://docs.python.org/3/glossary.html#glossary" title="(在 Python v3.5)"><span class="xref std std-ref">glossary entries</span></a> using the <a class="reference external" href="http://sphinx-doc.org/markup/inline.html#role-term">term role</a>. A
+cross-reference should be added the first time a Salt-specific term is used in
+a document.</p>
+<div class="highlight-restructuredtext"><div class="highlight"><pre><span></span>A common way to encapsulate master-side functionality is by writing a
+custom <span class="na">:term:</span><span class="nv">`Runner Function`</span>. Custom Runner Functions are easy to write.
+</pre></div>
+</div>
+</div>
+<div class="section" id="index-entries">
+<span id="docs-ref-index"></span><h3>Index entries<a class="headerlink" href="#index-entries" title="永久链接至标题">¶</a></h3>
+<p>Sphinx automatically generates many kinds of index entries, but it is
+occasionally useful to manually add items to the index.</p>
+<p>One method is to use the <a class="reference external" href="http://sphinx-doc.org/markup/misc.html#directive-index">index directive</a> above the document or section that
+should appear in the index.</p>
+<div class="highlight-restructuredtext"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="ow">index</span><span class="p">::</span> ! Event, event bus, event system
+    see: Reactor; Event
+</pre></div>
+</div>
+<p>Another method is to use the <a class="reference external" href="http://sphinx-doc.org/markup/misc.html#role-index">index role</a> inline with the text that should
+appear in the index. The index entry is created and the target text is left
+otherwise intact.</p>
+<div class="highlight-restructuredtext"><div class="highlight"><pre><span></span><span class="gh">Information about the :index:`Salt Reactor`</span>
+<span class="gh">-------------------------------------------</span>
+
+Paragraph.
+</pre></div>
+</div>
+</div>
+<div class="section" id="documents-and-sections">
+<span id="docs-ref-docs"></span><h3>Documents and sections<a class="headerlink" href="#documents-and-sections" title="永久链接至标题">¶</a></h3>
+<p>Each document should contain a unique top-level label of the form:</p>
+<div class="highlight-restructuredtext"><div class="highlight"><pre><span></span><span class="p">..</span> <span class="nt">_my-page:</span>
+
+<span class="gh">My page</span>
+<span class="gh">=======</span>
+
+Paragraph.
+</pre></div>
+</div>
+<p>Unique labels can be linked using the <a class="reference external" href="http://sphinx-doc.org/markup/inline.html#role-ref">ref role</a>. This allows cross-references
+to survive document renames or movement.</p>
+<div class="highlight-restructuredtext"><div class="highlight"><pre><span></span>For more information see <span class="na">:ref:</span><span class="nv">`my-page`</span>.
+</pre></div>
+</div>
+<p>Note, the <code class="docutils literal"><span class="pre">:doc:</span></code> role should <em>not</em> be used to link documents together.</p>
+</div>
+<div class="section" id="modules">
+<span id="docs-ref-modules"></span><h3>Modules<a class="headerlink" href="#modules" title="永久链接至标题">¶</a></h3>
+<p>Cross-references to Salt modules can be added using Sphinx's Python domain
+roles. For example, to create a link to the <a class="reference internal" href="../../../ref/modules/all/salt.modules.test.html#salt.modules.test.ping" title="salt.modules.test.ping"><code class="xref py py-func docutils literal"><span class="pre">test.ping</span></code></a> function:</p>
+<div class="highlight-restructuredtext"><div class="highlight"><pre><span></span>A useful execution module to test active communication with a minion is the
+<span class="na">:py:func:</span><span class="nv">`test.ping &lt;salt.modules.test.ping&gt;`</span> function.
+</pre></div>
+</div>
+<p>Salt modules can be referenced as well:</p>
+<div class="highlight-restructuredtext"><div class="highlight"><pre><span></span>The <span class="na">:py:mod:</span><span class="nv">`test module &lt;salt.modules.test&gt;`</span> contains many useful
+functions for inspecting an active Salt connection.
+</pre></div>
+</div>
+<p>The same syntax works for all modules types:</p>
+<div class="highlight-restructuredtext"><div class="highlight"><pre><span></span>One of the workhorse state module functions in Salt is the
+<span class="na">:py:func:</span><span class="nv">`file.managed &lt;salt.states.file.managed&gt;`</span> function.
+</pre></div>
+</div>
+</div>
+<div class="section" id="settings">
+<span id="docs-ref-settings"></span><h3>Settings<a class="headerlink" href="#settings" title="永久链接至标题">¶</a></h3>
+<p>Individual settings in the Salt Master or Salt Minion configuration files are
+cross-referenced using two custom roles, <code class="docutils literal"><span class="pre">conf_master</span></code>, and <code class="docutils literal"><span class="pre">conf_minion</span></code>.</p>
+<div class="highlight-restructuredtext"><div class="highlight"><pre><span></span>The :conf_minion:<span class="nv">`minion ID &lt;id&gt;`</span> setting is a unique identifier for a
+single minion.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="documentation-changes-and-fixes">
+<span id="docs-ref-fixes"></span><h2>Documentation Changes and Fixes<a class="headerlink" href="#documentation-changes-and-fixes" title="永久链接至标题">¶</a></h2>
+<p>Documentation changes and fixes should be made against the earliest supported
+release branch that the update applies to. The practice of updating a release
+branch instead of making all documentation changes against Salt's main, default
+branch, <code class="docutils literal"><span class="pre">develop</span></code>, is necessary in order for the docs to be as up-to-date as
+possible when the docs are built.</p>
+<p>The workflow mentioned above is also in line with the recommendations outlined
+in Salt's <a class="reference internal" href="../contributing.html#contributing"><span>Contributing</span></a> page. You can read more about how to choose where
+to submit documentation fixes by reading the <a class="reference internal" href="../contributing.html#which-salt-branch"><span>Which Salt branch?</span></a> section.</p>
+<p>For an explanation of how to submit changes against various branches, see the
+<a class="reference internal" href="../contributing.html#github-pull-request"><span>发送GitHub的pull请求</span></a> section. Specifically, see the section describing
+how to <code class="docutils literal"><span class="pre">Create</span> <span class="pre">a</span> <span class="pre">new</span> <span class="pre">branch</span></code> and the steps that follow.</p>
+</div>
+<div class="section" id="building-the-documentation">
+<span id="docs-building"></span><h2>Building the documentation<a class="headerlink" href="#building-the-documentation" title="永久链接至标题">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Install Sphinx using a system package manager or pip. The package name is
+often of the form <code class="docutils literal"><span class="pre">python-sphinx</span></code>. There are no other dependencies.</p>
+</li>
+<li><p class="first">Build the documentation using the provided Makefile or <code class="docutils literal"><span class="pre">.bat</span></code> file on
+Windows.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nb">cd</span> /path/to/salt/doc
+make html
+</pre></div>
+</div>
+</li>
+<li><p class="first">The generated documentation will be written to the <code class="docutils literal"><span class="pre">doc/_build/&lt;format&gt;</span></code>
+directory.</p>
+</li>
+<li><p class="first">A useful method of viewing the HTML documentation locally is to start
+Python's built-in HTTP server:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="nb">cd</span> /path/to/salt/doc/_build/html
+python -m SimpleHTTPServer
+</pre></div>
+</div>
+<p>Then pull up the documentation in a web browser at <a class="reference external" href="http://localhost:8000/">http://localhost:8000/</a>.</p>
+</li>
+</ol>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt Conventions" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="formulas.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt Formulas" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../windows/index.html">Windows</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Salt开发</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#salt-client">Salt Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#salt-master">Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#salt-minion">Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#a-note-on-clearfuncs-vs-aesfuncs">A Note on ClearFuncs vs. AESFuncs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deprecations.html">代码弃用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dunder_dictionaries.html">Dunder Dictionaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../external_pillars.html">External Pillars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hacking.html">Installing Salt for development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../labels.html">GitHub Labels and Milestones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logging.html">内部日志</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modular_systems.html">模块化系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package_providers.html">Package Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reporting_bugs.html">Reporting Bugs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../salt_projects.html">Community Projects That Use Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../topology.html">Salt Topology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../translating.html">翻译文档</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html">Developing Salt Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tests/index.html">Running The Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tests/index.html#automated-test-runs">Automated Test Runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tests/index.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../raet/index.html">raet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../git/index.html">SaltStack Git Policy</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Salt Conventions</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="">Writing Salt Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#style">Style</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#point-of-view">Point-of-view</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#active-voice">Active voice</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#title-capitalization">Title capitalization</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#serial-commas">Serial Commas</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#documenting-modules">Documenting modules</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#inline-documentation">Inline documentation</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#specify-a-release-for-additions-or-changes">Specify a release for additions or changes</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#adding-module-documentation-to-the-index">Adding module documentation to the index</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#cross-references">Cross-references</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#glossary-entries">Glossary entries</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#index-entries">Index entries</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#documents-and-sections">Documents and sections</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#modules">Modules</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#settings">Settings</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#documentation-changes-and-fixes">Documentation Changes and Fixes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#building-the-documentation">Building the documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="formulas.html">Salt Formulas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packaging.html">SaltStack Packaging Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="release.html">Salt Release Process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="style.html">Salt Coding Style</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ref/internals/index.html">Salt code and internals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../projects/index.html">Salt Based Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/writing_tests.html">编写Salt测试</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

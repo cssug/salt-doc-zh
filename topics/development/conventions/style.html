@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt Coding Style</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+        <link rel="up" title="Salt Conventions" href="index.html">
+        <link rel="next" title="Salt code and internals" href="../../../ref/internals/index.html">
+        <link rel="prev" title="Salt Release Process" href="release.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="release.html" title="Salt Release Process">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../ref/internals/index.html" title="Salt code and internals">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="salt-coding-style">
+<h1>Salt Coding Style<a class="headerlink" href="#salt-coding-style" title="永久链接至标题">¶</a></h1>
+<p>Salt is developed with a certain coding style, while the style is dominantly
+PEP 8 it is not completely PEP 8. It is also noteworthy that a few
+development techniques are also employed which should be adhered to. In the
+end, the code is made to be &quot;Salty&quot;.</p>
+<p>Most importantly though, we will accept code that violates the coding style and
+KINDLY ask the contributor to fix it, or go ahead and fix the code on behalf of
+the contributor. Coding style is NEVER grounds to reject code contributions,
+and is never grounds to talk down to another member of the community (There are
+no grounds to treat others without respect, especially people working to
+improve Salt)!!</p>
+<div class="section" id="linting">
+<h2>Linting<a class="headerlink" href="#linting" title="永久链接至标题">¶</a></h2>
+<p>Most Salt style conventions are codified in Salt's <code class="docutils literal"><span class="pre">.pylintrc</span></code> file. This file
+is found in the root of the Salt project and can be passed as an argument to the
+<a class="reference external" href="http://www.pylint.org">pylint</a> program as follows:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>pylint --rcfile<span class="o">=</span>/path/to/salt/.pylintrc salt/dir/to/lint
+</pre></div>
+</div>
+</div>
+<div class="section" id="variables">
+<h2>Variables<a class="headerlink" href="#variables" title="永久链接至标题">¶</a></h2>
+<p>Variables should be a minimum of three characters and should provide an
+easy-to-understand name of the object being represented.</p>
+<p>When keys and values are iterated over, descriptive names should be used
+to represent the temporary variables.</p>
+<p>Multi-word variables should be separated by an underscore.</p>
+<p>Variables which are two-letter words should have an underscore appended
+to them to pad them to three characters.</p>
+</div>
+<div class="section" id="strings">
+<h2>Strings<a class="headerlink" href="#strings" title="永久链接至标题">¶</a></h2>
+<p>Salt follows a few rules when formatting strings:</p>
+<div class="section" id="single-quotes">
+<h3>Single Quotes<a class="headerlink" href="#single-quotes" title="永久链接至标题">¶</a></h3>
+<p>In Salt, all strings use single quotes unless there is a good reason not to.
+This means that docstrings use single quotes, standard strings use single
+quotes etc.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">foo</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A function that does things</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;A name&#39;</span>
+    <span class="k">return</span> <span class="n">name</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="formatting-strings">
+<h3>Formatting Strings<a class="headerlink" href="#formatting-strings" title="永久链接至标题">¶</a></h3>
+<p>All strings which require formatting should use the <cite>.format</cite> string method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="s1">&#39;some text&#39;</span>
+<span class="n">more</span> <span class="o">=</span> <span class="s1">&#39;{0} and then some&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Make sure to use indices or identifiers in the format brackets, since empty
+brackets are not supported by python 2.6.</p>
+<p>Please do NOT use printf formatting.</p>
+</div>
+<div class="section" id="docstring-conventions">
+<h3>Docstring Conventions<a class="headerlink" href="#docstring-conventions" title="永久链接至标题">¶</a></h3>
+<p>Docstrings should always add a newline, docutils takes care of the new line and
+it makes the code cleaner and more vertical:</p>
+<p><cite>GOOD</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">bar</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Here lies a docstring with a newline after the quotes and is the salty</span>
+<span class="sd">    way to handle it! Vertical code is the way to go!</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span>
+</pre></div>
+</div>
+<p><cite>BAD</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">baz</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;This is not ok!&#39;&#39;&#39;</span>
+    <span class="k">return</span>
+</pre></div>
+</div>
+<p>When adding a new function or state, where possible try to use a
+<code class="docutils literal"><span class="pre">versionadded</span></code> directive to denote when the function or state was added.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">new_func</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    .. versionadded:: 0.16.0</span>
+
+<span class="sd">    Prints what was passed to the function.</span>
+
+<span class="sd">    msg : None</span>
+<span class="sd">        The string to be printed.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">print</span> <span class="n">msg</span>
+</pre></div>
+</div>
+<p>If you are uncertain what version should be used, either consult a core
+developer in IRC or bring this up when opening your
+<a class="reference internal" href="../hacking.html"><em>pull request</em></a> and a core developer will add the proper
+version once your pull request has been merged. Bugfixes will be available in a
+bugfix release (i.e. 0.17.1, the first bugfix release for 0.17.0), while new
+features are held for feature releases, and this will affect what version
+number should be used in the <code class="docutils literal"><span class="pre">versionadded</span></code> directive.</p>
+<p>Similar to the above, when an existing function or state is modified (for
+example, when an argument is added), then under the explanation of that new
+argument a <code class="docutils literal"><span class="pre">versionadded</span></code> directive should be used to note the version in
+which the new argument was added. If an argument's function changes
+significantly, the <code class="docutils literal"><span class="pre">versionchanged</span></code> directive can be used to clarify this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">new_func</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">signature</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    .. versionadded:: 0.16.0</span>
+
+<span class="sd">    Prints what was passed to the function.</span>
+
+<span class="sd">    msg : None</span>
+<span class="sd">        The string to be printed. Will be prepended with &#39;Greetings! &#39;.</span>
+
+<span class="sd">    .. versionchanged:: 0.17.1</span>
+
+<span class="sd">    signature : None</span>
+<span class="sd">        An optional signature.</span>
+
+<span class="sd">    .. versionadded 0.17.0</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">print</span> <span class="s1">&#39;Greetings! {0}</span><span class="se">\n\n</span><span class="s1">{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">signature</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="dictionaries">
+<h2>Dictionaries<a class="headerlink" href="#dictionaries" title="永久链接至标题">¶</a></h2>
+<p>Dictionaries should be initialized using <cite>{}</cite> instead of <cite>dict()</cite>.</p>
+<p>See <a class="reference external" href="http://doughellmann.com/2012/11/12/the-performance-impact-of-using-dict-instead-of-in-cpython-2-7-2.html">here</a> for an in-depth discussion of this topic.</p>
+</div>
+<div class="section" id="imports">
+<h2>Imports<a class="headerlink" href="#imports" title="永久链接至标题">¶</a></h2>
+<p>Salt code prefers importing modules and not explicit functions. This is both a
+style and functional preference. The functional preference originates around
+the fact that the module import system used by pluggable modules will include
+callable objects (functions) that exist in the direct module namespace. This
+is not only messy, but may unintentionally expose code python libs to the Salt
+interface and pose a security problem.</p>
+<p>To say this more directly with an example, this is <cite>GOOD</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="k">def</span> <span class="nf">minion_path</span><span class="p">():</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;cachedir&#39;</span><span class="p">],</span> <span class="s1">&#39;minions&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">path</span>
+</pre></div>
+</div>
+<p>This on the other hand is <cite>DISCOURAGED</cite>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span>
+
+<span class="k">def</span> <span class="nf">minion_path</span><span class="p">():</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;cachedir&#39;</span><span class="p">],</span> <span class="s1">&#39;minions&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">path</span>
+</pre></div>
+</div>
+<p>The time when this is changed is for importing exceptions, generally directly
+importing exceptions is preferred:</p>
+<p>This is a good way to import exceptions:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">salt.exceptions</span> <span class="kn">import</span> <span class="n">CommandExecutionError</span>
+</pre></div>
+</div>
+<div class="section" id="absolute-imports">
+<h3>Absolute Imports<a class="headerlink" href="#absolute-imports" title="永久链接至标题">¶</a></h3>
+<p>Although <a class="reference external" href="http://legacy.python.org/dev/peps/pep-0328/#rationale-for-absolute-imports">absolute imports</a> seems like an awesome idea, please do not use it.
+Extra care would be necessary all over salt's code in order for absolute
+imports to work as supposed. Believe it, it has been tried before and, as a
+tried example, by renaming <code class="docutils literal"><span class="pre">salt.modules.sysmod</span></code> to <code class="docutils literal"><span class="pre">salt.modules.sys</span></code>, all
+other salt modules which needed to import <a class="reference external" href="http://docs.python.org/2/library/sys.html#module-sys" title="(在 Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">sys</span></code></a> would have to
+also import <a class="reference external" href="http://docs.python.org/2/library/__future__.html#module-__future__" title="(在 Python v2.7)"><code class="xref py py-mod docutils literal"><span class="pre">absolute_import</span></code></a>, which should be
+avoided.</p>
+</div>
+</div>
+<div class="section" id="vertical-is-better">
+<h2>Vertical is Better<a class="headerlink" href="#vertical-is-better" title="永久链接至标题">¶</a></h2>
+<p>When writing Salt code, vertical code is generally preferred. This is not a hard
+rule but more of a guideline. As PEP 8 specifies, Salt code should not exceed 79
+characters on a line, but it is preferred to separate code out into more
+newlines in some cases for better readability:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;sock_dir&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;minion_event_pub.ipc&#39;</span><span class="p">),</span>
+        <span class="mi">448</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p>Where there are more line breaks, this is also apparent when constructing a
+function with many arguments, something very common in state functions for
+instance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">managed</span><span class="p">(</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">source</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">source_hash</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">user</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">group</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">template</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">makedirs</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+        <span class="n">context</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">replace</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">defaults</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">saltenv</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">backup</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Making function and class definitions vertical is only required if the
+arguments are longer then 80 characters. Otherwise, the formatting is
+optional and both are acceptable.</p>
+</div>
+<div class="section" id="line-length">
+<h3>Line Length<a class="headerlink" href="#line-length" title="永久链接至标题">¶</a></h3>
+<p>For function definitions and function calls, Salt adheres to the PEP-8
+specification of at most 80 characters per line.</p>
+<p>Non function definitions or function calls, please adopt a soft limit of 120
+characters per line. If breaking the line reduces the code readability, don't
+break it. Still, try to avoid passing that 120 characters limit and remember,
+<strong>vertical is better...  unless it isn't</strong></p>
+</div>
+</div>
+<div class="section" id="indenting">
+<h2>Indenting<a class="headerlink" href="#indenting" title="永久链接至标题">¶</a></h2>
+<p>Some confusion exists in the python world about indenting things like function
+calls, the above examples use 8 spaces when indenting comma-delimited
+constructs.</p>
+<p>The confusion arises because the pep8 program INCORRECTLY flags this as wrong,
+where PEP 8, the document, cites only using 4 spaces here as wrong, as it
+doesn't differentiate from a new indent level.</p>
+<p>Right:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">managed</span><span class="p">(</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">source</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+        <span class="n">source_hash</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+        <span class="n">user</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>WRONG:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">managed</span><span class="p">(</span><span class="n">name</span><span class="p">,</span>
+    <span class="n">source</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+    <span class="n">source_hash</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="n">user</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Lining up the indent is also correct:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">managed</span><span class="p">(</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">source</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">source_hash</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">user</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This also applies to function calls and other hanging indents.</p>
+<p>pep8 and Flake8 (and, by extension, the vim plugin Syntastic) will complain
+about the double indent for hanging indents.  This is a <a class="reference external" href="https://github.com/jcrocholl/pep8/issues/167#issuecomment-15936564">known conflict</a> between
+pep8 (the script) and the actual PEP 8 standard.  It is recommended that this
+particular warning be ignored with the following lines in
+<code class="docutils literal"><span class="pre">~/.config/flake8</span></code>:</p>
+<div class="highlight-ini"><div class="highlight"><pre><span></span><span class="k">[flake8]</span>
+<span class="na">ignore</span> <span class="o">=</span> <span class="s">E226,E241,E242,E126</span>
+</pre></div>
+</div>
+<p>Make sure your Flake8/pep8 are up to date.  The first three errors are ignored
+by default and are present here to keep the behavior the same.  This will also
+work for pep8 without the Flake8 wrapper -- just replace all instances of
+'flake8' with 'pep8', including the filename.</p>
+</div>
+<div class="section" id="code-churn">
+<h2>Code Churn<a class="headerlink" href="#code-churn" title="永久链接至标题">¶</a></h2>
+<p>Many pull requests have been submitted that only churn code in the name of
+PEP 8. Code churn is a leading source of bugs and is strongly discouraged.
+While style fixes are encouraged they should be isolated to a single file per
+commit, and the changes should be legitimate, if there are any questions about
+whether a style change is legitimate please reference this document and the
+official PEP 8 (<a class="reference external" href="http://legacy.python.org/dev/peps/pep-0008/">http://legacy.python.org/dev/peps/pep-0008/</a>) document before
+changing code. Many claims that a change is PEP 8 have been invalid, please
+double check before committing fixes.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="release.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt Release Process" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../../../ref/internals/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt code and internals" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../windows/index.html">Windows</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Salt开发</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#salt-client">Salt Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#salt-master">Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#salt-minion">Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#a-note-on-clearfuncs-vs-aesfuncs">A Note on ClearFuncs vs. AESFuncs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deprecations.html">代码弃用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dunder_dictionaries.html">Dunder Dictionaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../external_pillars.html">External Pillars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hacking.html">Installing Salt for development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../labels.html">GitHub Labels and Milestones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logging.html">内部日志</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modular_systems.html">模块化系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package_providers.html">Package Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reporting_bugs.html">Reporting Bugs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../salt_projects.html">Community Projects That Use Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../topology.html">Salt Topology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../translating.html">翻译文档</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html">Developing Salt Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tests/index.html">Running The Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tests/index.html#automated-test-runs">Automated Test Runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tests/index.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../raet/index.html">raet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../git/index.html">SaltStack Git Policy</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Salt Conventions</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="documentation.html">Writing Salt Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="formulas.html">Salt Formulas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="packaging.html">SaltStack Packaging Guide</a></li>
+<li class="toctree-l3"><a class="reference internal" href="release.html">Salt Release Process</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Salt Coding Style</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#linting">Linting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#variables">Variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#strings">Strings</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#single-quotes">Single Quotes</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#formatting-strings">Formatting Strings</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#docstring-conventions">Docstring Conventions</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#dictionaries">Dictionaries</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#imports">Imports</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#absolute-imports">Absolute Imports</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#vertical-is-better">Vertical is Better</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#line-length">Line Length</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#indenting">Indenting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#code-churn">Code Churn</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ref/internals/index.html">Salt code and internals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../projects/index.html">Salt Based Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/writing_tests.html">编写Salt测试</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Access Control System</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Configuring Salt" href="../configuration/index.html">
+        <link rel="next" title="Publisher ACL system" href="../../ref/publisheracl.html">
+        <link rel="prev" title="Minion Blackout Configuration" href="../blackout/index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../blackout/index.html" title="Minion Blackout Configuration">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../../ref/publisheracl.html" title="Publisher ACL system">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="access-control-system">
+<span id="acl"></span><h1>Access Control System<a class="headerlink" href="#access-control-system" title="永久链接至标题">¶</a></h1>
+<div class="versionadded">
+<p><span class="versionmodified">0.10.4 新版功能.</span></p>
+</div>
+<p>Salt maintains a standard system used to open granular control to non
+administrative users to execute Salt commands. The access control system
+has been applied to all systems used to configure access to non administrative
+control interfaces in Salt.</p>
+<p>These interfaces include, the <code class="docutils literal"><span class="pre">peer</span></code> system, the
+<code class="docutils literal"><span class="pre">external</span> <span class="pre">auth</span></code> system and the <code class="docutils literal"><span class="pre">publisher</span> <span class="pre">acl</span></code> system.</p>
+<p>The access control system mandated a standard configuration syntax used in
+all of the three aforementioned systems. While this adds functionality to the
+configuration in 0.10.4, it does not negate the old configuration.</p>
+<p>Now specific functions can be opened up to specific minions from specific users
+in the case of external auth and publisher ACLs, and for specific minions in the
+case of the peer system.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/publisheracl.html">Publisher ACL system</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/publisheracl.html#permission-issues">Permission Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/publisheracl.html#whitelist-and-blacklist">Whitelist and Blacklist</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">External Authentication System</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index.html#external-authentication-system-configuration">External Authentication System Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="index.html#tokens">Tokens</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#ldap-and-active-directory">LDAP and Active Directory</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="index.html#openldap-and-similar-systems">OpenLDAP and similar systems</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#active-directory">Active Directory</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/peer.html">Peer Communication</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/peer.html#peer-configuration">Peer Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/peer.html#peer-runner-communication">Peer Runner Communication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/peer.html#using-peer-communication">Using Peer Communication</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="when-to-use-each-authentication-system">
+<h2>When to Use Each Authentication System<a class="headerlink" href="#when-to-use-each-authentication-system" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">publisher_acl</span></code> is useful for allowing local system users to run Salt
+commands without giving them root access. If you can log into the Salt
+master directly, then <code class="docutils literal"><span class="pre">publisher_acl</span></code> allows you to use Salt without
+root privileges. If the local system is configured to authenticate against
+a remote system, like LDAP or Active Directory, then <code class="docutils literal"><span class="pre">publisher_acl</span></code> will
+interact with the remote system transparently.</p>
+<p><code class="docutils literal"><span class="pre">external_auth</span></code> is useful for <code class="docutils literal"><span class="pre">salt-api</span></code> or for making your own scripts
+that use Salt's Python API. It can be used at the CLI (with the <code class="docutils literal"><span class="pre">-a</span></code>
+flag) but it is more cumbersome as there are more steps involved.  The only
+time it is useful at the CLI is when the local system is <em>not</em> configured
+to authenticate against an external service <em>but</em> you still want Salt to
+authenticate against an external service.</p>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="永久链接至标题">¶</a></h2>
+<p>The access controls are manifested using matchers in these configurations:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">publisher_acl</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">fred</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">web\*</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg.list_pkgs</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">test.*</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">apache.*</span>
+</pre></div>
+</div>
+<p>In the above example, fred is able to send commands only to minions which match
+the specified glob target. This can be expanded to include other functions for
+other minions based on standard targets.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">external_auth</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">pam</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">dave</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">test.ping</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mongo\*</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">network.*</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">log\*</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">network.*</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pkg.*</span>
+      <span class="p p-Indicator">-</span> <span class="s">&#39;G@os:RedHat&#39;</span><span class="p p-Indicator">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">kmod.*</span>
+    <span class="l l-Scalar l-Scalar-Plain">steve</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">.*</span>
+</pre></div>
+</div>
+<p>The above allows for all minions to be hit by test.ping by dave, and adds a
+few functions that dave can execute on other minions. It also allows steve
+unrestricted access to salt commands.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Functions are matched using regular expressions.</p>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../blackout/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Minion Blackout Configuration" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../../ref/publisheracl.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Publisher ACL system" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/master.html">配置Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/minion.html">配置Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/examples.html">Configuration file examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../blackout/index.html">Minion Blackout Configuration</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Access Control System</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ref/publisheracl.html">Publisher ACL system</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html">External Authentication System</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ref/peer.html">Peer Communication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#when-to-use-each-authentication-system">When to Use Each Authentication System</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs/index.html">Job Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs/job_cache.html">Managing the Job Cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs/external_cache.html">Storing Job Results in an External System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/logging/index.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/file_server/index.html">Salt文件服务器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/gitfs.html">Git Fileserver Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/minionfs.html">MinionFS Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spm/index.html">Salt Package Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sdb/index.html">Storing Data in Other Databases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/nonroot.html">以非特权用户身份运行Salt Master/Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/cron.html">使用cron运行Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hardening.html">Hardening Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../security/index.html">Security disclosure policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transports/index.html">Salt Transport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../master_tops/index.html">Master Tops系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/returners/index.html">返回器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/renderers/index.html">Renderers渲染器</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

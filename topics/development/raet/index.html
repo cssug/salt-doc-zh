@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>raet</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+        <link rel="up" title="Salt开发" href="../index.html">
+        <link rel="next" title="SaltStack Git Policy" href="../git/index.html">
+        <link rel="prev" title="Writing Unit Tests" href="../tests/unit.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../tests/unit.html" title="Writing Unit Tests">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../git/index.html" title="SaltStack Git Policy">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="raet">
+<h1>raet<a class="headerlink" href="#raet" title="永久链接至标题">¶</a></h1>
+<p># RAET
+# Reliable Asynchronous Event Transport Protocol</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参见</p>
+<p class="last"><a class="reference internal" href="../../transports/raet/index.html#raet"><span>RAET Overview</span></a></p>
+</div>
+<div class="section" id="protocol">
+<h2>Protocol<a class="headerlink" href="#protocol" title="永久链接至标题">¶</a></h2>
+<p>Layering:</p>
+<p>OSI Layers</p>
+<p>7: Application: Format: Data (Stack to Application interface buffering etc)
+6: Presentation: Format: Data (Encrypt-Decrypt convert to machine independent format)
+5: Session: Format: Data (Interhost communications. Authentication. Groups)
+4: Transport: Format: Segments (Reliable delivery of Message, Transactions, Segmentation, Error checking)
+3: Network: Format: Packets/Datagrams (Addressing Routing)
+2: Link: Format: Frames ( Reliable per frame communications connection, Media access controller )
+1: Physical: Bits (Transceiver communication connection not reliable)</p>
+<p>Link is hidden from Raet
+Network is IP host address and Udp Port
+Transport is Raet transactions, service kind, tail error checking,
+Could include header signing as part of transport reliable delivery serialization of header
+Session is session id key exchange for signing. Grouping is Road (like 852 channel)
+Presentation is Encrypt Decrypt body Serialize Deserialize Body
+Application is body data dictionary</p>
+<p>Header signing spans both the Transport and Session layers.</p>
+</div>
+<div class="section" id="header">
+<h2>Header<a class="headerlink" href="#header" title="永久链接至标题">¶</a></h2>
+<p>JSON Header (Tradeoff some processing speed for extensibility, ease of use, readability)</p>
+<p>Body initially JSON but support for &quot;packed&quot; binary body</p>
+</div>
+<div class="section" id="packet">
+<h2>Packet<a class="headerlink" href="#packet" title="永久链接至标题">¶</a></h2>
+<p>Header ASCII Safe JSON
+Header termination:
+Empty line given by double pair of carriage return linefeed
+/r/n/r/n
+10 13 10 13
+ADAD
+1010 1101 1010 1101</p>
+<p>In json carriage return and newline characters cannot appear in a json encoded
+string unless they are escaped with backslash, so the 4 byte combination is illegal in valid
+json that does not have multi-byte unicode characters.</p>
+<p>These means the header must be ascii safe  so no multibyte utf-8 strings
+allowed in header.</p>
+<p>Following Header Terminator is variable length signature block. This is binary
+and the length is provided in the header.</p>
+<p>Following the signature block is the packet body or data.
+This may either be JSON or packed binary.
+The format is given in the json header</p>
+<p>Finally is an optional tail block for error checking or encryption details</p>
+</div>
+<div class="section" id="header-fields">
+<h2>Header Fields<a class="headerlink" href="#header-fields" title="永久链接至标题">¶</a></h2>
+<p>In UDP header</p>
+<p>sh = source host
+sp = source port
+dh = destination host
+dp = destination port</p>
+<p>In RAET Header</p>
+<p>hk = header kind
+hl = header length</p>
+<p>vn = version number</p>
+<p>sd = Source Device ID
+dd = Destination Device ID
+cf = Corresponder Flag
+mf = Multicast Flag</p>
+<p>si = Session ID
+ti = Transaction ID</p>
+<p>sk = Service Kind
+pk = Packet Kind
+bf = Burst Flag  (Send all Segments or Ordered packets without interleaved acks)</p>
+<p>oi = Order Index
+dt = DateTime Stamp</p>
+<p>sn = Segment Number
+sc = Segment Count</p>
+<p>pf = Pending Segment Flag
+af = All Flag   (Resent all Segments not just one)</p>
+<p>nk = Auth header kind
+nl = Auth header length</p>
+<p>bk = body kind
+bl = body length</p>
+<p>tk = tail kind
+tl = tail length</p>
+<dl class="docutils">
+<dt>fg = flags  packed (Flags) Default '00' hex string</dt>
+<dd>2 byte Hex string with bits (0, 0, af, pf, 0, bf, mf, cf)
+Zeros are TBD flags</dd>
+</dl>
+</div>
+<div class="section" id="session-bootstrap">
+<h2>Session Bootstrap<a class="headerlink" href="#session-bootstrap" title="永久链接至标题">¶</a></h2>
+<p>Minion sends packet with SID of Zero with public key of minions Public Private Key pair
+Master acks packet with SID of Zero to let minion know it received the request</p>
+<p>Some time later Master sends packet with SID of zero that accepts the Minion</p>
+<p>Minion</p>
+</div>
+<div class="section" id="session">
+<h2>Session<a class="headerlink" href="#session" title="永久链接至标题">¶</a></h2>
+<p>Session is important for security. Want one session opened and then multiple
+transactions within session.</p>
+<p>Session ID
+SID
+sid</p>
+<p>GUID hash to guarantee uniqueness since no guarantee of nonvolatile storage
+or require file storage to keep last session ID used.</p>
+</div>
+<div class="section" id="service-types-or-modular-services">
+<h2>Service Types or Modular Services<a class="headerlink" href="#service-types-or-modular-services" title="永久链接至标题">¶</a></h2>
+<p>Four Service Types</p>
+<ol class="upperalpha">
+<li><p class="first">One or more maybe (unacknowledged repeat) maybe means no guarantee</p>
+</li>
+<li><dl class="first docutils">
+<dt>Exactly one at most  (ack with retries) (duplicate detection idempotent)</dt>
+<dd><p class="first last">at most means fixed number of retries has finite probability of failing
+B1) finite retries
+B2) infinite retries with exponential back-off up to a maximum delay</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Exactly one of sequence at most (sequence numbered)</dt>
+<dd><p class="first last">Receiver requests retry of missing packet with same B1 or B2 retry type</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>End to End (Application layer Request Response)</dt>
+<dd><p class="first last">This is two B sub transactions</p>
+</dd>
+</dl>
+</li>
+</ol>
+<p>Initially unicast messaging
+Eventually support for Multicast</p>
+<p>The use case for C) is to fragment large packets as once a UDP packet
+exceeds the frame size its reliability goes way down
+So its more reliable to fragment large packets.</p>
+<p>Better approach might be to have more modularity.
+Services Levels</p>
+<blockquote>
+<div><ol class="arabic">
+<li><dl class="first docutils">
+<dt>Maybe one or more</dt>
+<dd><ol class="first last upperalpha">
+<li><dl class="first docutils">
+<dt>Fire and forget</dt>
+<dd><p class="first last">no transaction either side</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Repeat, no ack, no dupdet</dt>
+<dd><p class="first last">repeat counter send side,
+no transaction on receive side</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Repeat, no Ack, dupdet</dt>
+<dd><p class="first last">repeat counter send side,
+dup detection transaction receive side</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>More or Less Once</dt>
+<dd><ol class="first last upperalpha">
+<li><dl class="first docutils">
+<dt>retry finite, ack no dupdet</dt>
+<dd><p class="first last">retry timer send side, finite number of retires
+ack receive side no dupdet</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>At most Once</dt>
+<dd><ol class="first last upperalpha">
+<li><dl class="first docutils">
+<dt>retry finite, ack, dupdet</dt>
+<dd><p class="first last">retry timer send side, finite number of retires
+ack receive side dupdet</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Exactly once</dt>
+<dd><ol class="first last upperalpha">
+<li><dl class="first docutils">
+<dt>ack retry</dt>
+<dd><p class="first last">retry timer send side,
+ack and duplicate detection receive side
+Infinite retries with exponential backoff</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Sequential sequence number</dt>
+<dd><ol class="first last upperalpha simple">
+<li>reorder escrow</li>
+<li>Segmented packets</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><p class="first">request response to application layer</p>
+</li>
+</ol>
+</div></blockquote>
+<p>Service Features</p>
+<ol class="arabic simple">
+<li>repeats</li>
+<li>ack retry transaction id</li>
+<li>sequence number duplicate detection  out of order detection sequencing</li>
+<li>rep-req</li>
+</ol>
+<p>Always include transaction id since multiple transactions on same port
+So get duplicate detection for free if keep transaction alive but if use</p>
+<p>A) Maybe one or more
+B1) At Least One
+B2) Exactly One
+C) One of sequence
+D) End to End</p>
+<p>A) Sender creates transaction id for number of repeats but receiver does not
+keep transaction alive</p>
+<p>B1) Sender creates transaction id  keeps it for retries.
+Receiver keeps it to send ack then kills so retry could be duplicate not detected</p>
+<p>B2) Sender creates transaction id keeps for retries
+Receiver keeps tid for acks on any retires so no duplicates.</p>
+<p>C) Sender creates TID and Sequence Number.
+Receiver checks for out of order sequence and can request retry.</p>
+<p>D) Application layer sends response. So question is do we keep transaction open
+or have response be new transaction. No because then we need a rep-req ID so
+might as well use the same transaction id. Just keep alive until get response.</p>
+<p>Little advantage to B1 vs B2 not having duplicates.</p>
+<p>So 4 service types</p>
+<ol class="upperalpha simple">
+<li>Maybe one or more (unacknowledged repeat)</li>
+<li>Exactly One (At most one)  (ack with retry) (duplicate detection idempotent)</li>
+<li>One of Sequence (sequence numbered)</li>
+<li>End to End</li>
+</ol>
+<p>Also multicast or unicast</p>
+<p>Modular Transaction Table</p>
+<dl class="docutils">
+<dt>Sender Side:</dt>
+<dd>Transaction ID plus transaction source sender or receiver generated transaction id
+Repeat Counter
+Retry Timer Retry Counter (finite retries)
+Redo Timer (infinite redos with exponential backoff)
+Sequence number without acks (look for resend requests)
+Sequence with ack (wait for ack before sending next in sequence)
+Segmentation</dd>
+<dt>Receiver Side:</dt>
+<dd>Nothing just accept packet
+Acknowledge (can delete transaction after acknowledge)
+No duplicate detection
+Transaction timeout (keep transaction until timeout)
+Duplicate detection save transaction id duplicate detection timeout
+Request resend of missing packet in sequence
+Sequence reordering with escrow timeout wait escrow before requesting resend
+Unsegmentation (request resends of missing segment)</dd>
+</dl>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../tests/unit.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Writing Unit Tests" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../git/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="SaltStack Git Policy" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../windows/index.html">Windows</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Salt开发</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#salt-client">Salt Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#salt-master">Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#salt-minion">Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture.html#a-note-on-clearfuncs-vs-aesfuncs">A Note on ClearFuncs vs. AESFuncs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deprecations.html">代码弃用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dunder_dictionaries.html">Dunder Dictionaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../external_pillars.html">External Pillars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hacking.html">Installing Salt for development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../labels.html">GitHub Labels and Milestones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logging.html">内部日志</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modular_systems.html">模块化系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package_providers.html">Package Providers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reporting_bugs.html">Reporting Bugs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../salt_projects.html">Community Projects That Use Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../topology.html">Salt Topology</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../translating.html">翻译文档</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html">Developing Salt Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tests/index.html">Running The Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tests/index.html#automated-test-runs">Automated Test Runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tests/index.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">raet</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#protocol">Protocol</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#header">Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#packet">Packet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#header-fields">Header Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#session-bootstrap">Session Bootstrap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#session">Session</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#service-types-or-modular-services">Service Types or Modular Services</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../git/index.html">SaltStack Git Policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../conventions/index.html">Salt Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ref/internals/index.html">Salt code and internals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../projects/index.html">Salt Based Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/writing_tests.html">编写Salt测试</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.fileserver.s3fs</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+        <link rel="up" title="文件服务内置模块的完整列表" href="index.html">
+        <link rel="next" title="salt.fileserver.svnfs" href="salt.fileserver.svnfs.html">
+        <link rel="prev" title="salt.fileserver.roots" href="salt.fileserver.roots.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="salt.fileserver.roots.html" title="salt.fileserver.roots">上一页</a>
+            
+        </li>
+        <li>
+            <a href="salt.fileserver.svnfs.html" title="salt.fileserver.svnfs">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.fileserver.s3fs">
+<span id="salt-fileserver-s3fs"></span><h1>salt.fileserver.s3fs<a class="headerlink" href="#module-salt.fileserver.s3fs" title="永久链接至标题">¶</a></h1>
+<p>Amazon S3 Fileserver Backend</p>
+<p>This backend exposes directories in S3 buckets as Salt environments. To enable
+this backend, add <code class="docutils literal"><span class="pre">s3fs</span></code> to the <a class="reference internal" href="../../configuration/master.html#std:conf_master-fileserver_backend"><code class="xref std std-conf_master docutils literal"><span class="pre">fileserver_backend</span></code></a> option in the
+Master config file.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">fileserver_backend</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">s3fs</span>
+</pre></div>
+</div>
+<p>S3 credentials must also be set in the master config file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">s3.keyid</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">GKTADJGHEIQSXMKKRBJ08H</span>
+<span class="l l-Scalar l-Scalar-Plain">s3.key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">askdjghsdfjkghWupUjasdflkdfklgjsdfjajkghs</span>
+</pre></div>
+</div>
+<p>Alternatively, if on EC2 these credentials can be automatically loaded from
+instance metadata.</p>
+<p>This fileserver supports two modes of operation for the buckets:</p>
+<ol class="arabic">
+<li><p class="first"><strong>A single bucket per environment</strong></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">s3.buckets</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">production</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bucket1</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bucket2</span>
+  <span class="l l-Scalar l-Scalar-Plain">staging</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bucket3</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bucket4</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first"><strong>Multiple environments per bucket</strong></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">s3.buckets</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bucket1</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bucket2</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bucket3</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">bucket4</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>Note that bucket names must be all lowercase both in the AWS console and in
+Salt, otherwise you may encounter <code class="docutils literal"><span class="pre">SignatureDoesNotMatch</span></code> errors.</p>
+<p>A multiple-environment bucket must adhere to the following root directory
+structure:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>s3://&lt;bucket name&gt;/&lt;environment&gt;/&lt;files&gt;
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">This fileserver back-end requires the use of the MD5 hashing algorithm.
+MD5 may not be compliant with all security policies.</p>
+</div>
+<dl class="function">
+<dt id="salt.fileserver.s3fs.dir_list">
+<code class="descclassname">salt.fileserver.s3fs.</code><code class="descname">dir_list</code><span class="sig-paren">(</span><em>load</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.fileserver.s3fs.dir_list" title="永久链接至目标">¶</a></dt>
+<dd><p>返回一个在master所有目录的列表。</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.fileserver.s3fs.envs">
+<code class="descclassname">salt.fileserver.s3fs.</code><code class="descname">envs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.fileserver.s3fs.envs" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of directories within the bucket that can be
+used as environments.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.fileserver.s3fs.file_hash">
+<code class="descclassname">salt.fileserver.s3fs.</code><code class="descname">file_hash</code><span class="sig-paren">(</span><em>load</em>, <em>fnd</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.fileserver.s3fs.file_hash" title="永久链接至目标">¶</a></dt>
+<dd><p>Return an MD5 file hash</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.fileserver.s3fs.file_list">
+<code class="descclassname">salt.fileserver.s3fs.</code><code class="descname">file_list</code><span class="sig-paren">(</span><em>load</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.fileserver.s3fs.file_list" title="永久链接至目标">¶</a></dt>
+<dd><p>在指定环境中返回文件服务器的所有文件列表</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.fileserver.s3fs.file_list_emptydirs">
+<code class="descclassname">salt.fileserver.s3fs.</code><code class="descname">file_list_emptydirs</code><span class="sig-paren">(</span><em>load</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.fileserver.s3fs.file_list_emptydirs" title="永久链接至目标">¶</a></dt>
+<dd><p>Return a list of all empty directories on the master</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.fileserver.s3fs.find_file">
+<code class="descclassname">salt.fileserver.s3fs.</code><code class="descname">find_file</code><span class="sig-paren">(</span><em>path</em>, <em>saltenv='base'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.fileserver.s3fs.find_file" title="永久链接至目标">¶</a></dt>
+<dd><p>Look through the buckets cache file for a match.
+If the field is found, it is retrieved from S3 only if its cached version
+is missing, or if the MD5 does not match.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.fileserver.s3fs.serve_file">
+<code class="descclassname">salt.fileserver.s3fs.</code><code class="descname">serve_file</code><span class="sig-paren">(</span><em>load</em>, <em>fnd</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.fileserver.s3fs.serve_file" title="永久链接至目标">¶</a></dt>
+<dd><p>从一个基于接收到的文件中返回数据块</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="salt.fileserver.s3fs.update">
+<code class="descclassname">salt.fileserver.s3fs.</code><code class="descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#salt.fileserver.s3fs.update" title="永久链接至目标">¶</a></dt>
+<dd><p>Update the cache file for the bucket.</p>
+</dd></dl>
+
+</div>
+
+
+                            </div>
+                            <a href="salt.fileserver.roots.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.fileserver.roots" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="salt.fileserver.svnfs.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.fileserver.svnfs" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Salt Module Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../auth/all/index.html">内建身份认证模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../beacons/all/index.html">Full list of builtin beacon modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../engines/all/index.html">Full list of builtin engine modules</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">文件服务内置模块的完整列表</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="salt.fileserver.azurefs.html">salt.fileserver.azurefs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.fileserver.gitfs.html">salt.fileserver.gitfs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.fileserver.hgfs.html">salt.fileserver.hgfs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.fileserver.minionfs.html">salt.fileserver.minionfs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.fileserver.roots.html">salt.fileserver.roots</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">salt.fileserver.s3fs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.fileserver.svnfs.html">salt.fileserver.svnfs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../grains/all/index.html">Full list of builtin grains modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/all/index.html">Full list of builtin execution modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../netapi/all/index.html">Full list of netapi modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../output/all/index.html">完整的内置输出模块的列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../pillar/all/index.html">Full list of builtin pillar modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../proxy/all/index.html">Full list of builtin proxy modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../queues/all/index.html">Full list of builtin queues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../renderers/all/index.html">Full list of builtin renderer modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../returners/all/index.html">所有内置的返回接收器模块列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../roster/all/index.html">Full list of builtin roster modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../runners/all/index.html">Full list of runner modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sdb/all/index.html">Full list of builtin sdb modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../serializers/all/index.html">Full list of builtin serializers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../states/all/index.html">所有内置的state模块列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tops/all/index.html">master内置顶级模块的全部列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../wheel/all/index.html">Full list of builtin wheel modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt 2014.7.6 Release Notes</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Release Notes" href="index.html">
+        <link rel="next" title="Salt 2014.1.0 Release Notes - Codename Hydrogen" href="2014.1.0.html">
+        <link rel="prev" title="Salt 2014.7.5 Release Notes" href="2014.7.5.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="2014.7.5.html" title="Salt 2014.7.5 Release Notes">上一页</a>
+            
+        </li>
+        <li>
+            <a href="2014.1.0.html" title="Salt 2014.1.0 Release Notes - Codename Hydrogen">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="salt-2014-7-6-release-notes">
+<h1>Salt 2014.7.6 Release Notes<a class="headerlink" href="#salt-2014-7-6-release-notes" title="永久链接至标题">¶</a></h1>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">release:</th><td class="field-body">2015-05-18</td>
+</tr>
+</tbody>
+</table>
+<p>Version 2014.7.6 is a bugfix release for <a class="reference internal" href="2014.7.0.html"><em>2014.7.0</em></a>.</p>
+<p>This release is a security release. A minor issue was found, as cited below:</p>
+<ul class="simple">
+<li>CVE-2015-4017 -- Certificates are not verified when connecting to server in
+the Aliyun and Proxmox modules</li>
+</ul>
+<p>Only users of the Aliyun or Proxmox cloud modules are at risk. The
+vulnerability does not exist in the latest 2015.5.0 release of Salt.</p>
+<p>Changes:</p>
+<ul class="simple">
+<li>salt.runners.cloud.action() has changed the <cite>fun</cite> keyword argument to <cite>func</cite>.
+Please update any calls to this function in the cloud runner.</li>
+</ul>
+<p>Extended Changelog Courtesy of Todd Stansell (<a class="reference external" href="https://github.com/tjstansell/salt-changelogs">https://github.com/tjstansell/salt-changelogs</a>):</p>
+<ul>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23810">#23810</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/23757">#23757</a> to 2014.7
+&#64; <em>2015-05-18T15:30:21Z</em></p>
+<ul class="simple">
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23757">#23757</a>: (<em>clan</em>) use abspath, do not eliminating symlinks
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23810">#23810</a></li>
+</ul>
+<ul class="simple">
+<li>aee00c8 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23810">#23810</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/pull/23757">bp-23757</a></li>
+<li>fb32c32 use abspath, do not eliminating symlinks</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23809">#23809</a>: (<em>rallytime</em>) Fix virtualport section of virt.get_nics loop
+&#64; <em>2015-05-18T15:30:09Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/20198">#20198</a>: (<em>jcftang</em>) virt.get_graphics, virt.get_nics are broken, in turn breaking other things
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23809">#23809</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/21487">#21487</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/21469">#21469</a> to 2014.7
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23809">#23809</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/21469">#21469</a>: (<em>vdesjardins</em>) fixes <a class="reference external" href="https://github.com/saltstack/salt/issues/20198">#20198</a>: virt.get_graphics and virt.get_nics calls in module virt
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/21487">#21487</a></li>
+</ul>
+<ul class="simple">
+<li>6b3352b Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23809">#23809</a> from rallytime/virt_get_nics_fix</li>
+<li>0616fb7 Fix virtualport section of virt.get_nics loop</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23823">#23823</a>: (<em>gtmanfred</em>) add link local for ipv6
+&#64; <em>2015-05-17T12:48:25Z</em></p>
+<ul class="simple">
+<li>188f03f Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23823">#23823</a> from gtmanfred/2014.7</li>
+<li>5ef006d add link local for ipv6</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23802">#23802</a>: (<em>gtmanfred</em>) if it is ipv6 ip_to_int will fail
+&#64; <em>2015-05-16T04:06:59Z</em></p>
+<ul class="simple">
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23573">#23573</a>: (<em>techhat</em>) Scan all available networks for public and private IPs
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23802">#23802</a></li>
+</ul>
+<ul class="simple">
+<li>f3ca682 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23802">#23802</a> from gtmanfred/2014.7</li>
+<li>2da98b5 if it is ipv6 ip_to_int will fail</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23488">#23488</a>: (<em>cellscape</em>) LXC cloud fixes
+&#64; <em>2015-05-15T18:09:35Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/16424">#16424</a>: (<em>stanvit</em>) salt-run cloud.create fails with saltify</li>
+</ul>
+<ul class="simple">
+<li>d9af0c3 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23488">#23488</a> from cellscape/lxc-cloud-fixes</li>
+<li>64250a6 Remove profile from opts after creating LXC container</li>
+<li>c4047d2 Set destroy=True in opts when destroying cloud instance</li>
+<li>9e1311a Store instance names in opts when performing cloud action</li>
+<li>934bc57 Correctly pass custom env to lxc-attach</li>
+<li>7fb85f7 Preserve test=True option in cloud states</li>
+<li>9771b5a Fix detection of absent LXC container in cloud state</li>
+<li>fb24f0c Report failure when failed to create/clone LXC container</li>
+<li>2d9aa2b Avoid shadowing variables in lxc module</li>
+<li>792e102 Allow overriding profile options in lxc.cloud_init_interface</li>
+<li>42bd64b Return changes on successful lxc.create from salt-cloud</li>
+<li>4409eab Return correct result when creating cloud LXC container</li>
+<li>377015c Issue <a class="reference external" href="https://github.com/saltstack/salt/issues/16424">#16424</a>: List all providers when creating salt-cloud instance without profile</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23748">#23748</a>: (<em>basepi</em>) [2014.7] Log salt-ssh roster render errors more assertively and verbosely
+&#64; <em>2015-05-14T22:38:10Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/22332">#22332</a>: (<em>rallytime</em>) [salt-ssh] Add a check for host in /etc/salt/roster
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23748">#23748</a></li>
+</ul>
+<ul class="simple">
+<li>808bbe1 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23748">#23748</a> from basepi/salt-ssh.roster.host.check</li>
+<li>bc53e04 Log entire exception for render errors in roster</li>
+<li>753de6a Log render errors in roster to error level</li>
+<li>e01a7a9 Always let the real YAML error through</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23731">#23731</a>: (<em>twangboy</em>) Fixes <a class="reference external" href="https://github.com/saltstack/salt/issues/22959">#22959</a>: Trying to add a directory to an unmapped drive in windows
+&#64; <em>2015-05-14T21:59:14Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/22959">#22959</a>: (<em>highlyunavailable</em>) Windows Salt hangs if file.directory is trying to write to a drive that doesn't exist</li>
+</ul>
+<ul class="simple">
+<li>72cf360 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23731">#23731</a> from twangboy/fix_22959</li>
+<li>88e5495 Fixes <a class="reference external" href="https://github.com/saltstack/salt/issues/22959">#22959</a>: Trying to add a directory to an unmapped drive in windows</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23730">#23730</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/23729">#23729</a> to 2014.7
+&#64; <em>2015-05-14T21:58:34Z</em></p>
+<ul class="simple">
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23729">#23729</a>: (<em>rallytime</em>) Partially merge <a class="reference external" href="https://github.com/saltstack/salt/pull/23437">#23437</a> (grains fix)
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23730">#23730</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23437">#23437</a>: (<em>cedwards</em>) Grains item patch
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23729">#23729</a></li>
+</ul>
+<ul class="simple">
+<li>2610195 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23730">#23730</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/pull/23729">bp-23729</a></li>
+<li>1877cae adding support for nested grains to grains.item</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23688">#23688</a>: (<em>twangboy</em>) Added inet_pton to utils/validate/net.py for ip.set_static_ip in windows
+&#64; <em>2015-05-14T16:15:56Z</em></p>
+<ul class="simple">
+<li>3e9df88 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23688">#23688</a> from twangboy/fix_23415</li>
+<li>6a91169 Fixed unused-import pylint error</li>
+<li>5e25b3f fixed pylint errors</li>
+<li>1a96766 Added inet_pton to utils/validate/net.py for ip.set_static_ip in windows</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23680">#23680</a>: (<em>cachedout</em>) Rename kwarg in cloud runner
+&#64; <em>2015-05-13T19:44:02Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23403">#23403</a>: (<em>iamfil</em>) salt.runners.cloud.action fun parameter is replaced
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23680">#23680</a></li>
+</ul>
+<ul class="simple">
+<li>1b86460 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23680">#23680</a> from cachedout/issue_23403</li>
+<li>d5986c2 Rename kwarg in cloud runner</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23674">#23674</a>: (<em>cachedout</em>) Handle lists correctly in grains.list_prsesent
+&#64; <em>2015-05-13T18:34:58Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23548">#23548</a>: (<em>kkaig</em>) grains.list_present produces incorrect (?) output
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23674">#23674</a></li>
+</ul>
+<ul class="simple">
+<li>cd64af0 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23674">#23674</a> from cachedout/issue_23548</li>
+<li>da8a2f5 Handle lists correctly in grains.list_prsesent</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23672">#23672</a>: (<em>twangboy</em>) Fix user present
+&#64; <em>2015-05-13T18:30:09Z</em></p>
+<ul class="simple">
+<li>d322a19 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23672">#23672</a> from twangboy/fix_user_present</li>
+<li>731e7af Merge branch '2014.7' of <a class="reference external" href="https://github.com/saltstack/salt">https://github.com/saltstack/salt</a> into fix_user_present</li>
+<li>d6f70a4 Fixed user.present to create password in windows</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23670">#23670</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/23607">#23607</a> to 2014.7
+&#64; <em>2015-05-13T18:27:17Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23604">#23604</a>: (<em>Azidburn</em>) service.dead on systemd Minion create an Error Message
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23607">#23607</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23607">#23607</a>: (<em>Azidburn</em>) Fix for <a class="reference external" href="https://github.com/saltstack/salt/issues/23604">#23604</a>. No error reporting. Exitcode !=0 are ok
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23670">#23670</a></li>
+</ul>
+<ul class="simple">
+<li>43f7025 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23670">#23670</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/pull/23607">bp-23607</a></li>
+<li>ed30dc4 Fix for <a class="reference external" href="https://github.com/saltstack/salt/issues/23604">#23604</a>. No error reporting. Exitcode !=0 are ok</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23661">#23661</a>: (<em>rallytime</em>) Merge <a class="reference external" href="https://github.com/saltstack/salt/pull/23640">#23640</a> with whitespace fix
+&#64; <em>2015-05-13T15:47:30Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/22141">#22141</a>: (<em>Deshke</em>) grains.get_or_set_hash render error if hash begins with &quot;%&quot;
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23640">#23640</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23640">#23640</a>: (<em>cachedout</em>) Add warning to get_or_set_hash about reserved chars
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23661">#23661</a></li>
+</ul>
+<ul class="simple">
+<li>0f006ac Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23661">#23661</a> from rallytime/merge-23640</li>
+<li>4427f42 Whitespace fix</li>
+<li>dd91154 Add warning to get_or_set_hash about reserved chars</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23639">#23639</a>: (<em>cachedout</em>) Handle exceptions raised by __virtual__
+&#64; <em>2015-05-13T15:11:12Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23452">#23452</a>: (<em>michaelforge</em>) minion crashed with empty grain
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23639">#23639</a></li>
+</ul>
+<ul class="simple">
+<li>84e2ef8 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23639">#23639</a> from cachedout/issue_23452</li>
+<li>d418b49 Syntax error!</li>
+<li>45b4015 Handle exceptions raised by __virtual__</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23637">#23637</a>: (<em>cachedout</em>) Convert str master to list
+&#64; <em>2015-05-13T15:08:19Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23611">#23611</a>: (<em>hubez</em>) master_type set to 'failover' but 'master' is not of type list but of type &lt;type 'str'&gt;
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23637">#23637</a></li>
+</ul>
+<ul class="simple">
+<li>bd9b94b Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23637">#23637</a> from cachedout/issue_23611</li>
+<li>56cb1f5 Fix typo</li>
+<li>f6fcf19 Convert str master to list</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23595">#23595</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/23549">#23549</a> to 2014.7
+&#64; <em>2015-05-12T21:19:40Z</em></p>
+<ul class="simple">
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23549">#23549</a>: (<em>vr-jack</em>) Update __init__.py
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23595">#23595</a></li>
+</ul>
+<ul class="simple">
+<li>f20c0e4 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23595">#23595</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/pull/23549">bp-23549</a></li>
+<li>6efcac0 Update __init__.py</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23594">#23594</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/23496">#23496</a> to 2014.7
+&#64; <em>2015-05-12T21:19:34Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23110">#23110</a>: (<em>martinhoefling</em>) Copying files from gitfs in file.recurse state fails</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23496">#23496</a>: (<em>martinhoefling</em>) Fix for issue <a class="reference external" href="https://github.com/saltstack/salt/issues/23110">#23110</a>
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23594">#23594</a></li>
+</ul>
+<ul class="simple">
+<li>1acaf86 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23594">#23594</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/pull/23496">bp-23496</a></li>
+<li>d5ae1d2 Fix for issue <a class="reference external" href="https://github.com/saltstack/salt/issues/23110">#23110</a> This resolves issues when the freshly created directory is removed by fileserver.update.</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23593">#23593</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/23442">#23442</a> to 2014.7
+&#64; <em>2015-05-12T21:19:26Z</em></p>
+<ul class="simple">
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23442">#23442</a>: (<em>clan</em>) add directory itself to keep list
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23593">#23593</a></li>
+</ul>
+<ul class="simple">
+<li>2c221c7 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23593">#23593</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/pull/23442">bp-23442</a></li>
+<li>39869a1 check w/ low['name'] only</li>
+<li>304cc49 another fix for file defined w/ id, but require name</li>
+<li>8814d41 add directory itself to keep list</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23606">#23606</a>: (<em>twangboy</em>) Fixed checkbox for starting service and actually starting it
+&#64; <em>2015-05-12T21:18:50Z</em></p>
+<ul class="simple">
+<li>fadd1ef Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23606">#23606</a> from twangboy/fix_installer</li>
+<li>038331e Fixed checkbox for starting service and actually starting it</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23592">#23592</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/23389">#23389</a> to 2014.7
+&#64; <em>2015-05-12T16:44:42Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/22908">#22908</a>: (<em>karanjad</em>) Add failhard option to salt orchestration
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23389">#23389</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23389">#23389</a>: (<em>cachedout</em>) Correct fail_hard typo
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23592">#23592</a></li>
+</ul>
+<ul class="simple">
+<li>10b3f0f Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23592">#23592</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/pull/23389">bp-23389</a></li>
+<li>734cc43 Correct fail_hard typo</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23573">#23573</a>: (<em>techhat</em>) Scan all available networks for public and private IPs
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23802">#23802</a>
+&#64; <em>2015-05-12T15:22:22Z</em></p>
+<ul class="simple">
+<li>cd34b9b Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23573">#23573</a> from techhat/novaquery</li>
+<li>f92db5e Linting</li>
+<li>26e00d3 Scan all available networks for public and private IPs</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23558">#23558</a>: (<em>jfindlay</em>) reorder emerge command line
+&#64; <em>2015-05-12T15:17:46Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23479">#23479</a>: (<em>danielmorlock</em>) Typo in pkg.removed for Gentoo?
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23558">#23558</a></li>
+</ul>
+<ul class="simple">
+<li>2a72cd7 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23558">#23558</a> from jfindlay/fix_ebuild</li>
+<li>45404fb reorder emerge command line</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23530">#23530</a>: (<em>dr4Ke</em>) salt-ssh state: fix including all salt:// references
+&#64; <em>2015-05-12T15:13:43Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23355">#23355</a>: (<em>dr4Ke</em>) salt-ssh: 'sources: salt://' files from 'pkg' state are not included in salt_state.tgz
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23530">#23530</a></li>
+</ul>
+<ul class="simple">
+<li>a664a3c Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23530">#23530</a> from dr4Ke/fix_salt-ssh_to_include_pkg_sources</li>
+<li>5df6a80 fix pylint warning</li>
+<li>d0549e5 salt-ssh state: fix including all salt:// references</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23433">#23433</a>: (<em>twangboy</em>) Obtain all software from the registry
+&#64; <em>2015-05-11T22:47:52Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23004">#23004</a>: (<em>b18</em>) 2014.7.5 - Windows - pkg.list_pkgs - &quot;nxlog&quot; never shows up in output.
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23433">#23433</a></li>
+</ul>
+<ul class="simple">
+<li>55c3869 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23433">#23433</a> from twangboy/list_pkgs_fix</li>
+<li>8ab5b1b Fix pylint error</li>
+<li>2d11d65 Obtain all software from the registry</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23554">#23554</a>: (<em>jleroy</em>) Debian: Hostname always updated
+&#64; <em>2015-05-11T21:57:00Z</em></p>
+<ul class="simple">
+<li>755bed0 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23554">#23554</a> from jleroy/debian-hostname-fix</li>
+<li>5ff749e Debian: Hostname always updated</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23551">#23551</a>: (<em>dr4Ke</em>) grains.append unit tests, related to <a class="reference external" href="https://github.com/saltstack/salt/pull/23474">#23474</a>
+&#64; <em>2015-05-11T21:54:25Z</em></p>
+<ul class="simple">
+<li>6ec87ce Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23551">#23551</a> from dr4Ke/grains.append_unit_tests</li>
+<li>ebff9df fix pylint errors</li>
+<li>c495404 unit tests for grains.append module function</li>
+<li>0c9a323 use MagickMock</li>
+<li>c838a22 unit tests for grains.append module function</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23474">#23474</a>: (<em>dr4Ke</em>) Fix grains.append in nested dictionary grains <a class="reference external" href="https://github.com/saltstack/salt/issues/23411">#23411</a>
+&#64; <em>2015-05-11T18:00:21Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23411">#23411</a>: (<em>dr4Ke</em>) grains.append should work at any level of a grain
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23440">#23440</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23440">#23440</a>: (<em>dr4Ke</em>) fix grains.append in nested dictionary grains <a class="reference external" href="https://github.com/saltstack/salt/issues/23411">#23411</a>
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23474">#23474</a></li>
+</ul>
+<ul class="simple">
+<li>e96c5c5 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23474">#23474</a> from dr4Ke/fix_grains.append_nested</li>
+<li>a01a5bb grains.get, parameter delimititer, versionadded: 2014.7.6</li>
+<li>b39f504 remove debugging output</li>
+<li>b6e15e2 fix grains.append in nested dictionary grains <a class="reference external" href="https://github.com/saltstack/salt/issues/23411">#23411</a></li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23537">#23537</a>: (<em>t0rrant</em>) Update changelog
+&#64; <em>2015-05-11T17:02:16Z</em></p>
+<ul class="simple">
+<li>ab7e1ae Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23537">#23537</a> from t0rrant/patch-1</li>
+<li>8e03cc9 Update changelog</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23538">#23538</a>: (<em>cro</em>) Update date in LICENSE file
+&#64; <em>2015-05-11T15:19:25Z</em></p>
+<ul class="simple">
+<li>b79fed3 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23538">#23538</a> from cro/licupdate</li>
+<li>345efe2 Update date in LICENSE file</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23505">#23505</a>: (<em>aneeshusa</em>) Remove unused ssh config validator. Fixes <a class="reference external" href="https://github.com/saltstack/salt/issues/23159">#23159</a>.
+&#64; <em>2015-05-09T13:24:15Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23159">#23159</a>: (<em>aneeshusa</em>) Unused validator</li>
+</ul>
+<ul class="simple">
+<li>a123a36 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23505">#23505</a> from aneeshusa/remove-unused-ssh-config-validator</li>
+<li>90af167 Remove unused ssh config validator. Fixes <a class="reference external" href="https://github.com/saltstack/salt/issues/23159">#23159</a>.</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23467">#23467</a>: (<em>slinu3d</em>) Added AWS v4 signature support
+&#64; <em>2015-05-08T14:36:19Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/20518">#20518</a>: (<em>ekle</em>) module s3.get does not support eu-central-1
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23467">#23467</a></li>
+</ul>
+<ul class="simple">
+<li>ca2c21a Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23467">#23467</a> from slinu3d/2014.7</li>
+<li>0b4081d Fixed pylint error at line 363</li>
+<li>5be5eb5 Fixed pylink errors</li>
+<li>e64f374 Fixed lint errors</li>
+<li>b9d1ac4 Added AWS v4 signature support</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23444">#23444</a>: (<em>techhat</em>) Add create_attach_volume to nova driver
+&#64; <em>2015-05-07T19:51:32Z</em></p>
+<ul class="simple">
+<li>e6f9eec Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23444">#23444</a> from techhat/novacreateattach</li>
+<li>ebdb7ea Add create_attach_volume to nova driver</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23460">#23460</a>: (<em>s0undt3ch</em>) [2014.7] Update to latest stable bootstrap script v2015.05.07
+&#64; <em>2015-05-07T19:10:54Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/563">#563</a>: (<em>chutz</em>) pidfile support for minion and master daemons
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23460">#23460</a></li>
+</ul>
+<ul class="simple">
+<li>e331463 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23460">#23460</a> from s0undt3ch/hotfix/bootstrap-script-2014.7</li>
+<li>edcd0c4 Update to latest stable bootstrap script v2015.05.07</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23439">#23439</a>: (<em>techhat</em>) Add wait_for_passwd_maxtries variable
+&#64; <em>2015-05-07T07:28:56Z</em></p>
+<ul class="simple">
+<li>7a8ce1a Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23439">#23439</a> from techhat/maxtries</li>
+<li>0ad3ff2 Add wait_for_passwd_maxtries variable</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23422">#23422</a>: (<em>cro</em>) $HOME should not be used, some shells don't set it.
+&#64; <em>2015-05-06T21:02:36Z</em></p>
+<ul class="simple">
+<li>644eb75 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23422">#23422</a> from cro/gce_sh_home</li>
+<li>4ef9e6b Don't use $HOME to find user's directory, some shells don't set it</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23425">#23425</a>: (<em>basepi</em>) [2014.7] Fix typo in FunctionWrapper
+&#64; <em>2015-05-06T20:38:03Z</em></p>
+<ul class="simple">
+<li>ef17ab4 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23425">#23425</a> from basepi/functionwrapper_typo</li>
+<li>c390737 Fix typo in FunctionWrapper</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23385">#23385</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/23346">#23346</a> to 2014.7
+&#64; <em>2015-05-06T20:12:29Z</em></p>
+<ul class="simple">
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23346">#23346</a>: (<em>ericfode</em>) Allow file_map in salt-cloud to handle folders.
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23385">#23385</a></li>
+</ul>
+<ul class="simple">
+<li>1b13ec0 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23385">#23385</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/pull/23346">bp-23346</a></li>
+<li>9efc13c more linting fixes</li>
+<li>cf131c9 cleaned up some pylint errors</li>
+<li>f981699 added logic to sftp_file and file_map to allow folder uploads using file_map</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23414">#23414</a>: (<em>jfindlay</em>) 2015.2 -&gt; 2015.5
+&#64; <em>2015-05-06T20:04:02Z</em></p>
+<ul class="simple">
+<li>f8c7a62 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23414">#23414</a> from jfindlay/update_branch</li>
+<li>8074d16 2015.2 -&gt; 2015.5</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23404">#23404</a>: (<em>hvnsweeting</em>) saltapi cherrypy: initialize var when POST body is empty
+&#64; <em>2015-05-06T17:35:56Z</em></p>
+<ul class="simple">
+<li>54b3bd4 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23404">#23404</a> from hvnsweeting/cherrypy-post-emptybody-fix</li>
+<li>f85f8f9 initialize var when POST body is empty</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23409">#23409</a>: (<em>terminalmage</em>) Update Lithium docstrings in 2014.7 branch
+&#64; <em>2015-05-06T16:20:46Z</em></p>
+<ul class="simple">
+<li>160f703 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23409">#23409</a> from terminalmage/update-lithium-docstrings-2014.7</li>
+<li>bc97d01 Fix sphinx typo</li>
+<li>20006b0 Update Lithium docstrings in 2014.7 branch</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23397">#23397</a>: (<em>jfindlay</em>) add more flexible whitespace to locale_gen search
+&#64; <em>2015-05-06T03:44:11Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/17245">#17245</a>: (<em>tomashavlas</em>) localemod does not generate locale for Arch
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23307">#23307</a> <a class="reference external" href="https://github.com/saltstack/salt/pull/23397">#23397</a></li>
+</ul>
+<ul class="simple">
+<li>aa5fb0a Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23397">#23397</a> from jfindlay/fix_locale_gen</li>
+<li>0941fef add more flexible whitespace to locale_gen search</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23368">#23368</a>: (<em>kaithar</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/23367">#23367</a> to 2014.7
+&#64; <em>2015-05-05T21:42:26Z</em></p>
+<ul class="simple">
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23367">#23367</a>: (<em>kaithar</em>) Put the sed insert statement back in to the output.
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23368">#23368</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/18368">#18368</a>: (<em>basepi</em>) Merge forward from 2014.7 to develop
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23367">#23367</a> <a class="reference external" href="https://github.com/saltstack/salt/pull/23368">#23368</a></li>
+</ul>
+<ul class="simple">
+<li>0c76dd4 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23368">#23368</a> from kaithar/<a class="reference external" href="https://github.com/saltstack/salt/pull/23367">bp-23367</a></li>
+<li>577f419 Pylint fix</li>
+<li>8d9acd1 Put the sed insert statement back in to the output.</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23350">#23350</a>: (<em>lorengordon</em>) Append/prepend: search for full line
+&#64; <em>2015-05-05T21:42:11Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23294">#23294</a>: (<em>variia</em>) file.replace fails to append if repl string partially available
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23350">#23350</a></li>
+</ul>
+<ul class="simple">
+<li>3493cc1 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23350">#23350</a> from lorengordon/file.replace_assume_line</li>
+<li>b60e224 Append/prepend: search for full line</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23341">#23341</a>: (<em>cachedout</em>) Fix syndic pid and logfile path
+&#64; <em>2015-05-05T21:29:10Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23026">#23026</a>: (<em>adelcast</em>) Incorrect salt-syndic logfile and pidfile locations
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23341">#23341</a></li>
+</ul>
+<ul class="simple">
+<li>7be5c48 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23341">#23341</a> from cachedout/issue_23026</li>
+<li>e98e65e Fix tests</li>
+<li>6011b43 Fix syndic pid and logfile path</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23272">#23272</a>: (<em>basepi</em>) [2014.7] Allow salt-ssh minion config overrides via master config and roster
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23347">#23347</a>
+&#64; **</p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/19114">#19114</a>: (<em>pykler</em>) salt-ssh and gpg pillar renderer
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23188">#23188</a> <a class="reference external" href="https://github.com/saltstack/salt/pull/23272">#23272</a> <a class="reference external" href="https://github.com/saltstack/salt/pull/23347">#23347</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23188">#23188</a>: (<em>basepi</em>) [2014.7] Work around bug in salt-ssh in config.get for gpg renderer
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23272">#23272</a></li>
+</ul>
+<ul class="simple">
+<li>ea61abf Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23272">#23272</a> from basepi/salt-ssh.minion.config.19114</li>
+<li>c223309 Add versionadded</li>
+<li>be7407f Lint</li>
+<li>c2c3375 Missing comma</li>
+<li>8e3e8e0 Pass the minion_opts through the FunctionWrapper</li>
+<li>cb69cd0 Match the master config template in the master config reference</li>
+<li>87fc316 Add Salt-SSH section to master config template</li>
+<li>91dd9dc Add ssh_minion_opts to master config ref</li>
+<li>c273ea1 Add minion config to salt-ssh doc</li>
+<li>a0b6b76 Add minion_opts to roster docs</li>
+<li>5212c35 Accept minion_opts from the target information</li>
+<li>e2099b6 Process <cite>ssh_minion_opts</cite> from master config</li>
+<li>3b64214 Revert &quot;Work around bug in salt-ssh in config.get for gpg renderer&quot;</li>
+<li>494953a Remove the strip (embracing multi-line YAML dump)</li>
+<li>fe87f0f Dump multi-line yaml into the SHIM</li>
+<li>b751a72 Inject local minion config into shim if available</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23347">#23347</a>: (<em>basepi</em>) [2014.7] Salt-SSH Backport FunctionWrapper.__contains__
+&#64; <em>2015-05-05T14:13:21Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/19114">#19114</a>: (<em>pykler</em>) salt-ssh and gpg pillar renderer
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23188">#23188</a> <a class="reference external" href="https://github.com/saltstack/salt/pull/23272">#23272</a> <a class="reference external" href="https://github.com/saltstack/salt/pull/23347">#23347</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23272">#23272</a>: (<em>basepi</em>) [2014.7] Allow salt-ssh minion config overrides via master config and roster
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23347">#23347</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23188">#23188</a>: (<em>basepi</em>) [2014.7] Work around bug in salt-ssh in config.get for gpg renderer
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23272">#23272</a></li>
+</ul>
+<ul class="simple">
+<li>4f760dd Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23347">#23347</a> from basepi/salt-ssh.functionwrapper.contains.19114</li>
+<li>30595e3 Backport FunctionWrapper.__contains__</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23344">#23344</a>: (<em>cachedout</em>) Explicitly set file_client on master
+&#64; <em>2015-05-04T23:21:48Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/22742">#22742</a>: (<em>hvnsweeting</em>) salt-master says: &quot;This master address: 'salt' was previously resolvable but now fails to resolve!&quot;
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23344">#23344</a></li>
+</ul>
+<ul class="simple">
+<li>02658b1 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23344">#23344</a> from cachedout/issue_22742</li>
+<li>5adc96c Explicitly set file_client on master</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23318">#23318</a>: (<em>cellscape</em>) Honor seed argument in LXC container initializaton
+&#64; <em>2015-05-04T20:58:12Z</em></p>
+<ul class="simple">
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23311">#23311</a>: (<em>cellscape</em>) Fix new container initialization in LXC runner
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23318">#23318</a></li>
+</ul>
+<ul class="simple">
+<li>ba7605d Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23318">#23318</a> from cellscape/honor-seed-argument</li>
+<li>228b1be Honor seed argument in LXC container initializaton</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23307">#23307</a>: (<em>jfindlay</em>) check for /etc/locale.gen
+&#64; <em>2015-05-04T20:56:32Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/17245">#17245</a>: (<em>tomashavlas</em>) localemod does not generate locale for Arch
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23307">#23307</a> <a class="reference external" href="https://github.com/saltstack/salt/pull/23397">#23397</a></li>
+</ul>
+<ul class="simple">
+<li>4ac4509 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23307">#23307</a> from jfindlay/fix_locale_gen</li>
+<li>101199a check for /etc/locale.gen</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23324">#23324</a>: (<em>s0undt3ch</em>) [2014.7] Update to the latest stable release of the bootstrap script v2015.05.04
+&#64; <em>2015-05-04T16:28:30Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/580">#580</a>: (<em>thatch45</em>) recursive watch not being caught
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23324">#23324</a></li>
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/552">#552</a>: (<em>jhutchins</em>) Support require and watch under the same state dec
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23324">#23324</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/589">#589</a>: (<em>epoelke</em>) add --quiet and --outfile options to saltkey
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23324">#23324</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/567">#567</a>: (<em>bastichelaar</em>) Added upstart module
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23324">#23324</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/560">#560</a>: (<em>UtahDave</em>) The runas feature that was added in 93423aa2e5e4b7de6452090b0039560d2b13...
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23324">#23324</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/504">#504</a>: (<em>SEJeff</em>) File state goodies
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23324">#23324</a></li>
+</ul>
+<ul class="simple">
+<li>f790f42 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23324">#23324</a> from s0undt3ch/hotfix/bootstrap-script-2014.7</li>
+<li>6643e47 Update to the latest stable release of the bootstrap script v2015.05.04</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23329">#23329</a>: (<em>cro</em>) Require requests to verify cert when talking to aliyun and proxmox cloud providers
+&#64; <em>2015-05-04T16:18:17Z</em></p>
+<ul class="simple">
+<li>5487367 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23329">#23329</a> from cro/cloud_verify_cert</li>
+<li>860d4b7 Turn on ssl verify for requests.</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23311">#23311</a>: (<em>cellscape</em>) Fix new container initialization in LXC runner
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23318">#23318</a>
+&#64; <em>2015-05-04T09:55:29Z</em></p>
+<ul class="simple">
+<li>ea20176 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23311">#23311</a> from cellscape/fix-salt-cloud-lxc-init</li>
+<li>76fbb34 Fix new container initialization in LXC runner</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23298">#23298</a>: (<em>chris-prince</em>) Fixed issue <a class="reference external" href="https://github.com/saltstack/salt/issues/18880">#18880</a> in 2014.7 branch
+&#64; <em>2015-05-03T15:49:41Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/18880">#18880</a>: (<em>johtso</em>) npm installed breaks when a module is missing</li>
+</ul>
+<ul class="simple">
+<li>c399b8f Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23298">#23298</a> from chris-prince/2014.7</li>
+<li>0fa25db Fixed issue <a class="reference external" href="https://github.com/saltstack/salt/issues/18880">#18880</a> in 2014.7 branch</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23292">#23292</a>: (<em>rallytime</em>) Merge <a class="reference external" href="https://github.com/saltstack/salt/pull/23151">#23151</a> with pylint fixes
+&#64; <em>2015-05-02T03:54:12Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23148">#23148</a>: (<em>cr1st1p</em>) virt - error handling bogus if machine image location is wrong</li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23151">#23151</a>: (<em>cr1st1p</em>) Fixes <a class="reference external" href="https://github.com/saltstack/salt/issues/23148">#23148</a>
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23292">#23292</a></li>
+</ul>
+<ul class="simple">
+<li>16ecefd Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23292">#23292</a> from rallytime/merge-23151</li>
+<li>8ff852a Merge <a class="reference external" href="https://github.com/saltstack/salt/pull/23151">#23151</a> with pylint fixes</li>
+<li>8ffa12e Fixes <a class="reference external" href="https://github.com/saltstack/salt/issues/23148">#23148</a></li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23274">#23274</a>: (<em>basepi</em>) [2014.7] Reduce salt-ssh debug log verbosity
+&#64; <em>2015-05-01T20:19:23Z</em></p>
+<ul class="simple">
+<li>ce24315 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23274">#23274</a> from basepi/salt-ssh.debug.verbosity</li>
+<li>ecee6c6 Log stdout and stderr to trace</li>
+<li>08f54d7 Log stdout and stderr to trace as well</li>
+<li>9b9c30f Reduce salt-ssh debug log verbosity</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23261">#23261</a>: (<em>rallytime</em>) Fix tornado websocket event handler registration
+&#64; <em>2015-05-01T18:20:31Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/22605">#22605</a>: (<em>mavenAtHouzz</em>) Tornado websockets event Handlers registration are incorrect
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23261">#23261</a></li>
+</ul>
+<ul class="simple">
+<li>7b55e43 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23261">#23261</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/issues/22605">fix-22605</a></li>
+<li>4950fbf Fix tornado websocket event handler registration</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23258">#23258</a>: (<em>teizz</em>) TCP keepalives on the ret side, Revisited.
+&#64; <em>2015-05-01T16:13:49Z</em></p>
+<ul class="simple">
+<li>83ef7cb Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23258">#23258</a> from teizz/ï»¿ret_keepalive_2014_7_5</li>
+<li>0b9fb6f The fixes by ï»¿cachedout which were backported into 2015_2 were missing a single parameter thus not setting up the TCP keepalive for the ZeroMQ Channel by default.</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23241">#23241</a>: (<em>techhat</em>) Move iptables log options after the jump
+&#64; <em>2015-05-01T01:31:59Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23224">#23224</a>: (<em>twellspring</em>) iptables.append --log parameters must be after --jump LOG
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23241">#23241</a></li>
+</ul>
+<ul class="simple">
+<li>8de3c83 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23241">#23241</a> from techhat/issue23224</li>
+<li>87f7948 Move iptables log options after the jump</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23228">#23228</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/23171">#23171</a> to 2014.7
+&#64; <em>2015-04-30T21:09:45Z</em></p>
+<ul class="simple">
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23171">#23171</a>: (<em>skizunov</em>) Bugfix: 'clean_proc_dir' is broken
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23228">#23228</a></li>
+</ul>
+<ul class="simple">
+<li>f20210e Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23228">#23228</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/pull/23171">bp-23171</a></li>
+<li>e670e99 Bugfix: 'clean_proc_dir' is broken</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23227">#23227</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/22808">#22808</a> to 2014.7
+&#64; <em>2015-04-30T21:09:14Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/22703">#22703</a>: (<em>Xiol</em>) salt-ssh does not work with list matcher
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22808">#22808</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22808">#22808</a>: (<em>basepi</em>) [2015.2] Add list targeting to salt-ssh flat roster
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23227">#23227</a></li>
+</ul>
+<ul class="simple">
+<li>721cc28 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23227">#23227</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/pull/22808">bp-22808</a></li>
+<li>d208a00 Dict, not list</li>
+<li>a3f529e It's already been converted to a list</li>
+<li>dd57f2d Add list targeting to salt-ssh flat roster</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22823">#22823</a>: (<em>hvnsweeting</em>) 22822 file directory clean
+&#64; <em>2015-04-30T15:25:51Z</em></p>
+<ul class="simple">
+<li>82c22af Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22823">#22823</a> from hvnsweeting/22822-file-directory-clean</li>
+<li>c749c27 fix lint - remove unnecessary parenthesis</li>
+<li>cb3dfee refactor</li>
+<li>8924b5a refactor: use relpath instead of do it manually</li>
+<li>d3060a5 refactor</li>
+<li>5759a0e bugfix: fix file.directory clean=True when it require parent dir</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22977">#22977</a>: (<em>bersace</em>) Fix fileserver backends __opts__ overwritten by _pillar
+&#64; <em>2015-04-30T15:24:56Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/22941">#22941</a>: (<em>bersace</em>) <cite>_pillar</cite> func breaks fileserver globals
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22977">#22977</a> <a class="reference external" href="https://github.com/saltstack/salt/pull/22942">#22942</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22942">#22942</a>: (<em>bersace</em>) Fix fileserver backends global overwritten by _pillar
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22977">#22977</a></li>
+</ul>
+<ul class="simple">
+<li>f6c0728 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22977">#22977</a> from bersace/fix-fileserver-backends-pillar-side-effect</li>
+<li>5f451f6 Fix fileserver backends __opts__ overwritten by _pillar</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23180">#23180</a>: (<em>jfindlay</em>) fix typos from 36841bdd in masterapi.py
+&#64; <em>2015-04-30T15:22:41Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23166">#23166</a>: (<em>claudiupopescu</em>) &quot;Error in function _minion_event&quot; resulting in modules not loaded
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23180">#23180</a></li>
+</ul>
+<ul class="simple">
+<li>34206f7 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23180">#23180</a> from jfindlay/remote_event</li>
+<li>72066e1 fix typos from 36841bdd in masterapi.py</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23176">#23176</a>: (<em>jfindlay</em>) copy standard cmd.run* kwargs into cmd.run_chroot
+&#64; <em>2015-04-30T15:22:12Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23153">#23153</a>: (<em>cr1st1p</em>) cmdmod : run_chroot - broken in 2014.7.5 - missing kwargs
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23176">#23176</a></li>
+</ul>
+<ul class="simple">
+<li>b6b8216 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23176">#23176</a> from jfindlay/run_chroot</li>
+<li>7dc3417 copy standard cmd.run* kwargs into cmd.run_chroot</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23193">#23193</a>: (<em>joejulian</em>) supervisord.mod_watch should accept sfun
+&#64; <em>2015-04-30T04:34:21Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23192">#23192</a>: (<em>joejulian</em>) supervisord mod_watch does not accept sfun
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23193">#23193</a></li>
+</ul>
+<ul class="simple">
+<li>effacbe Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23193">#23193</a> from joejulian/2014.7_supervisord_accept_sfun</li>
+<li>efb59f9 supervisord.mod_watch should accept sfun</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23188">#23188</a>: (<em>basepi</em>) [2014.7] Work around bug in salt-ssh in config.get for gpg renderer
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23272">#23272</a>
+&#64; <em>2015-04-30T04:34:10Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/19114">#19114</a>: (<em>pykler</em>) salt-ssh and gpg pillar renderer
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23188">#23188</a> <a class="reference external" href="https://github.com/saltstack/salt/pull/23272">#23272</a> <a class="reference external" href="https://github.com/saltstack/salt/pull/23347">#23347</a></li>
+</ul>
+<ul class="simple">
+<li>72fe88e Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23188">#23188</a> from basepi/salt-ssh.function.wrapper.gpg.19114</li>
+<li>d73979e Work around bug in salt-ssh in config.get for gpg renderer</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23154">#23154</a>: (<em>cachedout</em>) Re-establish channel on interruption in fileclient
+&#64; <em>2015-04-29T16:18:59Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/21480">#21480</a>: (<em>msciciel</em>) TypeError: string indices must be integers, not str
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23154">#23154</a></li>
+</ul>
+<ul class="simple">
+<li>168508e Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23154">#23154</a> from cachedout/refresh_channel</li>
+<li>9f8dd80 Re-establish channel on interruption in fileclient</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23146">#23146</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/20779">#20779</a> to 2014.7
+&#64; <em>2015-04-28T20:45:06Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/20647">#20647</a>: (<em>ryan-lane</em>) file.serialize fails to serialize due to ordered dicts
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/20779">#20779</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/20779">#20779</a>: (<em>cachedout</em>) Use declared yaml options
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23146">#23146</a></li>
+</ul>
+<ul class="simple">
+<li>3b53e04 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23146">#23146</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/pull/20779">bp-20779</a></li>
+<li>ffd1849 compare OrderedDicts in serializer unit test</li>
+<li>a221706 Just change serialize</li>
+<li>a111798 Use declared yaml options</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23145">#23145</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/23089">#23089</a> to 2014.7
+&#64; <em>2015-04-28T20:44:56Z</em></p>
+<ul class="simple">
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23089">#23089</a>: (<em>cachedout</em>) Stringify version number before lstrip
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23145">#23145</a></li>
+</ul>
+<ul class="simple">
+<li>8bb4664 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23145">#23145</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/pull/23089">bp-23089</a></li>
+<li>93c41af Stringify version number before lstrip</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23144">#23144</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/23124">#23124</a> to 2014.7
+&#64; <em>2015-04-28T20:44:46Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/16188">#16188</a>: (<em>drawks</em>) salt.modules.parted has various functions with bogus input validation.
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23124">#23124</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23124">#23124</a>: (<em>ether42</em>) fix parsing the output of parted in parted.list_()
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23144">#23144</a></li>
+</ul>
+<ul class="simple">
+<li>c85d36f Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23144">#23144</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/pull/23124">bp-23124</a>-2014-7</li>
+<li>6b64da7 fix parsing the output of parted</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23120">#23120</a>: (<em>terminalmage</em>) Don't run os.path.relpath() if repo doesn't have a &quot;root&quot; param set
+&#64; <em>2015-04-28T15:46:54Z</em></p>
+<ul class="simple">
+<li>a27b158 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23120">#23120</a> from terminalmage/fix-gitfs-relpath</li>
+<li>1860fff Don't run os.path.relpath() if repo doesn't have a &quot;root&quot; param set</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23132">#23132</a>: (<em>clinta</em>) Backport b27c176
+&#64; <em>2015-04-28T15:00:30Z</em></p>
+<ul class="simple">
+<li>fcba607 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23132">#23132</a> from clinta/patch-2</li>
+<li>a824d72 Backport b27c176</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23114">#23114</a>: (<em>rallytime</em>) Adjust ZeroMQ 4 docs to reflect changes to Ubuntu 12 packages
+&#64; <em>2015-04-28T03:59:24Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/18476">#18476</a>: (<em>Auha</em>) Upgrading salt on my master caused dependency issues
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23114">#23114</a> <a class="reference external" href="https://github.com/saltstack/salt/pull/18610">#18610</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/18610">#18610</a>: (<em>rallytime</em>) Make ZMQ 4 installation docs for ubuntu more clear
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23114">#23114</a></li>
+</ul>
+<ul class="simple">
+<li>b0f4b28 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23114">#23114</a> from rallytime/remove_ubuntu_zmq4_docs</li>
+<li>f6cc7c8 Adjust ZeroMQ 4 docs to reflect changes to Ubuntu 12 packages</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23108">#23108</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/23097">#23097</a> to 2014.7
+&#64; <em>2015-04-28T03:58:05Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23085">#23085</a>: (<em>xenophonf</em>) Use &quot;s3fs&quot; (not &quot;s3&quot;) in fileserver_roots
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23097">#23097</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23097">#23097</a>: (<em>rallytime</em>) Change s3 to s3fs in fileserver_roots docs example
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23108">#23108</a></li>
+</ul>
+<ul class="simple">
+<li>399857f Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23108">#23108</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/pull/23097">bp-23097</a></li>
+<li>fa88984 Change s3 to s3fs in fileserver_roots docs example</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23112">#23112</a>: (<em>basepi</em>) [2014.7] Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/22199">#22199</a> to fix mysql returner save_load errors
+&#64; <em>2015-04-28T03:55:44Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/22171">#22171</a>: (<em>basepi</em>) We should only call returner.save_load once per jid
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22199">#22199</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22199">#22199</a>: (<em>basepi</em>) [2015.2] Put a bandaid on the save_load duplicate issue (mysql returner)
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23112">#23112</a></li>
+</ul>
+<ul class="simple">
+<li>5541537 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23112">#23112</a> from basepi/mysql_returner_save_load</li>
+<li>0127012 Put a bandaid on the save_load duplicate issue</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23113">#23113</a>: (<em>rallytime</em>) Revert &quot;Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/22895">#22895</a> to 2014.7&quot;
+&#64; <em>2015-04-28T03:27:29Z</em></p>
+<ul class="simple">
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22925">#22925</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/22895">#22895</a> to 2014.7
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23113">#23113</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22895">#22895</a>: (<em>aletourneau</em>) pam_tally counter was not reset to 0 after a succesfull login
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22925">#22925</a></li>
+</ul>
+<ul class="simple">
+<li>dfe2066 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23113">#23113</a> from saltstack/revert-22925-<a class="reference external" href="https://github.com/saltstack/salt/pull/22895">bp-22895</a></li>
+<li>b957ea8 Revert &quot;Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/22895">#22895</a> to 2014.7&quot;</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23094">#23094</a>: (<em>terminalmage</em>) pygit2: disable cleaning of stale refs for authenticated remotes
+&#64; <em>2015-04-27T20:51:28Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23013">#23013</a>: (<em>markusr815</em>) gitfs regression with authenticated repos
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23094">#23094</a></li>
+</ul>
+<ul class="simple">
+<li>21515f3 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23094">#23094</a> from terminalmage/issue23013</li>
+<li>aaf7b04 pygit2: disable cleaning of stale refs for authenticated remotes</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23048">#23048</a>: (<em>jfindlay</em>) py-2.6 compat for utils/boto.py ElementTree exception
+&#64; <em>2015-04-25T16:56:45Z</em></p>
+<ul class="simple">
+<li>d45aa21 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23048">#23048</a> from jfindlay/ET_error</li>
+<li>64c42cc py-2.6 compat for utils/boto.py ElementTree exception</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23025">#23025</a>: (<em>jfindlay</em>) catch exceptions on bad system locales/encodings
+&#64; <em>2015-04-25T16:56:30Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/22981">#22981</a>: (<em>syphernl</em>) Locale state throwing traceback when generating not (yet) existing locale
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23025">#23025</a></li>
+</ul>
+<ul class="simple">
+<li>d25a5c1 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23025">#23025</a> from jfindlay/fix_sys_locale</li>
+<li>9c4d62b catch exceptions on bad system locales/encodings</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22932">#22932</a>: (<em>hvnsweeting</em>) bugfix: also manipulate dir_mode when source not defined
+&#64; <em>2015-04-25T16:54:58Z</em></p>
+<ul class="simple">
+<li>5e44b59 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22932">#22932</a> from hvnsweeting/file-append-bugfix</li>
+<li>3f368de do not use assert in execution module</li>
+<li>9d4fd4a bugfix: also manipulate dir_mode when source not defined</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23055">#23055</a>: (<em>jfindlay</em>) prevent ps module errors on accessing dead procs
+&#64; <em>2015-04-24T22:39:49Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/23021">#23021</a>: (<em>ether42</em>) ps.pgrep raises NoSuchProcess
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23055">#23055</a></li>
+</ul>
+<ul class="simple">
+<li>c2416a4 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23055">#23055</a> from jfindlay/fix_ps</li>
+<li>c2dc7ad prevent ps module errors on accessing dead procs</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23031">#23031</a>: (<em>jfindlay</em>) convert exception e.message to just e
+&#64; <em>2015-04-24T18:38:13Z</em></p>
+<ul class="simple">
+<li>bfd9158 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23031">#23031</a> from jfindlay/exception</li>
+<li>856bad1 convert exception e.message to just e</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23015">#23015</a>: (<em>hvnsweeting</em>) if status of service is stop, there is not an error with it
+&#64; <em>2015-04-24T14:35:10Z</em></p>
+<ul class="simple">
+<li>7747f33 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23015">#23015</a> from hvnsweeting/set-non-error-lvl-for-service-status-log</li>
+<li>92ea163 if status of service is stop, there is not an error with it</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/23000">#23000</a>: (<em>jfindlay</em>) set systemd service killMode to process for minion
+&#64; <em>2015-04-24T03:42:39Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/22993">#22993</a>: (<em>jetpak</em>) salt-minion restart causes all spawned daemons to die on centos7 (systemd)
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23000">#23000</a></li>
+</ul>
+<ul class="simple">
+<li>2e09789 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/23000">#23000</a> from jfindlay/systemd_kill</li>
+<li>3d575e2 set systemd service killMode to process for minion</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22999">#22999</a>: (<em>jtand</em>) Added retry_dns to minion doc.
+&#64; <em>2015-04-24T03:30:24Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/22707">#22707</a>: (<em>arthurlogilab</em>) retry_dns of master configuration is missing from the  documentation
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22999">#22999</a></li>
+</ul>
+<ul class="simple">
+<li>b5c059a Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22999">#22999</a> from jtand/fix_22707</li>
+<li>8486e17 Added retry_dns to minion doc.</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22990">#22990</a>: (<em>techhat</em>) Use the proper cloud conf variable
+&#64; <em>2015-04-23T17:48:07Z</em></p>
+<ul class="simple">
+<li>27dc877 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22990">#22990</a> from techhat/2014.7</li>
+<li>d33bcbc Use the proper cloud conf variable</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22976">#22976</a>: (<em>multani</em>) Improve state_output documentation
+&#64; <em>2015-04-23T12:24:22Z</em></p>
+<ul class="simple">
+<li>13dff65 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22976">#22976</a> from multani/fix/state-output-doc</li>
+<li>19efd41 Improve state_output documentation</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22955">#22955</a>: (<em>terminalmage</em>) Fix regression introduced yesterday in dockerio module
+&#64; <em>2015-04-22T18:56:39Z</em></p>
+<ul class="simple">
+<li>89fa185 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22955">#22955</a> from terminalmage/dockerio-run-fix</li>
+<li>b4472ad Fix regression introduced yesterday in dockerio module</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22954">#22954</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/22909">#22909</a> to 2014.7
+&#64; <em>2015-04-22T18:56:20Z</em></p>
+<ul class="simple">
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22909">#22909</a>: (<em>mguegan</em>) Fix compatibility with pkgin &gt; 0.7
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22954">#22954</a></li>
+</ul>
+<ul class="simple">
+<li>46ef227 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22954">#22954</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/pull/22909">bp-22909</a></li>
+<li>70c1cd3 Fix compatibility with pkgin &gt; 0.7</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22856">#22856</a>: (<em>jfindlay</em>) increase timeout and decrease tries for route53 records
+&#64; <em>2015-04-22T16:47:01Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/18720">#18720</a>: (<em>Reiner030</em>) timeouts when setting Route53 records
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22856">#22856</a></li>
+</ul>
+<ul class="simple">
+<li>c9ae593 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22856">#22856</a> from jfindlay/route53_timeout</li>
+<li>ba4a786 add route53 record sync wait, default=False</li>
+<li>ea2fd50 increase timeout and tries for route53 records</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22946">#22946</a>: (<em>s0undt3ch</em>) Test with a more recent pip version to avoid a traceback
+&#64; <em>2015-04-22T16:25:17Z</em></p>
+<ul class="simple">
+<li>a178d44 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22946">#22946</a> from s0undt3ch/2014.7</li>
+<li>bc87749 Test with a more recent pip version to avoid a traceback</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22945">#22945</a>: (<em>garethgreenaway</em>) Fixes to scheduler
+&#64; <em>2015-04-22T16:25:00Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/22571">#22571</a>: (<em>BoomerB</em>) same error message as on issue <a class="reference external" href="https://github.com/saltstack/salt/issues/18504">#18504</a>
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22945">#22945</a></li>
+</ul>
+<ul class="simple">
+<li>de339be Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22945">#22945</a> from garethgreenaway/22571_2014_7_schedule_pillar_refresh_seconds_exceptions</li>
+<li>bfa6d25 Fixing a reported issue when using a scheduled job from pillar with splay.  _seconds element that acted as a backup of the actual seconds was being removed when pillar was refreshed and causing exceptions.  This fix moves some splay related code out of the if else condition so it's checked whether the job is in the job queue or not.</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22887">#22887</a>: (<em>hvnsweeting</em>) fix <a class="reference external" href="https://github.com/saltstack/salt/issues/18843">#18843</a>
+&#64; <em>2015-04-22T15:47:05Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/18843">#18843</a>: (<em>calvinhp</em>) State user.present will fail to create home if user exists and homedir doesn't</li>
+</ul>
+<ul class="simple">
+<li>12d2b91 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22887">#22887</a> from hvnsweeting/18843-fix-user-present-home</li>
+<li>7fe7b08 run user.chhome once to avoid any side-effect when run it twice</li>
+<li>19de995 clarify the usage of home arg</li>
+<li>d6dc09a enhance doc, as usermod on ubuntu 12.04 will not CREATE home</li>
+<li>0ce4d7f refactor: force to use boolean</li>
+<li>849d19e log debug the creating dir process</li>
+<li>c4e95b9 fix <a class="reference external" href="https://github.com/saltstack/salt/issues/18843">#18843</a>: usermod won't create a dir if old home does not exist</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22930">#22930</a>: (<em>jfindlay</em>) localemod.gen_locale now always returns a boolean
+&#64; <em>2015-04-22T15:37:39Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/21140">#21140</a>: (<em>holms</em>) locale.present state executed successfully, although originally fails
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22930">#22930</a> <a class="reference external" href="https://github.com/saltstack/salt/pull/22829">#22829</a></li>
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/2417">#2417</a>: (<em>ffa</em>) Module standards
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22829">#22829</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22829">#22829</a>: (<em>F30</em>) Always return a boolean in gen_locale()
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22930">#22930</a></li>
+</ul>
+<ul class="simple">
+<li>b7de7bd Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22930">#22930</a> from jfindlay/localegen_bool</li>
+<li>399399f localemod.gen_locale now always returns a boolean</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22933">#22933</a>: (<em>hvnsweeting</em>) add test for <a class="reference external" href="https://github.com/saltstack/salt/issues/18843">#18843</a>
+&#64; <em>2015-04-22T15:27:18Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/18843">#18843</a>: (<em>calvinhp</em>) State user.present will fail to create home if user exists and homedir doesn't</li>
+</ul>
+<ul class="simple">
+<li>11bcf14 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22933">#22933</a> from hvnsweeting/18843-test</li>
+<li>b13db32 add test for <a class="reference external" href="https://github.com/saltstack/salt/issues/18843">#18843</a></li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22925">#22925</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/22895">#22895</a> to 2014.7
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/23113">#23113</a>
+&#64; <em>2015-04-22T02:30:26Z</em></p>
+<ul class="simple">
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22895">#22895</a>: (<em>aletourneau</em>) pam_tally counter was not reset to 0 after a succesfull login
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22925">#22925</a></li>
+</ul>
+<ul class="simple">
+<li>6890752 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22925">#22925</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/pull/22895">bp-22895</a></li>
+<li>3852d96 Pylint fix</li>
+<li>90f7829 Fixed pylint issues</li>
+<li>5ebf159 Cleaned up pull request</li>
+<li>a08ac47 pam_tally counter was not reset to 0 after a succesfull login</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22914">#22914</a>: (<em>cachedout</em>) Call proper returner function in jobs.list_jobs
+&#64; <em>2015-04-22T00:49:01Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/22790">#22790</a>: (<em>whiteinge</em>) jobs.list_jobs runner tracebacks on 'missing' argument
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22914">#22914</a></li>
+</ul>
+<ul class="simple">
+<li>eca37eb Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22914">#22914</a> from cachedout/issue_22790</li>
+<li>d828d6f Call proper returner function in jobs.list_jobs</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22918">#22918</a>: (<em>JaseFace</em>) Add a note to the git_pillar docs stating that GitPython is the only currently supported provider
+&#64; <em>2015-04-22T00:48:26Z</em></p>
+<ul class="simple">
+<li>44f3409 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22918">#22918</a> from JaseFace/git-pillar-provider-doc-note</li>
+<li>0aee5c2 Add a note to the git_pillar docs stating that GitPython is the only currently supported provider</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22907">#22907</a>: (<em>techhat</em>) Properly merge cloud configs to create profiles
+&#64; <em>2015-04-21T22:02:44Z</em></p>
+<ul class="simple">
+<li>31c461f Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22907">#22907</a> from techhat/cloudconfig</li>
+<li>3bf4e66 Properly merge cloud configs to create profiles</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22894">#22894</a>: (<em>0xf10e</em>) Fix issue <a class="reference external" href="https://github.com/saltstack/salt/issues/22782">#22782</a>
+&#64; <em>2015-04-21T18:55:18Z</em></p>
+<ul class="simple">
+<li>f093975 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22894">#22894</a> from 0xf10e/2014.7</li>
+<li>58fa24c Clarify doc on kwarg 'roles' for user_present().</li>
+<li>f0ae2eb Improve readability by renaming tenant_role</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22902">#22902</a>: (<em>rallytime</em>) Change state example to use proper kwarg
+&#64; <em>2015-04-21T18:50:47Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/12003">#12003</a>: (<em>MarkusMuellerAU</em>) [state.dockerio] docker.run TypeError: run() argument after ** must be a mapping, not str
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22902">#22902</a></li>
+</ul>
+<ul class="simple">
+<li>c802ba7 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22902">#22902</a> from rallytime/docker_doc_fix</li>
+<li>8f70346 Change state example to use proper kwarg</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22898">#22898</a>: (<em>terminalmage</em>) dockerio: better error message for native exec driver
+&#64; <em>2015-04-21T18:02:58Z</em></p>
+<ul class="simple">
+<li>81771a7 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22898">#22898</a> from terminalmage/issue12003</li>
+<li>c375309 dockerio: better error message for native exec driver</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22897">#22897</a>: (<em>rallytime</em>) Add param documentation for file.replace state
+&#64; <em>2015-04-21T17:31:04Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/22825">#22825</a>: (<em>paolodina</em>) Issue using file.replace in state file
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22897">#22897</a></li>
+</ul>
+<ul class="simple">
+<li>e2ec4ec Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22897">#22897</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/issues/22825">fix-22825</a></li>
+<li>9c51630 Add param documentation for file.replace state</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22850">#22850</a>: (<em>bersace</em>) Fix pillar and salt fileserver mixed
+&#64; <em>2015-04-21T17:04:33Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/22844">#22844</a>: (<em>bersace</em>) LocalClient file cache confuse pillar and state files
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22850">#22850</a></li>
+</ul>
+<ul class="simple">
+<li>fd53889 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22850">#22850</a> from bersace/fix-pillar-salt-mixed</li>
+<li>31b98e7 Initialize state file client after pillar loading</li>
+<li>f6bebb7 Use saltenv</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22818">#22818</a>: (<em>twangboy</em>) Added documentation regarding pip in windows
+&#64; <em>2015-04-21T03:58:59Z</em></p>
+<ul class="simple">
+<li>1380fec Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22818">#22818</a> from twangboy/upd_pip_docs</li>
+<li>cb999c7 Update pip.py</li>
+<li>3cc5c97 Added documentation regarding pip in windows</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22872">#22872</a>: (<em>rallytime</em>) Prevent stacktrace on os.path.exists in hosts module
+&#64; <em>2015-04-21T02:54:40Z</em></p>
+<ul class="simple">
+<li>b2bf17f Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22872">#22872</a> from rallytime/fix_hosts_stacktrace</li>
+<li>c88a1ea Prevent stacktrace on os.path.exists in hosts module</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22853">#22853</a>: (<em>s0undt3ch</em>) Don't assume package installation order.
+&#64; <em>2015-04-21T02:42:41Z</em></p>
+<ul class="simple">
+<li>03af523 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22853">#22853</a> from s0undt3ch/2014.7</li>
+<li>b62df62 Don't assume package installation order.</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22877">#22877</a>: (<em>s0undt3ch</em>) Don't fail on <cite>make clean</cite> just because the directory does not exist
+&#64; <em>2015-04-21T02:40:47Z</em></p>
+<ul class="simple">
+<li>9211e36 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22877">#22877</a> from s0undt3ch/hotfix/clean-docs-fix</li>
+<li>95d6887 Don't fail on <cite>make clean</cite> just because the directory does not exist</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22873">#22873</a>: (<em>thatch45</em>) Type check the version since it will often be numeric
+&#64; <em>2015-04-21T02:38:11Z</em></p>
+<ul class="simple">
+<li>5bdbd08 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22873">#22873</a> from thatch45/type_check</li>
+<li>53b8376 Type check the version since it will often be numeric</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22870">#22870</a>: (<em>twangboy</em>) Added ability to send a version with a space in it
+&#64; <em>2015-04-20T23:18:28Z</em></p>
+<ul class="simple">
+<li>c965b0a Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22870">#22870</a> from twangboy/fix_installer_again</li>
+<li>3f180cf Added ability to send a version with a space in it</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22863">#22863</a>: (<em>rallytime</em>) Backport <a class="reference external" href="https://github.com/saltstack/salt/pull/20974">#20974</a> to 2014.7
+&#64; <em>2015-04-20T19:29:37Z</em></p>
+<ul class="simple">
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/20974">#20974</a>: (<em>JohannesEbke</em>) Fix expr_match usage in salt.utils.check_whitelist_blacklist
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22863">#22863</a></li>
+</ul>
+<ul class="simple">
+<li>2973eb1 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22863">#22863</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/pull/20974">bp-20974</a></li>
+<li>14913a4 Fix expr_match usage in salt.utils.check_whitelist_blacklist</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22578">#22578</a>: (<em>hvnsweeting</em>) gracefully handle when salt-minion cannot decrypt key
+&#64; <em>2015-04-20T15:24:45Z</em></p>
+<ul class="simple">
+<li>c45b92b Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22578">#22578</a> from hvnsweeting/2014-7-fix-compile-pillar</li>
+<li>f75b24a gracefully handle when salt-minion cannot decrypt key</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22800">#22800</a>: (<em>terminalmage</em>) Improve error logging for pygit2 SSH-based remotes
+&#64; <em>2015-04-18T17:18:55Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/21979">#21979</a>: (<em>yrdevops</em>) gitfs: error message not descriptive enough when libgit2 was compiled without libssh2
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22800">#22800</a></li>
+</ul>
+<ul class="simple">
+<li>900c7a5 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22800">#22800</a> from terminalmage/issue21979</li>
+<li>8f1c008 Clarify that for pygit2, receiving 0 objects means repo is up-to-date</li>
+<li>98885f7 Add information about libssh2 requirement for pygit2 ssh auth</li>
+<li>09468d2 Fix incorrect log message</li>
+<li>2093bf8 Adjust loglevels for gitfs errors</li>
+<li>9d394df Improve error logging for pygit2 SSH-based remotes</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22813">#22813</a>: (<em>twangboy</em>) Updated instructions for building salt
+&#64; <em>2015-04-18T04:10:07Z</em></p>
+<ul class="simple">
+<li>e99f2fd Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22813">#22813</a> from twangboy/win_doc_fix</li>
+<li>adc421a Fixed some formatting issues</li>
+<li>8901b3b Updated instructions for building salt</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22810">#22810</a>: (<em>basepi</em>) [2014.7] More msgpack gating for salt-ssh
+&#64; <em>2015-04-17T22:28:24Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/22708">#22708</a>: (<em>Bilge</em>) salt-ssh file.accumulated error: NameError: global name 'msgpack' is not defined
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22810">#22810</a></li>
+</ul>
+<ul class="simple">
+<li>fe1de89 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22810">#22810</a> from basepi/salt-ssh.more.msgpack.gating</li>
+<li>d4da8e6 Gate msgpack in salt/modules/saltutil.py</li>
+<li>02303b2 Gate msgpack in salt/modules/data.py</li>
+<li>d7e8741 Gate salt.states.file.py msgpack</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22803">#22803</a>: (<em>rallytime</em>) Allow map file to work with softlayer
+&#64; <em>2015-04-17T20:34:42Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/17144">#17144</a>: (<em>xpender</em>) salt-cloud -m fails with softlayer
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22803">#22803</a></li>
+</ul>
+<ul class="simple">
+<li>11df71e Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22803">#22803</a> from rallytime/<a class="reference external" href="https://github.com/saltstack/salt/issues/17144">fix-17144</a></li>
+<li>ce88b6a Allow map file to work with softlayer</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22807">#22807</a>: (<em>rallytime</em>) Add 2014.7.5 links to windows installation docs
+&#64; <em>2015-04-17T20:32:13Z</em></p>
+<ul class="simple">
+<li>cd43a95 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22807">#22807</a> from rallytime/windows_docs_update</li>
+<li>5931a58 Replace all 4s with 5s</li>
+<li>eadaead Add 2014.7.5 links to windows installation docs</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22795">#22795</a>: (<em>rallytime</em>) Added release note for 2014.7.5 release
+&#64; <em>2015-04-17T18:05:36Z</em></p>
+<ul class="simple">
+<li>0b295e2 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22795">#22795</a> from rallytime/release_notes</li>
+<li>fde1fee Remove extra line</li>
+<li>b19b95d Added release note for 2014.7.5 release</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22759">#22759</a>: (<em>twangboy</em>) Final edits to the batch files for running salt
+&#64; <em>2015-04-17T04:31:15Z</em></p>
+<ul class="simple">
+<li><strong>ISSUE</strong> <a class="reference external" href="https://github.com/saltstack/salt/issues/22740">#22740</a>: (<em>lorengordon</em>) New Windows installer assumes salt is installed to the current directory
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22759">#22759</a></li>
+<li><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22754">#22754</a>: (<em>twangboy</em>) Removed redundant \ and &quot;
+| refs: <a class="reference external" href="https://github.com/saltstack/salt/pull/22759">#22759</a></li>
+</ul>
+<ul class="simple">
+<li>3c91459 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22759">#22759</a> from twangboy/fix_bat_one_last_time</li>
+<li>075f82e Final edits to the batch files for running salt</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22760">#22760</a>: (<em>thatch45</em>) Fix issues with the syndic
+&#64; <em>2015-04-17T04:30:48Z</em></p>
+<ul class="simple">
+<li>20d3f2b Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22760">#22760</a> from thatch45/syndic_fix</li>
+<li>e2db624 Fix issues with the syndic not resolving the master when the interface is set</li>
+</ul>
+</li>
+<li><p class="first"><strong>PR</strong> <a class="reference external" href="https://github.com/saltstack/salt/pull/22762">#22762</a>: (<em>twangboy</em>) Fixed version not showing in Add/Remove Programs
+&#64; <em>2015-04-17T04:29:46Z</em></p>
+<ul class="simple">
+<li>54c4584 Merge pull request <a class="reference external" href="https://github.com/saltstack/salt/pull/22762">#22762</a> from twangboy/fix_installer</li>
+<li>4d25af8 Fixed version not showing in Add/Remove Programs</li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+                            </div>
+                            <a href="2014.7.5.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt 2014.7.5 Release Notes" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="2014.1.0.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt 2014.1.0 Release Notes - Codename Hydrogen" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Release Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#latest-branch-release">Latest Branch Release</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#previous-releases">Previous Releases</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="2016.3.0.html">Salt 2016.3.0 Release Notes - Codename Boron</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.8.html">Salt 2015.8.8 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.7.html">Salt 2015.8.7 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.5.html">Salt 2015.8.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.4.html">Salt 2015.8.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.3.html">Salt 2015.8.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.2.html">Salt 2015.8.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.1.html">Salt 2015.8.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.8.0.html">Salt 2015.8.0 Release Notes - Codename Beryllium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.10.html">Salt 2015.5.10 Release Notes (In Progress)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.9.html">Salt 2015.5.9 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.8.html">Salt 2015.5.8 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.7.html">Salt 2015.5.7 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.6.html">Salt 2015.5.6 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.5.html">Salt 2015.5.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.4.html">Salt 2015.5.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.3.html">Salt 2015.5.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.2.html">Salt 2015.5.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.1.html">Salt 2015.5.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2015.5.0.html">Salt 2015.5.0 Release Notes - Codename Lithium</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Salt 2014.7.6 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.5.html">Salt 2014.7.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.4.html">Salt 2014.7.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.3.html">Salt 2014.7.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.2.html">Salt 2014.7.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.1.html">Salt 2014.7.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.7.0.html">Salt 2014.7.0 Release Notes - Codename Helium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.13.html">Salt 2014.1.13 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.12.html">Salt 2014.1.12 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.11.html">Salt 2014.1.11 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.10.html">Salt 2014.1.10 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.9.html">Salt 2014.1.9 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.8.html">Salt 2014.1.8 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.7.html">Salt 2014.1.7 发行注记</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.6.html">Salt 2014.1.6 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.5.html">Salt 2014.1.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.4.html">Salt 2014.1.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.3.html">Salt 2014.1.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.2.html">Salt 2014.1.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.1.html">Salt 2014.1.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="2014.1.0.html">Salt 2014.1.0 Release Notes - Codename Hydrogen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.5.html">Salt 0.17.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.4.html">Salt 0.17.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.3.html">Salt 0.17.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.2.html">Salt 0.17.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.1.html">Salt 0.17.1发行注记</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.17.0.html">Salt 0.17.0发行注记</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.4.html">Salt 0.16.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.3.html">Salt 0.16.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.2.html">Salt 0.16.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.1.html">Salt 0.16.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.16.0.html">Salt 0.16.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.15.3.html">Salt 0.15.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.15.2.html">Salt 0.15.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.15.1.html">Salt 0.15.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.15.0.html">Salt 0.15.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.14.1.html">Salt 0.14.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.14.0.html">Salt 0.14.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.13.3.html">Salt 0.13.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.13.2.html">Salt 0.13.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.13.1.html">Salt 0.13.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.13.0.html">Salt 0.13.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.12.1.html">Salt 0.12.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.12.0.html">Salt 0.12.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.11.1.html">Salt 0.11.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.11.0.html">Salt 0.11.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.5.html">Salt 0.10.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.4.html">Salt 0.10.4发行注记</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.3.html">Salt 0.10.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.2.html">Salt 0.10.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.1.html">Salt 0.10.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.10.0.html">Salt 0.10.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.9.html">Salt 0.9.9 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.8.html">Salt 0.9.8 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.7.html">Salt 0.9.7 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.6.html">Salt 0.9.6 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.5.html">Salt 0.9.5 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.4.html">Salt 0.9.4 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.3.html">Salt 0.9.3 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.2.html">Salt 0.9.2 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.1.html">Salt 0.9.1 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.9.0.html">Salt 0.9.0 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.8.9.html">Salt 0.8.9 Release Notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.8.8.html">Salt 0.8.8 release notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.8.7.html">Salt 0.8.7 release notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.8.0.html">Salt 0.8.0 release notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.7.0.html">Salt 0.7.0 release notes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="0.6.0.html">Salt 0.6.0 release notes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

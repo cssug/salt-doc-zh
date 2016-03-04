@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Reactor系统</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Events &amp; Reactor" href="../event/index.html">
+        <link rel="next" title="Orchestration" href="../orchestrate/index.html">
+        <link rel="prev" title="Beacons" href="../beacons/index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../beacons/index.html" title="Beacons">上一页</a>
+            
+        </li>
+        <li>
+            <a href="../orchestrate/index.html" title="Orchestration">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <span class="target" id="reactor"></span><div class="section" id="reactor-system">
+<span id="index-0"></span><h1>Reactor系统<a class="headerlink" href="#reactor-system" title="永久链接至标题">¶</a></h1>
+<p>Salt's Reactor system gives Salt the ability to trigger actions in response to
+an event. It is a simple interface to watching Salt's event bus for event tags
+that match a given pattern and then running one or more commands in response.</p>
+<p>该系统结合sls文件在master端去匹配event tags. 这些sls文件定义反应. 这意味着reactor系统有两个部分. 第一, reactor选项需要在master配置文件中进行设置. 这些reactor选项允许event tags与sls反应文件进行关联. 第二, 这些反应文件使用highdata(类似于state系统)去定义哪些反应应该执行.</p>
+<div class="section" id="event-system">
+<h2>Event系统<a class="headerlink" href="#event-system" title="永久链接至标题">¶</a></h2>
+<p>理解reactor时需要首先基本理解event系统. event系统是一个本地的ZeroMQ PUB接口, 用于产生salt events. 这个event总线是一个开放的系统, 用于发送给Salt和其他系统发送关于操作的通告信息.</p>
+<p>event系统产生event有一个严格的标准. 每一个event有一个 <strong>tag</strong> . event tags用于快速过滤events. 每一个event有一个数据结构附加在tag后. 这个数据结构是个字典, 包含关于本event的信息.</p>
+</div>
+<div class="section" id="mapping-events-to-reactor-sls-files">
+<span id="reactor-mapping-events"></span><h2>映射events到Reactor SLS文件<a class="headerlink" href="#mapping-events-to-reactor-sls-files" title="永久链接至标题">¶</a></h2>
+<p>Reactor SLS文件和event tags在master配置文件中进行关联. 默认的配置文件是 /etc/salt/master或/etc/salt/master.d/reactor.conf.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能: </span>Added Reactor support for <code class="docutils literal"><span class="pre">salt://</span></code> file paths.</p>
+</div>
+<p>在master配置 'reactor:' 章节, 指定event tags列表来进行匹配, 每一个event tag有一组reactor SLS文件去运行.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">reactor</span><span class="p p-Indicator">:</span>                            <span class="c1"># Master config section &quot;reactor&quot;</span>
+
+  <span class="p p-Indicator">-</span> <span class="s">&#39;salt/minion/*/start&#39;</span><span class="p p-Indicator">:</span>          <span class="c1"># Match tag &quot;salt/minion/*/start&quot;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/reactor/start.sls</span>        <span class="c1"># Things to do when a minion starts</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/reactor/monitor.sls</span>      <span class="c1"># Other things to do</span>
+
+  <span class="p p-Indicator">-</span> <span class="s">&#39;salt/cloud/*/destroyed&#39;</span><span class="p p-Indicator">:</span>       <span class="c1"># Globs can be used to match tags</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/reactor/destroy/*.sls</span>    <span class="c1"># Globs can be used to match file names</span>
+
+  <span class="p p-Indicator">-</span> <span class="s">&#39;myco/custom/event/tag&#39;</span><span class="p p-Indicator">:</span>        <span class="c1"># React to custom event tags</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">salt://reactor/mycustom.sls</span>   <span class="c1"># Put reactor files under file_roots</span>
+</pre></div>
+</div>
+<p>Reactor sls files are similar to state and pillar sls files.  They are
+by default yaml + Jinja templates and are passed familiar context variables.</p>
+<p><code class="docutils literal"><span class="pre">tag</span></code> 和 <code class="docutils literal"><span class="pre">data</span></code> 变量的不同.</p>
+<ul class="simple">
+<li><p class="first"><code class="docutils literal"><span class="pre">tag</span></code> 变量对应的是产生的event的tag.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">data</span></code> 变量是event的数据字典.</p>
+</li>
+</ul>
+<p>这里是一个简单的reactor sls文件:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% if data[&#39;id&#39;] == &#39;mysql1&#39; %}
+highstate_run:
+  local.state.highstate:
+    - tgt: mysql1
+{% endif %}
+</pre></div>
+</div>
+<p>这是一个简单的reactor文件使用Jinja去说明反应的产生. 如果event数据的 <code class="docutils literal"><span class="pre">id</span></code> 是 <code class="docutils literal"><span class="pre">mysql1</span></code> (换句话说, 如果该minion的名字是 <code class="docutils literal"><span class="pre">mysql1</span></code>)然后定义接下来的reaction. reactor系统中使用和state系统同样的数据结构和编译程序. 唯一不同的是数据使用的是salt command API和runner系统. 在本例中, <code class="docutils literal"><span class="pre">state.highstate</span></code> 函数命令被发送到 <code class="docutils literal"><span class="pre">mysql1</span></code> minion上. 同样的, 一个runner是这样调用的:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% if data[&#39;data&#39;][&#39;orchestrate&#39;] == &#39;refresh&#39; %}
+orchestrate_run:
+  runner.state.orchestrate
+{% endif %}
+</pre></div>
+</div>
+<p>This example will execute the state.orchestrate runner and initiate an
+orchestrate execution.</p>
+</div>
+<div class="section" id="the-goal-of-writing-reactor-sls-files">
+<h2>The Goal of Writing Reactor SLS Files<a class="headerlink" href="#the-goal-of-writing-reactor-sls-files" title="永久链接至标题">¶</a></h2>
+<p>Reactor SLS files share the familiar syntax from Salt States but there are
+important differences. The goal of a Reactor file is to process a Salt event as
+quickly as possible and then to optionally start a <strong>new</strong> process in response.</p>
+<ol class="arabic simple">
+<li>The Salt Reactor watches Salt's event bus for new events.</li>
+<li>The event tag is matched against the list of event tags under the
+<code class="docutils literal"><span class="pre">reactor</span></code> section in the Salt Master config.</li>
+<li>The SLS files for any matches are Rendered into a data structure that
+represents one or more function calls.</li>
+<li>That data structure is given to a pool of worker threads for execution.</li>
+</ol>
+<p>Matching and rendering Reactor SLS files is done sequentially in a single
+process. Complex Jinja that calls out to slow Execution or Runner modules slows
+down the rendering and causes other reactions to pile up behind the current
+one. The worker pool is designed to handle complex and long-running processes
+such as Salt Orchestrate.</p>
+<p>tl;dr: Rendering Reactor SLS files MUST be simple and quick. The new process
+started by the worker threads can be long-running.</p>
+<div class="section" id="jinja-context">
+<h3>Jinja Context<a class="headerlink" href="#jinja-context" title="永久链接至标题">¶</a></h3>
+<p>Reactor files only have access to a minimal Jinja context. <code class="docutils literal"><span class="pre">grains</span></code> and
+<code class="docutils literal"><span class="pre">pillar</span></code> are not available. The <code class="docutils literal"><span class="pre">salt</span></code> object is available for calling
+Runner and Execution modules but it should be used sparingly and only for quick
+tasks for the reasons mentioned above.</p>
+</div>
+<div class="section" id="advanced-state-system-capabilities">
+<h3>Advanced State System Capabilities<a class="headerlink" href="#advanced-state-system-capabilities" title="永久链接至标题">¶</a></h3>
+<p>Reactor SLS files, by design, do not support Requisites, ordering,
+<code class="docutils literal"><span class="pre">onlyif</span></code>/<code class="docutils literal"><span class="pre">unless</span></code> conditionals and most other powerful constructs from
+Salt's State system.</p>
+<p>Complex Master-side operations are best performed by Salt's Orchestrate system
+so using the Reactor to kick off an Orchestrate run is a very common pairing.</p>
+<p>For example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># /etc/salt/master.d/reactor.conf</span>
+<span class="c1"># A custom event containing: {&quot;foo&quot;: &quot;Foo!&quot;, &quot;bar: &quot;bar*&quot;, &quot;baz&quot;: &quot;Baz!&quot;}</span>
+<span class="l l-Scalar l-Scalar-Plain">reactor</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">myco/custom/event</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/reactor/some_event.sls</span>
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># /srv/reactor/some_event.sls</span>
+<span class="l l-Scalar l-Scalar-Plain">invoke_orchestrate_file</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">runner.state.orchestrate</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mods</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">orch.do_complex_thing</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pillar</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">event_tag</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{{</span> <span class="nv">tag</span> <span class="p p-Indicator">}}</span>
+        <span class="l l-Scalar l-Scalar-Plain">event_data</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{{</span> <span class="nv">data | json()</span> <span class="p p-Indicator">}}</span>
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span># /srv/salt/orch/do_complex_thing.sls
+{% set tag = salt.pillar.get(&#39;event_tag&#39;) %}
+{% set data = salt.pillar.get(&#39;event_data&#39;) %}
+
+# Pass data from the event to a custom runner function.
+# The function expects a &#39;foo&#39; argument.
+do_first_thing:
+  salt.runner:
+    - name: custom_runner.custom_function
+    - foo: {{ data.foo }}
+
+# Wait for the runner to finish then send an execution to minions.
+# Forward some data from the event down to the minion&#39;s state run.
+do_second_thing:
+  salt.state:
+    - tgt: {{ data.bar }}
+    - sls:
+      - do_thing_on_minion
+    - pillar:
+        baz: {{ data.baz }}
+    - require:
+      - salt: do_first_thing
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="fire-an-event">
+<h2>产生event<a class="headerlink" href="#fire-an-event" title="永久链接至标题">¶</a></h2>
+<p>To fire an event from a minion call <code class="docutils literal"><span class="pre">event.send</span></code></p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-call event.send <span class="s1">&#39;foo&#39;</span> <span class="s1">&#39;{orchestrate: refresh}&#39;</span>
+</pre></div>
+</div>
+<p>After this is called, any reactor sls files matching event tag <code class="docutils literal"><span class="pre">foo</span></code> will
+execute with <code class="docutils literal"><span class="pre">{{</span> <span class="pre">data['data']['orchestrate']</span> <span class="pre">}}</span></code> equal to <code class="docutils literal"><span class="pre">'refresh'</span></code>.</p>
+<p>访问 <a class="reference internal" href="../../ref/modules/all/salt.modules.event.html#module-salt.modules.event" title="salt.modules.event"><code class="xref py py-mod docutils literal"><span class="pre">salt.modules.event</span></code></a> 获取更多信息.</p>
+</div>
+<div class="section" id="knowing-what-event-is-being-fired">
+<h2>或者正在产生什么event<a class="headerlink" href="#knowing-what-event-is-being-fired" title="永久链接至标题">¶</a></h2>
+<p>The best way to see exactly what events are fired and what data is available in
+each event is to use the <a class="reference internal" href="../../ref/runners/all/salt.runners.state.html#salt.runners.state.event" title="salt.runners.state.event"><code class="xref py py-func docutils literal"><span class="pre">state.event</span> <span class="pre">runner</span></code></a>.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">参见</p>
+<p class="last"><a class="reference internal" href="../event/master_events.html#event-master-events"><span>Common Salt Events</span></a></p>
+</div>
+<p>使用例子:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run state.event <span class="nv">pretty</span><span class="o">=</span>True
+</pre></div>
+</div>
+<p>输出例子:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>salt/job/20150213001905721678/new       {
+    &quot;_stamp&quot;: &quot;2015-02-13T00:19:05.724583&quot;,
+    &quot;arg&quot;: [],
+    &quot;fun&quot;: &quot;test.ping&quot;,
+    &quot;jid&quot;: &quot;20150213001905721678&quot;,
+    &quot;minions&quot;: [
+        &quot;jerry&quot;
+    ],
+    &quot;tgt&quot;: &quot;*&quot;,
+    &quot;tgt_type&quot;: &quot;glob&quot;,
+    &quot;user&quot;: &quot;root&quot;
+}
+salt/job/20150213001910749506/ret/jerry {
+    &quot;_stamp&quot;: &quot;2015-02-13T00:19:11.136730&quot;,
+    &quot;cmd&quot;: &quot;_return&quot;,
+    &quot;fun&quot;: &quot;saltutil.find_job&quot;,
+    &quot;fun_args&quot;: [
+        &quot;20150213001905721678&quot;
+    ],
+    &quot;id&quot;: &quot;jerry&quot;,
+    &quot;jid&quot;: &quot;20150213001910749506&quot;,
+    &quot;retcode&quot;: 0,
+    &quot;return&quot;: {},
+    &quot;success&quot;: true
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="debugging-the-reactor">
+<h2>Debug Reactor系统<a class="headerlink" href="#debugging-the-reactor" title="永久链接至标题">¶</a></h2>
+<p>最好的了解Reactor方法是将master运行在前台并启用debug log选项. 数据会包含master看到的event, 以及master回应该event的操作, 也包含SLS文件的渲染(或者在渲染SLS文件过程中出现的错误).</p>
+<ol class="arabic">
+<li><p class="first">停止master.</p>
+</li>
+<li><p class="first">Start the master manually:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-master -l debug
+</pre></div>
+</div>
+</li>
+<li><p class="first">Look for log entries in the form:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>[DEBUG   ] Gathering reactors for tag foo/bar
+[DEBUG   ] Compiling reactions for tag foo/bar
+[DEBUG   ] Rendered data from file: /path/to/the/reactor_file.sls:
+&lt;... Rendered output appears here. ...&gt;
+</pre></div>
+</div>
+<p>The rendered output is the result of the Jinja parsing and is a good way to
+view the result of referencing Jinja variables. If the result is empty then
+Jinja produced an empty result and the Reactor will ignore it.</p>
+</li>
+</ol>
+</div>
+<div class="section" id="understanding-the-structure-of-reactor-formulas">
+<span id="reactor-structure"></span><h2>理解Reactor方案结构<a class="headerlink" href="#understanding-the-structure-of-reactor-formulas" title="永久链接至标题">¶</a></h2>
+<p><strong>I.e., when to use `arg` and `kwarg` and when to specify the function
+arguments directly.</strong></p>
+<p>While the reactor system uses the same basic data structure as the state
+system, the functions that will be called using that data structure are
+different functions than are called via Salt's state system. The Reactor can
+call Runner modules using the <cite>runner</cite> prefix, Wheel modules using the <cite>wheel</cite>
+prefix, and can also cause minions to run Execution modules using the <cite>local</cite>
+prefix.</p>
+<div class="versionchanged">
+<p><span class="versionmodified">在 2014.7.0 版更改: </span>The <code class="docutils literal"><span class="pre">cmd</span></code> prefix was renamed to <code class="docutils literal"><span class="pre">local</span></code> for consistency with other
+parts of Salt. A backward-compatible alias was added for <code class="docutils literal"><span class="pre">cmd</span></code>.</p>
+</div>
+<p>The Reactor runs on the master and calls functions that exist on the master. In
+the case of Runner and Wheel functions the Reactor can just call those
+functions directly since they exist on the master and are run on the master.</p>
+<p>In the case of functions that exist on minions and are run on minions, the
+Reactor still needs to call a function on the master in order to send the
+necessary data to the minion so the minion can execute that function.</p>
+<p>The Reactor calls functions exposed in <a class="reference internal" href="../../ref/clients/index.html#client-apis"><span>Salt's Python API documentation</span></a>. and thus the structure of Reactor files very transparently
+reflects the function signatures of those functions.</p>
+<div class="section" id="calling-execution-modules-on-minions">
+<h3>Calling Execution modules on Minions<a class="headerlink" href="#calling-execution-modules-on-minions" title="永久链接至标题">¶</a></h3>
+<p>The Reactor sends commands down to minions in the exact same way Salt's CLI
+interface does. It calls a function locally on the master that sends the name
+of the function as well as a list of any arguments and a dictionary of any
+keyword arguments that the minion should use to execute that function.</p>
+<p>Specifically, the Reactor calls the async version of <a class="reference internal" href="../../ref/clients/index.html#salt.client.LocalClient.cmd" title="salt.client.LocalClient.cmd"><code class="xref py py-meth docutils literal"><span class="pre">this</span> <span class="pre">function</span></code></a>. You can see that function has 'arg' and 'kwarg'
+parameters which are both values that are sent down to the minion.</p>
+<p>Executing remote commands maps to the <strong>LocalClient</strong> interface which is
+used by the <strong>salt</strong> command. This interface more specifically maps to
+the <strong>cmd_async</strong> method inside of the <strong>LocalClient</strong> class. This
+means that the arguments passed are being passed to the <strong>cmd_async</strong>
+method, not the remote method. A field starts with <strong>local</strong> to use the
+<strong>LocalClient</strong> subsystem. The result is, to execute a remote command,
+a reactor formula would look like this:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">clean_tmp</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">local.cmd.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">tgt</span><span class="p p-Indicator">:</span> <span class="s">&#39;*&#39;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">arg</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">rm -rf /tmp/*</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">arg</span></code> 选项会携带一个参数列表, 就如同在命令行上指定. 因此以上的定义与运行如下salt命令作用相同:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;*&#39;</span> cmd.run <span class="s1">&#39;rm -rf /tmp/*&#39;</span>
+</pre></div>
+</div>
+<p>使用 <code class="docutils literal"><span class="pre">expr_form</span></code> 参数来指定一个匹配器</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">clean_tmp</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">local.cmd.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">tgt</span><span class="p p-Indicator">:</span> <span class="s">&#39;os:Ubuntu&#39;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">expr_form</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">grain</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">arg</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">rm -rf /tmp/*</span>
+
+
+<span class="l l-Scalar l-Scalar-Plain">clean_tmp</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">local.cmd.run</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">tgt</span><span class="p p-Indicator">:</span> <span class="s">&#39;G@roles:hbase_master&#39;</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">expr_form</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">compound</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">arg</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">rm -rf /tmp/*</span>
+</pre></div>
+</div>
+<p>Any other parameters in the <a class="reference internal" href="../../ref/clients/index.html#salt.client.LocalClient.cmd" title="salt.client.LocalClient.cmd"><code class="xref py py-meth docutils literal"><span class="pre">LocalClient().cmd()</span></code></a> method can be specified as well.</p>
+</div>
+<div class="section" id="calling-runner-modules-and-wheel-modules">
+<h3>Calling Runner modules and Wheel modules<a class="headerlink" href="#calling-runner-modules-and-wheel-modules" title="永久链接至标题">¶</a></h3>
+<p>Calling Runner modules and Wheel modules from the Reactor uses a more direct
+syntax since the function is being executed locally instead of sending a
+command to a remote system to be executed there. There are no 'arg' or 'kwarg'
+parameters (unless the Runner function or Wheel function accepts a parameter
+with either of those names.)</p>
+<p>For example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">clear_the_grains_cache_for_all_minions</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">runner.cache.clear_grains</span>
+</pre></div>
+</div>
+<p>If the <a class="reference internal" href="../../ref/runners/all/salt.runners.cloud.html#salt.runners.cloud.profile" title="salt.runners.cloud.profile"><code class="xref py py-func docutils literal"><span class="pre">the</span> <span class="pre">runner</span> <span class="pre">takes</span> <span class="pre">arguments</span></code></a> then
+they must be specified as keyword arguments.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">spin_up_more_web_machines</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">runner.cloud.profile</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">prof</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">centos_6</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">instances</span><span class="p p-Indicator">:</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">web11</span>       <span class="c1"># These VM names would be generated via Jinja in a</span>
+      <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">web12</span>       <span class="c1"># real-world example.</span>
+</pre></div>
+</div>
+<p>To determine the proper names for the arguments, check the documentation
+or source code for the runner function you wish to call.</p>
+</div>
+<div class="section" id="passing-event-data-to-minions-or-orchestrate-as-pillar">
+<h3>Passing event data to Minions or Orchestrate as Pillar<a class="headerlink" href="#passing-event-data-to-minions-or-orchestrate-as-pillar" title="永久链接至标题">¶</a></h3>
+<p>从Reactor脚本的 <code class="docutils literal"><span class="pre">state.highstate</span></code> 或 <code class="docutils literal"><span class="pre">state.sls</span></code> 去传递Pillar数据的一个小技巧是这两个函数携带一个名为 <code class="docutils literal"><span class="pre">pillar</span></code> 的参数关键字.</p>
+<p>接下来的例子将使用Salt的Reactor去监听在master端使用 <a href="#id1"><span class="problematic" id="id2">``</span></a>salt-key``去接受一个新的minion时产生的event.</p>
+<p><code class="file docutils literal"><span class="pre">/etc/salt/master.d/reactor.conf</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">reactor</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="s">&#39;salt/key&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/salt/haproxy/react_new_minion.sls</span>
+</pre></div>
+</div>
+<p>Reactor之后产生一个 <code class="docutils literal"><span class="pre">state.sls</span></code> 命令给HAProxy服务器, 通过内置的pillar将新minion的ID由event传递给state文件.</p>
+<p><code class="file docutils literal"><span class="pre">/srv/salt/haproxy/react_new_minion.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% if data[&#39;act&#39;] == &#39;accept&#39; and data[&#39;id&#39;].startswith(&#39;web&#39;) %}
+add_new_minion_to_pool:
+  local.state.sls:
+    - tgt: &#39;haproxy*&#39;
+    - arg:
+      - haproxy.refresh_pool
+    - kwarg:
+        pillar:
+          new_minion: {{ data[&#39;id&#39;] }}
+{% endif %}
+</pre></div>
+</div>
+<p>以上的命令等价于如下CLI命令:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt <span class="s1">&#39;haproxy*&#39;</span> state.sls haproxy.refresh_pool <span class="s1">&#39;pillar={new_minion: minionid}&#39;</span>
+</pre></div>
+</div>
+<p>This works with Orchestrate files as well:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">call_some_orchestrate_file</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">runner.state.orchestrate</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mods</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">some_orchestrate_file</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pillar</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">stuff</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">things</span>
+</pre></div>
+</div>
+<p>Which is equivalent to the following command at the CLI:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run state.orchestrate some_orchestrate_file <span class="nv">pillar</span><span class="o">=</span><span class="s1">&#39;{stuff: things}&#39;</span>
+</pre></div>
+</div>
+<p>最终, 在state文件中的数据使用常规的Pillar查找语法. 接下来的例子将通过 :ref:Salt Mine &lt;salt-mine&gt;`  来获取webserver名字和IP地址. 如果召回来自于Reactor的state, 然后使用如上的自定义的Pillar, 一个新的minion会加入该pool中, 但会携带一个 <code class="docutils literal"><span class="pre">disabled</span></code> 标签, 因此HAProxy并不会导入流量到它上边.</p>
+<p><code class="file docutils literal"><span class="pre">/srv/salt/haproxy/refresh_pool.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{% set new_minion = salt[&#39;pillar.get&#39;](&#39;new_minion&#39;) %}
+
+listen web *:80
+    balance source
+    {% for server,ip in salt[&#39;mine.get&#39;](&#39;web*&#39;, &#39;network.interfaces&#39;, [&#39;eth0&#39;]).items() %}
+    {% if server == new_minion %}
+    server {{ server }} {{ ip }}:80 disabled
+    {% else %}
+    server {{ server }} {{ ip }}:80 check
+    {% endif %}
+    {% endfor %}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="a-complete-example">
+<h2>A Complete Example<a class="headerlink" href="#a-complete-example" title="永久链接至标题">¶</a></h2>
+<p>在该例子中, 我们假设已有一个服务器组, 它会随机上线, 需要key自动接受. 我们并不想设置为所有的服务器均自动接受key. 因此本例中, 我们将嘉定所有id以'link'开头的主机的key会自动接受并执行state.highstate. On top of this, we're going to add that a host coming up that was replaced (meaning a new key) will also be accepted.</p>
+<p>我们的master配置是相当简单的. 所以尝试认证的minion会匹配到名为 <strong>salt/auth</strong> 的 <strong>tag</strong> . 当minion key接受时, 我们会得到新的包含minion id可以用于匹配的的 <strong>tag</strong>.</p>
+<p><code class="file docutils literal"><span class="pre">/etc/salt/master.d/reactor.conf</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">reactor</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="s">&#39;salt/auth&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/reactor/auth-pending.sls</span>
+  <span class="p p-Indicator">-</span> <span class="s">&#39;salt/minion/ink*/start&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/reactor/auth-complete.sls</span>
+</pre></div>
+</div>
+<p>在该sls文件中, 我们说如果key被回绝, 此时minion进程会死掉, 我们会删除master端的key并且告诉master去ssh到minion上重启该minion.</p>
+<p>We also say that if the key is pending and the id starts with ink we will
+accept the key. A minion that is waiting on a pending key will retry
+authentication every ten seconds by default.</p>
+<p><code class="file docutils literal"><span class="pre">/srv/reactor/auth-pending.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span>{# Ink server faild to authenticate -- remove accepted key #}
+{% if not data[&#39;result&#39;] and data[&#39;id&#39;].startswith(&#39;ink&#39;) %}
+minion_remove:
+  wheel.key.delete:
+    - match: {{ data[&#39;id&#39;] }}
+minion_rejoin:
+  local.cmd.run:
+    - tgt: salt-master.domain.tld
+    - arg:
+      - ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no &quot;{{ data[&#39;id&#39;] }}&quot; &#39;sleep 10 &amp;&amp; /etc/init.d/salt-minion restart&#39;
+{% endif %}
+
+{# Ink server is sending new key -- accept this key #}
+{% if &#39;act&#39; in data and data[&#39;act&#39;] == &#39;pend&#39; and data[&#39;id&#39;].startswith(&#39;ink&#39;) %}
+minion_add:
+  wheel.key.accept:
+    - match: {{ data[&#39;id&#39;] }}
+{% endif %}
+</pre></div>
+</div>
+<p>这里不需要使用if语法, 因为我们在master配置文件中已经限制本操作只针对刚刚加入的ink servers.</p>
+<p><code class="file docutils literal"><span class="pre">/srv/reactor/auth-complete.sls</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="p p-Indicator">{</span><span class="c1"># When an Ink server connects, run state.highstate. #}</span>
+<span class="nv">highstate_run</span><span class="p p-Indicator">:</span>
+  <span class="nv">local.state.highstate</span><span class="p p-Indicator">:</span>
+    <span class="nv">- tgt</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{{</span> <span class="nv">data</span><span class="p p-Indicator">[</span><span class="s">&#39;id&#39;</span><span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+    <span class="nv">- ret</span><span class="p p-Indicator">:</span> <span class="nv">smtp</span>
+</pre></div>
+</div>
+<p>The above will also return the highstate result data using the <cite>smtp_return</cite>
+returner (use virtualname like when using from the command line with <cite>--return</cite>).
+The returner needs to be configured on the minion for this to work.
+See <a class="reference internal" href="../../ref/returners/all/salt.returners.smtp_return.html#module-salt.returners.smtp_return" title="salt.returners.smtp_return"><code class="xref py py-mod docutils literal"><span class="pre">salt.returners.smtp_return</span></code></a> documentation
+for that.</p>
+</div>
+<div class="section" id="syncing-custom-types-on-minion-start">
+<span id="minion-start-reactor"></span><h2>Syncing Custom Types on Minion Start<a class="headerlink" href="#syncing-custom-types-on-minion-start" title="永久链接至标题">¶</a></h2>
+<p>Salt will sync all custom types (by running a <a class="reference internal" href="../../ref/modules/all/salt.modules.saltutil.html#salt.modules.saltutil.sync_all" title="salt.modules.saltutil.sync_all"><code class="xref py py-mod docutils literal"><span class="pre">saltutil.sync_all</span></code></a>) on every highstate. However, there is a
+chicken-and-egg issue where, on the initial highstate, a minion will not yet
+have these custom types synced when the top file is first compiled. This can be
+worked around with a simple reactor which watches for <code class="docutils literal"><span class="pre">minion_start</span></code> events,
+which each minion fires when it first starts up and connects to the master.</p>
+<p>On the master, create <strong>/srv/reactor/sync_grains.sls</strong> with the following
+contents:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">sync_grains</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">local.saltutil.sync_grains</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">tgt</span><span class="p p-Indicator">:</span> <span class="p p-Indicator">{{</span> <span class="nv">data</span><span class="p p-Indicator">[</span><span class="s">&#39;id&#39;</span><span class="p p-Indicator">]</span> <span class="p p-Indicator">}}</span>
+</pre></div>
+</div>
+<p>And in the master config file, add the following reactor configuration:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">reactor</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="s">&#39;minion_start&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/reactor/sync_grains.sls</span>
+</pre></div>
+</div>
+<p>This will cause the master to instruct each minion to sync its custom grains
+when it starts, making these grains available when the initial highstate is
+executed.</p>
+<p>Other types can be synced by replacing <code class="docutils literal"><span class="pre">local.saltutil.sync_grains</span></code> with
+<code class="docutils literal"><span class="pre">local.saltutil.sync_modules</span></code>, <code class="docutils literal"><span class="pre">local.saltutil.sync_all</span></code>, or whatever else
+suits the intended use case.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../beacons/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Beacons" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="../orchestrate/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Orchestration" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../event/events.html">Event System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../beacons/index.html">Beacons</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Reactor系统</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#event-system">Event系统</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mapping-events-to-reactor-sls-files">映射events到Reactor SLS文件</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#the-goal-of-writing-reactor-sls-files">The Goal of Writing Reactor SLS Files</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#jinja-context">Jinja Context</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#advanced-state-system-capabilities">Advanced State System Capabilities</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#fire-an-event">产生event</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#knowing-what-event-is-being-fired">或者正在产生什么event</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#debugging-the-reactor">Debug Reactor系统</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#understanding-the-structure-of-reactor-formulas">理解Reactor方案结构</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#calling-execution-modules-on-minions">Calling Execution modules on Minions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#calling-runner-modules-and-wheel-modules">Calling Runner modules and Wheel modules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#passing-event-data-to-minions-or-orchestrate-as-pillar">Passing event data to Minions or Orchestrate as Pillar</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#a-complete-example">A Complete Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#syncing-custom-types-on-minion-start">Syncing Custom Types on Minion Start</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

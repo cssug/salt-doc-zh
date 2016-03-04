@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Renderers渲染器</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Configuring Salt" href="../../topics/configuration/index.html">
+        <link rel="next" title="Full list of builtin renderer modules" href="all/index.html">
+        <link rel="prev" title="salt.returners.xmpp_return" href="../returners/all/salt.returners.xmpp_return.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../returners/all/salt.returners.xmpp_return.html" title="salt.returners.xmpp_return">上一页</a>
+            
+        </li>
+        <li>
+            <a href="all/index.html" title="Full list of builtin renderer modules">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="renderers">
+<span id="id1"></span><h1>Renderers渲染器<a class="headerlink" href="#renderers" title="永久链接至标题">¶</a></h1>
+<p>The Salt state system operates by gathering information from common data
+types such as lists, dictionaries, and strings that would be familiar
+to any developer.</p>
+<p>SLS files are translated from whatever data templating format they are written
+in back into Python data types to be consumed by Salt.</p>
+<p>By default SLS files are rendered as Jinja templates and then parsed as YAML
+documents. But since the only thing the state system cares about is raw data,
+the SLS files can be any structured format that can be dreamed up.</p>
+<p>Currently there is support for <code class="docutils literal"><span class="pre">Jinja</span> <span class="pre">+</span> <span class="pre">YAML</span></code>, <code class="docutils literal"><span class="pre">Mako</span> <span class="pre">+</span> <span class="pre">YAML</span></code>,
+<code class="docutils literal"><span class="pre">Wempy</span> <span class="pre">+</span> <span class="pre">YAML</span></code>, <code class="docutils literal"><span class="pre">Jinja</span> <span class="pre">+</span> <span class="pre">json</span></code>, <code class="docutils literal"><span class="pre">Mako</span> <span class="pre">+</span> <span class="pre">json</span></code> and <code class="docutils literal"><span class="pre">Wempy</span> <span class="pre">+</span> <span class="pre">json</span></code>.</p>
+<p>Renderers can be written to support any template type. This means that the
+Salt states could be managed by XML files, HTML files, Puppet files, or any
+format that can be translated into the Pythonic data structure used by the state
+system.</p>
+<div class="section" id="multiple-renderers">
+<h2>Multiple Renderers<a class="headerlink" href="#multiple-renderers" title="永久链接至标题">¶</a></h2>
+<p>A default renderer is selected in the master configuration file by providing
+a value to the <code class="docutils literal"><span class="pre">renderer</span></code> key.</p>
+<p>When evaluating an SLS, more than one renderer can be used.</p>
+<p>When rendering SLS files, Salt checks for the presence of a Salt-specific
+shebang line.</p>
+<p>The shebang line directly calls the name of the renderer as it is specified
+within Salt. One of the most common reasons to use multiple renderers is to
+use the Python or <code class="docutils literal"><span class="pre">py</span></code> renderer.</p>
+<p>Below, the first line is a shebang that references the <code class="docutils literal"><span class="pre">py</span></code> renderer.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="ch">#!py</span>
+
+<span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Install the python-mako package</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;include&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;python&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;python-mako&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;pkg&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;installed&#39;</span><span class="p">]}}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="composing-renderers">
+<span id="renderers-composing"></span><h2>Composing Renderers<a class="headerlink" href="#composing-renderers" title="永久链接至标题">¶</a></h2>
+<p>A renderer can be composed from other renderers by connecting them in a series
+of pipes(<code class="docutils literal"><span class="pre">|</span></code>).</p>
+<p>In fact, the default <code class="docutils literal"><span class="pre">Jinja</span> <span class="pre">+</span> <span class="pre">YAML</span></code> renderer is implemented by connecting a YAML
+renderer to a Jinja renderer. Such renderer configuration is specified as: <code class="docutils literal"><span class="pre">jinja</span> <span class="pre">|</span> <span class="pre">yaml</span></code>.</p>
+<p>Other renderer combinations are possible:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">yaml</span></code></dt>
+<dd>i.e, just YAML, no templating.</dd>
+<dt><code class="docutils literal"><span class="pre">mako</span> <span class="pre">|</span> <span class="pre">yaml</span></code></dt>
+<dd>pass the input to the <code class="docutils literal"><span class="pre">mako</span></code> renderer, whose output is then fed into the
+<code class="docutils literal"><span class="pre">yaml</span></code> renderer.</dd>
+<dt><code class="docutils literal"><span class="pre">jinja</span> <span class="pre">|</span> <span class="pre">mako</span> <span class="pre">|</span> <span class="pre">yaml</span></code></dt>
+<dd>This one allows you to use both jinja and mako templating syntax in the
+input and then parse the final rendered output as YAML.</dd>
+</dl>
+</div></blockquote>
+<p>The following is a contrived example SLS file using the <code class="docutils literal"><span class="pre">jinja</span> <span class="pre">|</span> <span class="pre">mako</span> <span class="pre">|</span> <span class="pre">yaml</span></code> renderer:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span>#!jinja|mako|yaml
+
+An_Example:
+  cmd.run:
+    - name: |
+        echo &quot;Using Salt ${grains[&#39;saltversion&#39;]}&quot; \
+             &quot;from path {{grains[&#39;saltpath&#39;]}}.&quot;
+    - cwd: /
+
+&lt;%doc&gt; ${...} is Mako&#39;s notation, and so is this comment. &lt;/%doc&gt;
+{#     Similarly, {{...}} is Jinja&#39;s notation, and so is this comment. #}
+</pre></div>
+</div>
+<p>For backward compatibility, <code class="docutils literal"><span class="pre">jinja</span> <span class="pre">|</span> <span class="pre">yaml</span></code> can also be written as
+<code class="docutils literal"><span class="pre">yaml_jinja</span></code>, and similarly, the <code class="docutils literal"><span class="pre">yaml_mako</span></code>, <code class="docutils literal"><span class="pre">yaml_wempy</span></code>,
+<code class="docutils literal"><span class="pre">json_jinja</span></code>, <code class="docutils literal"><span class="pre">json_mako</span></code>, and <code class="docutils literal"><span class="pre">json_wempy</span></code> renderers are all supported.</p>
+<p>Keep in mind that not all renderers can be used alone or with any other renderers.
+For example, the template renderers shouldn't be used alone as their outputs are
+just strings, which still need to be parsed by another renderer to turn them into
+highstate data structures.</p>
+<p>For example, it doesn't make sense to specify <code class="docutils literal"><span class="pre">yaml</span> <span class="pre">|</span> <span class="pre">jinja</span></code> because the
+output of the YAML renderer is a highstate data structure (a dict in Python), which
+cannot be used as the input to a template renderer. Therefore, when combining
+renderers, you should know what each renderer accepts as input and what it returns
+as output.</p>
+</div>
+<div class="section" id="writing-renderers">
+<h2>Writing Renderers<a class="headerlink" href="#writing-renderers" title="永久链接至标题">¶</a></h2>
+<p>A custom renderer must be a Python module placed in the renderers directory and the
+module implement the <code class="docutils literal"><span class="pre">render</span></code> function.</p>
+<p>The <code class="docutils literal"><span class="pre">render</span></code> function will be passed the path of the SLS file as an argument.</p>
+<p>The purpose of of <code class="docutils literal"><span class="pre">render</span></code> function is to  parse the passed file and to return
+the Python data structure derived from the file.</p>
+<p>Custom renderers must be placed in a <code class="docutils literal"><span class="pre">_renderers</span></code> directory within the
+<a class="reference internal" href="../configuration/master.html#std:conf_master-file_roots"><code class="xref std std-conf_master docutils literal"><span class="pre">file_roots</span></code></a> specified by the master config file.</p>
+<dl class="docutils">
+<dt>Custom renderers are distributed when any of the following are run:</dt>
+<dd><p class="first"><a class="reference internal" href="../modules/all/salt.modules.state.html#salt.modules.state.highstate" title="salt.modules.state.highstate"><code class="xref py py-mod docutils literal"><span class="pre">state.highstate</span></code></a></p>
+<p><a class="reference internal" href="../modules/all/salt.modules.saltutil.html#salt.modules.saltutil.sync_renderers" title="salt.modules.saltutil.sync_renderers"><code class="xref py py-mod docutils literal"><span class="pre">saltutil.sync_renderers</span></code></a></p>
+<p class="last"><a class="reference internal" href="../modules/all/salt.modules.saltutil.html#salt.modules.saltutil.sync_all" title="salt.modules.saltutil.sync_all"><code class="xref py py-mod docutils literal"><span class="pre">saltutil.sync_all</span></code></a></p>
+</dd>
+</dl>
+<p>Any custom renderers which have been synced to a minion, that are named the
+same as one of Salt's default set of renderers, will take the place of the
+default renderer with the same name.</p>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="永久链接至标题">¶</a></h2>
+<p>The best place to find examples of renderers is in the Salt source code.</p>
+<p>Documentation for renderers included with Salt can be found here:</p>
+<p><a class="reference external" href="https://github.com/saltstack/salt/blob/develop/salt/renderers">https://github.com/saltstack/salt/blob/develop/salt/renderers</a></p>
+<p>Here is a simple YAML renderer example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">yaml</span>
+<span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="n">yaml_data</span><span class="p">,</span> <span class="n">saltenv</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">sls</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">yaml_data</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+        <span class="n">yaml_data</span> <span class="o">=</span> <span class="n">yaml_data</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">yaml_data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span> <span class="k">if</span> <span class="n">data</span> <span class="k">else</span> <span class="p">{}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="full-list-of-renderers">
+<h2>Full List of Renderers<a class="headerlink" href="#full-list-of-renderers" title="永久链接至标题">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="all/index.html">Full list of builtin renderer modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.renderers.cheetah.html">salt.renderers.cheetah</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.renderers.genshi.html">salt.renderers.genshi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.renderers.gpg.html">salt.renderers.gpg</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.gpg.html#setup">Setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.gpg.html#export-the-public-key">Export the Public Key</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.gpg.html#import-the-public-key">Import the Public Key</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.gpg.html#encrypted-cli-pillar-data">Encrypted CLI Pillar Data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="all/salt.renderers.gpg.html#replacing-newlines">Replacing Newlines</a></li>
+<li class="toctree-l4"><a class="reference internal" href="all/salt.renderers.gpg.html#encrypting-the-entire-cli-pillar-dictionary">Encrypting the Entire CLI Pillar Dictionary</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.renderers.hjson.html">salt.renderers.hjson</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.renderers.jinja.html">salt.renderers.jinja</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.jinja.html#jinja-in-states">Jinja在States中的使用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.jinja.html#include-and-import">Include和Import</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.jinja.html#macros">宏</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.jinja.html#template-inheritance">模板继承</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.jinja.html#filters">过滤器</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.jinja.html#jinja-in-files">Jinja在普通文件的使用</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.jinja.html#calling-salt-functions">调用Salt函数</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.jinja.html#debugging">Debugging</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.renderers.json.html">salt.renderers.json</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.renderers.mako.html">salt.renderers.mako</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.renderers.msgpack.html">salt.renderers.msgpack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.renderers.py.html">salt.renderers.py</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.renderers.pydsl.html">salt.renderers.pydsl</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.pydsl.html#special-integration-with-the-cmd-state">Special integration with the <cite>cmd</cite> state</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.pydsl.html#implicit-ordering-of-states">Implicit ordering of states</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.pydsl.html#render-time-state-execution">Render time state execution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.pydsl.html#integration-with-the-stateconf-renderer">Integration with the stateconf renderer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.pydsl.html#importing-custom-python-modules">Importing custom Python modules</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.renderers.pyobjects.html">salt.renderers.pyobjects</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.pyobjects.html#creating-state-data">Creating state data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.pyobjects.html#context-managers-and-requisites">Context Managers and requisites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.pyobjects.html#including-and-extending">Including and Extending</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.pyobjects.html#importing-from-other-state-files">Importing from other state files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.pyobjects.html#salt-object">Salt object</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.pyobjects.html#pillar-grain-mine-config-data">Pillar, grain, mine &amp; config data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.pyobjects.html#map-data">Map Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.pyobjects.html#todo">待完善</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.renderers.stateconf.html">salt.renderers.stateconf</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.renderers.wempy.html">salt.renderers.wempy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.renderers.yaml.html">salt.renderers.yaml</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.yaml.html#understanding-yaml">了解YAML</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="all/salt.renderers.yaml.html#rule-one-indentation">规则一: 缩进</a></li>
+<li class="toctree-l4"><a class="reference internal" href="all/salt.renderers.yaml.html#rule-two-colons">规则二: 冒号</a></li>
+<li class="toctree-l4"><a class="reference internal" href="all/salt.renderers.yaml.html#rule-three-dashes">规则三: 短横杠</a></li>
+<li class="toctree-l4"><a class="reference internal" href="all/salt.renderers.yaml.html#module-salt.renderers.yaml">参考文献</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="all/salt.renderers.yamlex.html">salt.renderers.yamlex</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="all/salt.renderers.yamlex.html#module-salt.renderers.yamlex">参考文献</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../returners/all/salt.returners.xmpp_return.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.returners.xmpp_return" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="all/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Full list of builtin renderer modules" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../topics/configuration/index.html">Configuring Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../configuration/master.html">配置Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/minion.html">配置Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/examples.html">Configuration file examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/blackout/index.html">Minion Blackout Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/eauth/access_control.html">Access Control System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/jobs/index.html">Job Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/jobs/job_cache.html">Managing the Job Cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/jobs/external_cache.html">Storing Job Results in an External System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/logging/index.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../file_server/index.html">Salt文件服务器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/gitfs.html">Git Fileserver Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/minionfs.html">MinionFS Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/spm/index.html">Salt Package Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/sdb/index.html">Storing Data in Other Databases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/nonroot.html">以非特权用户身份运行Salt Master/Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/tutorials/cron.html">使用cron运行Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/hardening.html">Hardening Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../security/index.html">Security disclosure policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/transports/index.html">Salt Transport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../topics/master_tops/index.html">Master Tops系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../returners/index.html">返回器</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Renderers渲染器</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#multiple-renderers">Multiple Renderers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#composing-renderers">Composing Renderers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#writing-renderers">Writing Renderers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#full-list-of-renderers">Full List of Renderers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="all/index.html">Full list of builtin renderer modules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

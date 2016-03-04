@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Salt SSH</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="next" title="Salt Rosters" href="roster.html">
+        <link rel="prev" title="Orchestrate Runner" href="../orchestrate/orchestrate_runner.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../orchestrate/orchestrate_runner.html" title="Orchestrate Runner">上一页</a>
+            
+        </li>
+        <li>
+            <a href="roster.html" title="Salt Rosters">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="salt-ssh">
+<span id="id1"></span><h1>Salt SSH<a class="headerlink" href="#salt-ssh" title="永久链接至标题">¶</a></h1>
+
+<row class="intro-row">
+    <div class="col-sm-6">
+        <div class="intro-text">Execute salt commands and states over ssh without installing a salt-minion.</div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="embed-responsive embed-responsive-16by9">
+            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/F3WZKhKKhz0"></iframe>
+        </div>
+    </div>
+
+</row>
+
+<row class="intro-row">
+<div class="col-sm-12"><br />
+    </div>
+</row>
+
+<row class="intro-row">
+    <div class="col-sm-6">
+        <div class="embed-responsive embed-responsive-16by9">
+            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/qWG5pI8Glbs"></iframe>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+        <div class="embed-responsive embed-responsive-16by9">
+            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/d1Q1g5AFHbk"></iframe>
+        </div>
+    </div>
+
+</row>
+
+<row class="intro-row">
+<div class="col-sm-12"><br />
+    </div>
+</row>
+<div class="section" id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="永久链接至标题">¶</a></h2>
+<p>Salt SSH is very easy to use, simply set up a basic <a class="reference internal" href="roster.html#ssh-roster"><span>roster</span></a> file of the
+systems to connect to and run <code class="docutils literal"><span class="pre">salt-ssh</span></code> commands in a similar way as
+standard <code class="docutils literal"><span class="pre">salt</span></code> commands.</p>
+<ul class="simple">
+<li>Salt ssh is considered production ready in version 2014.7.0</li>
+<li>Python is required on the remote system (unless using the <code class="docutils literal"><span class="pre">-r</span></code> option to send raw ssh commands)</li>
+<li>On many systems, the <code class="docutils literal"><span class="pre">salt-ssh</span></code> executable will be in its own package, usually named
+<code class="docutils literal"><span class="pre">salt-ssh</span></code></li>
+<li>The Salt SSH system does not supercede the standard Salt communication
+systems, it simply offers an SSH-based alternative that does not require
+ZeroMQ and a remote agent. Be aware that since all communication with Salt SSH is
+executed via SSH it is substantially slower than standard Salt with ZeroMQ.</li>
+<li><p class="first">目前文件服务操作必须包装成相关文件传递给 <code class="docutils literal"><span class="pre">salt-ssh</span></code> 命令。state模块是一个例外，它将在master上编译为state运行，并在这过程中发现所有 <code class="docutils literal"><span class="pre">salt://</span></code> 路径的引用，然后当state运行时拷贝那些文件到同样的tar包。但是，所需的文件服务包装器仍然在开发中。</p>
+</li>
+</ul>
+</div>
+<div class="section" id="salt-ssh-roster">
+<h2>Salt SSH Roster<a class="headerlink" href="#salt-ssh-roster" title="永久链接至标题">¶</a></h2>
+<p>Salt中的roster系统将使指定远程的minions操作变得简单.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">See the <a class="reference internal" href="roster.html#ssh-roster"><span>SSH roster docs</span></a> for more details.</p>
+</div>
+<p>简单的创建下roster文件，默认的本地路径是 <cite>/etc/salt/roster</cite>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">web1</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">192.168.42.1</span>
+</pre></div>
+</div>
+<p>这是一个非常基本的roster文件，指定了Salt ID及IP地址.  更为复杂的roster如下:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">web1</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">192.168.42.1</span> <span class="c1"># The IP addr or DNS hostname</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">fred</span>         <span class="c1"># Remote executions will be executed as user fred</span>
+  <span class="l l-Scalar l-Scalar-Plain">passwd</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">foobarbaz</span>  <span class="c1"># The password to use for login, if omitted, keys are used</span>
+  <span class="l l-Scalar l-Scalar-Plain">sudo</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>         <span class="c1"># Whether to sudo to root, not enabled by default</span>
+<span class="l l-Scalar l-Scalar-Plain">web2</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">host</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">192.168.42.2</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">sudo works only if NOPASSWD is set for user in /etc/sudoers:
+<code class="docutils literal"><span class="pre">fred</span> <span class="pre">ALL=(ALL)</span> <span class="pre">NOPASSWD:</span> <span class="pre">ALL</span></code></p>
+</div>
+</div>
+<div class="section" id="deploy-ssh-key-for-salt-ssh">
+<h2>Deploy ssh key for salt-ssh<a class="headerlink" href="#deploy-ssh-key-for-salt-ssh" title="永久链接至标题">¶</a></h2>
+<p>By default, salt-ssh will generate key pairs for ssh, the default path will be
+/etc/salt/pki/master/ssh/salt-ssh.rsa</p>
+<p>You can use ssh-copy-id, (the OpenSSH key deployment tool) to deploy keys to your servers.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>ssh-copy-id -i /etc/salt/pki/master/ssh/salt-ssh.rsa.pub user@server.demo.com
+</pre></div>
+</div>
+<p>One could also create a simple shell script, named salt-ssh-copy-id.sh as follows:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="k">if</span> <span class="o">[</span> -z <span class="nv">$1</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+   <span class="nb">echo</span> <span class="nv">$0</span> user@host.com
+   <span class="nb">exit</span> 0
+<span class="k">fi</span>
+ssh-copy-id -i /etc/salt/pki/master/ssh/salt-ssh.rsa.pub <span class="nv">$1</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Be certain to chmod +x salt-ssh-copy-id.sh.</p>
+</div>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>./salt-ssh-copy-id.sh user@server1.host.com
+./salt-ssh-copy-id.sh user@server2.host.com
+</pre></div>
+</div>
+<p>Once keys are successfully deployed, salt-ssh can be used to control them.</p>
+<p>Alternatively ssh agent forwarding can be used by setting the priv to agent-forwarding.</p>
+</div>
+<div class="section" id="calling-salt-ssh">
+<h2>调用Salt SSH<a class="headerlink" href="#calling-salt-ssh" title="永久链接至标题">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">salt-ssh</span></code> command can be easily executed in the same way as a salt
+command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-ssh <span class="s1">&#39;*&#39;</span> test.ping
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">salt-ssh</span></code> 命令的语法和 <code class="docutils literal"><span class="pre">salt</span></code> 命令类似.</p>
+<p>Salt标准函数可以直接执行！ 其输出也和 <code class="docutils literal"><span class="pre">salt</span></code> 命令一样，也有一些参数可以指定，可以访问 <a class="reference external" href="http://docs.saltstack.com/ref/cli/salt-ssh.html">http://docs.saltstack.com/ref/cli/salt-ssh.html</a> 获取这些参数选项.</p>
+<div class="section" id="raw-shell-calls">
+<h3>原始Shell调用<a class="headerlink" href="#raw-shell-calls" title="永久链接至标题">¶</a></h3>
+<p>默认情况下 <code class="docutils literal"><span class="pre">salt-ssh</span></code> 可以直接在远程系统上运行Salt执行模块. 通过 <code class="docutils literal"><span class="pre">salt-ssh</span></code> 也可以直接执行原始shell命令:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-ssh <span class="s1">&#39;*&#39;</span> -r <span class="s1">&#39;ifconfig&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="states-via-salt-ssh">
+<h2>通过Salt SSH进行状态管理<a class="headerlink" href="#states-via-salt-ssh" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">salt-ssh</span></code> 也可以直接使用Salt状态管理系统. 状态管理系统在 <code class="docutils literal"><span class="pre">salt-ssh</span></code> 中抽象为和 <code class="docutils literal"><span class="pre">salt</span></code> 同样的接口，这样就保证了通过 <code class="docutils literal"><span class="pre">salt-ssh</span></code> 及vice-versa可以直接使用标准的 <code class="docutils literal"><span class="pre">salt</span></code> Formulase而无需做修改.</p>
+<p>Salt状态管理演练可以直接将 <code class="docutils literal"><span class="pre">salt</span></code> 命令直接替换为 <code class="docutils literal"><span class="pre">salt-ssh</span></code> 即可使用.</p>
+</div>
+<div class="section" id="targeting-with-salt-ssh">
+<h2>Salt SSH Target<a class="headerlink" href="#targeting-with-salt-ssh" title="永久链接至标题">¶</a></h2>
+<p>由于salt-ssh中的target与salt几乎不一致，当前只支持glob及正则target, 其他的target系统也会不断的加入进来.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>By default, Grains are settable through <code class="docutils literal"><span class="pre">salt-ssh</span></code>. By
+default, these grains will <em>not</em> be persisted across reboots.</p>
+<p class="last">See the &quot;thin_dir&quot; setting in <a class="reference internal" href="roster.html"><em>Roster documentation</em></a>
+for more details.</p>
+</div>
+</div>
+<div class="section" id="configuring-salt-ssh">
+<h2>配置Salt SSH<a class="headerlink" href="#configuring-salt-ssh" title="永久链接至标题">¶</a></h2>
+<p>Salt SSH从master配置文件提取自己的配置。通常情况下，配置文件位于 <code class="docutils literal"><span class="pre">/etc/salt/master</span></code>。如果想使用一个自定义的配置文件，传递 <code class="docutils literal"><span class="pre">-c</span></code> 选项给Salt SSH指定一个查找目录，包含文件名 <code class="docutils literal"><span class="pre">master</span></code>。</p>
+<div class="section" id="minion-config">
+<h3>Minion Config<a class="headerlink" href="#minion-config" title="永久链接至标题">¶</a></h3>
+<div class="versionadded">
+<p><span class="versionmodified">2015.5.1 新版功能.</span></p>
+</div>
+<p>Minion config options can be defined globally using the master configuration
+option <code class="docutils literal"><span class="pre">ssh_minion_opts</span></code>. It can also be defined on a per-minion basis with
+the <code class="docutils literal"><span class="pre">minion_opts</span></code> entry in the roster.</p>
+</div>
+</div>
+<div class="section" id="running-salt-ssh-as-non-root-user">
+<h2>用非root用户运行Salt SSH<a class="headerlink" href="#running-salt-ssh-as-non-root-user" title="永久链接至标题">¶</a></h2>
+<p>默认情况下，salt从/etc/salt/读取所有配置。如果你使用普通用户运行Salt SSH，必须修改一些路径，否则你会收到&quot;Permission denied&quot;信息。你必须修改两个参数: <code class="docutils literal"><span class="pre">pki_dir</span></code> 和 <code class="docutils literal"><span class="pre">cachedir</span></code>。应该指向一个对于用户可写的绝对路径。</p>
+<p>不建议直接修改 /etc/salt。为用户创建一份/etc/salt的私有拷贝并且运行命令行加上``-c /new/config/path``。</p>
+</div>
+<div class="section" id="define-cli-options-with-saltfile">
+<h2>利用Saltfile定义CLI选项<a class="headerlink" href="#define-cli-options-with-saltfile" title="永久链接至标题">¶</a></h2>
+<p>如果您通常通过CLI中的选项&quot;salt-ssh&quot; ，你可以创建一个&quot;Saltfile&quot; 自动使用这些选项。如果你在同一台服务器上管理多个不同的salt项目,这是常见的。</p>
+<p>So you can <code class="docutils literal"><span class="pre">cd</span></code> into a directory that has a <code class="docutils literal"><span class="pre">Saltfile</span></code> with the following
+YAML contents:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">salt-ssh</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">config_dir</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">path/to/config/dir</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_max_procs</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">30</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_wipe</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<p>Instead of having to call
+<code class="docutils literal"><span class="pre">salt-ssh</span> <span class="pre">--config-dir=path/to/config/dir</span> <span class="pre">--max-procs=30</span> <span class="pre">--wipe</span> <span class="pre">\*</span> <span class="pre">test.ping</span></code> you
+can call <code class="docutils literal"><span class="pre">salt-ssh</span> <span class="pre">\*</span> <span class="pre">test.ping</span></code>.</p>
+<p>Boolean-style options should be specified in their YAML representation.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The option keys specified must match the destination attributes for the
+options specified in the parser
+<code class="xref py py-class docutils literal"><span class="pre">salt.utils.parsers.SaltSSHOptionParser</span></code>.  For example, in the
+case of the <code class="docutils literal"><span class="pre">--wipe</span></code> command line option, its <code class="docutils literal"><span class="pre">dest</span></code> is configured to
+be <code class="docutils literal"><span class="pre">ssh_wipe</span></code> and thus this is what should be configured in the
+<code class="docutils literal"><span class="pre">Saltfile</span></code>.  Using the names of flags for this option, being <code class="docutils literal"><span class="pre">wipe:</span>
+<span class="pre">True</span></code> or <code class="docutils literal"><span class="pre">w:</span> <span class="pre">True</span></code>, will not work.</p>
+</div>
+</div>
+<div class="section" id="debugging-salt-ssh">
+<h2>Debugging salt-ssh<a class="headerlink" href="#debugging-salt-ssh" title="永久链接至标题">¶</a></h2>
+<p>One common approach for debugging <code class="docutils literal"><span class="pre">salt-ssh</span></code> is to simply use the tarball that salt
+ships to the remote machine and call <code class="docutils literal"><span class="pre">salt-call</span></code> directly.</p>
+<p>To determine the location of <code class="docutils literal"><span class="pre">salt-call</span></code>, simply run <code class="docutils literal"><span class="pre">salt-ssh</span></code> with the <code class="docutils literal"><span class="pre">-ltrace</span></code>
+flag and look for a line containing the string, <code class="docutils literal"><span class="pre">SALT_ARGV</span></code>. This contains the <code class="docutils literal"><span class="pre">salt-call</span></code>
+command that <code class="docutils literal"><span class="pre">salt-ssh</span></code> attempted to execute.</p>
+<p>It is recommended that one modify this command a bit by removing the <code class="docutils literal"><span class="pre">-l</span> <span class="pre">quiet</span></code>,
+<code class="docutils literal"><span class="pre">--metadata</span></code> and <code class="docutils literal"><span class="pre">--output</span> <span class="pre">json</span></code> to get a better idea of what's going on on the target system.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="roster.html">Salt Rosters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="roster.html#how-rosters-work">Rosters如何工作</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="roster.html#targets-data">目标数据</a></li>
+<li class="toctree-l3"><a class="reference internal" href="roster.html#thin-dir">thin_dir</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../orchestrate/orchestrate_runner.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Orchestrate Runner" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="roster.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Salt Rosters" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Salt SSH</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#salt-ssh-roster">Salt SSH Roster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deploy-ssh-key-for-salt-ssh">Deploy ssh key for salt-ssh</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calling-salt-ssh">调用Salt SSH</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#raw-shell-calls">原始Shell调用</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#states-via-salt-ssh">通过Salt SSH进行状态管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#targeting-with-salt-ssh">Salt SSH Target</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuring-salt-ssh">配置Salt SSH</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#minion-config">Minion Config</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#running-salt-ssh-as-non-root-user">用非root用户运行Salt SSH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#define-cli-options-with-saltfile">利用Saltfile定义CLI选项</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#debugging-salt-ssh">Debugging salt-ssh</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="roster.html">Salt Rosters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

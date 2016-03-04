@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Git Fileserver Backend Walkthrough</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Configuring Salt" href="../configuration/index.html">
+        <link rel="next" title="MinionFS Backend Walkthrough" href="minionfs.html">
+        <link rel="prev" title="File Server Configuration" href="../../ref/file_server/file_roots.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="../../ref/file_server/file_roots.html" title="File Server Configuration">上一页</a>
+            
+        </li>
+        <li>
+            <a href="minionfs.html" title="MinionFS Backend Walkthrough">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="git-fileserver-backend-walkthrough">
+<span id="tutorial-gitfs"></span><h1>Git Fileserver Backend Walkthrough<a class="headerlink" href="#git-fileserver-backend-walkthrough" title="永久链接至标题">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">This walkthrough assumes basic knowledge of Salt. To get up to speed, check
+out the <a class="reference internal" href="walkthrough.html"><em>Salt Walkthrough</em></a>.</p>
+</div>
+<p>The gitfs backend allows Salt to serve files from git repositories. It can be
+enabled by adding <code class="docutils literal"><span class="pre">git</span></code> to the <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-fileserver_backend"><code class="xref std std-conf_master docutils literal"><span class="pre">fileserver_backend</span></code></a> list, and
+configuring one or more repositories in <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_remotes"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_remotes</span></code></a>.</p>
+<p>Branches and tags become Salt fileserver environments.</p>
+<div class="section" id="installing-dependencies">
+<span id="gitfs-dependencies"></span><h2>安装依赖<a class="headerlink" href="#installing-dependencies" title="永久链接至标题">¶</a></h2>
+<p>Beginning with version 2014.7.0, both <a class="reference external" href="https://github.com/libgit2/pygit2">pygit2</a> and <a class="reference external" href="https://www.samba.org/~jelmer/dulwich/">Dulwich</a> are supported as
+alternatives to <a class="reference external" href="https://github.com/gitpython-developers/GitPython">GitPython</a>. The desired provider can be configured using the
+<a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_provider"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_provider</span></code></a> parameter in the master config file.</p>
+<p>If <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_provider"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_provider</span></code></a> is not configured, then Salt will prefer
+<a class="reference external" href="https://github.com/libgit2/pygit2">pygit2</a> if a suitable version is available, followed by <a class="reference external" href="https://github.com/gitpython-developers/GitPython">GitPython</a> and
+<a class="reference external" href="https://www.samba.org/~jelmer/dulwich/">Dulwich</a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">It is recommended to always run the most recent version of any the below
+dependencies. Certain features of gitfs may not be available without
+the most recent version of the chosen library.</p>
+</div>
+<div class="section" id="id1">
+<h3>pygit2<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h3>
+<p>The minimum supported version of <a class="reference external" href="https://github.com/libgit2/pygit2">pygit2</a> is 0.20.3. Availability for this
+version of <a class="reference external" href="https://github.com/libgit2/pygit2">pygit2</a> is still limited, though the SaltStack team is working to
+get compatible versions available for as many platforms as possible.</p>
+<p>For the Fedora/EPEL versions which have a new enough version packaged, the
+following command would be used to install <a class="reference external" href="https://github.com/libgit2/pygit2">pygit2</a>:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># yum install python-pygit2</span>
+</pre></div>
+</div>
+<p>Provided a valid version is packaged for Debian/Ubuntu (which is not currently
+the case), the package name would be the same, and the following command would
+be used to install it:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># apt-get install python-pygit2</span>
+</pre></div>
+</div>
+<p>If <a class="reference external" href="https://github.com/libgit2/pygit2">pygit2</a> is not packaged for the platform on which the Master is running, the
+<a class="reference external" href="https://github.com/libgit2/pygit2">pygit2</a> website has installation instructions <a class="reference external" href="http://www.pygit2.org/install.html">here</a>. Keep in mind however that
+following these instructions will install libgit2 and <a class="reference external" href="https://github.com/libgit2/pygit2">pygit2</a> without system
+packages. Additionally, keep in mind that <a class="reference internal" href="#pygit2-authentication-ssh"><span>SSH authentication in pygit2</span></a> requires <a class="reference external" href="http://www.libssh2.org/">libssh2</a> (<em>not</em> libssh) development
+libraries to be present before libgit2 is built. On some distros (debian based)
+<code class="docutils literal"><span class="pre">pkg-config</span></code> is also required to link libgit2 with libssh2.</p>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last"><a class="reference external" href="https://github.com/libgit2/pygit2">pygit2</a> is actively developed and <span class="xref std std-ref">frequently makes
+non-backwards-compatible API changes</span>, even in
+minor releases. It is not uncommon for <a class="reference external" href="https://github.com/libgit2/pygit2">pygit2</a> upgrades to result in errors
+in Salt. Please take care when upgrading <a class="reference external" href="https://github.com/libgit2/pygit2">pygit2</a>, and pay close attention
+to the <span class="xref std std-ref">changelog</span>, keeping an eye out for API
+changes. Errors can be reported on the <span class="xref std std-ref">SaltStack issue tracker</span>.</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>GitPython<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p><a class="reference external" href="https://github.com/gitpython-developers/GitPython">GitPython</a> 0.3.0 or newer is required to use GitPython for gitfs. For
+RHEL-based Linux distros, a compatible version is available in EPEL, and can be
+easily installed on the master using yum:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># yum install GitPython</span>
+</pre></div>
+</div>
+<p>Ubuntu 14.04 LTS和Debian Wheezy (7.x) 同样有兼容版本的安装包：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># apt-get install python-git</span>
+</pre></div>
+</div>
+<p>如果你的master运行在老版本系统上(类似于Ubuntu12.04LTS或Debian Squeeze)，那么你必须使用pip或easy_install(建议使用pip)来安装GitPython。0.3.2.RC1是当前在PyPi中的稳定版本，所以使用root来运行``pip install GitPython``(或``easy_install GitPython``)应该是件简单的事情。</p>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">记住，如果GitPython在master上已经使用pip安装过(即使它随后被卸载了)，并且在安装之后没有清理缓存，那么它可能还存在于生成缓存(通常在``/tmp/pip-build-root/GitPython``) 。生成缓存中的包会覆盖任何要求说明，所以如果你使用``pip install GitPython==0.3.2.RC1``尝试将版本升级到0.3.2.RC1，那么它将被忽略并且只会从缓存目录来安装版本。因此，需要从生成缓存中删除 GitPython 目录，以确保指定的版本的安装。</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>Dulwich<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+<p>Dulwich 0.9.4 or newer is required to use Dulwich as backend for gitfs.</p>
+<p>Dulwich is available in EPEL, and can be easily installed on the master using
+yum:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># yum install python-dulwich</span>
+</pre></div>
+</div>
+<p>For APT-based distros such as Ubuntu and Debian:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># apt-get install python-dulwich</span>
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="first admonition-title">重要</p>
+<p>If switching to Dulwich from GitPython/pygit2, or switching from
+GitPython/pygit2 to Dulwich, it is necessary to clear the gitfs cache to
+avoid unpredictable behavior. This is probably a good idea whenever
+switching to a new <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_provider"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_provider</span></code></a>, but it is less important
+when switching between GitPython and pygit2.</p>
+<p>Beginning in version 2015.5.0, the gitfs cache can be easily cleared using
+the <a class="reference internal" href="../../ref/runners/all/salt.runners.fileserver.html#salt.runners.fileserver.clear_cache" title="salt.runners.fileserver.clear_cache"><code class="xref py py-mod docutils literal"><span class="pre">fileserver.clear_cache</span></code></a>
+runner.</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>salt-run fileserver.clear_cache <span class="nv">backend</span><span class="o">=</span>git
+</pre></div>
+</div>
+<p>If the Master is running an earlier version, then the cache can be cleared
+by removing the <code class="docutils literal"><span class="pre">gitfs</span></code> and <code class="docutils literal"><span class="pre">file_lists/gitfs</span></code> directories (both paths
+relative to the master cache directory, usually
+<code class="docutils literal"><span class="pre">/var/cache/salt/master</span></code>).</p>
+<div class="last highlight-bash"><div class="highlight"><pre><span></span>rm -rf /var/cache/salt/master<span class="o">{</span>,/file_lists<span class="o">}</span>/gitfs
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="simple-configuration">
+<h2>基本配置<a class="headerlink" href="#simple-configuration" title="永久链接至标题">¶</a></h2>
+<p>使用gitfs backend，只需要在master上修改两个配置：</p>
+<ol class="arabic">
+<li><p class="first">Include <code class="docutils literal"><span class="pre">git</span></code> in the <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-fileserver_backend"><code class="xref std std-conf_master docutils literal"><span class="pre">fileserver_backend</span></code></a> list in the master
+config file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">fileserver_backend</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">git</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Specify one or more <code class="docutils literal"><span class="pre">git://</span></code>, <code class="docutils literal"><span class="pre">https://</span></code>, <code class="docutils literal"><span class="pre">file://</span></code>, or <code class="docutils literal"><span class="pre">ssh://</span></code>
+URLs in <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_remotes"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_remotes</span></code></a> to configure which repositories to
+cache and search for requested files:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">gitfs_remotes</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">https://github.com/saltstack-formulas/salt-formula.git</span>
+</pre></div>
+</div>
+<p>SSH remotes can also be configured using scp-like syntax:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">gitfs_remotes</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">git@github.com:user/repo.git</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ssh://user@domain.tld/path/to/repo.git</span>
+</pre></div>
+</div>
+<p>Information on how to authenticate to SSH remotes can be found <a class="reference internal" href="#gitfs-authentication"><span>here</span></a>.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Dulwich does not recognize <code class="docutils literal"><span class="pre">ssh://</span></code> URLs, <code class="docutils literal"><span class="pre">git+ssh://</span></code> must be used
+instead. Salt version 2015.5.0 and later will automatically add the
+<code class="docutils literal"><span class="pre">git+</span></code> to the beginning of these URLs before fetching, but earlier
+Salt versions will fail to fetch unless the URL is specified using
+<code class="docutils literal"><span class="pre">git+ssh://</span></code>.</p>
+</div>
+</li>
+<li><p class="first">重启控制器来加载新的配置文件</p>
+</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">In a master/minion setup, files from a gitfs remote are cached once by the
+master, so minions do not need direct access to the git repository.</p>
+</div>
+</div>
+<div class="section" id="multiple-remotes">
+<h2>多远程仓库<a class="headerlink" href="#multiple-remotes" title="永久链接至标题">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">gitfs_remotes</span></code> 选项接受一个有序的git remotes列表，该顺序列表用于缓存和搜索所请求的文件。</p>
+<p>一个简单的场景说明了这种级联的查找行为：</p>
+<p>如果 <code class="docutils literal"><span class="pre">gitfs_remotes</span></code> 选项指定了三个remotes：</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">gitfs_remotes</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">git://github.com/example/first.git</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">https://github.com/example/second.git</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">file:///root/third</span>
+</pre></div>
+</div>
+<p>每个版本库包含一些文件：</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">first.git</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">top.sls</span>
+    <span class="l l-Scalar l-Scalar-Plain">edit/vim.sls</span>
+    <span class="l l-Scalar l-Scalar-Plain">edit/vimrc</span>
+    <span class="l l-Scalar l-Scalar-Plain">nginx/init.sls</span>
+
+<span class="l l-Scalar l-Scalar-Plain">second.git</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">edit/dev_vimrc</span>
+    <span class="l l-Scalar l-Scalar-Plain">haproxy/init.sls</span>
+
+<span class="l l-Scalar l-Scalar-Plain">third</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">haproxy/haproxy.conf</span>
+    <span class="l l-Scalar l-Scalar-Plain">edit/dev_vimrc</span>
+</pre></div>
+</div>
+<p>Salt will attempt to lookup the requested file from each gitfs remote
+repository in the order in which they are defined in the configuration. The
+<strong>git://github.com/example/first.git</strong> remote will be searched first.
+If the requested file is found, then it is served and no further searching
+is executed. For example:</p>
+<ul class="simple">
+<li>A request for the file <strong>salt://haproxy/init.sls</strong> will be served from
+the <strong>https://github.com/example/second.git</strong> git repo.</li>
+<li>A request for the file <strong>salt://haproxy/haproxy.conf</strong> will be served from the
+<strong>file:///root/third</strong> repo.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>本例只是用于介绍如何使用gitfs后端,并不建议在实际环境中这样布局文件及git仓库.</p>
+<p class="last"><strong>file://</strong> 前缀指定了本地的文件夹作为git仓库. 然而，salt依然会使用给定的 <strong>file://</strong> URL作为一个远端仓库, 而不是直接拷贝git仓库到salt的缓存中. 这意味着需要的refs需要在指定的仓库中存在.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p class="last">2014.1.0之前的salt版本不能改变remotes的顺序或修改已有remotes的URI。在这些版本中，当修改remotes，重启salt-master服务之前，最好先删除gitfs缓存目录 (<code class="docutils literal"><span class="pre">/var/cache/salt/master/gitfs</span></code>)</p>
+</div>
+</div>
+<div class="section" id="per-remote-configuration-parameters">
+<span id="gitfs-per-remote-config"></span><h2>Per-remote Configuration Parameters<a class="headerlink" href="#per-remote-configuration-parameters" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<p>The following master config parameters are global (that is, they apply to all
+configured gitfs remotes):</p>
+<ul class="simple">
+<li><a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_base"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_base</span></code></a></li>
+<li><a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_root"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_root</span></code></a></li>
+<li><a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_mountpoint"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_mountpoint</span></code></a> (new in 2014.7.0)</li>
+<li><a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_user"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_user</span></code></a> (<strong>pygit2 only</strong>, new in 2014.7.0)</li>
+<li><a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_password"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_password</span></code></a> (<strong>pygit2 only</strong>, new in 2014.7.0)</li>
+<li><a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_insecure_auth"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_insecure_auth</span></code></a> (<strong>pygit2 only</strong>, new in 2014.7.0)</li>
+<li><a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_pubkey"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_pubkey</span></code></a> (<strong>pygit2 only</strong>, new in 2014.7.0)</li>
+<li><a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_privkey"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_privkey</span></code></a> (<strong>pygit2 only</strong>, new in 2014.7.0)</li>
+<li><a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_passphrase"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_passphrase</span></code></a> (<strong>pygit2 only</strong>, new in 2014.7.0)</li>
+</ul>
+<p>These parameters can now be overridden on a per-remote basis. This allows for a
+tremendous amount of customization. Here's some example usage:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">gitfs_provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">pygit2</span>
+<span class="l l-Scalar l-Scalar-Plain">gitfs_base</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">develop</span>
+
+<span class="l l-Scalar l-Scalar-Plain">gitfs_remotes</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">https://foo.com/foo.git</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">https://foo.com/bar.git</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">root</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">mountpoint</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://foo/bar/baz</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">base</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt-base</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">http://foo.com/baz.git</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">root</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt/states</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">joe</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mysupersecretpassword</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">insecure_auth</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="first admonition-title">重要</p>
+<p>There are two important distinctions which should be noted for per-remote
+configuration:</p>
+<ol class="last arabic simple">
+<li>The URL of a remote which has per-remote configuration must be suffixed
+with a colon.</li>
+<li>Per-remote configuration parameters are named like the global versions,
+with the <code class="docutils literal"><span class="pre">gitfs_</span></code> removed from the beginning.</li>
+</ol>
+</div>
+<p>In the example configuration above, the following is true:</p>
+<ol class="arabic simple">
+<li>The first and third gitfs remotes will use the <code class="docutils literal"><span class="pre">develop</span></code> branch/tag as the
+<code class="docutils literal"><span class="pre">base</span></code> environment, while the second one will use the <code class="docutils literal"><span class="pre">salt-base</span></code>
+branch/tag as the <code class="docutils literal"><span class="pre">base</span></code> environment.</li>
+<li>The first remote will serve all files in the repository. The second
+remote will only serve files from the <code class="docutils literal"><span class="pre">salt</span></code> directory (and its
+subdirectories), while the third remote will only serve files from the
+<code class="docutils literal"><span class="pre">salt/states</span></code> directory (and its subdirectories).</li>
+<li>The files from the second remote will be located under
+<code class="docutils literal"><span class="pre">salt://foo/bar/baz</span></code>, while the files from the first and third remotes
+will be located under the root of the Salt fileserver namespace
+(<code class="docutils literal"><span class="pre">salt://</span></code>).</li>
+<li>The third remote overrides the default behavior of <a class="reference internal" href="#gitfs-insecure-auth"><span>not authenticating to
+insecure (non-HTTPS) remotes</span></a>.</li>
+</ol>
+</div>
+<div class="section" id="serving-from-a-subdirectory">
+<h2>子目录<a class="headerlink" href="#serving-from-a-subdirectory" title="永久链接至标题">¶</a></h2>
+<p>The <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_root"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_root</span></code></a> parameter allows files to be served from a
+subdirectory within the repository. This allows for only part of a repository
+to be exposed to the Salt fileserver.</p>
+<p>假设下面的布局：</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>.gitignore
+README.txt
+foo/
+foo/bar/
+foo/bar/one.txt
+foo/bar/two.txt
+foo/bar/three.txt
+foo/baz/
+foo/baz/top.sls
+foo/baz/edit/vim.sls
+foo/baz/edit/vimrc
+foo/baz/nginx/init.sls
+</pre></div>
+</div>
+<p>The below configuration would serve only the files under <code class="docutils literal"><span class="pre">foo/baz</span></code>, ignoring
+the other files in the repository:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">gitfs_remotes</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">git://mydomain.com/stuff.git</span>
+
+<span class="l l-Scalar l-Scalar-Plain">gitfs_root</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">foo/baz</span>
+</pre></div>
+</div>
+<p>The root can also be configured on a <a class="reference internal" href="#gitfs-per-remote-config"><span>per-remote basis</span></a>.</p>
+</div>
+<div class="section" id="mountpoints">
+<h2>Mountpoints<a class="headerlink" href="#mountpoints" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<p>The <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_mountpoint"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_mountpoint</span></code></a> parameter will prepend the specified path
+to the files served from gitfs. This allows an existing repository to be used,
+rather than needing to reorganize a repository or design it around the layout
+of the Salt fileserver.</p>
+<p>Before the addition of this feature, if a file being served up via gitfs was
+deeply nested within the root directory (for example,
+<code class="docutils literal"><span class="pre">salt://webapps/foo/files/foo.conf</span></code>, it would be necessary to ensure that the
+file was properly located in the remote repository, and that all of the the
+parent directories were present (for example, the directories
+<code class="docutils literal"><span class="pre">webapps/foo/files/</span></code> would need to exist at the root of the repository).</p>
+<p>The below example would allow for a file <code class="docutils literal"><span class="pre">foo.conf</span></code> at the root of the
+repository to be served up from the Salt fileserver path
+<code class="docutils literal"><span class="pre">salt://webapps/foo/files/foo.conf</span></code>.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">gitfs_remotes</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">https://mydomain.com/stuff.git</span>
+
+<span class="l l-Scalar l-Scalar-Plain">gitfs_mountpoint</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt://webapps/foo/files</span>
+</pre></div>
+</div>
+<p>Mountpoints can also be configured on a <a class="reference internal" href="#gitfs-per-remote-config"><span>per-remote basis</span></a>.</p>
+</div>
+<div class="section" id="using-gitfs-alongside-other-backends">
+<h2>Using gitfs Alongside Other Backends<a class="headerlink" href="#using-gitfs-alongside-other-backends" title="永久链接至标题">¶</a></h2>
+<p>有时它可能会有意识的使用多个后端 ；例如，如果``sls`` 文件被存储在git上，而大多数文件被直接存储在master上。</p>
+<p>级联的查找逻辑用于多remotes，也同样应用于多个backends。如果``fileserver_backend`` 选项包含多个backends：</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">fileserver_backend</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">roots</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">git</span>
+</pre></div>
+</div>
+<p>那么 <code class="docutils literal"><span class="pre">roots</span></code>  backend( 默认文件的backend在``/srv/salt``中)将会首先被请求文件搜索；然后，如果在master上没有找到，将会搜索每个配置的git remote。</p>
+</div>
+<div class="section" id="branches-environments-and-top-files">
+<h2>Branches, Environments, and Top Files<a class="headerlink" href="#branches-environments-and-top-files" title="永久链接至标题">¶</a></h2>
+<p>When using the gitfs backend, branches, and tags will be mapped to environments
+using the branch/tag name as an identifier.</p>
+<p>这里有一个例外： <code class="docutils literal"><span class="pre">master</span></code> branch 隐含映射到 <code class="docutils literal"><span class="pre">base</span></code> environment。</p>
+<p>所以，一个典型的 <code class="docutils literal"><span class="pre">base</span></code>, <code class="docutils literal"><span class="pre">qa</span></code>, <code class="docutils literal"><span class="pre">dev</span></code> 设置中，以下的branches可以使用：</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">master</span>
+<span class="l l-Scalar l-Scalar-Plain">qa</span>
+<span class="l l-Scalar l-Scalar-Plain">dev</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">top.sls</span></code> files from different branches will be merged into one at runtime.
+Since this can lead to overly complex configurations, the recommended setup is
+to have a separate repository, containing only the <code class="docutils literal"><span class="pre">top.sls</span></code> file with just
+one single <code class="docutils literal"><span class="pre">master</span></code> branch.</p>
+<p>要映射一个不同于``master``的 branch，使用 <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_base"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_base</span></code></a> 参数。</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">gitfs_base</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">salt-base</span>
+</pre></div>
+</div>
+<p>The base can also be configured on a <a class="reference internal" href="#gitfs-per-remote-config"><span>per-remote basis</span></a>.</p>
+</div>
+<div class="section" id="environment-whitelist-blacklist">
+<span id="gitfs-whitelist-blacklist"></span><h2>Environment Whitelist/Blacklist<a class="headerlink" href="#environment-whitelist-blacklist" title="永久链接至标题">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<p>The <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_env_whitelist"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_env_whitelist</span></code></a> and <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_env_blacklist"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_env_blacklist</span></code></a>
+parameters allow for greater control over which branches/tags are exposed as
+fileserver environments. Exact matches, globs, and regular expressions are
+supported, and are evaluated in that order. If using a regular expression,
+<code class="docutils literal"><span class="pre">^</span></code> and <code class="docutils literal"><span class="pre">$</span></code> must be omitted, and the expression must match the entire
+branch/tag.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">gitfs_env_whitelist</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">base</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">v1.*</span>
+  <span class="p p-Indicator">-</span> <span class="s">&#39;mybranch\d+&#39;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last"><code class="docutils literal"><span class="pre">v1.*</span></code>, in this example, will match as both a glob and a regular
+expression (though it will have been matched as a glob, since globs are
+evaluated before regular expressions).</p>
+</div>
+<p>The behavior of the blacklist/whitelist will differ depending on which
+combination of the two options is used:</p>
+<ul class="simple">
+<li>If only <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_env_whitelist"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_env_whitelist</span></code></a> is used, then <strong>only</strong> branches/tags
+which match the whitelist will be available as environments</li>
+<li>If only <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_env_blacklist"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_env_blacklist</span></code></a> is used, then the branches/tags
+which match the blacklist will <strong>not</strong> be available as environments</li>
+<li>If both are used, then the branches/tags which match the whitelist, but do
+<strong>not</strong> match the blacklist, will be available as environments.</li>
+</ul>
+</div>
+<div class="section" id="authentication">
+<span id="gitfs-authentication"></span><h2>Authentication<a class="headerlink" href="#authentication" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id5">
+<h3>pygit2<a class="headerlink" href="#id5" title="永久链接至标题">¶</a></h3>
+<div class="versionadded">
+<p><span class="versionmodified">2014.7.0 新版功能.</span></p>
+</div>
+<p>Both HTTPS and SSH authentication are supported as of version 0.20.3, which is
+the earliest version of <a class="reference external" href="https://github.com/libgit2/pygit2">pygit2</a> supported by Salt for gitfs.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">The examples below make use of per-remote configuration parameters, a
+feature new to Salt 2014.7.0. More information on these can be found
+<a class="reference internal" href="#gitfs-per-remote-config"><span>here</span></a>.</p>
+</div>
+<div class="section" id="https">
+<h4>HTTPS<a class="headerlink" href="#https" title="永久链接至标题">¶</a></h4>
+<p>For HTTPS repositories which require authentication, the username and password
+can be provided like so:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">gitfs_remotes</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">https://domain.tld/myrepo.git</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">git</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mypassword</span>
+</pre></div>
+</div>
+<p id="gitfs-insecure-auth">If the repository is served over HTTP instead of HTTPS, then Salt will by
+default refuse to authenticate to it. This behavior can be overridden by adding
+an <code class="docutils literal"><span class="pre">insecure_auth</span></code> parameter:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">gitfs_remotes</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">http://domain.tld/insecure_repo.git</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">git</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mypassword</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">insecure_auth</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ssh">
+<span id="pygit2-authentication-ssh"></span><h4>SSH<a class="headerlink" href="#ssh" title="永久链接至标题">¶</a></h4>
+<p>SSH repositories can be configured using the <code class="docutils literal"><span class="pre">ssh://</span></code> protocol designation,
+or using scp-like syntax. So, the following two configurations are equivalent:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">ssh://git&#64;github.com/user/repo.git</span></code></li>
+<li><code class="docutils literal"><span class="pre">git&#64;github.com:user/repo.git</span></code></li>
+</ul>
+<p>Both <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_pubkey"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_pubkey</span></code></a> and <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_privkey"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_privkey</span></code></a> (or their
+<a class="reference internal" href="#gitfs-per-remote-config"><span>per-remote counterparts</span></a>) must be configured in
+order to authenticate to SSH-based repos. If the private key is protected with
+a passphrase, it can be configured using <a class="reference internal" href="../../ref/configuration/master.html#std:conf_master-gitfs_passphrase"><code class="xref std std-conf_master docutils literal"><span class="pre">gitfs_passphrase</span></code></a> (or
+simply <code class="docutils literal"><span class="pre">passphrase</span></code> if being configured <a class="reference internal" href="#gitfs-per-remote-config"><span>per-remote</span></a>). For example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">gitfs_remotes</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">git@github.com:user/repo.git</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">pubkey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/root/.ssh/id_rsa.pub</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">privkey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/root/.ssh/id_rsa</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">passphrase</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myawesomepassphrase</span>
+</pre></div>
+</div>
+<p>Finally, the SSH host key must be <a class="reference internal" href="#gitfs-ssh-fingerprint"><span>added to the known_hosts file</span></a>.</p>
+</div>
+</div>
+<div class="section" id="id6">
+<h3>GitPython<a class="headerlink" href="#id6" title="永久链接至标题">¶</a></h3>
+<p>With <a class="reference external" href="https://github.com/gitpython-developers/GitPython">GitPython</a>, only passphrase-less SSH public key authentication is
+supported. <strong>The auth parameters (pubkey, privkey, etc.) shown in the pygit2
+authentication examples above do not work with GitPython.</strong></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">gitfs_remotes</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">ssh://git@github.com/example/salt-states.git</span>
+</pre></div>
+</div>
+<p>Since <a class="reference external" href="https://github.com/gitpython-developers/GitPython">GitPython</a> wraps the git CLI, the private key must be located in
+<code class="docutils literal"><span class="pre">~/.ssh/id_rsa</span></code> for the user under which the Master is running, and should
+have permissions of <code class="docutils literal"><span class="pre">0600</span></code>. Also, in the absence of a user in the repo URL,
+<a class="reference external" href="https://github.com/gitpython-developers/GitPython">GitPython</a> will (just as SSH does) attempt to login as the current user (in
+other words, the user under which the Master is running, usually <code class="docutils literal"><span class="pre">root</span></code>).</p>
+<p>If a key needs to be used, then <code class="docutils literal"><span class="pre">~/.ssh/config</span></code> can be configured to use
+the desired key. Information on how to do this can be found by viewing the
+manpage for <code class="docutils literal"><span class="pre">ssh_config</span></code>. Here's an example entry which can be added to the
+<code class="docutils literal"><span class="pre">~/.ssh/config</span></code> to use an alternate key for gitfs:</p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>Host github.com
+    IdentityFile /root/.ssh/id_rsa_gitfs
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">Host</span></code> parameter should be a hostname (or hostname glob) that matches the
+domain name of the git repository.</p>
+<p>It is also necessary to <a class="reference internal" href="#gitfs-ssh-fingerprint"><span>add the SSH host key to the known_hosts file</span></a>. The exception to this would be if strict host key
+checking is disabled, which can be done by adding <code class="docutils literal"><span class="pre">StrictHostKeyChecking</span> <span class="pre">no</span></code>
+to the entry in <code class="docutils literal"><span class="pre">~/.ssh/config</span></code></p>
+<div class="highlight-text"><div class="highlight"><pre><span></span>Host github.com
+    IdentityFile /root/.ssh/id_rsa_gitfs
+    StrictHostKeyChecking no
+</pre></div>
+</div>
+<p>However, this is generally regarded as insecure, and is not recommended.</p>
+</div>
+<div class="section" id="adding-the-ssh-host-key-to-the-known-hosts-file">
+<span id="gitfs-ssh-fingerprint"></span><h3>Adding the SSH Host Key to the known_hosts File<a class="headerlink" href="#adding-the-ssh-host-key-to-the-known-hosts-file" title="永久链接至标题">¶</a></h3>
+<p>To use SSH authentication, it is necessary to have the remote repository's SSH
+host key in the <code class="docutils literal"><span class="pre">~/.ssh/known_hosts</span></code> file. If the master is also a minion,
+this can be done using the <a class="reference internal" href="../../ref/modules/all/salt.modules.ssh.html#salt.modules.ssh.set_known_host" title="salt.modules.ssh.set_known_host"><code class="xref py py-mod docutils literal"><span class="pre">ssh.set_known_host</span></code></a> function:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="c1"># salt mymaster ssh.set_known_host user=root hostname=github.com</span>
+mymaster:
+    ----------
+    new:
+        ----------
+        enc:
+            ssh-rsa
+        fingerprint:
+            16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48
+        hostname:
+            <span class="p">|</span>1<span class="p">|</span><span class="nv">OiefWWqOD4kwO3BhoIGa0loR5AA</span><span class="o">=</span><span class="p">|</span>BIXVtmcTbPER+68HvXmceodDcfI<span class="o">=</span>
+        key:
+            AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ<span class="o">==</span>
+    old:
+        None
+    status:
+        updated
+</pre></div>
+</div>
+<p>If not, then the easiest way to add the key is to su to the user (usually
+<code class="docutils literal"><span class="pre">root</span></code>) under which the salt-master runs and attempt to login to the
+server via SSH:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ su
+Password:
+# ssh github.com
+The authenticity of host &#39;github.com (192.30.252.128)&#39; can&#39;t be established.
+RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added &#39;github.com,192.30.252.128&#39; (RSA) to the list of known hosts.
+Permission denied (publickey).
+</pre></div>
+</div>
+<p>It doesn't matter if the login was successful, as answering <code class="docutils literal"><span class="pre">yes</span></code> will write
+the fingerprint to the known_hosts file.</p>
+<div class="section" id="verifying-the-fingerprint">
+<h4>Verifying the Fingerprint<a class="headerlink" href="#verifying-the-fingerprint" title="永久链接至标题">¶</a></h4>
+<p>To verify that the correct fingerprint was added, it is a good idea to look it
+up. One way to do this is to use nmap:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ nmap github.com --script ssh-hostkey
+
+Starting Nmap 5.51 <span class="o">(</span> http://nmap.org <span class="o">)</span> at 2014-08-18 17:47 CDT
+Nmap scan report <span class="k">for</span> github.com <span class="o">(</span>192.30.252.129<span class="o">)</span>
+Host is up <span class="o">(</span>0.17s latency<span class="o">)</span>.
+Not shown: <span class="m">996</span> filtered ports
+PORT     STATE SERVICE
+22/tcp   open  ssh
+<span class="p">|</span> ssh-hostkey: <span class="m">1024</span> ad:1c:08:a4:40:e3:6f:9c:f5:66:26:5d:4b:33:5d:8c <span class="o">(</span>DSA<span class="o">)</span>
+<span class="p">|</span>_2048 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48 <span class="o">(</span>RSA<span class="o">)</span>
+80/tcp   open  http
+443/tcp  open  https
+9418/tcp open  git
+
+Nmap <span class="k">done</span>: <span class="m">1</span> IP address <span class="o">(</span><span class="m">1</span> host up<span class="o">)</span> scanned in 28.78 seconds
+</pre></div>
+</div>
+<p>Another way is to check one's own known_hosts file, using this one-liner:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ ssh-keygen -l -f /dev/stdin <span class="o">&lt;&lt;&lt;</span><span class="sb">`</span>ssh-keyscan -t rsa github.com 2&gt;/dev/null<span class="sb">`</span> <span class="p">|</span> awk <span class="s1">&#39;{print $2}&#39;</span>
+16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="refreshing-gitfs-upon-push">
+<h2>Refreshing gitfs Upon Push<a class="headerlink" href="#refreshing-gitfs-upon-push" title="永久链接至标题">¶</a></h2>
+<p>默认情况下，Salt每60秒更新remote文件服务器后端。但是，如果希望快速的刷新后端， <a class="reference internal" href="../reactor/index.html#reactor"><span>Reactor System</span></a> 可以用信号通知master来更新每个推送的文件服务器，这些服务器由git服务器来提供，它也可以是Salt minion。这一过程有三个步骤：</p>
+<ol class="arabic">
+<li><p class="first">On the master, create a file <strong>/srv/reactor/update_fileserver.sls</strong>, with
+the following contents:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">update_fileserver</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">runner.fileserver.update</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">添加下列反应器配置到master 配置文件：</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">reactor</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="s">&#39;salt/fileserver/gitfs/update&#39;</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">/srv/reactor/update_fileserver.sls</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">在git服务器上，添加一个 <a href="#id1"><span class="problematic" id="id2">`</span></a>post-receive hook`_包含以下内容：</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env sh</span>
+
+salt-call event.fire_master update salt/fileserver/gitfs/update
+</pre></div>
+</div>
+</li>
+</ol>
+<p>The <code class="docutils literal"><span class="pre">update</span></code> argument right after <a class="reference internal" href="../../ref/modules/all/salt.modules.event.html#salt.modules.event.fire_master" title="salt.modules.event.fire_master"><code class="xref py py-mod docutils literal"><span class="pre">event.fire_master</span></code></a> in this example can really be anything, as it
+represents the data being passed in the event, and the passed data is ignored
+by this reactor.</p>
+<p>同样地，tag名称 <code class="docutils literal"><span class="pre">salt/fileserver/gitfs/update</span></code> 可以被任意替代，只要用法是一致的就可以。</p>
+</div>
+<div class="section" id="using-git-as-an-external-pillar-source">
+<h2>使用Git作为一个外部Pillar来源<a class="headerlink" href="#using-git-as-an-external-pillar-source" title="永久链接至标题">¶</a></h2>
+<p>The git external pillar (a.k.a. git_pillar) has been rewritten for the 2015.8.0
+release. This rewrite brings with it <a class="reference external" href="https://github.com/libgit2/pygit2">pygit2</a> support (allowing for access to
+authenticated repositories), as well as more granular support for per-remote
+configuration.</p>
+<p>To make use of the new features, changes to the git ext_pillar configuration
+must be made. The new configuration schema is detailed <a class="reference internal" href="../../ref/pillar/all/salt.pillar.git_pillar.html#git-pillar-2015-8-0-and-later"><span>here</span></a>.</p>
+<p>For Salt releases before 2015.8.0, click <a class="reference internal" href="../../ref/pillar/all/salt.pillar.git_pillar.html#git-pillar-pre-2015-8-0"><span>here</span></a>
+for documentation.</p>
+</div>
+<div class="section" id="why-aren-t-my-custom-modules-states-etc-syncing-to-my-minions">
+<span id="faq-gitfs-bug"></span><h2>为什么自定义的模块/states等等不会同步到Minions上?<a class="headerlink" href="#why-aren-t-my-custom-modules-states-etc-syncing-to-my-minions" title="永久链接至标题">¶</a></h2>
+<p>在0.16.3及之前的版本, 当使用 <a class="reference internal" href=""><em>git文件服务后端</em></a> 时，某些版本的GitPython可能会在fetch时产生错误, 导致Salt抓取失败。虽然对于fetch过程来说这并不致命，但是中断文件服务发生在自定义类型同步完成之前发生，这样会中断同步过程本身。请尝试关闭掉master配置中的git文件服务后端, 重启master并尝试再次同步.</p>
+<p>这个问题在Salt 0.16.4及最新的版本已经得到解决.</p>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="../../ref/file_server/file_roots.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="File Server Configuration" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="minionfs.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="MinionFS Backend Walkthrough" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/master.html">配置Salt Master</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/minion.html">配置Salt Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/examples.html">Configuration file examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../blackout/index.html">Minion Blackout Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../eauth/access_control.html">Access Control System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs/index.html">Job Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs/job_cache.html">Managing the Job Cache</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../jobs/external_cache.html">Storing Job Results in an External System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/logging/index.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/file_server/index.html">Salt文件服务器</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Git Fileserver Backend Walkthrough</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#installing-dependencies">安装依赖</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">pygit2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">GitPython</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Dulwich</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#simple-configuration">基本配置</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#multiple-remotes">多远程仓库</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#per-remote-configuration-parameters">Per-remote Configuration Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#serving-from-a-subdirectory">子目录</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mountpoints">Mountpoints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-gitfs-alongside-other-backends">Using gitfs Alongside Other Backends</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#branches-environments-and-top-files">Branches, Environments, and Top Files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#environment-whitelist-blacklist">Environment Whitelist/Blacklist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#authentication">Authentication</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id5">pygit2</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#https">HTTPS</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#ssh">SSH</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">GitPython</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#adding-the-ssh-host-key-to-the-known-hosts-file">Adding the SSH Host Key to the known_hosts File</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#verifying-the-fingerprint">Verifying the Fingerprint</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#refreshing-gitfs-upon-push">Refreshing gitfs Upon Push</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#using-git-as-an-external-pillar-source">使用Git作为一个外部Pillar来源</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#why-aren-t-my-custom-modules-states-etc-syncing-to-my-minions">为什么自定义的模块/states等等不会同步到Minions上?</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="minionfs.html">MinionFS Backend Walkthrough</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spm/index.html">Salt Package Manager</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sdb/index.html">Storing Data in Other Databases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/configuration/nonroot.html">以非特权用户身份运行Salt Master/Minion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cron.html">使用cron运行Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../hardening.html">Hardening Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../security/index.html">Security disclosure policy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transports/index.html">Salt Transport</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../master_tops/index.html">Master Tops系统</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/returners/index.html">返回器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ref/renderers/index.html">Renderers渲染器</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

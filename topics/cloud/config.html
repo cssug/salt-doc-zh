@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Cloud核心配置</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../index.html">
+        <link rel="up" title="Salt云端" href="index.html">
+        <link rel="next" title="Spinning up Windows Minions" href="windows.html">
+        <link rel="prev" title="安装Salt Cloud" href="install/index.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="install/index.html" title="安装Salt Cloud">上一页</a>
+            
+        </li>
+        <li>
+            <a href="windows.html" title="Spinning up Windows Minions">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="core-configuration">
+<h1>Cloud核心配置<a class="headerlink" href="#core-configuration" title="永久链接至标题">¶</a></h1>
+<p>核心配置选项和一些虚拟机配置文件的选项，可以设置在云配置文件中。默认的配置文件路径是&quot;/etc/salt/cloud&quot;</p>
+<div class="section" id="thread-pool-size">
+<h2>Thread Pool Size<a class="headerlink" href="#thread-pool-size" title="永久链接至标题">¶</a></h2>
+<p>When salt cloud is operating in parallel mode via the <code class="docutils literal"><span class="pre">-P</span></code> argument, you can
+control the thread pool size by specifying the <code class="docutils literal"><span class="pre">pool_size</span></code> parameter with
+a positive integer value.</p>
+<p>By default, the thread pool size will be set to the number of VMs that salt
+cloud is operating on.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">pool_size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="minion-configuration">
+<h2>Minion配置<a class="headerlink" href="#minion-configuration" title="永久链接至标题">¶</a></h2>
+<p>The default minion configuration is set up in this file. Minions created by
+salt-cloud derive their configuration from this file.  Almost all parameters
+found in <a class="reference internal" href="../../ref/configuration/minion.html#configuration-salt-minion"><span>Configuring the Salt Minion</span></a> can
+be used here.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">saltmaster.example.com</span>
+</pre></div>
+</div>
+<p>In particular, this is the location to specify the location of the salt master
+and its listening port, if the port is not set to the default.</p>
+</div>
+<div class="section" id="cloud-configuration-syntax">
+<h2>Cloud Configuration Syntax<a class="headerlink" href="#cloud-configuration-syntax" title="永久链接至标题">¶</a></h2>
+<p>在这里建立公共云相互作用的特定数据。</p>
+<p>Cloud provider configuration settings can live in several places. The first is in
+<code class="docutils literal"><span class="pre">/etc/salt/cloud</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># /etc/salt/cloud</span>
+<span class="l l-Scalar l-Scalar-Plain">providers</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">my-aws-migrated-config</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">id</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">HJGRYCILJLKJYG</span>
+    <span class="l l-Scalar l-Scalar-Plain">key</span><span class="p p-Indicator">:</span> <span class="s">&#39;kdjgfsgm;woormgl/aserigjksjdhasdfgn&#39;</span>
+    <span class="l l-Scalar l-Scalar-Plain">keyname</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">test</span>
+    <span class="l l-Scalar l-Scalar-Plain">securitygroup</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">quick-start</span>
+    <span class="l l-Scalar l-Scalar-Plain">private_key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/root/test.pem</span>
+    <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ec2</span>
+</pre></div>
+</div>
+<p>Cloud provider configuration data can also be housed in <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers</span></code>
+or any file matching <code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/*.conf</span></code>. All files in any of these
+locations will be parsed for cloud provider data.</p>
+<p>Using the example configuration above:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># /etc/salt/cloud.providers</span>
+<span class="c1"># or could be /etc/salt/cloud.providers.d/*.conf</span>
+<span class="l l-Scalar l-Scalar-Plain">my-aws-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">id</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">HJGRYCILJLKJYG</span>
+  <span class="l l-Scalar l-Scalar-Plain">key</span><span class="p p-Indicator">:</span> <span class="s">&#39;kdjgfsgm;woormgl/aserigjksjdhasdfgn&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">keyname</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">test</span>
+  <span class="l l-Scalar l-Scalar-Plain">securitygroup</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">quick-start</span>
+  <span class="l l-Scalar l-Scalar-Plain">private_key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/root/test.pem</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ec2</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">Salt Cloud provider configurations within <code class="docutils literal"><span class="pre">/etc/cloud.provider.d/</span> <span class="pre">should</span> <span class="pre">not</span>
+<span class="pre">specify</span> <span class="pre">the</span> <span class="pre">``providers</span></code> starting key.</p>
+</div>
+<p>It is also possible to have multiple cloud configuration blocks within the same alias block.
+For example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">production-config</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">id</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">HJGRYCILJLKJYG</span>
+    <span class="l l-Scalar l-Scalar-Plain">key</span><span class="p p-Indicator">:</span> <span class="s">&#39;kdjgfsgm;woormgl/aserigjksjdhasdfgn&#39;</span>
+    <span class="l l-Scalar l-Scalar-Plain">keyname</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">test</span>
+    <span class="l l-Scalar l-Scalar-Plain">securitygroup</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">quick-start</span>
+    <span class="l l-Scalar l-Scalar-Plain">private_key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/root/test.pem</span>
+    <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ec2</span>
+
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">example_user</span>
+    <span class="l l-Scalar l-Scalar-Plain">apikey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">123984bjjas87034</span>
+    <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">rackspace</span>
+</pre></div>
+</div>
+<p>However, using this configuration method requires a change with profile configuration blocks.
+The provider alias needs to have the provider key value appended as in the following example:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">rhel_aws_dev</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">production-config:ec2</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ami-e565ba8c</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">t1.micro</span>
+
+<span class="l l-Scalar l-Scalar-Plain">rhel_aws_prod</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">production-config:ec2</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ami-e565ba8c</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">High-CPU Extra Large Instance</span>
+
+<span class="l l-Scalar l-Scalar-Plain">database_prod</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">production-config:rackspace</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Ubuntu 12.04 LTS</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">256 server</span>
+</pre></div>
+</div>
+<p>Notice that because of the multiple entries, one has to be explicit about the provider alias and
+name, from the above example, <code class="docutils literal"><span class="pre">production-config:</span> <span class="pre">ec2</span></code>.</p>
+<p>This data interactions with the <code class="docutils literal"><span class="pre">salt-cloud</span></code> binary regarding its <code class="docutils literal"><span class="pre">--list-location</span></code>,
+<code class="docutils literal"><span class="pre">--list-images</span></code>, and <code class="docutils literal"><span class="pre">--list-sizes</span></code> which needs a cloud provider as an argument. The argument
+used should be the configured cloud provider alias. If the provider alias has multiple entries,
+<code class="docutils literal"><span class="pre">&lt;provider-alias&gt;:</span> <span class="pre">&lt;provider-name&gt;</span></code> should be used.</p>
+<p>To allow for a more extensible configuration, <code class="docutils literal"><span class="pre">--providers-config</span></code>, which defaults to
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.providers</span></code>, was added to the cli parser.  It allows for the providers'
+configuration to be added on a per-file basis.</p>
+</div>
+<div class="section" id="pillar-configuration">
+<h2>Pillar Configuration<a class="headerlink" href="#pillar-configuration" title="永久链接至标题">¶</a></h2>
+<p>It is possible to configure cloud providers using pillars. This is only used when inside the cloud
+module. You can setup a variable called <code class="docutils literal"><span class="pre">cloud</span></code> that contains your profile and provider to pass
+that information to the cloud servers instead of having to copy the full configuration to every
+minion. In your pillar file, you would use something like this:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">cloud</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_key_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">saltstack</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_key_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/root/.ssh/id_rsa</span>
+  <span class="l l-Scalar l-Scalar-Plain">update_cachedir</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+  <span class="l l-Scalar l-Scalar-Plain">diff_cache_events</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+  <span class="l l-Scalar l-Scalar-Plain">change_password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+
+  <span class="l l-Scalar l-Scalar-Plain">providers</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">my-nova</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">identity_url</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">https://identity.api.rackspacecloud.com/v2.0/</span>
+      <span class="l l-Scalar l-Scalar-Plain">compute_region</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">IAD</span>
+      <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myuser</span>
+      <span class="l l-Scalar l-Scalar-Plain">api_key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">apikey</span>
+      <span class="l l-Scalar l-Scalar-Plain">tenant</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">123456</span>
+      <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">nova</span>
+
+    <span class="l l-Scalar l-Scalar-Plain">my-openstack</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">identity_url</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">https://identity.api.rackspacecloud.com/v2.0/tokens</span>
+      <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">user2</span>
+      <span class="l l-Scalar l-Scalar-Plain">apikey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">apikey2</span>
+      <span class="l l-Scalar l-Scalar-Plain">tenant</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">654321</span>
+      <span class="l l-Scalar l-Scalar-Plain">compute_region</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">DFW</span>
+      <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack</span>
+      <span class="l l-Scalar l-Scalar-Plain">compute_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">cloudServersOpenStack</span>
+
+  <span class="l l-Scalar l-Scalar-Plain">profiles</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">ubuntu-nova</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-nova</span>
+      <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">performance1-8</span>
+      <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">bb02b1a3-bc77-4d17-ab5b-421d89850fca</span>
+      <span class="l l-Scalar l-Scalar-Plain">script_args</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">git develop</span>
+
+    <span class="l l-Scalar l-Scalar-Plain">ubuntu-openstack</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-openstack</span>
+      <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">performance1-8</span>
+      <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">bb02b1a3-bc77-4d17-ab5b-421d89850fca</span>
+      <span class="l l-Scalar l-Scalar-Plain">script_args</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">git develop</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cloud-configurations">
+<h2>Cloud Configurations<a class="headerlink" href="#cloud-configurations" title="永久链接至标题">¶</a></h2>
+<div class="section" id="scaleway">
+<h3>Scaleway<a class="headerlink" href="#scaleway" title="永久链接至标题">¶</a></h3>
+<p>To use Salt Cloud with Scaleway, you need to get an <code class="docutils literal"><span class="pre">access</span> <span class="pre">key</span></code> and an <code class="docutils literal"><span class="pre">API</span> <span class="pre">token</span></code>. <code class="docutils literal"><span class="pre">API</span> <span class="pre">tokens</span></code> are unique identifiers associated with your Scaleway account.
+To retrieve your <code class="docutils literal"><span class="pre">access</span> <span class="pre">key</span></code> and <code class="docutils literal"><span class="pre">API</span> <span class="pre">token</span></code>, log-in to the Scaleway control panel, open the pull-down menu on your account name and click on &quot;My Credentials&quot; link.</p>
+<p>If you do not have <code class="docutils literal"><span class="pre">API</span> <span class="pre">token</span></code> you can create one by clicking the &quot;Create New Token&quot; button on the right corner.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-scaleway-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">access_key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">15cf404d-4560-41b1-9a0c-21c3d5c4ff1f</span>
+  <span class="l l-Scalar l-Scalar-Plain">token</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">a7347ec8-5de1-4024-a5e3-24b77d1ba91d</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">scaleway</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">In the cloud profile that uses this provider configuration, the syntax for the
+<code class="docutils literal"><span class="pre">provider</span></code> required field would be <code class="docutils literal"><span class="pre">provider:</span> <span class="pre">my-scaleway-config</span></code>.</p>
+</div>
+</div>
+<div class="section" id="rackspace">
+<h3>Rackspace<a class="headerlink" href="#rackspace" title="永久链接至标题">¶</a></h3>
+<p>Rackspace cloud requires two configuration options; a <code class="docutils literal"><span class="pre">user</span></code> and an <code class="docutils literal"><span class="pre">apikey</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-rackspace-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">example_user</span>
+  <span class="l l-Scalar l-Scalar-Plain">apikey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">123984bjjas87034</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">rackspace</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">In the cloud profile that uses this provider configuration, the syntax for the
+<code class="docutils literal"><span class="pre">provider</span></code> required field would be <code class="docutils literal"><span class="pre">provider:</span> <span class="pre">my-rackspace-config</span></code>.</p>
+</div>
+</div>
+<div class="section" id="amazon-aws">
+<h3>Amazon AWS<a class="headerlink" href="#amazon-aws" title="永久链接至标题">¶</a></h3>
+<p>A number of configuration options are required for Amazon AWS including <code class="docutils literal"><span class="pre">id</span></code>,
+<code class="docutils literal"><span class="pre">key</span></code>, <code class="docutils literal"><span class="pre">keyname</span></code>, <code class="docutils literal"><span class="pre">securitygroup</span></code>, and <code class="docutils literal"><span class="pre">private_key</span></code>:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-aws-quick-start</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">id</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">HJGRYCILJLKJYG</span>
+  <span class="l l-Scalar l-Scalar-Plain">key</span><span class="p p-Indicator">:</span> <span class="s">&#39;kdjgfsgm;woormgl/aserigjksjdhasdfgn&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">keyname</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">test</span>
+  <span class="l l-Scalar l-Scalar-Plain">securitygroup</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">quick-start</span>
+  <span class="l l-Scalar l-Scalar-Plain">private_key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/root/test.pem</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ec2</span>
+
+<span class="l l-Scalar l-Scalar-Plain">my-aws-default</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">id</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">HJGRYCILJLKJYG</span>
+  <span class="l l-Scalar l-Scalar-Plain">key</span><span class="p p-Indicator">:</span> <span class="s">&#39;kdjgfsgm;woormgl/aserigjksjdhasdfgn&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">keyname</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">test</span>
+  <span class="l l-Scalar l-Scalar-Plain">securitygroup</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+  <span class="l l-Scalar l-Scalar-Plain">private_key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/root/test.pem</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ec2</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">In the cloud profile that uses this provider configuration, the syntax for the
+<code class="docutils literal"><span class="pre">provider</span></code> required field would be either <code class="docutils literal"><span class="pre">provider:</span> <span class="pre">my-aws-quick-start</span></code>
+or <code class="docutils literal"><span class="pre">provider:</span> <span class="pre">my-aws-default</span></code>.</p>
+</div>
+</div>
+<div class="section" id="linode">
+<h3>Linode<a class="headerlink" href="#linode" title="永久链接至标题">¶</a></h3>
+<p>Linode requires a single API key, but the default root password also needs to
+be set:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-linode-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">apikey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">asldkgfakl;sdfjsjaslfjaklsdjf;askldjfaaklsjdfhasldsadfghdkf</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">F00barbaz</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_pubkey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKHEOLLbeXgaqRQT9NBAopVz366SdYc0KKX33vAnq+2R user@host</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_key_file</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">~/.ssh/id_ed25519</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">linode</span>
+</pre></div>
+</div>
+<p>The password needs to be 8 characters and contain lowercase, uppercase, and
+numbers.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">In the cloud profile that uses this provider configuration, the syntax for the
+<code class="docutils literal"><span class="pre">provider</span></code> required field would be <code class="docutils literal"><span class="pre">provider:</span> <span class="pre">my-linode-config</span></code></p>
+</div>
+</div>
+<div class="section" id="joyent-cloud">
+<h3>Joyent Cloud<a class="headerlink" href="#joyent-cloud" title="永久链接至标题">¶</a></h3>
+<p>The Joyent cloud requires three configuration parameters: The username and
+password that are used to log into the Joyent system, as well as the location
+of the private SSH key associated with the Joyent account. The SSH key is needed
+to send the provisioning commands up to the freshly created virtual machine.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-joyent-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">fred</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">saltybacon</span>
+  <span class="l l-Scalar l-Scalar-Plain">private_key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/root/joyent.pem</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">joyent</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">In the cloud profile that uses this provider configuration, the syntax for the
+<code class="docutils literal"><span class="pre">provider</span></code> required field would be <code class="docutils literal"><span class="pre">provider:</span> <span class="pre">my-joyent-config</span></code></p>
+</div>
+</div>
+<div class="section" id="gogrid">
+<h3>GoGrid<a class="headerlink" href="#gogrid" title="永久链接至标题">¶</a></h3>
+<p>To use Salt Cloud with GoGrid, log into the GoGrid web interface and create an
+API key. Do this by clicking on &quot;My Account&quot; and then going to the API Keys
+tab.</p>
+<p>The <code class="docutils literal"><span class="pre">apikey</span></code> and the <code class="docutils literal"><span class="pre">sharedsecret</span></code> configuration parameters need to
+be set in the configuration file to enable interfacing with GoGrid:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-gogrid-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">apikey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">asdff7896asdh789</span>
+  <span class="l l-Scalar l-Scalar-Plain">sharedsecret</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">saltybacon</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">gogrid</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">In the cloud profile that uses this provider configuration, the syntax for the
+<code class="docutils literal"><span class="pre">provider</span></code> required field would be <code class="docutils literal"><span class="pre">provider:</span> <span class="pre">my-gogrid-config</span></code>.</p>
+</div>
+</div>
+<div class="section" id="openstack">
+<h3>OpenStack<a class="headerlink" href="#openstack" title="永久链接至标题">¶</a></h3>
+<p>OpenStack configuration differs between providers, and at the moment several
+options need to be specified. This module has been officially tested against
+the HP and the Rackspace implementations, and some examples are provided for
+both.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="c1"># For HP</span>
+<span class="l l-Scalar l-Scalar-Plain">my-openstack-hp-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">identity_url</span><span class="p p-Indicator">:</span>
+  <span class="s">&#39;https://region-a.geo-1.identity.hpcloudsvc.com:35357/v2.0/&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">compute_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Compute</span>
+  <span class="l l-Scalar l-Scalar-Plain">compute_region</span><span class="p p-Indicator">:</span> <span class="s">&#39;az-1.region-a.geo-1&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">tenant</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myuser-tenant1</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myuser</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_key_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mykey</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_key_file</span><span class="p p-Indicator">:</span> <span class="s">&#39;/etc/salt/hpcloud/mykey.pem&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mypass</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack</span>
+
+<span class="c1"># For Rackspace</span>
+<span class="l l-Scalar l-Scalar-Plain">my-openstack-rackspace-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">identity_url</span><span class="p p-Indicator">:</span> <span class="s">&#39;https://identity.api.rackspacecloud.com/v2.0/tokens&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">compute_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">cloudServersOpenStack</span>
+  <span class="l l-Scalar l-Scalar-Plain">protocol</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ipv4</span>
+  <span class="l l-Scalar l-Scalar-Plain">compute_region</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">DFW</span>
+  <span class="l l-Scalar l-Scalar-Plain">protocol</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ipv4</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myuser</span>
+  <span class="l l-Scalar l-Scalar-Plain">tenant</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">5555555</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mypass</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">openstack</span>
+</pre></div>
+</div>
+<p>If you have an API key for your provider, it may be specified instead of a
+password:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-openstack-hp-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">apikey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">901d3f579h23c8v73q9</span>
+
+<span class="l l-Scalar l-Scalar-Plain">my-openstack-rackspace-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">apikey</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">901d3f579h23c8v73q9</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">In the cloud profile that uses this provider configuration, the syntax for the
+<code class="docutils literal"><span class="pre">provider</span></code> required field would be either <code class="docutils literal"><span class="pre">provider:</span> <span class="pre">my-openstack-hp-config</span></code>
+or <code class="docutils literal"><span class="pre">provider:</span> <span class="pre">my-openstack-rackspace-config</span></code>.</p>
+</div>
+<p>You will certainly need to configure the <code class="docutils literal"><span class="pre">user</span></code>, <code class="docutils literal"><span class="pre">tenant</span></code>, and either
+<code class="docutils literal"><span class="pre">password</span></code> or <code class="docutils literal"><span class="pre">apikey</span></code>.</p>
+<p>If your OpenStack instances only have private IP addresses and a CIDR range of
+private addresses are not reachable from the salt-master, you may set your
+preference to have Salt ignore it:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-openstack-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">ignore_cidr</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">192.168.0.0/16</span>
+</pre></div>
+</div>
+<p>For in-house OpenStack Essex installation, libcloud needs the service_type :</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-openstack-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">identity_url</span><span class="p p-Indicator">:</span> <span class="s">&#39;http://control.openstack.example.org:5000/v2.0/&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">compute_name</span> <span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Compute Service</span>
+  <span class="l l-Scalar l-Scalar-Plain">service_type</span> <span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">compute</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="digitalocean">
+<h3>DigitalOcean<a class="headerlink" href="#digitalocean" title="永久链接至标题">¶</a></h3>
+<p>Using Salt for DigitalOcean requires a <code class="docutils literal"><span class="pre">client_key</span></code> and an <code class="docutils literal"><span class="pre">api_key</span></code>. These
+can be found in the DigitalOcean web interface, in the &quot;My Settings&quot; section,
+under the API Access tab.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-digitalocean-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">digital_ocean</span>
+  <span class="l l-Scalar l-Scalar-Plain">personal_access_token</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">xxx</span>
+  <span class="l l-Scalar l-Scalar-Plain">location</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">New York 1</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">In the cloud profile that uses this provider configuration, the syntax for the
+<code class="docutils literal"><span class="pre">provider</span></code> required field would be <code class="docutils literal"><span class="pre">provider:</span> <span class="pre">my-digital-ocean-config</span></code>.</p>
+</div>
+</div>
+<div class="section" id="parallels">
+<h3>Parallels<a class="headerlink" href="#parallels" title="永久链接至标题">¶</a></h3>
+<p>Using Salt with Parallels requires a <code class="docutils literal"><span class="pre">user</span></code>, <code class="docutils literal"><span class="pre">password</span></code> and <code class="docutils literal"><span class="pre">URL</span></code>. These
+can be obtained from your cloud provider.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-parallels-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myuser</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">xyzzy</span>
+  <span class="l l-Scalar l-Scalar-Plain">url</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">https://api.cloud.xmission.com:4465/paci/v1.0/</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">parallels</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">In the cloud profile that uses this provider configuration, the syntax for the
+<code class="docutils literal"><span class="pre">provider</span></code> required field would be <code class="docutils literal"><span class="pre">provider:</span> <span class="pre">my-parallels-config</span></code>.</p>
+</div>
+</div>
+<div class="section" id="proxmox">
+<h3>Proxmox<a class="headerlink" href="#proxmox" title="永久链接至标题">¶</a></h3>
+<p>Using Salt with Proxmox requires a <code class="docutils literal"><span class="pre">user</span></code>, <code class="docutils literal"><span class="pre">password</span></code>, and <code class="docutils literal"><span class="pre">URL</span></code>. These can be
+obtained from your cloud host. Both PAM and PVE users can be used.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-proxmox-config</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">proxmox</span>
+  <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">saltcloud@pve</span>
+  <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">xyzzy</span>
+  <span class="l l-Scalar l-Scalar-Plain">url</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">your.proxmox.host</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">In the cloud profile that uses this provider configuration, the syntax for the
+<code class="docutils literal"><span class="pre">provider</span></code> required field would be <code class="docutils literal"><span class="pre">provider:</span> <span class="pre">my-proxmox-config</span></code>.</p>
+</div>
+</div>
+<div class="section" id="lxc">
+<h3>LXC<a class="headerlink" href="#lxc" title="永久链接至标题">¶</a></h3>
+<p>The lxc driver uses saltify to install salt and attach the lxc container as a new lxc
+minion. As soon as we can, we manage baremetal operation over SSH. You can also destroy
+those containers via this driver.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">devhost10-lxc</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">target</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">devhost10</span>
+  <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">lxc</span>
+</pre></div>
+</div>
+<p>And in the map file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">devhost10-lxc</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">devhost10-lxc</span>
+  <span class="l l-Scalar l-Scalar-Plain">from_container</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ubuntu</span>
+  <span class="l l-Scalar l-Scalar-Plain">backing</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">lvm</span>
+  <span class="l l-Scalar l-Scalar-Plain">sudo</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">3g</span>
+  <span class="l l-Scalar l-Scalar-Plain">ip</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10.0.3.9</span>
+  <span class="l l-Scalar l-Scalar-Plain">minion</span><span class="p p-Indicator">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">master</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">10.5.0.1</span>
+    <span class="l l-Scalar l-Scalar-Plain">master_port</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">4506</span>
+  <span class="l l-Scalar l-Scalar-Plain">lxc_conf</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">lxc.utsname</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">superlxc</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p class="last">In the cloud profile that uses this provider configuration, the syntax for the
+<code class="docutils literal"><span class="pre">provider</span></code> required field would be <code class="docutils literal"><span class="pre">provider:</span> <span class="pre">devhost10-lxc</span></code>.</p>
+</div>
+</div>
+<div class="section" id="saltify">
+<span id="config-saltify"></span><h3>Saltify<a class="headerlink" href="#saltify" title="永久链接至标题">¶</a></h3>
+<p>The Saltify driver is a new, experimental driver designed to install Salt on a remote
+machine, virtual or bare metal, using SSH. This driver is useful for provisioning
+machines which are already installed, but not Salted. For more information about using
+this driver and for configuration examples, please see the
+<a class="reference internal" href="saltify.html#getting-started-with-saltify"><span>Gettting Started with Saltify</span></a> documentation.</p>
+</div>
+</div>
+<div class="section" id="extending-profiles-and-cloud-providers-configuration">
+<h2>Extending Profiles and Cloud Providers Configuration<a class="headerlink" href="#extending-profiles-and-cloud-providers-configuration" title="永久链接至标题">¶</a></h2>
+<p>As of 0.8.7, the option to extend both the profiles and cloud providers
+configuration and avoid duplication was added. The extends feature works on the
+current profiles configuration, but, regarding the cloud providers
+configuration, <strong>only</strong> works in the new syntax and respective configuration
+files, i.e. <code class="docutils literal"><span class="pre">/etc/salt/salt/cloud.providers</span></code> or
+<code class="docutils literal"><span class="pre">/etc/salt/cloud.providers.d/*.conf</span></code>.</p>
+<div class="admonition note">
+<p class="first admonition-title">注解</p>
+<p>Extending cloud profiles and providers is not recursive. For example, a
+profile that is extended by a second profile is possible, but the second
+profile cannot be extended by a third profile.</p>
+<p class="last">Also, if a profile (or provider) is extending another profile and each
+contains a list of values, the lists from the extending profile will
+override the list from the original profile. The lists are not merged
+together.</p>
+</div>
+<div class="section" id="extending-profiles">
+<h3>Extending Profiles<a class="headerlink" href="#extending-profiles" title="永久链接至标题">¶</a></h3>
+<p>Some example usage on how to use <code class="docutils literal"><span class="pre">extends</span></code> with profiles. Consider
+<code class="docutils literal"><span class="pre">/etc/salt/salt/cloud.profiles</span></code> containing:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">development-instances</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-ec2-config</span>
+  <span class="l l-Scalar l-Scalar-Plain">size</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">t1.micro</span>
+  <span class="l l-Scalar l-Scalar-Plain">ssh_username</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ec2_user</span>
+  <span class="l l-Scalar l-Scalar-Plain">securitygroup</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">default</span>
+  <span class="l l-Scalar l-Scalar-Plain">deploy</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+
+<span class="l l-Scalar l-Scalar-Plain">Amazon-Linux-AMI-2012.09-64bit</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ami-54cf5c3d</span>
+  <span class="l l-Scalar l-Scalar-Plain">extends</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">development-instances</span>
+
+<span class="l l-Scalar l-Scalar-Plain">Fedora-17</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ami-08d97e61</span>
+  <span class="l l-Scalar l-Scalar-Plain">extends</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">development-instances</span>
+
+<span class="l l-Scalar l-Scalar-Plain">CentOS-5</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">provider</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-aws-config</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ami-09b61d60</span>
+  <span class="l l-Scalar l-Scalar-Plain">extends</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">development-instances</span>
+</pre></div>
+</div>
+<p>The above configuration, once parsed would generate the following profiles
+data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="p">[{</span><span class="s1">&#39;deploy&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+  <span class="s1">&#39;image&#39;</span><span class="p">:</span> <span class="s1">&#39;ami-08d97e61&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;profile&#39;</span><span class="p">:</span> <span class="s1">&#39;Fedora-17&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;provider&#39;</span><span class="p">:</span> <span class="s1">&#39;my-ec2-config&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;securitygroup&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">],</span>
+  <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="s1">&#39;t1.micro&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;ssh_username&#39;</span><span class="p">:</span> <span class="s1">&#39;ec2_user&#39;</span><span class="p">},</span>
+ <span class="p">{</span><span class="s1">&#39;deploy&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+  <span class="s1">&#39;image&#39;</span><span class="p">:</span> <span class="s1">&#39;ami-09b61d60&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;profile&#39;</span><span class="p">:</span> <span class="s1">&#39;CentOS-5&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;provider&#39;</span><span class="p">:</span> <span class="s1">&#39;my-aws-config&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;securitygroup&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">],</span>
+  <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="s1">&#39;t1.micro&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;ssh_username&#39;</span><span class="p">:</span> <span class="s1">&#39;ec2_user&#39;</span><span class="p">},</span>
+ <span class="p">{</span><span class="s1">&#39;deploy&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+  <span class="s1">&#39;image&#39;</span><span class="p">:</span> <span class="s1">&#39;ami-54cf5c3d&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;profile&#39;</span><span class="p">:</span> <span class="s1">&#39;Amazon-Linux-AMI-2012.09-64bit&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;provider&#39;</span><span class="p">:</span> <span class="s1">&#39;my-ec2-config&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;securitygroup&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">],</span>
+  <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="s1">&#39;t1.micro&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;ssh_username&#39;</span><span class="p">:</span> <span class="s1">&#39;ec2_user&#39;</span><span class="p">},</span>
+ <span class="p">{</span><span class="s1">&#39;deploy&#39;</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+  <span class="s1">&#39;profile&#39;</span><span class="p">:</span> <span class="s1">&#39;development-instances&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;provider&#39;</span><span class="p">:</span> <span class="s1">&#39;my-ec2-config&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;securitygroup&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;default&#39;</span><span class="p">],</span>
+  <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="s1">&#39;t1.micro&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;ssh_username&#39;</span><span class="p">:</span> <span class="s1">&#39;ec2_user&#39;</span><span class="p">}]</span>
+</pre></div>
+</div>
+<p>Pretty cool right?</p>
+</div>
+<div class="section" id="extending-providers">
+<h3>Extending Providers<a class="headerlink" href="#extending-providers" title="永久链接至标题">¶</a></h3>
+<p>Some example usage on how to use <code class="docutils literal"><span class="pre">extends</span></code> within the cloud providers
+configuration.  Consider <code class="docutils literal"><span class="pre">/etc/salt/salt/cloud.providers</span></code> containing:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">my-develop-envs</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">id</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">HJGRYCILJLKJYG</span>
+    <span class="l l-Scalar l-Scalar-Plain">key</span><span class="p p-Indicator">:</span> <span class="s">&#39;kdjgfsgm;woormgl/aserigjksjdhasdfgn&#39;</span>
+    <span class="l l-Scalar l-Scalar-Plain">keyname</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">test</span>
+    <span class="l l-Scalar l-Scalar-Plain">securitygroup</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">quick-start</span>
+    <span class="l l-Scalar l-Scalar-Plain">private_key</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/root/test.pem</span>
+    <span class="l l-Scalar l-Scalar-Plain">location</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ap-southeast-1</span>
+    <span class="l l-Scalar l-Scalar-Plain">availability_zone</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ap-southeast-1b</span>
+    <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ec2</span>
+
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">myuser@mycorp.com</span>
+    <span class="l l-Scalar l-Scalar-Plain">password</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mypass</span>
+    <span class="l l-Scalar l-Scalar-Plain">ssh_key_name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">mykey</span>
+    <span class="l l-Scalar l-Scalar-Plain">ssh_key_file</span><span class="p p-Indicator">:</span> <span class="s">&#39;/etc/salt/ibm/mykey.pem&#39;</span>
+    <span class="l l-Scalar l-Scalar-Plain">location</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Raleigh</span>
+    <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">ibmsce</span>
+
+
+<span class="l l-Scalar l-Scalar-Plain">my-productions-envs</span><span class="p p-Indicator">:</span>
+  <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">extends</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-develop-envs:ibmsce</span>
+    <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">my-production-user@mycorp.com</span>
+    <span class="l l-Scalar l-Scalar-Plain">location</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+    <span class="l l-Scalar l-Scalar-Plain">availability_zone</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+</pre></div>
+</div>
+<p>The above configuration, once parsed would generate the following providers
+data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="s1">&#39;providers&#39;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s1">&#39;my-develop-envs&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s1">&#39;availability_zone&#39;</span><span class="p">:</span> <span class="s1">&#39;ap-southeast-1b&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="s1">&#39;HJGRYCILJLKJYG&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;kdjgfsgm;woormgl/aserigjksjdhasdfgn&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;keyname&#39;</span><span class="p">:</span> <span class="s1">&#39;test&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;ap-southeast-1&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;private_key&#39;</span><span class="p">:</span> <span class="s1">&#39;/root/test.pem&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;driver&#39;</span><span class="p">:</span> <span class="s1">&#39;aws&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;securitygroup&#39;</span><span class="p">:</span> <span class="s1">&#39;quick-start&#39;</span>
+        <span class="p">},</span>
+        <span class="p">{</span><span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Raleigh&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="s1">&#39;mypass&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;driver&#39;</span><span class="p">:</span> <span class="s1">&#39;ibmsce&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;ssh_key_file&#39;</span><span class="p">:</span> <span class="s1">&#39;/etc/salt/ibm/mykey.pem&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;ssh_key_name&#39;</span><span class="p">:</span> <span class="s1">&#39;mykey&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="s1">&#39;myuser@mycorp.com&#39;</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;my-productions-envs&#39;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s1">&#39;availability_zone&#39;</span><span class="p">:</span> <span class="s1">&#39;us-east-1&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;us-east-1&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="s1">&#39;mypass&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;driver&#39;</span><span class="p">:</span> <span class="s1">&#39;ibmsce&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;ssh_key_file&#39;</span><span class="p">:</span> <span class="s1">&#39;/etc/salt/ibm/mykey.pem&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;ssh_key_name&#39;</span><span class="p">:</span> <span class="s1">&#39;mykey&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="s1">&#39;my-production-user@mycorp.com&#39;</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+                            </div>
+                            <a href="install/index.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="安装Salt Cloud" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="windows.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="Spinning up Windows Minions" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Salt云端</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">入门指南</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud">Using Salt Cloud</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#core-configuration">Cloud核心配置</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="install/index.html">Installing salt cloud</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">Core Configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#thread-pool-size">Thread Pool Size</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#minion-configuration">Minion配置</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cloud-configuration-syntax">Cloud Configuration Syntax</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pillar-configuration">Pillar Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cloud-configurations">Cloud Configurations</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#scaleway">Scaleway</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#rackspace">Rackspace</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#amazon-aws">Amazon AWS</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#linode">Linode</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#joyent-cloud">Joyent Cloud</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#gogrid">GoGrid</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#openstack">OpenStack</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#digitalocean">DigitalOcean</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#parallels">Parallels</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#proxmox">Proxmox</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#lxc">LXC</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#saltify">Saltify</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#extending-profiles-and-cloud-providers-configuration">Extending Profiles and Cloud Providers Configuration</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#extending-profiles">Extending Profiles</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#extending-providers">Extending Providers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#windows-configuration">Windows Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#cloud-provider-specifics">Cloud Provider Specifics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#miscellaneous-options">Miscellaneous Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#troubleshooting-steps">Troubleshooting Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#extending-salt-cloud">Extending Salt Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#using-salt-cloud-from-salt">Using Salt Cloud from Salt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#feature-comparison">Feature Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorials">Tutorials</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ref/index.html">Salt Module Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../_static/js/core.min.js"></script>
+
+    <script src="../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>

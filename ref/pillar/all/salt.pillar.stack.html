@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>salt.pillar.stack</title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="google-site-verification" content="1Y-ojT3ndjxA9coB77iUDyXPWxeuQ3T4_r0j-QG6QHg" />
+
+        
+        <link rel="stylesheet" href="../../../_static/css/core.min.css">
+        <link rel="stylesheet" href="../../../_static/css/webhelp.min_v1.4.4.css">
+            <link rel="shortcut icon" href="../../../_static/favicon.ico">
+
+        <!--[if lt IE 9]>
+        <script src="../../../_static/js/respond.min.js"></script>
+        <![endif]-->
+        <link rel="top" title="" href="../../../index.html">
+        <link rel="up" title="Full list of builtin pillar modules" href="index.html">
+        <link rel="next" title="salt.pillar.svn_pillar" href="salt.pillar.svn_pillar.html">
+        <link rel="prev" title="salt.pillar.sqlite3 module" href="salt.pillar.sqlite3.html">
+    </head>
+
+    <body class="index">
+        <!--[if lt IE 8]>
+            <p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser.</a></p>
+        <![endif]-->
+        <div id="wrapper">
+            <div id="page-content-wrapper">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-11 col-md-offset-1 col-lg-10 col-lg-offset-1">
+                            <!--start navbar-->
+                            <nav class="navbar navbar-default">
+                                <div class="navbar-header">
+                                    <button type="button" class="pull-left navbar-toggle collapsed" id="menu-toggle"><span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <ul id="header-nav" class="nav navbar-nav">
+        <li>
+            <a href="../../../contents.html" title="Table of Contents">Table of Contents</a>
+            
+        </li>
+        <li>
+            <a href="../../../glossary.html" title="Glossary">Glossary</a>
+            
+        </li>
+        <li>
+            <a href="salt.pillar.sqlite3.html" title="salt.pillar.sqlite3 module">上一页</a>
+            
+        </li>
+        <li>
+            <a href="salt.pillar.svn_pillar.html" title="salt.pillar.svn_pillar">下一页</a>
+            
+        </li>
+        <li>
+            <a href="../../../salt-modindex.html" title="Salt Module Index">all salt modules</a>
+            
+        </li>
+        <li>
+            <a href="../../../genindex.html" title="总目录">索引</a>
+            
+        </li> 
+
+                                        
+
+                                        
+                                    </ul>
+                                </div>
+                            </nav>
+                            <!--end navbar-->
+
+                            
+
+                            
+
+                            
+                            <div class="body-content">
+                                
+  <div class="section" id="module-salt.pillar.stack">
+<span id="salt-pillar-stack"></span><h1>salt.pillar.stack<a class="headerlink" href="#module-salt.pillar.stack" title="永久链接至标题">¶</a></h1>
+<p>Simple and flexible YAML ext_pillar which can read pillar from within pillar.</p>
+<div class="versionadded">
+<p><span class="versionmodified">2016.3.0 新版功能.</span></p>
+</div>
+<p>This custom saltstack <code class="docutils literal"><span class="pre">ext_pillar</span></code> is inspired by
+<a class="reference external" href="https://github.com/conversis/varstack">varstack</a> but is heavily based on
+Jinja2 for maximum flexibility.</p>
+<p>It supports the following features:</p>
+<ul class="simple">
+<li>multiple config files that are jinja2 templates with support for <code class="docutils literal"><span class="pre">pillar</span></code>,
+<code class="docutils literal"><span class="pre">__grains__</span></code>, <code class="docutils literal"><span class="pre">__salt__</span></code>, <code class="docutils literal"><span class="pre">__opts__</span></code> objects</li>
+<li>a config file renders as an ordered list of files (paths of these files are
+relative to the current config file)</li>
+<li>this list of files are read in ordered as jinja2 templates with support for
+<code class="docutils literal"><span class="pre">stack</span></code>, <code class="docutils literal"><span class="pre">pillar</span></code>, <code class="docutils literal"><span class="pre">__grains__</span></code>, <code class="docutils literal"><span class="pre">__salt__</span></code>, <code class="docutils literal"><span class="pre">__opts__</span></code> objects</li>
+<li>all these rendered files are then parsed as <code class="docutils literal"><span class="pre">yaml</span></code></li>
+<li>then all yaml dicts are merged in order with support for the following
+merging strategies: <code class="docutils literal"><span class="pre">merge-first</span></code>, <code class="docutils literal"><span class="pre">merge-last</span></code>, <code class="docutils literal"><span class="pre">remove</span></code>, and
+<code class="docutils literal"><span class="pre">overwrite</span></code></li>
+<li>stack config files can be matched based on <code class="docutils literal"><span class="pre">pillar</span></code>, <code class="docutils literal"><span class="pre">grains</span></code>, or
+<code class="docutils literal"><span class="pre">opts</span></code> values, which make it possible to support kind of self-contained
+environments</li>
+</ul>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="永久链接至标题">¶</a></h2>
+<p>PillarStack is already bundled with Salt since 2016.3.0 version so there is
+nothing to install from version 2016.3.0.</p>
+<p>If you use an older Salt version or you want to override PillarStack with a
+more recent one, follow the installation procedure below.</p>
+<p>Installing the PillarStack <code class="docutils literal"><span class="pre">ext_pillar</span></code> is as simple as dropping the
+<code class="docutils literal"><span class="pre">stack.py</span></code> file in the <code class="docutils literal"><span class="pre">&lt;extensions_modules&gt;/pillar</span></code> directory (no external
+python module required), given that <code class="docutils literal"><span class="pre">extensions_modules</span></code> is set in your
+salt-master configuration, see:
+<a class="reference external" href="http://docs.saltstack.com/en/latest/ref/configuration/master.html#extension-modules">http://docs.saltstack.com/en/latest/ref/configuration/master.html#extension-modules</a></p>
+</div>
+<div class="section" id="configuration-in-salt">
+<h2>Configuration in Salt<a class="headerlink" href="#configuration-in-salt" title="永久链接至标题">¶</a></h2>
+<p>Like any other external pillar, its configuration takes place through the
+<code class="docutils literal"><span class="pre">ext_pillar</span></code> key in the master config file.</p>
+<p>However, you can configure PillarStack in 3 different ways:</p>
+<div class="section" id="single-config-file">
+<h3>Single config file<a class="headerlink" href="#single-config-file" title="永久链接至标题">¶</a></h3>
+<p>This is the simplest option, you just need to set the path to your single
+PillarStack config file like below:</p>
+<div class="code yaml highlight-python"><div class="highlight"><pre><span></span>ext_pillar:
+  - stack: /path/to/stack.cfg
+</pre></div>
+</div>
+</div>
+<div class="section" id="list-of-config-files">
+<h3>List of config files<a class="headerlink" href="#list-of-config-files" title="永久链接至标题">¶</a></h3>
+<p>You can also provide a list of config files:</p>
+<div class="code yaml highlight-python"><div class="highlight"><pre><span></span>ext_pillar:
+  - stack:
+      - /path/to/stack1.cfg
+      - /path/to/stack2.cfg
+</pre></div>
+</div>
+</div>
+<div class="section" id="select-config-files-through-grains-pillar-opts-matching">
+<h3>Select config files through grains|pillar|opts matching<a class="headerlink" href="#select-config-files-through-grains-pillar-opts-matching" title="永久链接至标题">¶</a></h3>
+<p>You can also opt for a much more flexible configuration: PillarStack allows to
+select the config files for the current minion based on matching values from
+either grains, or pillar, or opts objects.</p>
+<p>Here is an example of such a configuration, which should speak by itself:</p>
+<div class="code yaml highlight-python"><div class="highlight"><pre><span></span>ext_pillar:
+  - stack:
+      pillar:environment:
+        dev: /path/to/dev/stack.cfg
+        prod: /path/to/prod/stack.cfg
+      grains:custom:grain:
+        value:
+          - /path/to/stack1.cfg
+          - /path/to/stack2.cfg
+      opts:custom:opt:
+        value: /path/to/stack0.cfg
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="pillarstack-configuration-files">
+<h2>PillarStack configuration files<a class="headerlink" href="#pillarstack-configuration-files" title="永久链接至标题">¶</a></h2>
+<p>The config files that are referenced in the above <code class="docutils literal"><span class="pre">ext_pillar</span></code> configuration
+are jinja2 templates which must render as a simple ordered list of <code class="docutils literal"><span class="pre">yaml</span></code>
+files that will then be merged to build pillar data.</p>
+<p>The path of these <code class="docutils literal"><span class="pre">yaml</span></code> files must be relative to the directory of the
+PillarStack config file.</p>
+<p>The following variables are available in jinja2 templating of PillarStack
+configuration files:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">pillar</span></code>: the pillar data (as passed by Salt to our <code class="docutils literal"><span class="pre">ext_pillar</span></code>
+function)</li>
+<li><code class="docutils literal"><span class="pre">minion_id</span></code>: the minion id ;-)</li>
+<li><code class="docutils literal"><span class="pre">__opts__</span></code>: a dictionary of mostly Salt configuration options</li>
+<li><code class="docutils literal"><span class="pre">__grains__</span></code>: a dictionary of the grains of the minion making this pillar
+call</li>
+<li><code class="docutils literal"><span class="pre">__salt__</span></code>: a dictionary of Salt module functions, useful so you don't have
+to duplicate functions that already exist (note: runs on the master)</li>
+</ul>
+<p>So you can use all the power of jinja2 to build your list of <code class="docutils literal"><span class="pre">yaml</span></code> files
+that will be merged in pillar data.</p>
+<p>For example, you could have a PillarStack config file which looks like:</p>
+<div class="code jinja highlight-python"><div class="highlight"><pre><span></span>$ cat /path/to/stack/config.cfg
+core.yml
+osarchs/{{ __grains__[&#39;osarch&#39;] }}.yml
+oscodenames/{{ __grains__[&#39;oscodename&#39;] }}.yml
+{%- for role in pillar.get(&#39;roles&#39;, []) %}
+roles/{{ role }}.yml
+{%- endfor %}
+minions/{{ minion_id }}.yml
+</pre></div>
+</div>
+<p>And the whole directory structure could look like:</p>
+<div class="code highlight-python"><div class="highlight"><pre><span></span>$ tree /path/to/stack/
+/path/to/stack/
+├── config.cfg
+├── core.yml
+├── osarchs/
+│   ├── amd64.yml
+│   └── armhf.yml
+├── oscodenames/
+│   ├── wheezy.yml
+│   └── jessie.yml
+├── roles/
+│   ├── web.yml
+│   └── db.yml
+└── minions/
+    ├── test-1-dev.yml
+    └── test-2-dev.yml
+</pre></div>
+</div>
+</div>
+<div class="section" id="overall-process">
+<h2>Overall process<a class="headerlink" href="#overall-process" title="永久链接至标题">¶</a></h2>
+<p>In the above PillarStack configuration, given that test-1-dev minion is an
+amd64 platform running Debian Jessie, and which pillar <code class="docutils literal"><span class="pre">roles</span></code> is <code class="docutils literal"><span class="pre">[&quot;db&quot;]</span></code>,
+the following <code class="docutils literal"><span class="pre">yaml</span></code> files would be merged in order:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">core.yml</span></code></li>
+<li><code class="docutils literal"><span class="pre">osarchs/amd64.yml</span></code></li>
+<li><code class="docutils literal"><span class="pre">oscodenames/jessie.yml</span></code></li>
+<li><code class="docutils literal"><span class="pre">roles/db.yml</span></code></li>
+<li><code class="docutils literal"><span class="pre">minions/test-1-dev.yml</span></code></li>
+</ul>
+<p>Before merging, every files above will be preprocessed as Jinja2 templates.
+The following variables are available in Jinja2 templating of <code class="docutils literal"><span class="pre">yaml</span></code> files:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">stack</span></code>: the PillarStack pillar data object that has currently been merged
+(data from previous <code class="docutils literal"><span class="pre">yaml</span></code> files in PillarStack configuration)</li>
+<li><code class="docutils literal"><span class="pre">pillar</span></code>: the pillar data (as passed by Salt to our <code class="docutils literal"><span class="pre">ext_pillar</span></code>
+function)</li>
+<li><code class="docutils literal"><span class="pre">minion_id</span></code>: the minion id ;-)</li>
+<li><code class="docutils literal"><span class="pre">__opts__</span></code>: a dictionary of mostly Salt configuration options</li>
+<li><code class="docutils literal"><span class="pre">__grains__</span></code>: a dictionary of the grains of the minion making this pillar
+call</li>
+<li><code class="docutils literal"><span class="pre">__salt__</span></code>: a dictionary of Salt module functions, useful so you don't have
+to duplicate functions that already exist (note: runs on the master)</li>
+</ul>
+<p>So you can use all the power of jinja2 to build your pillar data, and even use
+other pillar values that has already been merged by PillarStack (from previous
+<code class="docutils literal"><span class="pre">yaml</span></code> files in PillarStack configuration) through the <code class="docutils literal"><span class="pre">stack</span></code> variable.</p>
+<p>Once a <code class="docutils literal"><span class="pre">yaml</span></code> file has been preprocessed by Jinja2, we obtain a Python dict -
+let's call it <code class="docutils literal"><span class="pre">yml_data</span></code> - then, PillarStack will merge this <code class="docutils literal"><span class="pre">yml_data</span></code>
+dict in the main <code class="docutils literal"><span class="pre">stack</span></code> dict (which contains already merged PillarStack
+pillar data).
+By default, PillarStack will deeply merge <code class="docutils literal"><span class="pre">yml_data</span></code> in <code class="docutils literal"><span class="pre">stack</span></code> (similarly
+to the <code class="docutils literal"><span class="pre">recurse</span></code> salt <code class="docutils literal"><span class="pre">pillar_source_merging_strategy</span></code>), but 3 merging
+strategies are currently available for you to choose (see next section).</p>
+<p>Once every <code class="docutils literal"><span class="pre">yaml</span></code> files have been processed, the <code class="docutils literal"><span class="pre">stack</span></code> dict will contain
+your whole own pillar data, merged in order by PillarStack.
+So PillarStack <code class="docutils literal"><span class="pre">ext_pillar</span></code> returns the <code class="docutils literal"><span class="pre">stack</span></code> dict, the contents of which
+Salt takes care to merge in with all of the other pillars and finally return
+the whole pillar to the minion.</p>
+</div>
+<div class="section" id="merging-strategies">
+<h2>Merging strategies<a class="headerlink" href="#merging-strategies" title="永久链接至标题">¶</a></h2>
+<p>The way the data from a new <code class="docutils literal"><span class="pre">yaml_data</span></code> dict is merged with the existing
+<code class="docutils literal"><span class="pre">stack</span></code> data can be controlled by specifying a merging strategy. Right now
+this strategy can either be <code class="docutils literal"><span class="pre">merge-last</span></code> (the default), <code class="docutils literal"><span class="pre">merge-first</span></code>,
+<code class="docutils literal"><span class="pre">remove</span></code>, or <code class="docutils literal"><span class="pre">overwrite</span></code>.</p>
+<p>Note that scalar values like strings, integers, booleans, etc. are always
+evaluated using the <code class="docutils literal"><span class="pre">overwrite</span></code> strategy (other strategies don't make sense
+in that case).</p>
+<p>The merging strategy can be set by including a dict in the form of:</p>
+<div class="code yaml highlight-python"><div class="highlight"><pre><span></span>__: &lt;merging strategy&gt;
+</pre></div>
+</div>
+<p>as the first item of the dict or list.
+This allows fine grained control over the merging process.</p>
+<div class="section" id="merge-last-default-strategy">
+<h3><code class="docutils literal"><span class="pre">merge-last</span></code> (default) strategy<a class="headerlink" href="#merge-last-default-strategy" title="永久链接至标题">¶</a></h3>
+<p>If the <code class="docutils literal"><span class="pre">merge-last</span></code> strategy is selected (the default), then content of dict
+or list variables is merged recursively with previous definitions of this
+variable (similarly to the <code class="docutils literal"><span class="pre">recurse</span></code> salt
+<code class="docutils literal"><span class="pre">pillar_source_merging_strategy</span></code>).
+This allows for extending previously defined data.</p>
+</div>
+<div class="section" id="merge-first-strategy">
+<h3><code class="docutils literal"><span class="pre">merge-first</span></code> strategy<a class="headerlink" href="#merge-first-strategy" title="永久链接至标题">¶</a></h3>
+<p>If the <code class="docutils literal"><span class="pre">merge-first</span></code> strategy is selected, then the content of dict or list
+variables are swapped between the <code class="docutils literal"><span class="pre">yaml_data</span></code> and <code class="docutils literal"><span class="pre">stack</span></code> objects before
+being merged recursively with the <code class="docutils literal"><span class="pre">merge-last</span></code> previous strategy.</p>
+</div>
+<div class="section" id="remove-strategy">
+<h3><code class="docutils literal"><span class="pre">remove</span></code> strategy<a class="headerlink" href="#remove-strategy" title="永久链接至标题">¶</a></h3>
+<p>If the <code class="docutils literal"><span class="pre">remove</span></code> strategy is selected, then content of dict or list variables
+in <code class="docutils literal"><span class="pre">stack</span></code> are removed only if the correponding item is present in the
+<code class="docutils literal"><span class="pre">yaml_data</span></code> dict.
+This allows for removing items from previously defined data.</p>
+</div>
+<div class="section" id="overwrite-strategy">
+<h3><code class="docutils literal"><span class="pre">overwrite</span></code> strategy<a class="headerlink" href="#overwrite-strategy" title="永久链接至标题">¶</a></h3>
+<p>If the <code class="docutils literal"><span class="pre">overwrite</span></code> strategy is selected, then the content of dict or list
+variables in <code class="docutils literal"><span class="pre">stack</span></code> is overwritten by the content of <code class="docutils literal"><span class="pre">yaml_data</span></code> dict.
+So this allows one to overwrite variables from previous definitions.</p>
+</div>
+</div>
+<div class="section" id="merging-examples">
+<h2>Merging examples<a class="headerlink" href="#merging-examples" title="永久链接至标题">¶</a></h2>
+<p>Let's go through small examples that should clarify what's going on when a
+<code class="docutils literal"><span class="pre">yaml_data</span></code> dict is merged in the <code class="docutils literal"><span class="pre">stack</span></code> dict.</p>
+<p>When you don't specify any strategy, the default <code class="docutils literal"><span class="pre">merge-last</span></code> strategy is
+selected:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="31%" />
+<col width="33%" />
+<col width="36%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><code class="docutils literal"><span class="pre">stack</span></code></th>
+<th class="head"><code class="docutils literal"><span class="pre">yaml_data</span></code></th>
+<th class="head"><code class="docutils literal"><span class="pre">stack</span></code> (after merge)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  tom:
+    uid: 500
+    roles:
+      - sysadmin
+  root:
+    uid: 0
+</pre></div>
+</div>
+</td>
+<td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  tom:
+    uid: 1000
+    roles:
+      - developer
+  mat:
+    uid: 1001
+</pre></div>
+</div>
+</td>
+<td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  tom:
+    uid: 1000
+    roles:
+      - sysadmin
+      - developer
+  mat:
+    uid: 1001
+  root:
+    uid: 0
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Then you can select a custom merging strategy using the <code class="docutils literal"><span class="pre">__</span></code> key in a dict:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="31%" />
+<col width="33%" />
+<col width="36%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><code class="docutils literal"><span class="pre">stack</span></code></th>
+<th class="head"><code class="docutils literal"><span class="pre">yaml_data</span></code></th>
+<th class="head"><code class="docutils literal"><span class="pre">stack</span></code> (after merge)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  tom:
+    uid: 500
+    roles:
+      - sysadmin
+  root:
+    uid: 0
+</pre></div>
+</div>
+</td>
+<td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  __: merge-last
+  tom:
+    uid: 1000
+    roles:
+      - developer
+  mat:
+    uid: 1001
+</pre></div>
+</div>
+</td>
+<td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  tom:
+    uid: 1000
+    roles:
+      - sysadmin
+      - developer
+  mat:
+    uid: 1001
+  root:
+    uid: 0
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  tom:
+    uid: 500
+    roles:
+      - sysadmin
+  root:
+    uid: 0
+</pre></div>
+</div>
+</td>
+<td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  __: merge-first
+  tom:
+    uid: 1000
+    roles:
+      - developer
+  mat:
+    uid: 1001
+</pre></div>
+</div>
+</td>
+<td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  tom:
+    uid: 500
+    roles:
+      - developer
+      - sysadmin
+  mat:
+    uid: 1001
+  root:
+    uid: 0
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  tom:
+    uid: 500
+    roles:
+      - sysadmin
+  root:
+    uid: 0
+</pre></div>
+</div>
+</td>
+<td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  __: remove
+  tom:
+  mat:
+</pre></div>
+</div>
+</td>
+<td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  root:
+    uid: 0
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  tom:
+    uid: 500
+    roles:
+      - sysadmin
+  root:
+    uid: 0
+</pre></div>
+</div>
+</td>
+<td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  __: overwrite
+  tom:
+    uid: 1000
+    roles:
+      - developer
+  mat:
+    uid: 1001
+</pre></div>
+</div>
+</td>
+<td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  tom:
+    uid: 1000
+    roles:
+      - developer
+  mat:
+    uid: 1001
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<p>You can also select a custom merging strategy using a <code class="docutils literal"><span class="pre">__</span></code> object in a list:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="38%" />
+<col width="38%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><code class="docutils literal"><span class="pre">stack</span></code></th>
+<th class="head"><code class="docutils literal"><span class="pre">yaml_data</span></code></th>
+<th class="head"><code class="docutils literal"><span class="pre">stack</span></code> (after merge)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  - tom
+  - root
+</pre></div>
+</div>
+</td>
+<td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  - __: merge-last
+  - mat
+</pre></div>
+</div>
+</td>
+<td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  - tom
+  - root
+  - mat
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  - tom
+  - root
+</pre></div>
+</div>
+</td>
+<td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  - __: merge-first
+  - mat
+</pre></div>
+</div>
+</td>
+<td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  - mat
+  - tom
+  - root
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  - tom
+  - root
+</pre></div>
+</div>
+</td>
+<td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  - __: remove
+  - mat
+  - tom
+</pre></div>
+</div>
+</td>
+<td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  - root
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  - tom
+  - root
+</pre></div>
+</div>
+</td>
+<td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  - __: overwrite
+  - mat
+</pre></div>
+</div>
+</td>
+<td><div class="code yaml first last highlight-python"><div class="highlight"><pre><span></span>users:
+  - mat
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="function">
+<dt id="salt.pillar.stack.ext_pillar">
+<code class="descclassname">salt.pillar.stack.</code><code class="descname">ext_pillar</code><span class="sig-paren">(</span><em>minion_id</em>, <em>pillar</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#salt.pillar.stack.ext_pillar" title="永久链接至目标">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+                            </div>
+                            <a href="salt.pillar.sqlite3.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.pillar.sqlite3 module" id="prev-button" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-chevron-left"></span> Previous</button></a>
+                            <a href="salt.pillar.svn_pillar.html"><button data-container="body" data-toggle="tooltip" data-placement="bottom" title="salt.pillar.svn_pillar" id="next-button" type="button" class="btn btn-primary">
+                                Next <span class="glyphicon glyphicon-chevron-right"></span></button></a>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <hr />
+
+                        
+                    </div> <!--end footer-->
+
+                    </div>
+                </div>
+            <!--start sidebar-->
+            <div id="sidebar-wrapper">
+            <div id="sidebar-static">
+
+                <a class="ss-logo" href="http://saltstack.com"><img width="250" height="63" class="nolightbox sidebar-logo" src="../../../_static/images/saltstack_logo.svg"></a>
+
+                
+                <div class="versions">
+                    <p>Version 2016.3.0-172-gbf4b651</p>
+                </div>
+                
+
+                <div id="search-form" class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input type="text" class="form-control">
+                </div>
+
+            </div> <!--end sidebar-static-->
+
+                <div id="sidebar-nav">
+                    
+                    
+                    
+                    <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">SaltStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/installation/index.html">安装教程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/configuration/index.html">Configuring Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/using_salt.html">Using Salt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/execution/index.html">Remote Execution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/states/index.html">Configuration Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/event/index.html">Events &amp; Reactor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/orchestrate/index.html">Orchestration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/ssh/index.html">Salt SSH</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/cloud/index.html">Salt云端</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/proxyminion/index.html">Salt Proxy Minion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/virt/index.html">Salt Virt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">Command Line Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Salt Module Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../auth/all/index.html">内建身份认证模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../beacons/all/index.html">Full list of builtin beacon modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../engines/all/index.html">Full list of builtin engine modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../file_server/all/index.html">文件服务内置模块的完整列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../grains/all/index.html">Full list of builtin grains modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/all/index.html">Full list of builtin execution modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../netapi/all/index.html">Full list of netapi modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../output/all/index.html">完整的内置输出模块的列表</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Full list of builtin pillar modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.cmd_json.html">salt.pillar.cmd_json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.cmd_yaml.html">salt.pillar.cmd_yaml</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.cmd_yamlex.html">salt.pillar.cmd_yamlex</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.cobbler.html">salt.pillar.cobbler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.consul_pillar.html">salt.pillar.consul_pillar module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.django_orm.html">salt.pillar.django_orm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.ec2_pillar.html">salt.pillar.ec2_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.etcd_pillar.html">salt.pillar.etcd_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.file_tree.html">salt.pillar.file_tree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.foreman.html">salt.pillar.foreman</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.git_pillar.html">salt.pillar.git_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.hg_pillar.html">salt.pillar.hg_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.hiera.html">salt.pillar.hiera</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.http_yaml.html">salt.pillar.http_yaml module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.libvirt.html">salt.pillar.libvirt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.mongo.html">salt.pillar.mongo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.mysql.html">salt.pillar.mysql</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.neutron.html">salt.pillar.neutron module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.pepa.html">salt.pillar.pepa</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.pillar_ldap.html">salt.pillar.pillar_ldap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.puppet.html">salt.pillar.puppet</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.reclass_adapter.html">salt.pillar.reclass_adapter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.redismod.html">salt.pillar.redismod</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.s3.html">salt.pillar.s3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.sql_base.html">salt.pillar.sql_base module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.sqlcipher.html">salt.pillar.sqlcipher module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.sqlite3.html">salt.pillar.sqlite3 module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">salt.pillar.stack</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#configuration-in-salt">Configuration in Salt</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#single-config-file">Single config file</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#list-of-config-files">List of config files</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#select-config-files-through-grains-pillar-opts-matching">Select config files through grains|pillar|opts matching</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#pillarstack-configuration-files">PillarStack configuration files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#overall-process">Overall process</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#merging-strategies">Merging strategies</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#merge-last-default-strategy"><code class="docutils literal"><span class="pre">merge-last</span></code> (default) strategy</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#merge-first-strategy"><code class="docutils literal"><span class="pre">merge-first</span></code> strategy</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#remove-strategy"><code class="docutils literal"><span class="pre">remove</span></code> strategy</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#overwrite-strategy"><code class="docutils literal"><span class="pre">overwrite</span></code> strategy</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#merging-examples">Merging examples</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.svn_pillar.html">salt.pillar.svn_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.varstack_pillar.html">salt.pillar.varstack_pillar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="salt.pillar.virtkey.html">salt.pillar.virtkey</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../proxy/all/index.html">Full list of builtin proxy modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../queues/all/index.html">Full list of builtin queues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../renderers/all/index.html">Full list of builtin renderer modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../returners/all/index.html">所有内置的返回接收器模块列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../roster/all/index.html">Full list of builtin roster modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../runners/all/index.html">Full list of runner modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sdb/all/index.html">Full list of builtin sdb modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../serializers/all/index.html">Full list of builtin serializers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../states/all/index.html">所有内置的state模块列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tops/all/index.html">master内置顶级模块的全部列表</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../wheel/all/index.html">Full list of builtin wheel modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/api.html">APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/topology/index.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/windows/index.html">Windows</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/development/index.html">Salt开发</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../topics/releases/index.html">Release Notes</a></li>
+</ul>
+
+                    
+                    
+                </div>
+
+                <div id="sidebar-static-bottom">
+                <div class="text-nowrap">
+                    <!--social icons from http://vervex.deviantart.com/art/somacro-45-300dpi-social-media-icons-267955425-->
+                    <ul id="social-links" class="list-inline">
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="watch saltstack videos on youtube" href="https://www.youtube.com/user/saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/youtube-variation.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="view the latest saltstack tweets" href="http://twitter.com/saltstackinc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/twitter.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="subscribe to the salt users mailing list" href="https://groups.google.com/forum/#!forum/salt-users" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/email.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="download saltstack code from github" href="https://github.com/saltstack/salt" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/github.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="chat in #salt on freenode irc" href="http://webchat.freenode.net/?channels=salt&uio=mj10cnvljjk9dhj1zsyxmd10cnvl83" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/messenger-generic.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="/r/saltstack" href="http://www.reddit.com/r/saltstack/" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/reddit.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="ask a saltstack question on stackoverflow" href="http://stackoverflow.com/questions/tagged/salt-stack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/stackoverflow.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="join or start a saltstack meetup" href="http://www.meetup.com/find/?keywords=saltstack" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/meetup.png" ></a></li>
+                        <li><a data-container="body" data-delay='{ "show": 500, "hide": 100 }' data-toggle="tooltip" data-placement="top" title="follow saltstack on linkedin" href="http://www.linkedin.com/company/salt-stack-inc" target="_blank"><img class="nolightbox" width="24" src="../../../_static/images/linkedin.png" ></a></li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <!--end sidebar-->
+
+            </div> <!--end wrapper--> <!--end block content-->
+        
+    <script>
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:    '../../../',
+            VERSION:     '2015.8.7',
+            SEARCH_CX:   '004624818632696854117:yfmprrbw3pk',
+            COLLAPSE_INDEX: false,
+            FILE_SUFFIX: '.html',
+            HAS_SOURCE:  'true'
+        };
+    </script>
+
+    <script src="../../../_static/js/core.min.js"></script>
+
+    <script src="../../../_static/js/webhelp.min_v1.4.3.js"></script>
+
+        
+    </body>
+</html>
